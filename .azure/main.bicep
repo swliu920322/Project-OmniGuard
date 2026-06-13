@@ -1,88 +1,43 @@
+// 强行将部署范围提升至订阅级别：代码同时接管资源组的生死
+targetScope = 'subscription'
+
 // ==========================================
-// 1. 全局配置与参数 Schema (定规矩)
+// 1. 全局配置与参数 Schema
 // ==========================================
 param location string = 'southeastasia' // 锁死新加坡（东南亚）数据中心
 param prefix string = 'omni'
 
+var resourceGroupName = '${prefix}-guard-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
 
+// 直接读取外部网络规则安全矩阵文件
+var networkRules = json(loadTextContent('network-rules.json'))
+
 // ==========================================
-// 2. 部署 Hub 虚拟网络 (管理与安全中心)
+// 2. 全自动化拉起合规边界资源组 (RG)
 // ==========================================
-resource hubVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
-  name: hubVNetName
+resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
+  name: resourceGroupName
   location: location
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        '10.0.0.0/16' // Hub 区网络范围
-      ]
-    }
-    subnets: [
-      {
-        name: 'ManagementSubnet'
-        properties: {
-          addressPrefix: '10.0.1.0/24'
-        }
-      }
-    ]
+  tags: {
+    Environment: 'Sandbox-Dev'
+    Project: 'Project-OmniGuard'
+    FinOpsOwner: 'Shengwei'
   }
 }
 
 // ==========================================
-// 3. 部署 Spoke 虚拟网络 (业务与 AI 运行时环境)
+// 3. 跨域下沉：投递网络组装细节
 // ==========================================
-resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
-  name: spokeVNetName
-  location: location
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        '10.1.0.0/16' // Spoke 区网络范围，与 Hub 完美错开，防止路由冲突
-      ]
-    }
-    subnets: [
-      {
-        name: 'BackendSubnet' // 未来我们的 Azure Functions 降落场
-        properties: {
-          addressPrefix: '10.1.1.0/24'
-        }
-      }
-    ]
-  }
-}
-
-// ==========================================
-// 4. 双向 VNet Peering 隧道互通 (打通内网)
-// ==========================================
-
-// Hub -> Spoke 隧道
-resource hubToSpokePeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
-  parent: hubVnet
-  name: 'Hub-To-Spoke'
-  properties: {
-    allowVirtualNetworkAccess: true
-    allowForwardedTraffic: true
-    allowGatewayTransit: false
-    useRemoteGateways: false
-    remoteVirtualNetwork: {
-      id: spokeVnet.id
-    }
-  }
-}
-
-// Spoke -> Hub 隧道
-resource spokeToHubPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
-  parent: spokeVnet
-  name: 'Spoke-To-Hub'
-  properties: {
-    allowVirtualNetworkAccess: true
-    allowForwardedTraffic: true
-    allowGatewayTransit: false
-    useRemoteGateways: false
-    remoteVirtualNetwork: {
-      id: hubVnet.id
-    }
+module networkSecurityAndRouting './nested-infra.bicep' = {
+  name: 'Nested-Network-Enforcements'
+  scope: resourceGroup(rg.name) // 强制进入刚刚创建的资源组上下文
+  params: {
+    location: location
+    prefix: prefix
+    networkRules: networkRules
+    hubVNetName: hubVNetName
+    spokeVNetName: spokeVNetName
   }
 }
