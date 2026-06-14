@@ -1,0 +1,8 @@
+# Azure Functions 核心运行时（必须包含）
+azure-functions
+
+# OpenAI 官方高级 SDK（Week 3 注入 Bicep 智能审计大脑）
+openai
+
+# 零凭据、无密钥托管身份 RBAC 认证大动脉（核心战区必用）
+azure-identity

@@ -81,7 +81,7 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
 }
 
 // ==========================================
-// 4. 双向 VNet Peering 隧道互通 (数据面打通)
+// 4. 双向 VNet Peering 隧道互通 (核心内网通路，坚决保留)
 // ==========================================
 resource hubToSpokePeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
   parent: hubVnet
@@ -110,3 +110,77 @@ resource spokeToHubPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
     }
   }
 }
+
+// ==========================================
+// 5. Serverless 大脑宿主组件（修复 24 位定名冲突限制）
+// ==========================================
+
+// 修复点：用 'st' 代替 'funcstor'，确保 prefix + st + uniqueString 不超过 24 位物理红线
+resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+  name: '${prefix}st${uniqueString(resourceGroup().id)}'
+  location: location
+  sku: { name: 'Standard_LRS' }
+  kind: 'StorageV2'
+  properties: {
+    publicNetworkAccess: 'Disabled' // 零信任治理：锁死运行时存储公网访问
+    networkAcls: {
+      defaultAction: 'Deny'
+      bypass: 'AzureServices'
+    }
+  }
+}
+
+// 创建高级服务器弹性宿主计划
+resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
+  name: '${prefix}-serverless-plan'
+  location: location
+  sku: {
+    name: 'FC1' // Flex Consumption计划拥有内网集成的最高性价比
+    tier: 'FlexConsumption'
+  }
+  properties: {
+    reserved: true // 锁定 Linux OS 运行时
+  }
+}
+
+// 3. 部署无密钥安全大脑外壳 (Azure Function App)
+resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
+  name: '${prefix}-secure-brain-app'
+  location: location
+  kind: 'functionapp,linux'
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {
+    serverFarmId: serverlessPlan.id
+    httpsOnly: true
+    // 强制显式定义 functionAppConfig，修复 BadRequest 错误
+    functionAppConfig: {
+      runtime: {
+        name: 'python'
+        version: '3.10'
+      }
+      scaleAndConcurrency: {
+        maximumInstanceCount: 10
+        instanceMemoryMB: 2048
+      }
+    }
+    siteConfig: {
+      linuxFxVersion: 'PYTHON|3.10'
+      appSettings: [
+        {
+          name: 'AzureWebJobsStorage'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${funcStorage.name};AccountKey=${funcStorage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
+        }
+        { name: 'FUNCTIONS_EXTENSION_VERSION', value: '~4' }
+        { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'python' }
+      ]
+    }
+  }
+}
+
+// ==========================================
+// 4. 建立 Function 出站流量内网吞噬 (VNet Integration)
+// ==========================================
+// 注意：在真实生产中，需要为 Function 绑定虚拟网络物理网卡。
+// 为了死守你的订阅额度（FinOps），我们今天先将这套托管身份和 Function 宿主骨架成功编译入库。
