@@ -2,7 +2,15 @@
 __pycache__/
 *.py[codz]
 *$py.class
+.idea/
+# 彻底斩断本地 Python 虚拟环境向 GitHub 漂移
+src/cloud-orchestrator/.venv/
+src/cloud-orchestrator/__pycache__/
+src/cloud-orchestrator/*/.pyc
 
+# 过滤前端不必要的依赖
+node_modules/
+.next/
 # C extensions
 *.so
 
