@@ -1,9 +1,9 @@
 targetScope = 'subscription'
 
-param location string = 'southeastasia'
+param location string = 'japaneast'
 param prefix string = 'omni'
 
-var resourceGroupName = '${prefix}-guard-rg'
+var resourceGroupName = '${prefix}-guard-blitz-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
 

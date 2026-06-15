@@ -106,16 +106,16 @@ resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-// 5. 基础专用虚拟机宿主计划 (平替为 Standard S1，击穿 Premium 零配额死锁)
 resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
-  name: '${prefix}-standard-plan'
+  name: '${prefix}-proto-plan'
   location: location
   sku: {
-    name: 'S1'
-    tier: 'Standard'
+    name: 'B1'
+    tier: 'Basic'
   }
+  kind: 'linux'
   properties: {
-    reserved: true // 锁定 Linux 物理平台
+    reserved: true
   }
 }
 
