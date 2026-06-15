@@ -5,21 +5,28 @@ param prefix string
 param serverlessPlanId string
 param storageAccountName string
 
+resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
+  name: storageAccountName
+}
+
+// 💡 核心修复：引入基于当前资源组哈希的动态定名，彻底粉碎全局二级域名 54001 碰撞冲突
+var dynamicAppName = '${prefix}-brain-${uniqueString(resourceGroup().id)}'
+
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
-  name: '${prefix}-secure-brain-app'
+  name: dynamicAppName
   location: location
   kind: 'functionapp,linux'
   identity: {
-    type: 'SystemAssigned' // 强行激活系统分配托管身份
+    type: 'SystemAssigned'
   }
   properties: {
     serverFarmId: serverlessPlanId
     httpsOnly: true
     siteConfig: {
-      linuxFxVersion: 'PYTHON|3.11' // 锁定 Python 3.11 运行时，抹除 3.10 EOL 风险
+      linuxFxVersion: 'PYTHON|3.11'
       appSettings: [
         {
-          name: 'AzureWebJobsStorage__accountName' // 0% 凭据暴露：走全托管身份授信连接
+          name: 'AzureWebJobsStorage__accountName'
           value: storageAccountName
         }
         {
@@ -44,5 +51,39 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
 			  }
       ]
     }
+  }
+}
+
+var blobDataContributorId  = 'ba92f5b4-2d11-4010-a4c0-147070102211'
+var queueDataContributorId = '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
+var tableDataContributorId = '0a9a6454-47a4-4c4d-9710-41598468b660'
+
+resource blobRoleAssign 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(funcStorage.id, functionApp.id, blobDataContributorId)
+  scope: funcStorage
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', blobDataContributorId)
+    principalId: functionApp.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource queueRoleAssign 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(funcStorage.id, functionApp.id, queueDataContributorId)
+  scope: funcStorage
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', queueDataContributorId)
+    principalId: functionApp.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource tableRoleAssign 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(funcStorage.id, functionApp.id, tableDataContributorId)
+  scope: funcStorage
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', tableDataContributorId)
+    principalId: functionApp.identity.principalId
+    principalType: 'ServicePrincipal'
   }
 }
