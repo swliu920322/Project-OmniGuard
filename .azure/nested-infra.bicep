@@ -6,26 +6,39 @@ param networkRules object
 param hubVNetName string
 param spokeVNetName string
 
-// 1. 网络安全防线
+// ==========================================
+// 1. 网络安全隔离组矩阵 (NSG 防线)
+// ==========================================
 resource backendNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: '${prefix}-backend-nsg'
   location: location
-  properties: { securityRules: networkRules.backendNsgRules }
+  properties: {
+    securityRules: networkRules.backendNsgRules
+  }
 }
 
 resource storageNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: '${prefix}-storage-nsg'
   location: location
-  properties: { securityRules: networkRules.storageNsgRules }
+  properties: {
+    securityRules: networkRules.storageNsgRules
+  }
 }
 
-// 2. 核心网络拓扑
+// ==========================================
+// 2. 虚拟网络物理拓扑 (Hub & Spoke)
+// ==========================================
 resource hubVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   name: hubVNetName
   location: location
   properties: {
     addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
-    subnets: [{ name: 'ManagementSubnet', properties: { addressPrefix: '10.0.1.0/24' } }]
+    subnets: [
+      {
+        name: 'ManagementSubnet'
+        properties: { addressPrefix: '10.0.1.0/24' }
+      }
+    ]
   }
 }
 
@@ -35,42 +48,96 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   properties: {
     addressSpace: { addressPrefixes: ['10.1.0.0/16'] }
     subnets: [
-      { name: 'BackendSubnet', properties: { addressPrefix: '10.1.1.0/24', networkSecurityGroup: { id: backendNsg.id } } }
-      { name: 'StorageSubnet', properties: { addressPrefix: '10.1.2.0/24', networkSecurityGroup: { id: storageNsg.id } } }
+      {
+        name: 'BackendSubnet'
+        properties: {
+          addressPrefix: '10.1.1.0/24'
+          networkSecurityGroup: { id: backendNsg.id }
+          delegations: [
+            {
+              name: 'serverlessDelegation'
+              properties: {
+                serviceName: 'Microsoft.Web/serverFarms'
+              }
+            }
+          ]
+        }
+      }
+      {
+        name: 'StorageSubnet'
+        properties: {
+          addressPrefix: '10.1.2.0/24'
+          networkSecurityGroup: { id: storageNsg.id }
+        }
+      }
     ]
   }
 }
 
-// 3. 对等互联隧道
+// ==========================================
+// 3. 跨网络对等互联大动脉 (VNet Peering)
+// ==========================================
 resource hubToSpokePeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
   parent: hubVnet
   name: 'Hub-To-Spoke'
-  properties: { allowVirtualNetworkAccess: true, allowForwardedTraffic: true, remoteVirtualNetwork: { id: spokeVnet.id } }
+  properties: {
+    allowVirtualNetworkAccess: true
+    allowForwardedTraffic: true
+    remoteVirtualNetwork: { id: spokeVnet.id }
+  }
 }
 
 resource spokeToHubPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
   parent: spokeVnet
   name: 'Spoke-To-Hub'
-  properties: { allowVirtualNetworkAccess: true, allowForwardedTraffic: true, remoteVirtualNetwork: { id: hubVnet.id } }
+  properties: {
+    allowVirtualNetworkAccess: true
+    allowForwardedTraffic: true
+    remoteVirtualNetwork: { id: hubVnet.id }
+  }
 }
 
-// 4. 存储基石
+// ==========================================
+// 4. FinOps 运行时伴生轻量存储 (st)
+// ==========================================
 resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: '${replace(prefix, '-', '')}st${uniqueString(resourceGroup().id)}'
+  name: '${prefix}st${uniqueString(resourceGroup().id)}'
   location: location
   sku: { name: 'Standard_LRS' }
   kind: 'StorageV2'
-  properties: { publicNetworkAccess: 'Disabled', networkAcls: { defaultAction: 'Deny', bypass: 'AzureServices' } }
+  properties: {
+    publicNetworkAccess: 'Disabled' // 物理切断外网
+    networkAcls: {
+      defaultAction: 'Deny'
+      bypass: 'AzureServices'
+    }
+  }
 }
 
-// 5. 弹性算力计划
+// ==========================================
+// 5. 弹性计算宿主宿主计划 (Flex Consumption)
+// ==========================================
 resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: '${prefix}-serverless-plan'
   location: location
-  sku: { name: 'FC1', tier: 'FlexConsumption' }
-  properties: { reserved: true }
+  sku: {
+    name: 'FC1'
+    tier: 'FlexConsumption'
+  }
+  properties: {
+    reserved: true
+  }
 }
 
-// 导出参数给 compute 模块使用
-output serverFarmId string = serverlessPlan.id
-output storageAccountName string = funcStorage.name
+// ==========================================
+// 6. 级联调度：将计算大脑完全解耦并空投进去
+// ==========================================
+module computeBrain './compute-module.bicep' = {
+  name: 'Compute-Brain-Deployment'
+  params: {
+    location: location
+    prefix: prefix
+    serverlessPlanId: serverlessPlan.id
+    storageAccountName: funcStorage.name
+  }
+}
