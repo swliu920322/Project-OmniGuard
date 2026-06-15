@@ -12,16 +12,32 @@ Enterprise-grade secure AI orchestration substrate built on Azure zero-trust net
 ## 📁 System Repository Structure
 
 ```text
-├── .azure/                  # Infrastructure as Code (IaC) Base
-│   ├── main.bicep           # Hub-Spoke network topology & resource provisioning
-│   └── network-rules.json   # NSG/ASG micro-segmentation matrix
+├── .azure/                    # 基础设施即代码 (IaC) 的神庙
+│   ├── main.bicep             # 订阅级指挥官
+│   ├── nested-infra.bicep     # 网络基建特种部队
+│   ├── compute-module.bicep   # 计算大脑(Function)特种部队
+│   └── network-rules.json     # 安全规则配置矩阵
 ├── .github/workflows/       # CI/CD Automation
 │   └── deploy-infra.yml     # Credentialless deployment via GitHub OIDC federation
 ├── src/
 │   ├── client-edge/         # Next.js frontend with WebGPU PII guardrails
-│   └── cloud-orchestrator/  # Serverless asynchronous auditing & token circuit breakers
+│   └── cloud-orchestrator/    # 无服务器后端大脑
+│       ├── BicepAuditor/      # 业务逻辑代码
+│       ├── requirements.txt   # Python 依赖清单
+│       ├── host.json          # 网关配置
+│       └── BicepAuditor/
+│           └── function_app.py # 业务路由模拟JSON端点
 ├── docker-compose.serving.yml# Local high-performance private GPU/CPU inference cluster
 ├── docs/adrs/               # Architecture Decision Records (ADRs)
 │   ├── ADR-001-Network-Isolation.md
 │   └── ADR-002-Isomorphic-FinOps.md
 └── README.md                # System Topology & Governance Manifest
+```
+
+## 🛠️ Infrastructure Changelog
+
+| Date | Target Component | Modification | Resolution |
+| :--- | :--- | :--- | :--- |
+| 2026-06-15 | `nested-infra.bicep` | Mutated `serverfarms` name token to append `-v2` suffix. | Fixed `FlexConsumption` -> `ElasticPremium` SKU migration deadlock (`53216 / BadRequest`). |
+| 2026-06-15 | `nested-infra.bicep` | Swapped SKU from `EP1` to `P1v3` (`PremiumV3`). | Bypassed `SubscriptionIsOverQuotaForSku` preflight validation failure in `southeastasia`. |
+| 2026-06-15 | `nested-infra.bicep` | Pivoted SKU from `PremiumV3` to `Standard/S1`. | Crushed subscription-wide premium VM zero-quota lockdown; maintained VNet injection plane. |
