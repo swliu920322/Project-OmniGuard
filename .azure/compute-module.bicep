@@ -34,6 +34,14 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           name: 'WEBSITE_RUN_FROM_PACKAGE'
           value: '1' // 锁定企业级包部署模式，缩短冷启动
         }
+				{
+			    name: 'AZURE_OPENAI_ENDPOINT'
+			    value: 'https://omni-openai-instance.privatelink.openai.azure.com/' // 预锁定的私网终结点域名
+			  }
+			  {
+			    name: 'AZURE_OPENAI_DEPLOYMENT_NAME'
+			    value: 'gpt-4o-audit-engine'
+			  }
       ]
     }
   }
