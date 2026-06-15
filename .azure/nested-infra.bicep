@@ -115,14 +115,14 @@ resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
 }
 
 // ==========================================
-// 5. 弹性计算宿主宿主计划 (Flex Consumption)
+// 5. 高级服务器弹性宿主计划 (Elastic Premium 稳定版)
 // ==========================================
 resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: '${prefix}-serverless-plan'
   location: location
   sku: {
-    name: 'FC1'
-    tier: 'FlexConsumption'
+    name: 'EP1' // 👈 切换为成熟的 Elastic Premium 计划，消灭 Schema 阻断
+    tier: 'ElasticPremium'
   }
   properties: {
     reserved: true
@@ -130,7 +130,7 @@ resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
 }
 
 // ==========================================
-// 6. 级联调度：将计算大脑完全解耦并空投进去
+// 6. 级联调度：投递解耦后的纯净计算大脑
 // ==========================================
 module computeBrain './compute-module.bicep' = {
   name: 'Compute-Brain-Deployment'
