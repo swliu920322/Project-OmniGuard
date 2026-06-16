@@ -24,11 +24,8 @@ specifically as a tactical sandbox to master secure network perimeters and state
 ├── src/
 │   ├── client-edge/         # Next.js frontend with WebGPU PII guardrails
 │   └── cloud-orchestrator/    # 无服务器后端大脑
-│       ├── BicepAuditor/      # 业务逻辑代码
 │       ├── requirements.txt   # Python 依赖清单
 │       ├── host.json          # 网关配置
-│       └── BicepAuditor/
-│           └── function_app.py # 业务路由模拟JSON端点
 ├── docker-compose.serving.yml# Local high-performance private GPU/CPU inference cluster
 ├── docs/adrs/               # Architecture Decision Records (ADRs)
 │   ├── ADR-001-Network-Isolation.md
