@@ -528,19 +528,19 @@
 
         const chunk = decoder.decode(value, { stream: true });
 
-        // 🟩 核心修复：只有当网络流中真正剥离出有效文本时，才原位初始化 DOM 节点
         if (chunk) {
+          // 🟩 核心自愈：清洗沿途代理可能黏连的空白或换行符，确保打入 WebGPU 的是纯净 Token
           if (!aiMessageDiv) {
-            aiMessageDiv = appendMessage('', 'ai'); // 👈 此时气泡才会出现在屏幕上
+            aiMessageDiv = appendMessage('', 'ai');
           }
 
           fullText += chunk;
 
-          // 3. 高频原位追加内容
+          // 原位高频刷写 DOM 树
           aiMessageDiv.innerText = fullText;
           chatHistory.scrollTop = chatHistory.scrollHeight;
 
-          // 4. 将单字动态打入 WebGPU 动画管道
+          // 驱动 WebGPU 数字人网格
           triggerDigitalHumanExpression(chunk);
         }
       }

@@ -90,7 +90,15 @@ async def chat_proxy(req: Request) -> StreamingResponse:
           if text:
             yield text
 
-    return StreamingResponse(stream_factory(), media_type="text/plain")
+    return StreamingResponse(
+      stream_factory(),
+      media_type="text/event-stream",  # 1. 👈 升级为事件流媒体类型，暗示代理不要拦截
+      headers={
+        "Cache-Control": "no-cache",  # 2. 👈 斩断浏览器本地缓存
+        "Connection": "keep-alive",  # 3. 👈 保持长连接通道不被中途掐断
+        "X-Accel-Buffering": "no"  # 4. 🎯 【绝杀】强制通知 Azure/Nginx 代理层：关闭 4KB 缓冲，出厂一字立刻冲刷外扔！
+      }
+    )
 
   except Exception as e:
     async def error_handler():
