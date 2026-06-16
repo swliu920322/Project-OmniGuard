@@ -1,3 +1,4 @@
+// 📥 覆盖更新 .azure/compute-module.bicep
 param location string
 param prefix string
 param serverlessPlanId string
@@ -16,6 +17,11 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     siteConfig: {
       linuxFxVersion: 'PYTHON|3.11'
       appSettings: [
+        // 💡 绝杀修复：重新焊死第 4 代宿主引擎钢印，彻底击碎 Functions version is not supported 阻断
+        {
+          name: 'FUNCTIONS_EXTENSION_VERSION'
+          value: '~4'
+        }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: 'python'
