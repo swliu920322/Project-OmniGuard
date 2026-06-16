@@ -1,9 +1,10 @@
 import json
 import datetime
 import os  # 👈 刚性补齐：消灭 NameError 猝死
-import requests  # 👈 刚性补齐：消灭 NameError 猝死
 import azure.functions as func
 from azure.storage.blob import generate_account_sas, ResourceTypes, AccountSasPermissions
+from openai import AzureOpenAI                   # 👈 必须存在，驱动大模型 SDK
+from azure.identity import DefaultAzureCredential # 👈 必须存在，解密 NameError
 
 # 1. 初始化计算大脑实例
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
