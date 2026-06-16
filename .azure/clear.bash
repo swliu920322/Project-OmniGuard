@@ -3,12 +3,11 @@ az group delete --name omniv2-guard-isolated-rg --yes --no-wait
 az deployment sub delete --name omniv2-baseline-run --no-wait
 
 az cognitiveservices account list-deleted --query "[].{Name:name, OldRG:resourceGroup, Location:location}" --output table
-
-
+# 看好名称和组，替换掉删除命令中的参数，执行强制物理删除
 az cognitiveservices account purge \
---name "omniv2-openai-q2dttqqcwfp4u" \
+--name "omni-openai-o44xryuqjevnu" \
 --location japaneast \
---resource-group "omniv2-guard-isolated-rg"
+--resource-group "omni-guard-isolated-rg"
 
 echo "========= 1. 正在全域检索所有被软删除的大模型实例 ========="
 DELETED_LIST=$(az cognitiveservices account list-deleted --query "[].{name:name, rg:resourceGroup, loc:location}" -o json)
