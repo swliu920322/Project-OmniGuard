@@ -8,9 +8,7 @@ param spokeVNetName string
 
 var swaControlPlaneLocation = 'eastasia'
 
-// =========================================================================
-// 1. 安全防线配置 (Network Security Boundaries)
-// =========================================================================
+// NSG 安全防线规则
 resource backendNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: '${prefix}-backend-nsg'
   location: location
@@ -23,9 +21,7 @@ resource storageNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   properties: { securityRules: networkRules.storageNsgRules }
 }
 
-// =========================================================================
-// 2. 双虚网物理 Peering 骨干网络 (Spoke-Hub Network Topology)
-// =========================================================================
+// 骨干双虚网架构
 resource hubVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   name: hubVNetName
   location: location
@@ -61,6 +57,7 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   }
 }
 
+// Peering 双向高速合拢
 resource hubToSpokePeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
   parent: hubVnet
   name: 'Hub-To-Spoke'
@@ -73,9 +70,7 @@ resource spokeToHubPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
   properties: { allowVirtualNetworkAccess: true, allowForwardedTraffic: true, remoteVirtualNetwork: { id: hubVnet.id } }
 }
 
-// =========================================================================
-// 3. 存储底座 (Trident Private Data Plane)
-// =========================================================================
+// 零信任隔离存储
 resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: '${prefix}st${uniqueString(resourceGroup().id)}'
   location: location
@@ -87,9 +82,7 @@ resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-// =========================================================================
-// 4. 计算平面计划 (App Service Plan)
-// =========================================================================
+// 专属计算宿主平面 (Basic B1 支持区域 VNet 强制集成)
 resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: '${prefix}-proto-plan'
   location: location
@@ -98,22 +91,19 @@ resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   properties: { reserved: true }
 }
 
-// =========================================================================
-// 5. 纯净版单轨计算大脑级联挂载 (Single-Core Brain Engine Deployment)
-// =========================================================================
+// 级联挂载大脑计算核心
 module computeBrain './compute-module.bicep' = {
   name: 'Compute-Brain-Deployment'
   params: {
     location: location
     prefix: prefix
     serverlessPlanId: serverlessPlan.id
-    storageAccountName: funcStorage.name // 🟩 刚性对齐真正存活的存储变量名
+    storageAccountName: funcStorage.name
+    backendSubnetId: '${spokeVnet.id}/subnets/BackendSubnet' // 🟩 刚性下钻透传
   }
 }
 
-// =========================================================================
-// 7. 存储三叉戟 DNS 矩阵 (Private DNS Infrastructures)
-// =========================================================================
+// 私网 DNS 矩阵声明
 resource blobDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: 'privatelink.blob.${environment().suffixes.storage}'
   location: 'global'
@@ -147,9 +137,7 @@ resource queueDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@202
   properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
 }
 
-// =========================================================================
-// 8. 存储三叉戟私网芯片挂载 (Private Endpoints Provisioning)
-// =========================================================================
+// 私网终结点芯片挂载
 resource blobPrivateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
   name: '${prefix}-storage-blob-pe'
   location: location
@@ -192,16 +180,11 @@ resource queueDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@
   properties: { privateDnsZoneConfigs: [{ name: 'queue-config', properties: { privateDnsZoneId: queueDnsZone.id } }] }
 }
 
-// =========================================================================
-// 9. Module Alpha: 统一域主权与跨区域后端绑定 (Edge Gateway Gateway Routing)
-// =========================================================================
+// 前端 Static Web App 绑定
 resource staticWebApp 'Microsoft.Web/staticSites@2023-12-01' = {
   name: '${prefix}-digitalhuman-portal'
   location: swaControlPlaneLocation
-  sku: {
-    name: 'Standard'
-    tier: 'Standard'
-  }
+  sku: { name: 'Standard', tier: 'Standard' }
   properties: {}
 }
 
@@ -209,7 +192,6 @@ resource swaApiLink 'Microsoft.Web/staticSites/linkedBackends@2023-12-01' = {
   parent: staticWebApp
   name: 'backendApi'
   properties: {
-    // 🟩 完美对齐：提着单轨 computeBrain 导出的真实真机计算平面名称动态生成绝对 ID
     backendResourceId: resourceId('Microsoft.Web/sites', computeBrain.outputs.functionAppName)
     region: location
   }

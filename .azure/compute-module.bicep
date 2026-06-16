@@ -1,23 +1,20 @@
-// 📥 覆盖更新 .azure/compute-module.bicep
 param location string
 param prefix string
 param serverlessPlanId string
-param storageAccountName string  // 🟩 关键修复：补齐此参数，彻底湮灭 BCP037 报错
+param storageAccountName string
+param backendSubnetId string
 param existingOpenAiName string = '0387621-2410-resource'
 
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: '${prefix}-brain-${uniqueString(resourceGroup().id)}'
   location: location
   kind: 'functionapp,linux'
-  identity: {
-    type: 'SystemAssigned' // 开启硬件级刷脸引信
-  }
   properties: {
     serverFarmId: serverlessPlanId
+    virtualNetworkSubnetId: backendSubnetId // 强行绑定 VNet 出站集成
     siteConfig: {
       linuxFxVersion: 'PYTHON|3.11'
       appSettings: [
-        // 💡 绝杀修复：重新焊死第 4 代宿主引擎钢印，彻底击碎 Functions version is not supported 阻断
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
           value: '~4'
@@ -26,10 +23,27 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: 'python'
         }
-        // 💡 工业级闭环：利用 listKeys 在控制面动态生成私网存储凭证，研发期无需感知明文
+        {
+          name: 'WEBSITE_VNET_ROUTE_ALL' // 强迫所有出站流量卷入私网
+          value: '1'
+        }
+        {
+          name: 'WEBSITE_DNS_SERVER' // 挂载内网核心 DNS 劫持区
+          value: '168.63.129.16'
+        }
+        // 🟩 核心配置：自动算解主连接字符串，原生支持 Module Gamma 的 Queue 触发器
         {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys(resourceId('Microsoft.Storage/storageAccounts', storageAccountName), '2023-01-01').keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
+        }
+        // 🟩 Module Alpha 专属：明性化解耦主键，供 Python 进程内存直接签发 SAS Token，无需硬编码
+        {
+          name: 'AZURE_STORAGE_ACCOUNT_NAME'
+          value: storageAccountName
+        }
+        {
+          name: 'AZURE_STORAGE_ACCOUNT_KEY'
+          value: listKeys(resourceId('Microsoft.Storage/storageAccounts', storageAccountName), '2023-01-01').keys[0].value
         }
         {
           name: 'AZURE_OPENAI_ENDPOINT'
@@ -40,10 +54,8 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           value: 'false'
         }
       ]
-   }
+    }
   }
 }
 
-// 刚性合拢输出链指针
 output functionAppName string = functionApp.name
-output functionAppPrincipalId string = functionApp.identity.principalId

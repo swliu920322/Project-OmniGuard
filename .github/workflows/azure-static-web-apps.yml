@@ -3,7 +3,7 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - main # 仅在主干合并时触发生产级上架
+      - main
 
 jobs:
   build_and_deploy_job:
@@ -19,14 +19,10 @@ jobs:
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }} # 昨晚提取的真机 Token
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-
-          # =========================================================================
-          # 刚性目录定义：彻底明确前后端编译物理边界
-          # =========================================================================
-          app_location: "src/client-edge"          # 👈 前端 3D 门户所在目录
-#          api_location: "src/cloud-orchestrator"  # 🟩 激活：命令 GitHub 将后端塞进 SWA 内部
-          api_location: ""  # 🟩 绝杀置空：物理斩断内嵌函数繁衍，强迫网关释放 /api 路由主权
+          app_location: "src/client-edge" # 前端端侧解耦目录
+          ###### 🟩 Route B 铁律：置空 API 路径，彻底绝育 SWA 内部函数，阻断幽灵缓存 ######
+          api_location: ""
           output_location: ""
