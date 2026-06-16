@@ -67,9 +67,8 @@ resource spokeToHubPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
   properties: { allowVirtualNetworkAccess: true, allowForwardedTraffic: true, remoteVirtualNetwork: { id: hubVnet.id } }
 }
 
-// 3. 持久化安全存储 (完全断绝公网)
-resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: '${prefix}st${uniqueString(resourceGroup().id, 'v4')}' // 💡 注入盐值破锁
+··resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+  name: '${prefix}st${uniqueString(resourceGroup().id, 'v5')}' // 升级 v5 盐值
   location: location
   sku: { name: 'Standard_LRS' }
   kind: 'StorageV2'
@@ -100,9 +99,9 @@ module computeBrain './compute-module.bicep' = {
 }
 
 // =========================================================================
-// 6. 🧠 终极修复：唯一资源组 + 名字哈希加盐('v4')，瞬间蒸发所有 Accepted 状态锁
+// 6. 🧠 顺产第一步：先拉起开启公网的大模型外壳
 // =========================================================================
-var openAiAccountName = '${prefix}-openai-${uniqueString(resourceGroup().id, 'v4')}' // 👈 强行注入'v4'物理盐值，彻底改变名字哈希
+var openAiAccountName = '${prefix}-openai-${uniqueString(resourceGroup().id, 'v5')}' // 💡 强改 v5 物理盐值，秒杀影子锁
 var modelDeploymentName = 'gpt-4o-audit-engine'
 
 resource openAiAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
@@ -111,21 +110,27 @@ resource openAiAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   kind: 'OpenAI'
   sku: { name: 'S0' }
   properties: {
-    publicNetworkAccess: 'Enabled' // 💡 保持开启确保首次初始化顺产，稍后随手拔线
+    publicNetworkAccess: 'Enabled' // 保持 Enabled 通道直到模型安全降生
     customSubDomainName: openAiAccountName
   }
 }
 
+// =========================================================================
+// 7. 🧠 顺产第二步：强行在实例内部把 gpt-4o 算力槽位实例化就绪
+// =========================================================================
 resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
   parent: openAiAccount
   name: modelDeploymentName
-  sku: { name: 'GlobalStandard', capacity: 10 }
+  sku: {
+    name: 'GlobalStandard'
+    capacity: 10 // 恢复被验证过的 10K TPM 基准线
+  }
   properties: {
     model: { format: 'OpenAI', name: 'gpt-4o', version: '2024-11-20' }
   }
 }
 
-// 7. 大模型私网 DNS
+// 8. 大模型私网 DNS
 resource openAiDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: 'privatelink.openai.azure.com'
   location: 'global'
@@ -138,6 +143,9 @@ resource openAiDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@20
   properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
 }
 
+// =========================================================================
+// 9. 🛡️ 终极收网：手写不可动摇的 dependsOn，强行命令网络层等模型部署完毕后再进场
+// =========================================================================
 resource openAiPrivateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
   name: '${prefix}-openai-pe'
   location: location
@@ -153,6 +161,9 @@ resource openAiPrivateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' =
       }
     ]
   }
+  dependsOn: [
+    gpt4oDeployment // 👈 刚性断层：必须死等 gpt-4o 模型在云端就绪，彻底粉碎并发冲突
+  ]
 }
 
 resource openAiDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
