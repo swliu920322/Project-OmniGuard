@@ -3,7 +3,7 @@ targetScope = 'subscription'
 param location string = 'japaneast'
 param prefix string = 'omni'
 
-// 💡 终极修复：漂移至完全干净的资源组命名空间，100% 闪避上一轮卡在 Accepted 状态的旧大模型实例
+// 锁定当前完全干净、无状态死锁残留的黄金验证资源组
 var resourceGroupName = '${prefix}-guard-isolated-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'

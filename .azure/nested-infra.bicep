@@ -19,7 +19,7 @@ resource storageNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   properties: { securityRules: networkRules.storageNsgRules }
 }
 
-// 2. 虚拟网络 (Hub & Spoke)
+// 2. 虚拟网络拓扑
 resource hubVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   name: hubVNetName
   location: location
@@ -48,7 +48,7 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
         properties: {
           addressPrefix: '10.1.2.0/24'
           networkSecurityGroup: { id: storageNsg.id }
-          privateEndpointNetworkPolicies: 'Disabled' // 允许私网终结点挂载
+          privateEndpointNetworkPolicies: 'Disabled'
         }
       }
     ]
@@ -67,7 +67,7 @@ resource spokeToHubPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
   properties: { allowVirtualNetworkAccess: true, allowForwardedTraffic: true, remoteVirtualNetwork: { id: hubVnet.id } }
 }
 
-// 3. 持久化安全存储 (完全阻断公网)
+// 3. 持久化安全存储 (保持安全网络隔离)
 resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: '${prefix}st${uniqueString(resourceGroup().id)}'
   location: location
@@ -88,7 +88,7 @@ resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   properties: { reserved: true }
 }
 
-// 5. 级联调度业务 Function 计算大脑
+// 5. 计算 brains
 module computeBrain './compute-module.bicep' = {
   name: 'Compute-Brain-Deployment'
   params: {
@@ -99,7 +99,9 @@ module computeBrain './compute-module.bicep' = {
   }
 }
 
-// 6. Azure OpenAI 实例 (物理断电)
+// =========================================================================
+// 6. 🧠 修复核心：恢复 publicNetworkAccess 为 Enabled，破除出生死锁
+// =========================================================================
 var openAiAccountName = '${prefix}-openai-${uniqueString(resourceGroup().id)}'
 var modelDeploymentName = 'gpt-4o-audit-engine'
 
@@ -109,7 +111,7 @@ resource openAiAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   kind: 'OpenAI'
   sku: { name: 'S0' }
   properties: {
-    publicNetworkAccess: 'Disabled' // 拔除大模型公网网卡
+    publicNetworkAccess: 'Enabled' // 💡 100% 释放顺产通道
     customSubDomainName: openAiAccountName
   }
 }
@@ -123,9 +125,7 @@ resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-
   }
 }
 
-// =========================================================================
-// 7. 🛡️ 终极纠偏：对齐 2020-06-01 刚性 DNS 规范，终结 NoRegisteredProviderFound
-// =========================================================================
+// 7. 大模型私网 DNS
 resource openAiDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: 'privatelink.openai.azure.com'
   location: 'global'
@@ -133,14 +133,11 @@ resource openAiDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
 
 resource openAiDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   parent: openAiDnsZone
-  name: 'link-to-spoke-vnet'
+  name: 'openai-link-to-spoke'
   location: 'global'
   properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
 }
 
-// =========================================================================
-// 8. 拉起大模型私网终结点 (Private Endpoint)
-// =========================================================================
 resource openAiPrivateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
   name: '${prefix}-openai-pe'
   location: location
@@ -164,6 +161,83 @@ resource openAiDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups
   properties: {
     privateDnsZoneConfigs: [{ name: 'openai-config', properties: { privateDnsZoneId: openAiDnsZone.id } }]
   }
+}
+
+// 10. 存储三叉戟 DNS 矩阵
+resource blobDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+  name: 'privatelink.blob.${environment().suffixes.storage}'
+  location: 'global'
+}
+resource blobDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
+  parent: blobDnsZone
+  name: 'blob-link-to-spoke'
+  location: 'global'
+  properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
+}
+
+resource tableDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+  name: 'privatelink.table.${environment().suffixes.storage}'
+  location: 'global'
+}
+resource tableDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
+  parent: tableDnsZone
+  name: 'table-link-to-spoke'
+  location: 'global'
+  properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
+}
+
+resource queueDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+  name: 'privatelink.queue.${environment().suffixes.storage}'
+  location: 'global'
+}
+resource queueDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
+  parent: queueDnsZone
+  name: 'queue-link-to-spoke'
+  location: 'global'
+  properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
+}
+
+// 11. 存储三叉戟私网终结点
+resource blobPrivateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
+  name: '${prefix}-storage-blob-pe'
+  location: location
+  properties: {
+    subnet: { id: '${spokeVnet.id}/subnets/StorageSubnet' }
+    privateLinkServiceConnections: [{ name: 'blob-connection', properties: { privateLinkServiceId: funcStorage.id, groupIds: ['blob'] } }]
+  }
+}
+resource blobDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
+  parent: blobPrivateEndpoint
+  name: 'blob-dns-group'
+  properties: { privateDnsZoneConfigs: [{ name: 'blob-config', properties: { privateDnsZoneId: blobDnsZone.id } }] }
+}
+
+resource tablePrivateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
+  name: '${prefix}-storage-table-pe'
+  location: location
+  properties: {
+    subnet: { id: '${spokeVnet.id}/subnets/StorageSubnet' }
+    privateLinkServiceConnections: [{ name: 'table-connection', properties: { privateLinkServiceId: funcStorage.id, groupIds: ['table'] } }]
+  }
+}
+resource tableDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
+  parent: tablePrivateEndpoint
+  name: 'table-dns-group'
+  properties: { privateDnsZoneConfigs: [{ name: 'table-config', properties: { privateDnsZoneId: tableDnsZone.id } }] }
+}
+
+resource queuePrivateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
+  name: '${prefix}-storage-queue-pe'
+  location: location
+  properties: {
+    subnet: { id: '${spokeVnet.id}/subnets/StorageSubnet' }
+    privateLinkServiceConnections: [{ name: 'queue-connection', properties: { privateLinkServiceId: funcStorage.id, groupIds: ['queue'] } }]
+  }
+}
+resource queueDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
+  parent: queuePrivateEndpoint
+  name: 'queue-dns-group'
+  properties: { privateDnsZoneConfigs: [{ name: 'queue-config', properties: { privateDnsZoneId: queueDnsZone.id } }] }
 }
 
 output openAiName string = openAiAccount.name
