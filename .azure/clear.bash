@@ -1,6 +1,6 @@
 # 1. 强拆资源组
-az group delete --name omniv2-guard-isolated-rg --yes --no-wait
-az deployment sub delete --name omniv2-baseline-run --no-wait
+az group delete --name omni-guard-infra-rg --yes --no-wait
+az deployment sub delete --name omni-guard-infra-rg --no-wait
 
 az cognitiveservices account list-deleted --query "[].{Name:name, OldRG:resourceGroup, Location:location}" --output table
 # 看好名称和组，替换掉删除命令中的参数，执行强制物理删除
