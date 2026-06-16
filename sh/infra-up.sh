@@ -74,6 +74,9 @@ az functionapp config appsettings set \
     AZURE_STORAGE_ACCOUNT_NAME="$REAL_ST_NAME" \
     LOCAL_MOCK_MODE="false" \
     WEBSITE_VNET_ROUTE_ALL="0" \
+    FUNCTIONS_WORKER_PROCESS_COUNT=4 \
+    PYTHON_THREADPOOL_THREAD_COUNT=32 \
+    PYTHON_ENABLE_INIT_INDEXING=1 \
   --output none
 
 # 强制执行机架容器冷启动，压入全新环境变量
@@ -105,6 +108,7 @@ cat <<EOF > src/cloud-orchestrator/digitalhuman/local.settings.json
     "AZURE_OPENAI_ENDPOINT": "${REAL_ENDPOINT}",
     "AZURE_OPENAI_API_KEY": "${REAL_KEY}",
     "AZURE_OPENAI_DEPLOYMENT_NAME": "gpt-4o"
+    "PYTHON_ENABLE_INIT_INDEXING": "1",
   }
 }
 EOF

@@ -8,7 +8,7 @@ VAR_RG=omni-guard-infra-rg
 # 1. 一键拉起云端底座并倒灌密钥
 infra: provision
 
-up:  devops deploy
+up: devops deploy
 
 provision:
 	@chmod +x ./sh/infra-up.sh
@@ -21,7 +21,7 @@ destroy:
 
 # 3. 本地双端热拔插联动肉搏 (自动同步最新 local.settings.json)
 dev:
-	@npx swa start src/client-edge --api-location http://localhost:7071 & cd src/cloud-orchestrator/digitalhuman && source .venv/bin/activate && func start
+	npx @azure/static-web-apps-cli start src/client-edge --api-port 7071 & cd src/cloud-orchestrator/digitalhuman && func start
 
 
 # 4. 极致压缩版定向轰击部署
