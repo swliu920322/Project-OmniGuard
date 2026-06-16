@@ -3,8 +3,8 @@ targetScope = 'subscription'
 param location string = 'japaneast'
 param prefix string = 'omni'
 
-// 锁定干净的终选资源组命名空间
-var resourceGroupName = '${prefix}-guard-blitz-rg'
+// 💡 终极修复：漂移至完全干净的资源组命名空间，100% 闪避上一轮卡在 Accepted 状态的旧大模型实例
+var resourceGroupName = '${prefix}-guard-isolated-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
 
