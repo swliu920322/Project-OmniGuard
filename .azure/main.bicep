@@ -3,7 +3,6 @@ targetScope = 'subscription'
 param location string = 'japaneast'
 param prefix string = 'omni'
 
-// 刚性锁死唯一底座，此后演进绝不更名
 var resourceGroupName = '${prefix}-guard-infra-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
@@ -14,8 +13,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
   name: resourceGroupName
   location: location
   tags: {
-    Environment: 'Sandbox-Dev'
-    Project: 'Project-OmniGuard'
+    Environment: 'Persistent-Sandbox'
     FinOpsOwner: 'Shengwei'
   }
 }

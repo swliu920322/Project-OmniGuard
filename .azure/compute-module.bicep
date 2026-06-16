@@ -52,3 +52,8 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     }
   }
 }
+// =========================================================================
+// 💡 追加：向外部防御网络抛出 Function App 的真机动态物理名称
+// =========================================================================
+// 请将下方的 'functionApp' 替换为你该文件内部定义 Microsoft.Web/sites 资源时使用的真实符号名称
+output functionAppName string = functionApp.name
