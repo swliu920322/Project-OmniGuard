@@ -6,7 +6,7 @@ param networkRules object
 param hubVNetName string
 param spokeVNetName string
 
-// 1. 网络安全组防线
+// 1. 网络安全组
 resource backendNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: '${prefix}-backend-nsg'
   location: location
@@ -19,7 +19,7 @@ resource storageNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   properties: { securityRules: networkRules.storageNsgRules }
 }
 
-// 2. 虚拟网络物理拓扑 (Hub & Spoke)
+// 2. 虚拟网络 (Hub & Spoke)
 resource hubVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   name: hubVNetName
   location: location
@@ -45,7 +45,11 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
       }
       {
         name: 'StorageSubnet'
-        properties: { addressPrefix: '10.1.2.0/24', networkSecurityGroup: { id: storageNsg.id } }
+        properties: {
+          addressPrefix: '10.1.2.0/24'
+          networkSecurityGroup: { id: storageNsg.id }
+          privateEndpointNetworkPolicies: 'Disabled' // 允许私网终结点挂载
+        }
       }
     ]
   }
@@ -63,19 +67,19 @@ resource spokeToHubPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
   properties: { allowVirtualNetworkAccess: true, allowForwardedTraffic: true, remoteVirtualNetwork: { id: hubVnet.id } }
 }
 
-// 3. 持久化独立持久存储 account
+// 3. 持久化安全存储 (完全阻断公网)
 resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: '${prefix}st${uniqueString(resourceGroup().id)}'
   location: location
   sku: { name: 'Standard_LRS' }
   kind: 'StorageV2'
   properties: {
-    publicNetworkAccess: 'Disabled' // 锁死存储私网边界
+    publicNetworkAccess: 'Disabled'
     networkAcls: { defaultAction: 'Deny', bypass: 'AzureServices' }
   }
 }
 
-// 4. 计算宿主计划 (B1 档位保活)
+// 4. 计算宿主计划
 resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: '${prefix}-proto-plan'
   location: location
@@ -95,9 +99,7 @@ module computeBrain './compute-module.bicep' = {
   }
 }
 
-// =========================================================================
-// 6. 🧠 终极收网：对齐 2026 活跃内核，强行迎回 gpt-4o 审计大脑
-// =========================================================================
+// 6. Azure OpenAI 实例 (物理断电)
 var openAiAccountName = '${prefix}-openai-${uniqueString(resourceGroup().id)}'
 var modelDeploymentName = 'gpt-4o-audit-engine'
 
@@ -107,7 +109,7 @@ resource openAiAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   kind: 'OpenAI'
   sku: { name: 'S0' }
   properties: {
-    publicNetworkAccess: 'Enabled' // 保持公网开启用于今日 Baseline 验证，明日断线
+    publicNetworkAccess: 'Disabled' // 拔除大模型公网网卡
     customSubDomainName: openAiAccountName
   }
 }
@@ -115,18 +117,53 @@ resource openAiAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
 resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
   parent: openAiAccount
   name: modelDeploymentName
-  sku: {
-    name: 'GlobalStandard' // 走全球标准按量计费，无请求 0 扣费
-    capacity: 10          // 分配 10k TPM 基础吞吐
-  }
+  sku: { name: 'GlobalStandard', capacity: 10 }
   properties: {
-    model: {
-      format: 'OpenAI'
-      name: 'gpt-4o'
-      version: '2024-11-20' // 💡 最终修复：升级为 2026 年依然强力活跃的旗舰稳定版内核
-    }
+    model: { format: 'OpenAI', name: 'gpt-4o', version: '2024-11-20' }
   }
 }
 
-output openAiEndpoint string = openAiAccount.properties.endpoint
+// =========================================================================
+// 7. 🛡️ 终极纠偏：对齐 2020-06-01 刚性 DNS 规范，终结 NoRegisteredProviderFound
+// =========================================================================
+resource openAiDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+  name: 'privatelink.openai.azure.com'
+  location: 'global'
+}
+
+resource openAiDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
+  parent: openAiDnsZone
+  name: 'link-to-spoke-vnet'
+  location: 'global'
+  properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
+}
+
+// =========================================================================
+// 8. 拉起大模型私网终结点 (Private Endpoint)
+// =========================================================================
+resource openAiPrivateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
+  name: '${prefix}-openai-pe'
+  location: location
+  properties: {
+    subnet: { id: '${spokeVnet.id}/subnets/StorageSubnet' }
+    privateLinkServiceConnections: [
+      {
+        name: 'openai-connection'
+        properties: {
+          privateLinkServiceId: openAiAccount.id
+          groupIds: ['account']
+        }
+      }
+    ]
+  }
+}
+
+resource openAiDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
+  parent: openAiPrivateEndpoint
+  name: 'default-dns-group'
+  properties: {
+    privateDnsZoneConfigs: [{ name: 'openai-config', properties: { privateDnsZoneId: openAiDnsZone.id } }]
+  }
+}
+
 output openAiName string = openAiAccount.name
