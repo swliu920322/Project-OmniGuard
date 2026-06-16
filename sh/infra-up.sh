@@ -107,8 +107,8 @@ cat <<EOF > src/cloud-orchestrator/digitalhuman/local.settings.json
     "AZURE_STORAGE_ACCOUNT_KEY": "${VAR_ST_KEY}",
     "AZURE_OPENAI_ENDPOINT": "${REAL_ENDPOINT}",
     "AZURE_OPENAI_API_KEY": "${REAL_KEY}",
-    "AZURE_OPENAI_DEPLOYMENT_NAME": "gpt-4o"
-    "PYTHON_ENABLE_INIT_INDEXING": "1",
+    "AZURE_OPENAI_DEPLOYMENT_NAME": "gpt-4o",
+    "PYTHON_ENABLE_INIT_INDEXING": 1,
   }
 }
 EOF
