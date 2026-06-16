@@ -41,77 +41,115 @@
 
 ---
 
-## 🛠️ 工业级交付：Project-OmniGuard 全栈启动与运维手册
+# 亚太分布式架构演进：解构 Azure SWA 托管函数与独立 Serverless 大脑的路由死锁与边界权衡
 
-本手册用于规范从零冷启动到生产环境预览的全量确定性步骤。
+控制台的 500 熔断通过网络指派标头（`x-ms-middleware-request-id`）落地。这并非简单的代码报错，而是分布式 Serverless 拓扑中高频爆发的“双头蛇路由抢占（Split-Brain Routing Deadlock）”。
 
-### 📦 Step 1: 本地环境初始化与鉴权
+本篇技术对账账本物理拆解 Azure 边缘计算的两种硬核演进路径：**方案 A（SWA 托管函数一体化架构）**与**方案 B（独立 Function App 企业级强隔离架构）**。
 
-在本地 Mac 终端中，强行切入目标学术租户控制面，锁定主权：
+---
 
-```bash
-# 1. 强制登录指定教育域
-az login --tenant "sd.taylors.edu.my"
+## 架构之“神” (The Spirit) —— 拓扑解耦协议与控制面视界
 
-# 2. 检查当前激活的订阅，确保 a1722efd 凭证就位
-az account show --query "{SubscriptionName:name, SubscriptionID:id}" -o table
+### 方案 A：SWA Managed Functions（边缘沙盒一体化模式）
+
+代码与前端静态资源（HTML/JS/WebGPU 网格数据）同源共生于同一个 Git 仓库中。GitHub Actions 在冲锋打包时，识别到 `.yml` 账本中的 `api_location: "src/cloud-orchestrator"`，自动在 Azure Static Web Apps (SWA) 香港边缘网关内部，就地繁衍出一个全托管的隐藏计算沙盒。
+
+```
+【方案 A 拓扑流】
+ 用户浏览器 ──> HTTPS ──> [香港 SWA 边缘网关 (内嵌托管函数沙盒)] ──(本地环回)──> 动态响应
 
 ```
 
-### 🧱 Step 2: 一键拉起亚太网络与计算平面的拓扑树
+* **优势（Pros）：**
+* **绝对的 0-CORS 零跨域损耗**：网关在亚太边缘层直接劫持 `/api` 相对路径，双端在浏览器侧呈现绝对同源基因，天然免疫跨域攻击与非法撞击。
+* **FinOps 闲置 0 财务占用**：无常驻虚拟机机架月租，实行纯粹的按量计费与自动缩容至零（Scale-to-Zero）。
+* **极致的 NoOps 运维剪裁**：研发期无需感知任何存储连接字符串（`AzureWebJobsStorage`）。控制面全量接管证书续签、反向代理与冷启动底座优化。
 
-下发声明式基础设施（IaC）重组指令：
 
-```bash
-# 执行幂等性生命周期脚本，在云端克隆出纯净的资源组网格
-./infra-up.sh
+* **劣势（Cons）：**
+* **网络防线真空（No VNet Integration）**：**这是致命硬伤。** 托管沙盒无法钉入企业级虚拟网络（VNet），意味着它无法挂载私网终结点（Private Endpoint），无法横向穿透内网防火墙。
+* **计算生命周期受限**：执行超时时间被控制面死锁（通常为 1.5 到 10 分钟），无法承载重型高并发复杂状态机控制或长时间的 WebGPU 网格动画数据预解算。
+* **控制面变量分裂**：配置变量必须在 `az staticwebapp appsettings` 级别注入，无法享受独立主机的精细化内存字典隔离。
+
+
+
+---
+
+### 方案 B：Standalone Function App（独立Serverless大脑模式）
+
+计算层与网络分发层在物理拓扑上完全解耦。通过 Bicep 脚本在 `japaneast`（日本东区）拉起独立的 Linux 宿主机容器，再通过 SWA 的 `linkedBackends` 控制协议，跨地域将 `/api` 路由动态锚定到该独立大脑上。
+
+```
+【方案 B 拓扑流】
+ 用户浏览器 ──> [香港 SWA 网关] ──(微软全球高速骨干网穿透)──> [日本东区独立 Function 容器]
 
 ```
 
-* **运维审计断言**：死等终端弹出 `Nested-Network-Enforcements | Succeeded` 令牌。此时，香港 SWA 网站、日本 Function App 宿主机以及私网三叉戟 DNS 矩阵全部在物理机架上就位。
-
-### 🌐 Step 3: 配置 GitHub GitOps 管道钥匙
-
-1. 登录 Azure Portal，进入新创资源组 `omni-guard-infra-rg`。
-2. 点击进入静态网站 `omni-digitalhuman-portal`，在 Overview 右上角点击 **"Manage deployment token"**，完整复制该令牌。
-3. 转身进入你的 GitHub 仓库（`Project-OmniGuard`）$\rightarrow$ **Settings** $\rightarrow$ **Secrets and variables** $\rightarrow$ **Actions**。
-4. 新建 Repository Secret：
-* **Name**: `AZURE_STATIC_WEB_APPS_API_TOKEN_OMNI_DIGITALHUMAN_PORTAL`
-* **Value**: 贴入你刚才复制的 Deployment Token。
+* **优势（Pros）：**
+* **军工级网络物理防线（VNet & NSG Compliance）**：**这是拿下高级云架构师 Offer 的核心资产。** 独立主机支持全量网络注入（Regional VNet Integration）。可以配合网络安全组（NSG）白名单、私网三叉戟 DNS 矩阵（Private DNS Zones）将后端完全隐藏在公网视线之外。
+* **独占型高算力机架支持**：支持挂载 Dedicated（基本 B1 计划）或 Premium 专属机型，解除执行超时限制，容器常驻内存，抹平冷启动延迟（Cold Start Limit）。
+* **极致的环境漂移灵活性**：配合 Level 3 托管身份（Managed Identity），计算节点可化身为拥有独立法人的云端实体，跨资源组刷脸调拨已有的大模型联邦算力。
 
 
-5. 在本地执行一发空提交，强行炸开云端编译引擎：
+* **劣势（Cons）：**
+* **持有成本刚性抬升**：一旦开启 Dedicated 包月机架（如 B1 计划），即使午夜 0 流量，也存在固定的固定财务月租开销。
+* **研发期管道变长（CI/CD Friction）**：GitHub Actions 部署时必须清空 `api_location` 避免幽灵抢占，转而依赖本地 Azure Core Tools 工具链（`func azure functionapp publish`）向计算节点定向注入二进制载荷。
+
+
+
+---
+
+## 🧭 双头蛇抢占：为什么云端配置是 false，返回却是 Mock？
+
+这盘技术文章必须点穿我们在实弹演练中踩穿的**底层大坑**：
+
+当你在 `.yml` 工作流中保留了 `api_location: "src/cloud-orchestrator"`，同时又在 Bicep 里拉起了独立 Function——**你的云端实际上同时存活了两个一模一样的代码肉身。**
+
+SWA 边缘网关在路由解析上存在刚性底层序列：**内嵌托管函数优先级绝对高于外部后端链接（Linked Backends）**。
+
+流量在香港边缘层直接被内嵌托管函数就地拦截吞噬。而你通过 `az functionapp config appsettings set` 注入的 `LOCAL_MOCK_MODE="false"`，是精准对准日本外部独立 Function 轰击的。接客的内嵌函数脑子里一片真空，抓取不到环境变量，瞬间退化到代码缺省值 `true`，从而疯狂吐出 Mock 词包。
+
+通过 Chrome Network 提取出的响应头特征码 **`x-ms-middleware-request-id`** 便是铁证：它代表流量根本没有出海去日本，直接在香港边缘网关内部被就地正法。
+
+---
+
+## 工程之“形” (The Form) —— 高阶云架构师资产交底
+
+### 🛠️ 场景抉择断言（面试夺权短句）
+
+在向顶尖Tech Lead发帖或面试肉搏时，斩断基础概念，直接抛出边界 Trade-offs 闭环：
+
+> “**Strip the hype.** 放弃方案 A 还是方案 B 不是个人喜好，而是基于 **网络边界安全（Network Boundary）** 与 **持有财务模型（FinOps Topologies）** 的物理对账。”
+> “如果是轻量级、无私网穿透诉求的快速 MVP 交付，应当 **Force 方案 A**，清空常驻虚拟机债务，让配置与代码捆绑生死；一旦业务长出对既有企业级多租户隔离向量库、或跨组大模型私网对撞的刚性合规诉求，必须 **Deploy 方案 B**，强行将 `api_location` 剪裁置空，通过 VNet 注入与私网芯片挂载（Private Endpoints）原位封锁计算平面，夺取绝对的架构控制权。”
+
+---
+
+### 🔍 附：二维方案实弹真机审计命令账本
+
+#### 路径 A（合拢全托管 SWA 变量注入）
+
 ```bash
-git commit --allow-empty -m "ci(gitops): re-route code delivery to brand new cloud nodes"
-git push origin main
+az staticwebapp appsettings set \
+  --name "omni-digitalhuman-portal" \
+  --resource-group "omni-guard-infra-rg" \
+  --setting-names LOCAL_MOCK_MODE="false" AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o"
 
 ```
 
-
-* *对账点*：死死盯住 GitHub Actions，直至 `Azure Static Web Apps CI/CD` 转为纯净的绿色 Success。
-
-
-
-### 🔒 Step 4: 运行时行政级配置倒灌（激活真实算力）
-
-当代码完全落盘云端后，我们将实弹参数在运行时直接砸入容器内存，彻底解决学校租户无权限角色指派（`RoleDefinitionDoesNotExist`）的环境真空：
+#### 路径 B（合拢独立强隔离 Function 变量注入）
 
 ```bash
-# 1. 向日本东区的计算平面单向灌入绝密配置字典
 az functionapp config appsettings set \
   --name "omni-brain-javzwzvip3pce" \
   --resource-group "omni-guard-infra-rg" \
-  --settings \
-    LOCAL_MOCK_MODE="false" \
-    AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
-    AZURE_OPENAI_ENDPOINT="https://0387621-2410-resource.openai.azure.com/" \
-    AZURE_OPENAI_API_KEY="9t3ITR5Tzns5Zk9XFui7rRdeTMzfaf1gqSfReaZyyFe18Zl6uN5gJQQJ99CCACi0881XJ3w3AAAAACOGLQ7e" \
-  --output none
-
-# 2. 强制下发硬重启，逼迫容器重启并挂载新字典
-az functionapp restart --name "omni-brain-javzwzvip3pce" --resource-group "omni-guard-infra-rg"
+  --settings LOCAL_MOCK_MODE="false" AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o"
 
 ```
+
+---
+
+把这盘冰冷坚硬的对比图谱横向打入你的 LinkedIn 杠杆武器库，彻底剥离技术玩具标签，这才是通过工程解题路径展现的高阶架构师 Insights！全量通车！
 
 ### 🎯 Step 5: 实弹线上对账预览
 
