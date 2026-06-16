@@ -19,7 +19,7 @@ resource storageNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   properties: { securityRules: networkRules.storageNsgRules }
 }
 
-// 2. 虚拟网络拓扑
+// 2. 虚拟网络拓扑 (Hub & Spoke)
 resource hubVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   name: hubVNetName
   location: location
@@ -67,9 +67,9 @@ resource spokeToHubPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
   properties: { allowVirtualNetworkAccess: true, allowForwardedTraffic: true, remoteVirtualNetwork: { id: hubVnet.id } }
 }
 
-// 3. 持久化安全存储 (保持安全网络隔离)
+// 3. 持久化安全存储 (完全断绝公网)
 resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: '${prefix}st${uniqueString(resourceGroup().id)}'
+  name: '${prefix}st${uniqueString(resourceGroup().id, 'v4')}' // 💡 注入盐值破锁
   location: location
   sku: { name: 'Standard_LRS' }
   kind: 'StorageV2'
@@ -88,7 +88,7 @@ resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   properties: { reserved: true }
 }
 
-// 5. 计算 brains
+// 5. 计算大脑
 module computeBrain './compute-module.bicep' = {
   name: 'Compute-Brain-Deployment'
   params: {
@@ -100,9 +100,9 @@ module computeBrain './compute-module.bicep' = {
 }
 
 // =========================================================================
-// 6. 🧠 修复核心：恢复 publicNetworkAccess 为 Enabled，破除出生死锁
+// 6. 🧠 终极修复：唯一资源组 + 名字哈希加盐('v4')，瞬间蒸发所有 Accepted 状态锁
 // =========================================================================
-var openAiAccountName = '${prefix}-openai-${uniqueString(resourceGroup().id)}'
+var openAiAccountName = '${prefix}-openai-${uniqueString(resourceGroup().id, 'v4')}' // 👈 强行注入'v4'物理盐值，彻底改变名字哈希
 var modelDeploymentName = 'gpt-4o-audit-engine'
 
 resource openAiAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
@@ -111,7 +111,7 @@ resource openAiAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   kind: 'OpenAI'
   sku: { name: 'S0' }
   properties: {
-    publicNetworkAccess: 'Enabled' // 💡 100% 释放顺产通道
+    publicNetworkAccess: 'Enabled' // 💡 保持开启确保首次初始化顺产，稍后随手拔线
     customSubDomainName: openAiAccountName
   }
 }

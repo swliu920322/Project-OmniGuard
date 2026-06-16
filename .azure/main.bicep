@@ -3,8 +3,8 @@ targetScope = 'subscription'
 param location string = 'japaneast'
 param prefix string = 'omni'
 
-// 锁定当前完全干净、无状态死锁残留的黄金验证资源组
-var resourceGroupName = '${prefix}-guard-isolated-rg'
+// 💡 终极收拢：全量演进全部死守这一个唯一资源组，彻底告别多资源组内耗
+var resourceGroupName = '${prefix}-guard-infra-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
 
