@@ -8,7 +8,9 @@ param spokeVNetName string
 
 var swaControlPlaneLocation = 'eastasia'
 
-// 1. 安全防线配置
+// =========================================================================
+// 1. 安全防线配置 (Network Security Boundaries)
+// =========================================================================
 resource backendNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: '${prefix}-backend-nsg'
   location: location
@@ -21,7 +23,9 @@ resource storageNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   properties: { securityRules: networkRules.storageNsgRules }
 }
 
-// 2. 双虚网物理 Peering 骨干网络
+// =========================================================================
+// 2. 双虚网物理 Peering 骨干网络 (Spoke-Hub Network Topology)
+// =========================================================================
 resource hubVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   name: hubVNetName
   location: location
@@ -69,7 +73,9 @@ resource spokeToHubPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
   properties: { allowVirtualNetworkAccess: true, allowForwardedTraffic: true, remoteVirtualNetwork: { id: hubVnet.id } }
 }
 
-// 3. 存储底座 (Trident Data Plane)
+// =========================================================================
+// 3. 存储底座 (Trident Private Data Plane)
+// =========================================================================
 resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: '${prefix}st${uniqueString(resourceGroup().id)}'
   location: location
@@ -81,7 +87,9 @@ resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
+// =========================================================================
 // 4. 计算平面计划 (App Service Plan)
+// =========================================================================
 resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: '${prefix}-proto-plan'
   location: location
@@ -90,18 +98,22 @@ resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   properties: { reserved: true }
 }
 
-// 5. 计算 brains 级联挂载
+// =========================================================================
+// 5. 纯净版单轨计算大脑级联挂载 (Single-Core Brain Engine Deployment)
+// =========================================================================
 module computeBrain './compute-module.bicep' = {
   name: 'Compute-Brain-Deployment'
   params: {
     location: location
     prefix: prefix
     serverlessPlanId: serverlessPlan.id
-    storageAccountName: funcStorage.name
+    storageAccountName: funcStorage.name // 🟩 刚性对齐真正存活的存储变量名
   }
 }
 
-// 9. 存储三叉戟 DNS 矩阵
+// =========================================================================
+// 7. 存储三叉戟 DNS 矩阵 (Private DNS Infrastructures)
+// =========================================================================
 resource blobDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: 'privatelink.blob.${environment().suffixes.storage}'
   location: 'global'
@@ -135,7 +147,9 @@ resource queueDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@202
   properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
 }
 
-// 10. 存储三叉戟私网芯片挂载
+// =========================================================================
+// 8. 存储三叉戟私网芯片挂载 (Private Endpoints Provisioning)
+// =========================================================================
 resource blobPrivateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
   name: '${prefix}-storage-blob-pe'
   location: location
@@ -179,7 +193,7 @@ resource queueDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@
 }
 
 // =========================================================================
-// 11. Module Alpha: 统一域主权
+// 9. Module Alpha: 统一域主权与跨区域后端绑定 (Edge Gateway Gateway Routing)
 // =========================================================================
 resource staticWebApp 'Microsoft.Web/staticSites@2023-12-01' = {
   name: '${prefix}-digitalhuman-portal'
@@ -195,11 +209,10 @@ resource swaApiLink 'Microsoft.Web/staticSites/linkedBackends@2023-12-01' = {
   parent: staticWebApp
   name: 'backendApi'
   properties: {
-    // 💡 绝杀：提着模块抛出的真实计算平面名称动态生成绝对 ID，彻底粉碎 ghost 命名冲突
+    // 🟩 完美对齐：提着单轨 computeBrain 导出的真实真机计算平面名称动态生成绝对 ID
     backendResourceId: resourceId('Microsoft.Web/sites', computeBrain.outputs.functionAppName)
     region: location
   }
-//   dependsOn: [ computeBrain ]
 }
 
 output openAiName string = 'byo-decoupled-instance'
