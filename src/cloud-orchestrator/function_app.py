@@ -1,21 +1,21 @@
 import json
-import datetime
-import os  # 👈 刚性补齐：消灭 NameError 猝死
+import os
 import azure.functions as func
-from azure.storage.blob import generate_account_sas, ResourceTypes, AccountSasPermissions
-from openai import AzureOpenAI                   # 👈 必须存在，驱动大模型 SDK
-from azure.identity import DefaultAzureCredential # 👈 必须存在，解密 NameError
+# 💡 绝杀更正：导入标准的 get_bearer_token_provider 令牌解算器
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from openai import AzureOpenAI
 
-# 1. 初始化计算大脑实例
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 
 @app.route(route="assets/auth", methods=["POST", "GET"])
 def get_sas_token(req: func.HttpRequest) -> func.HttpResponse:
   try:
-    ACCOUNT_NAME = "omnistjavzwzvip3pce"  # 👈 对齐你云端的真实存储名
-    ACCOUNT_KEY = "BzQo3d5ewNK3wKl1RwxRB9B2XjU8sMJAvJldRCspHMfNWbRihNPZQYPczvsIjRfw2eh9Nu/wWgx2+AStFEuONw=="  # 👈 对齐你真实的物理 Key1
+    ACCOUNT_NAME = "omnistjavzwzvip3pce"  # 👈 保持对齐云端真实存储名
+    ACCOUNT_KEY = "BzQo3d5ewNK3wKl1RwxRB9B2XjU8sMJAvJldRCspHMfNWbRihNPZQYPczvsIjRfw2eh9Nu/wWgx2+AStFEuONw=="  #
 
+    from azure.storage.blob import generate_account_sas, ResourceTypes, AccountSasPermissions
+    import datetime
     sas_token = generate_account_sas(
       account_name=ACCOUNT_NAME,
       account_key=ACCOUNT_KEY,
@@ -41,17 +41,23 @@ def chat_proxy(req: func.HttpRequest) -> func.HttpResponse:
         json.dumps({"choices": [{"message": {"role": "assistant", "content": f"[Mock]: {user_message}"}}]}),
         mimetype="application/json")
 
-    # 🟩 Level 3 军工级无密钥核心路由激活
+    # 🟩 完美的环境灵活性：从应用环境变量中提取非敏感配置
     OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
     DEPLOYMENT_NAME = os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4o")
 
-    # ⚡ 刷脸引信：运行时自动探测当前环境。本地调试自动抓取 az login 态；云端自动抓取 Managed Identity
+    # ⚡ 开启运行时无密钥凭证链
     credential = DefaultAzureCredential()
 
-    # 呼叫标准客户端，利用 token_provider 代替明文 api_key
+    # 💡 正确的SDK姿态：利用标准助手将凭证封装为符合OpenAI协议的动态Token生成器
+    token_provider = get_bearer_token_provider(
+      credential,
+      "https://cognitiveservices.azure.com/.default"
+    )
+
+    # 呼叫官方SDK客户端，通过零密钥令牌环直线挂载
     client = AzureOpenAI(
       azure_endpoint=OPENAI_ENDPOINT,
-      azure_ad_token_provider=credential.get_login_token_provider("https://cognitiveservices.azure.com/.default"),
+      azure_ad_token_provider=token_provider,  # 👈 灌入合规生成的提供商
       api_version="2024-02-15-preview"
     )
 
