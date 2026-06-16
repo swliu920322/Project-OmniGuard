@@ -27,5 +27,6 @@ jobs:
           # 刚性目录定义：彻底明确前后端编译物理边界
           # =========================================================================
           app_location: "src/client-edge"          # 👈 前端 3D 门户所在目录
-          api_location: "src/cloud-orchestrator"  # 👈 后端计算大脑 Python 所在目录
+#          api_location: "src/cloud-orchestrator"  # 🟩 激活：命令 GitHub 将后端塞进 SWA 内部
+          api_location: ""  # 🟩 绝杀置空：物理斩断内嵌函数繁衍，强迫网关释放 /api 路由主权
           output_location: ""
