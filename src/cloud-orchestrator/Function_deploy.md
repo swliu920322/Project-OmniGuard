@@ -130,7 +130,7 @@ az functionapp config appsettings set \
   --output table
 
 # 强制触发冷启动
-az functionapp restart --name "omni-brain-javzwzvip3pce" --resource-group "omni-guard-infra-rg"
+func azure functionapp logstream omni-brain-javzwzvip3pce
 
 # 强行触发冷启动，逼迫机架容器带着全新注入的环境变量重生
 az functionapp restart --name "omni-brain-javzwzvip3pce" --resource-group "omni-guard-infra-rg"
