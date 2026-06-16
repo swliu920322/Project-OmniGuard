@@ -9,11 +9,17 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 @app.route(route="assets/auth", methods=["POST", "GET"])
 def get_sas_token(req: func.HttpRequest) -> func.HttpResponse:
   try:
-    ACCOUNT_NAME = "omnistjavzwzvip3pce"
-    ACCOUNT_KEY = "BzQo3d5ewNK3wKl1RwxRB9B2XjU8sMJAvJldRCspHMfNWbRihNPZQYPczvsIjRfw2eh9Nu/wWgx2+AStFEuONw=="
+    # 🟩 降维解耦：存储账号与主密钥彻底撤离代码，改向宿主机内存索要
+    ACCOUNT_NAME = os.environ.get("AZURE_STORAGE_ACCOUNT_NAME", "omnistjavzwzvip3pce")
+    ACCOUNT_KEY = os.environ.get("AZURE_STORAGE_ACCOUNT_KEY", "")
+
+    if not ACCOUNT_KEY:
+      return func.HttpResponse(json.dumps({"error": "Missing Storage Master Key in Runtime Environment"}),
+                               status_code=500)
 
     from azure.storage.blob import generate_account_sas, ResourceTypes, AccountSasPermissions
     import datetime
+
     sas_token = generate_account_sas(
       account_name=ACCOUNT_NAME,
       account_key=ACCOUNT_KEY,
@@ -39,12 +45,10 @@ def chat_proxy(req: func.HttpRequest) -> func.HttpResponse:
         json.dumps({"choices": [{"message": {"role": "assistant", "content": f"[Mock]: {user_message}"}}]}),
         mimetype="application/json")
 
-    # 🟩 环境灵活性核心：代码只向宿主机内存要配置与密钥
     OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
     DEPLOYMENT_NAME = os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4o")
-    OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY", "") # 👈 运行时容器内网单向解密读取
+    OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY", "")
 
-    # 呼叫标准工业级客户端，实现零密钥落盘的实弹撞击
     client = AzureOpenAI(
       azure_endpoint=OPENAI_ENDPOINT,
       api_key=OPENAI_API_KEY,
