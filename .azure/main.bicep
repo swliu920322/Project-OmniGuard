@@ -3,7 +3,7 @@ targetScope = 'subscription'
 param location string = 'japaneast'
 param prefix string = 'omni'
 
-// 💡 终极收拢：全量演进全部死守这一个唯一资源组，彻底告别多资源组内耗
+// 刚性锁死唯一底座，此后演进绝不更名
 var resourceGroupName = '${prefix}-guard-infra-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
