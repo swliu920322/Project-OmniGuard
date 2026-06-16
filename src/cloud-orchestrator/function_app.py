@@ -1,25 +1,31 @@
 import json
 import os
+import datetime
 import azure.functions as func
 from openai import AzureOpenAI
+from azure.storage.blob import generate_account_sas, ResourceTypes, AccountSasPermissions
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 
 @app.route(route="assets/auth", methods=["POST", "GET"])
 def get_sas_token(req: func.HttpRequest) -> func.HttpResponse:
+  """
+  Module Alpha: 动态向前端签发 60秒 极短时效只读 SAS 令牌，完全越过 RBAC 权限限制
+  """
   try:
-    # 🟩 降维解耦：存储账号与主密钥彻底撤离代码，改向宿主机内存索要
-    ACCOUNT_NAME = os.environ.get("AZURE_STORAGE_ACCOUNT_NAME", "omnistjavzwzvip3pce")
-    ACCOUNT_KEY = os.environ.get("AZURE_STORAGE_ACCOUNT_KEY", "")
+    # 🟩 降维打击：从 Bicep 动态灌入的宿主机加密内存中直接索要凭证
+    ACCOUNT_NAME = os.environ.get("AZURE_STORAGE_ACCOUNT_NAME")
+    ACCOUNT_KEY = os.environ.get("AZURE_STORAGE_ACCOUNT_KEY")
 
-    if not ACCOUNT_KEY:
-      return func.HttpResponse(json.dumps({"error": "Missing Storage Master Key in Runtime Environment"}),
-                               status_code=500)
+    if not ACCOUNT_KEY or not ACCOUNT_NAME:
+      return func.HttpResponse(
+        json.dumps({"error": "Missing Private Storage Credentials in Runtime Application Settings."}),
+        status_code=500,
+        mimetype="application/json"
+      )
 
-    from azure.storage.blob import generate_account_sas, ResourceTypes, AccountSasPermissions
-    import datetime
-
+    # 动态算解专属私网数据面通行证
     sas_token = generate_account_sas(
       account_name=ACCOUNT_NAME,
       account_key=ACCOUNT_KEY,
@@ -27,14 +33,22 @@ def get_sas_token(req: func.HttpRequest) -> func.HttpResponse:
       permission=AccountSasPermissions(read=True),
       expiry=datetime.datetime.utcnow() + datetime.timedelta(seconds=60)
     )
-    payload = {"sasToken": sas_token, "blobEndpoint": f"https://{ACCOUNT_NAME}.blob.core.windows.net"}
+
+    payload = {
+      "sasToken": sas_token,
+      "blobEndpoint": f"https://{ACCOUNT_NAME}.blob.core.windows.net"
+    }
     return func.HttpResponse(body=json.dumps(payload), mimetype="application/json", status_code=200)
   except Exception as e:
-    return func.HttpResponse(body=json.dumps({"error": str(e)}), mimetype="application/json", status_code=500)
+    return func.HttpResponse(body=json.dumps({"error": f"Internal Core Error: {str(e)}"}), mimetype="application/json",
+                             status_code=500)
 
 
 @app.route(route="chat/stream", methods=["POST"])
 def chat_proxy(req: func.HttpRequest) -> func.HttpResponse:
+  """
+  大模型分流中转代理
+  """
   try:
     req_body = req.get_json()
     user_message = req_body.get("message", "")

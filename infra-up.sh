@@ -2,7 +2,7 @@
 set -e
 
 # =========================================================================
-# 🔒 Project-OmniGuard: 专属雷达换装与凭证安全倒灌脚本
+# 🔒 Project-OmniGuard: 专属雷达换装与凭证安全倒灌脚本 (庚金总工保固版)
 # =========================================================================
 
 PREFIX="omni"
@@ -39,14 +39,15 @@ echo "📡 [Step 3/4] 正在定向突袭跨资源组资产凭证 (Cross-RG Harve
 echo "========================================================="
 echo "🎯 正在锁定目标资源组: $TARGET_COG_RG -> 实例: $REAL_OPENAI_NAME"
 
-REAL_ENDPOINT="https://0387621-2410-resource.services.ai.azure.com/"
+# 🟩 核心修复：强行修正为 OpenAI 原生终结点，阻止 Azure SDK 路由崩溃
+REAL_ENDPOINT="https://${REAL_OPENAI_NAME}.openai.azure.com/"
 REAL_KEY=$(az cognitiveservices account keys list --name "$REAL_OPENAI_NAME" --resource-group "$TARGET_COG_RG" --query "key1" -o tsv)
 
 if [ -z "$REAL_KEY" ]; then
     echo "❌ 错误: 提取密匙失败！请确保你的 CLI 有权访问资源组 '$TARGET_COG_RG'。"
     exit 1
 fi
-echo "🟩 大模型凭证定向解密成功，内存护航就绪。"
+echo "🟩 大模型凭证定向解密成功，环境内存护航就绪。"
 
 echo -e "\n========================================================="
 echo "⚡ [Step 4/4] 动态解算新计算平面并执行密匙安全倒灌..."
@@ -61,17 +62,21 @@ fi
 
 echo "🎯 成功锁定真机计算大脑: $REAL_FUNC_NAME"
 
-# 唤醒云端物理节点并强行灌入加密环境变量
-az webapp start --name "$REAL_FUNC_NAME" --resource-group "$RG"
+# 🟩 核心修复：用标准的 functionapp 专属控制权取代 webapp，并顺手注入存储账户上下文
+REAL_ST_NAME=$(az storage account list --resource-group "$RG" --query "[0].name" -o tsv)
 
-az webapp config appsettings set \
+az functionapp config appsettings set \
   --name "$REAL_FUNC_NAME" \
   --resource-group "$RG" \
   --settings \
     AZURE_OPENAI_ENDPOINT="$REAL_ENDPOINT" \
     AZURE_OPENAI_API_KEY="$REAL_KEY" \
+    AZURE_STORAGE_ACCOUNT_NAME="$REAL_ST_NAME" \
     LOCAL_MOCK_MODE="false" \
   --output none
+
+# 强制执行机架容器冷启动，压入全新环境变量
+az functionapp restart --name "$REAL_FUNC_NAME" --resource-group "$RG"
 
 echo "--------------------------------------------------------"
 echo "🎉 全线大捷！云端多活分流底座已完全与旧大模型合拢通车！"
@@ -79,4 +84,11 @@ echo "🛡️ 云端 Function 已合法接管你的 Foundry 军火库。"
 echo "🔗 复制下方实弹变量到本地 local.settings.json 开启真机本地肉搏："
 echo "   AZURE_OPENAI_ENDPOINT: $REAL_ENDPOINT"
 echo "   AZURE_OPENAI_API_KEY : $REAL_KEY"
+echo "--------------------------------------------------------"
+
+
+cd src/cloud-orchestrator
+source .venv/bin/activate
+func azure functionapp publish $(az functionapp list --resource-group "omni-guard-infra-rg" --query "[0].name" -o tsv) --python
+
 echo "--------------------------------------------------------"
