@@ -449,7 +449,7 @@
 
             try {
                 // 💡 同源相对路径路由，0 跨域配置，直接被 SWA 边缘节点注入微软专用骨干网
-                const response = await fetch('/api/chat/stream', {
+                const response = await fetch(`/api/chat/stream?t=${Date.now()}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: userText })

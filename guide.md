@@ -96,3 +96,17 @@
 
 1. 我们的存储账户是三叉戟模式（Blob、Table、**Queue**），**Queue 已经原位在私网内拉起**，Module Gamma 随时可以直接把任务砸进队列。
 2. 我们的虚网已经拉通了 `BackendSubnet`，Function 随时拥有完整的内网握手权限去访问大模型和存储。
+
+--- 
+
+目前你新部署在微软日本东区（japaneast）和香港（eastasia）的物理底座，按月计费明细如下：
+
+App Service Plan (B1 Linux 专属平面)：约 $12.41 USD / 月（折合约 $0.017/小时）。
+
+Azure Static Web Apps (Standard 标准层)：约 $9.00 USD / 月（为了自带内网计算大脑链接，刚性升级至标准层）。
+
+Azure Storage Account (高并发三叉戟存储)：按量计费，无流量时闲置成本 <$0.50 USD / 月。
+
+Azure OpenAI (0387621-2410-resource)：$0 固定成本。因为它属于你已有的存活资产，不产生额外机架费，仅在发起 chat 撞击时按 Token 计费。
+
+🔥 当前底座闲置总成本：约 $22.00 USD / 月（每天约 $0.73 USD，按当前汇率约 5.3 元人民币/天）
