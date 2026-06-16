@@ -224,14 +224,4 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-src/cloud-orchestrator/local.settings.json
-src/cloud-orchestrator/local.settings.json
-src/cloud-orchestrator/local.settings.json
-src/cloud-orchestrator/local.settings.json
-src/cloud-orchestrator/local.settings.json
-src/cloud-orchestrator/local.settings.json
-src/cloud-orchestrator/local.settings.json
 **/local.settings.json
-local.settings.json
-**/local.settings.json
-local.settings.json
