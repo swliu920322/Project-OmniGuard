@@ -26,6 +26,6 @@ jobs:
           # =========================================================================
           # 刚性目录定义：彻底明确前后端编译物理边界
           # =========================================================================
-          app_location: "/"          # 前端根目录（包含你的 Vite / WebGPU 源码）
-          api_location: "api"        # 后端 Python Function 源码所在目录
-          app_artifact_location: "dist" # Vite 编译后吐出的纯静态物理网格资产目录
+          app_location: "src/client-edge"          # 👈 前端 3D 门户所在目录
+          api_location: "src/cloud-orchestrator"  # 👈 后端计算大脑 Python 所在目录
+          output_location: ""
