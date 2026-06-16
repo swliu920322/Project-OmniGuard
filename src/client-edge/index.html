@@ -497,44 +497,74 @@
   }
 
   // 核心请求引擎：对接 SWA 后端代理的 AzFunction 路由
+  // 🟩 终极自愈：首字驱动的懒加载流式读取引擎
   async function sendChatMessage(userText) {
     if (!userText.trim()) return;
 
+    // 1. 正常渲染用户消息
     appendMessage(userText, 'user');
     userInput.value = '';
 
+    // 2. 将 AI 气泡指针置空，锁死初始化状态
+    let aiMessageDiv = null;
+    let fullText = '';
+
     try {
-      // 💡 同源相对路径路由，0 跨域配置，直接被 SWA 边缘节点注入微软专用骨干网
       const response = await fetch(`/api/chat/stream?t=${Date.now()}`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({message: userText})
       });
-      // 💡 前端高级 Log 注入：打印全量响应头元数据
+
       console.log("[OmniGuard Trace] Response Status:", response.status);
-      console.log("[OmniGuard Trace] Server Fingerprint:", response.headers.get("Server"));
-      console.log("[OmniGuard Trace] Computed Region:", response.headers.get("X-MS-Region"));
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-      const data = await response.json();
-      const aiReply = data.choices[0].message.content;
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
 
-      appendMessage(aiReply, 'ai');
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-      // 将文本引信驱动至你的 WebGPU 数字人 WGSL 唇形同步/网格动画缓冲区
-      triggerDigitalHumanExpression(aiReply);
+        const chunk = decoder.decode(value, { stream: true });
+
+        // 🟩 核心修复：只有当网络流中真正剥离出有效文本时，才原位初始化 DOM 节点
+        if (chunk) {
+          if (!aiMessageDiv) {
+            aiMessageDiv = appendMessage('', 'ai'); // 👈 此时气泡才会出现在屏幕上
+          }
+
+          fullText += chunk;
+
+          // 3. 高频原位追加内容
+          aiMessageDiv.innerText = fullText;
+          chatHistory.scrollTop = chatHistory.scrollHeight;
+
+          // 4. 将单字动态打入 WebGPU 动画管道
+          triggerDigitalHumanExpression(chunk);
+        }
+      }
+
     } catch (error) {
-      console.error('Fetch Pipeline Failed:', error);
-      appendMessage('边缘节点通信异常，请检查本地开发环境的 AzFunction 代理状态。', 'ai');
+      console.error('Fetch Streaming Pipeline Failed:', error);
+
+      // 5. 异常防御：如果崩溃时气泡尚未创建，原位补登一个带错误样式的气泡
+      if (!aiMessageDiv) {
+        aiMessageDiv = appendMessage('', 'ai');
+      }
+      aiMessageDiv.innerText = '边缘节点通信异常，请检查本地开发环境的 AzFunction 代理状态。';
+      aiMessageDiv.classList.add('error');
     }
   }
 
+  // 🟩 增强型函数：返回当前创建的 DOM 节点，供外部进行高频动态覆写
   function appendMessage(text, sender) {
     const msgDiv = document.createElement('div');
     msgDiv.classList.add('msg', sender);
     msgDiv.innerText = text;
     chatHistory.appendChild(msgDiv);
     chatHistory.scrollTop = chatHistory.scrollHeight;
+    return msgDiv; // 👈 绝杀：必须将指针抛出
   }
 
   // 事件侦听器注入
