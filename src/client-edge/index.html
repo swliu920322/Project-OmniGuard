@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIU SHENGWEI - Portfolio</title>
+    <style>
+        :root {
+            --bg-color: #0a0f1d;
+            --panel-bg: #111827;
+            --accent-color: #00f2fe;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, monospace;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* 科技感背景网格 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.15;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header 区域 */
+        header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 24px;
+            margin-bottom: 40px;
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+        }
+
+        .header-subtitle {
+            font-size: 1.1rem;
+            color: var(--accent-color);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .contact-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .contact-bar a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contact-bar a:hover {
+            color: var(--accent-color);
+        }
+
+        /* 布局栅格 */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 板块通用样式 */
+        section {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 24px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        section::before {
+            content: "";
+            position: absolute;
+            top: -1px; left: -1px; width: 10px; height: 10px;
+            border-top: 2px solid var(--accent-color);
+            border-left: 2px solid var(--accent-color);
+        }
+
+        section h2 {
+            font-size: 1.25rem;
+            color: #fff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        /* 签名项目 & 工作经历样式 */
+        .experience-item {
+            margin-bottom: 24px;
+        }
+
+        .experience-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .exp-role-company {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .exp-time {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+        }
+
+        .exp-bullets {
+            margin-top: 10px;
+            list-style: none;
+        }
+
+        .exp-bullets li {
+            position: relative;
+            padding-left: 16px;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .exp-bullets li::before {
+            content: "↪";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+        }
+
+        /* 证书标签 */
+        .cert-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .cert-badge {
+            background-color: rgba(0, 242, 254, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cert-badge.achieved {
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .cert-badge.candidate {
+            border-left: 3px solid #f59e0b;
+        }
+
+        /* 数字人挂件悬浮窗 */
+        #digital-human-widget {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 320px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--accent-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #digital-human-canvas-container {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(180deg, #1f2937, #0a0f1d);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* WebGPU 占位动效 */
+        .webgpu-placeholder-mesh {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed var(--accent-color);
+            border-radius: 50%;
+            animation: rotateMesh 10s linear infinite;
+        }
+
+        @keyframes rotateMesh {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .chat-history {
+            height: 160px;
+            overflow-y: auto;
+            padding: 12px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            background-color: rgba(10, 15, 29, 0.6);
+        }
+
+        .msg { margin-bottom: 8px; padding: 6px 10px; border-radius: 4px; max-width: 85%; }
+        .msg.user { background-color: var(--border-color); color: #fff; margin-left: auto; text-align: right; }
+        .msg.ai { background-color: rgba(0, 242, 254, 0.1); color: var(--accent-color); border-left: 2px solid var(--accent-color); }
+
+        .chat-input-area {
+            display: flex;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            background-color: transparent;
+            border: none;
+            padding: 12px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .chat-input-area input:focus {
+            outline: none;
+        }
+
+        .chat-input-area button {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .chat-input-area button:hover {
+            background-color: #00c6ff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1 class="header-title">LIU SHENGWEI</h1>
+            <div class="header-subtitle">Senior Solutions Architect (AI & Cloud Transformation)</div>
+            <div class="contact-bar">
+                <span>📍 Singapore</span>
+                <span>📧 lsw19920322@gmail.com</span>
+                <span>📞 +6011-1121-6759</span>
+                <a href="https://linkedin.com/in/shengwei-liu" target="_blank">🔗 linkedin.com/in/shengwei-liu</a>
+            </div>
+        </header>
+
+        <div class="grid-layout">
+            <div class="main-content">
+                <section>
+                    <h2>PROFESSIONAL SUMMARY</h2>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">
+                        10+ years of engineering excellence, bridging robust software systems with AI-native solutions. Expert in transitioning complex front-end modularity into high-level Azure Cloud Architectures and Agentic Workflows. Proven track record in Fortune 500 environments delivering standardized SOPs and measurable ROI.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>SIGNATURE PROJECT</h2>
+                    <div class="experience-item">
+                        <div class="exp-role-company">
+                            <span>Azure-Based Multi-Agent Orchestration Platform</span>
+                            <span class="exp-time">2025 - Present</span>
+                        </div>
+                        <div style="color: var(--accent-color); font-size: 0.9rem; margin-top: 2px;">Lead Architect</div>
+                        <ul class="exp-bullets">
+                            <li><strong>Architectural Vision:</strong> Designed a serverless agentic workflow using Azure Functions and Semantic Kernel to replace rigid, hard-coded legacy business logic.</li>
+                            <li><strong>Key Innovation:</strong> Implemented a Vendor-Agnostic abstraction layer for seamless LLM switching (GPT-4) while maintaining 100% data compliance within Azure VNet.</li>
+                            <li><strong>Impact:</strong> Reduced manual audit costs by 60% and achieved a scalable MVP for automated complex business processes.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>WORK EXPERIENCE</h2>
+                    <div class="experience-item">
+                        <div class="exp-role-company">
+                            <span>Accenture</span>
+                            <span class="exp-time">2021 – 2023</span>
+                        </div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 2px;">Associate Manager (Technical Lead / Architect)</div>
+                        <ul class="exp-bullets">
+                            <li>Led the 0-to-1 foundational architecture for FinTech platforms; engineered a centralized micro-frontend layout with modular isolation to secure independent multi-team delivery.</li>
+                            <li>Devised isomorphic multi-project builds and optimized asset bundling strategies, achieving independent lifecycle deployments.</li>
+                            <li>Developed a generic runtime intelligent state machine for centralized multi-state dialog controls, enhancing transactional error-capture.</li>
+                        </ul>
+                    </div>
+
+                    <div class="experience-item" style="margin-top: 20px;">
+                        <div class="exp-role-company">
+                            <span>Scania Group</span>
+                            <span class="exp-time">2023.7 - 2024.1</span>
+                        </div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 2px;">Software Engineer</div>
+                        <ul class="exp-bullets">
+                            <li>Collaborated with cross-functional European and Asian teams to evaluate and implement low-code platforms for Manufacturing Execution Systems (MES).</li>
+                            <li>Addressed front-end scalability and system integration challenges under industrial compliance standards.</li>
+                        </ul>
+                    </div>
+
+                    <div class="experience-item" style="margin-top: 20px;">
+                        <div class="exp-role-company">
+                            <span>Aosheng Information Technology</span>
+                            <span class="exp-time">2020.5 – 2021.9</span>
+                        </div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 2px;">Lead Systems Architect (Migration)</div>
+                        <ul class="exp-bullets">
+                            <li>Orchestrated a shift from manual coding to a modular assembly model, shortening the MVP delivery cycle by 60%.</li>
+                            <li>Spearheaded frontend architecture refactoring for legacy corporate banking platforms.</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
+            <div class="sidebar">
+                <section>
+                    <h2>CERTIFICATIONS</h2>
+                    <div class="cert-list">
+                        <div class="cert-badge achieved">
+                            <div>
+                                <div style="font-weight:700; font-size:0.9rem;">AZ-305</div>
+                                <div style="font-size:0.75rem; color:var(--text-muted);">Azure Solutions Architect Expert</div>
+                            </div>
+                            <span style="font-size:0.75rem; color:var(--accent-color);">● Achieved</span>
+                        </div>
+                        <div class="cert-badge achieved">
+                            <div>
+                                <div style="font-weight:700; font-size:0.9rem;">AZ-104</div>
+                                <div style="font-size:0.75rem; color:var(--text-muted);">Azure Administrator Associate</div>
+                            </div>
+                            <span style="font-size:0.75rem; color:var(--accent-color);">● Achieved</span>
+                        </div>
+                        <div class="cert-badge achieved">
+                            <div>
+                                <div style="font-weight:700; font-size:0.9rem;">AI-102</div>
+                                <div style="font-size:0.75rem; color:var(--text-muted);">Azure AI Engineer Associate</div>
+                            </div>
+                            <span style="font-size:0.75rem; color:var(--accent-color);">● Achieved</span>
+                        </div>
+                        <div class="cert-badge candidate">
+                            <div>
+                                <div style="font-weight:700; font-size:0.9rem;">AB-100</div>
+                                <div style="font-size:0.75rem; color:var(--text-muted);">Agentic AI Business Architect</div>
+                            </div>
+                            <span style="font-size:0.75rem; color:#f59e0b;">⏳ June 2026</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>EDUCATION</h2>
+                    <div style="margin-bottom: 12px;">
+                        <div style="font-weight:700; font-size:0.9rem; color:#fff;">Taylor’s University</div>
+                        <div style="font-size:0.8rem; color:var(--accent-color);">MSc in Applied Computing (AI)</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">2025.9 – 2026.8</div>
+                    </div>
+                    <div>
+                        <div style="font-weight:700; font-size:0.9rem; color:#fff;">Taiyuan University of Technology</div>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">B.Eng in Mechanical Engineering</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">2010.9 – 2014.9</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div id="digital-human-widget">
+        <div id="digital-human-canvas-container">
+            <div class="webgpu-placeholder-mesh"></div>
+            <div style="position:absolute; bottom:8px; font-size:0.7rem; color:var(--accent-color); letter-spacing:1px;">WEBGPU MESH REFRESHING...</div>
+        </div>
+        <div class="chat-history" id="chatHistory">
+            <div class="msg ai">你好，我是刘胜伟的 AI 助理。关于他的 Azure 云架构经验或 Agentic Workflows 方案，欢迎随时向我提问。</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="输入指令询问架构细节..." autocomplete="off">
+            <button id="sendBtn">发送</button>
+        </div>
+    </div>
+
+    <script>
+        const chatHistory = document.getElementById('chatHistory');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // 占位函数：驱动至 WebGPU 数字人 WGSL 唇形同步/网格动画缓冲区
+        function triggerDigitalHumanExpression(replyText) {
+            console.log(`[WebGPU Pipeline] Syncing mesh buffers for response: ${replyText}`);
+            // 可以在此处绑定实际网格动画或震动反馈
+        }
+
+        // 核心请求引擎：对接 SWA 后端代理的 AzFunction 路由
+        async function sendChatMessage(userText) {
+            if (!userText.trim()) return;
+
+            appendMessage(userText, 'user');
+            userInput.value = '';
+
+            try {
+                // 💡 同源相对路径路由，0 跨域配置，直接被 SWA 边缘节点注入微软专用骨干网
+                const response = await fetch('/api/chat/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userText })
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+                const aiReply = data.choices[0].message.content;
+
+                appendMessage(aiReply, 'ai');
+
+                // 将文本引信驱动至你的 WebGPU 数字人 WGSL 唇形同步/网格动画缓冲区
+                triggerDigitalHumanExpression(aiReply);
+            } catch (error) {
+                console.error('Fetch Pipeline Failed:', error);
+                appendMessage('边缘节点通信异常，请检查本地开发环境的 AzFunction 代理状态。', 'ai');
+            }
+        }
+
+        function appendMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('msg', sender);
+            msgDiv.innerText = text;
+            chatHistory.appendChild(msgDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        // 事件侦听器注入
+        sendBtn.addEventListener('click', () => sendChatMessage(userInput.value));
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChatMessage(userInput.value);
+        });
+    </script>
+</body>
+</html>

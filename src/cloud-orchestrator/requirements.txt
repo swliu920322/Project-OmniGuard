@@ -6,3 +6,4 @@ openai
 
 # 零凭据、无密钥托管身份 RBAC 认证大动脉（核心战区必用）
 azure-identity
+azure-storage-blob

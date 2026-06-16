@@ -48,15 +48,3 @@ az deployment sub create \
   --parameters location=japaneast prefix=omni
 ```
 
-## 五、 后续行动指南
-
-现在你的自旋对账锁只要确认全部归零，请
-**立刻、无脑轰入这最后一次 `az deployment sub create --name omni-permanent-base ...`**。
-
-由于这是新名字冷启动，且带有 `dependsOn` 串行时序锁，这一发将直接在云端牢固合拢！成功后，每天结束实验只需执行
-`az webapp stop` 挂起计算层，我们就能彻底甩掉环境债务，进入下一步。
-
-底座完全坐实之后，你准备先从哪个工程细节撕开突破口？
-
-1. **编写前端的 WebGPU/WGSL 数字人顶点着色器与离线资产挂载？**
-2. **在 `BackendSubnet` 的 Function App 内部配置 Python 环境，编写智能生成 Bicep 的 Prompt 编排与 WASM 静态预检层？**
