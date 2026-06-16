@@ -25,7 +25,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'WEBSITE_VNET_ROUTE_ALL' // 强迫所有出站流量卷入私网
-          value: '1'
+          value: '0' // 🟩 改为 0：仅私网域名走 PE，OpenAI 走公共互联网通道避开黑洞
         }
         {
           name: 'WEBSITE_DNS_SERVER' // 挂载内网核心 DNS 劫持区

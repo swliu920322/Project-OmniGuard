@@ -87,8 +87,24 @@ echo "   AZURE_OPENAI_API_KEY : $REAL_KEY"
 echo "--------------------------------------------------------"
 
 
-cd src/cloud-orchestrator
-source .venv/bin/activate
-func azure functionapp publish $(az functionapp list --resource-group "omni-guard-infra-rg" --query "[0].name" -o tsv) --python
+# 💡 追加至 infra-up.sh 尾部：自动同步本地调试密匙账本
+echo "📥 正在同步本地实弹调试账本 local.settings.json ..."
+VAR_RG="omni-guard-infra-rg"
+VAR_ST_NAME=$(az storage account list --resource-group "$VAR_RG" --query "[0].name" -o tsv)
+VAR_ST_KEY=$(az storage account keys list --account-name "$VAR_ST_NAME" --resource-group "$VAR_RG" --query "[0].value" -o tsv)
 
-echo "--------------------------------------------------------"
+cat <<EOF > src/cloud-orchestrator/BicepAuditor/local.settings.json
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "LOCAL_MOCK_MODE": "false",
+    "AZURE_STORAGE_ACCOUNT_NAME": "${VAR_ST_NAME}",
+    "AZURE_STORAGE_ACCOUNT_KEY": "${VAR_ST_KEY}",
+    "AZURE_OPENAI_ENDPOINT": "${REAL_ENDPOINT}",
+    "AZURE_OPENAI_API_KEY": "${REAL_KEY}",
+    "AZURE_OPENAI_DEPLOYMENT_NAME": "gpt-4o"
+  }
+}
+EOF
+echo "🟩 local.settings.json 同步完毕，本地肉搏引信已完全对齐云端变数！"
