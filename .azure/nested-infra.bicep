@@ -6,7 +6,9 @@ param networkRules object
 param hubVNetName string
 param spokeVNetName string
 
-// 1. 网络安全组
+var swaControlPlaneLocation = 'eastasia'
+
+// 1. 安全防线配置
 resource backendNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: '${prefix}-backend-nsg'
   location: location
@@ -19,7 +21,7 @@ resource storageNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   properties: { securityRules: networkRules.storageNsgRules }
 }
 
-// 2. 虚拟网络拓扑 (Hub & Spoke)
+// 2. 双虚网物理 Peering 骨干网络
 resource hubVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   name: hubVNetName
   location: location
@@ -67,7 +69,7 @@ resource spokeToHubPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
   properties: { allowVirtualNetworkAccess: true, allowForwardedTraffic: true, remoteVirtualNetwork: { id: hubVnet.id } }
 }
 
-// 3. 持久化安全存储 (纯净确定性哈希)
+// 3. 存储底座 (Trident Data Plane)
 resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: '${prefix}st${uniqueString(resourceGroup().id)}'
   location: location
@@ -79,7 +81,7 @@ resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-// 4. 计算宿主计划
+// 4. 计算平面计划 (App Service Plan)
 resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: '${prefix}-proto-plan'
   location: location
@@ -88,7 +90,7 @@ resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   properties: { reserved: true }
 }
 
-// 5. 计算大脑
+// 5. 计算 brains 级联挂载
 module computeBrain './compute-module.bicep' = {
   name: 'Compute-Brain-Deployment'
   params: {
@@ -96,72 +98,6 @@ module computeBrain './compute-module.bicep' = {
     prefix: prefix
     serverlessPlanId: serverlessPlan.id
     storageAccountName: funcStorage.name
-  }
-}
-
-// 6. Azure OpenAI 实例 (标准版，开放顺产公网)
-var openAiAccountName = '${prefix}-openai-${uniqueString(resourceGroup().id)}'
-var modelDeploymentName = 'gpt-4o-audit-engine'
-
-resource openAiAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
-  name: openAiAccountName
-  location: location
-  kind: 'OpenAI'
-  sku: { name: 'S0' }
-  properties: {
-    publicNetworkAccess: 'Enabled'
-    customSubDomainName: openAiAccountName
-  }
-}
-
-resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
-  parent: openAiAccount
-  name: modelDeploymentName
-  sku: { name: 'GlobalStandard', capacity: 10 }
-  properties: {
-    model: { format: 'OpenAI', name: 'gpt-4o', version: '2024-11-20' }
-  }
-}
-
-// 7. 大模型私网 DNS
-resource openAiDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
-  name: 'privatelink.openai.azure.com'
-  location: 'global'
-}
-
-resource openAiDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  parent: openAiDnsZone
-  name: 'openai-link-to-spoke'
-  location: 'global'
-  properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
-}
-
-// 8. 大模型私网终结点 (刚性阻断，保证时序)
-resource openAiPrivateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
-  name: '${prefix}-openai-pe'
-  location: location
-  properties: {
-    subnet: { id: '${spokeVnet.id}/subnets/StorageSubnet' }
-    privateLinkServiceConnections: [
-      {
-        name: 'openai-connection'
-        properties: {
-          privateLinkServiceId: openAiAccount.id
-          groupIds: ['account']
-        }
-      }
-    ]
-  }
-  dependsOn: [
-    gpt4oDeployment // 👈 刚性断层：必须死等 gpt-4o 模型在云端就绪，彻底粉碎并发冲突
-  ]
-}
-
-resource openAiDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
-  parent: openAiPrivateEndpoint
-  name: 'default-dns-group'
-  properties: {
-    privateDnsZoneConfigs: [{ name: 'openai-config', properties: { privateDnsZoneId: openAiDnsZone.id } }]
   }
 }
 
@@ -199,7 +135,7 @@ resource queueDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@202
   properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
 }
 
-// 10. 存储三叉戟私网终结点
+// 10. 存储三叉戟私网芯片挂载
 resource blobPrivateEndpoint 'Microsoft.Network/privateEndpoints@2023-11-01' = {
   name: '${prefix}-storage-blob-pe'
   location: location
@@ -242,4 +178,28 @@ resource queueDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@
   properties: { privateDnsZoneConfigs: [{ name: 'queue-config', properties: { privateDnsZoneId: queueDnsZone.id } }] }
 }
 
-output openAiName string = openAiAccount.name
+// =========================================================================
+// 11. Module Alpha: 统一域主权
+// =========================================================================
+resource staticWebApp 'Microsoft.Web/staticSites@2023-12-01' = {
+  name: '${prefix}-digitalhuman-portal'
+  location: swaControlPlaneLocation
+  sku: {
+    name: 'Standard'
+    tier: 'Standard'
+  }
+  properties: {}
+}
+
+resource swaApiLink 'Microsoft.Web/staticSites/linkedBackends@2023-12-01' = {
+  parent: staticWebApp
+  name: 'backendApi'
+  properties: {
+    // 💡 绝杀：提着模块抛出的真实计算平面名称动态生成绝对 ID，彻底粉碎 ghost 命名冲突
+    backendResourceId: resourceId('Microsoft.Web/sites', computeBrain.outputs.functionAppName)
+    region: location
+  }
+//   dependsOn: [ computeBrain ]
+}
+
+output openAiName string = 'byo-decoupled-instance'

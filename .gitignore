@@ -13,7 +13,7 @@ node_modules/
 .next/
 # C extensions
 *.so
-
+*.setting.json
 # Distribution / packaging
 .Python
 build/
@@ -224,3 +224,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+src/cloud-orchestrator/local.settings.json
+src/cloud-orchestrator/local.settings.json
+src/cloud-orchestrator/local.settings.json
+src/cloud-orchestrator/local.settings.json
+src/cloud-orchestrator/local.settings.json
+src/cloud-orchestrator/local.settings.json
+src/cloud-orchestrator/local.settings.json
+**/local.settings.json
+local.settings.json
+**/local.settings.json
+local.settings.json
