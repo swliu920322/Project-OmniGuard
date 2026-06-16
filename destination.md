@@ -58,7 +58,7 @@
 
 ### 🧠 Week 3: 大模型 GenAI 审计流水线与数据面闭环 (6月29日 - 7月3日)
 
-* **Day 11**：编写 `src/cloud-orchestrator/BicepAuditor/function_app.py` 内部的 HTTP 触发器。配置 Python 运行环境以无密钥（Managed Identity 凭据）方式加载 `azure-identity` 与 `openai` 官方 SDK。
+* **Day 11**：编写 `src/cloud-orchestrator/function_app.py` 内部的 HTTP 触发器。配置 Python 运行环境以无密钥（Managed Identity 凭据）方式加载 `azure-identity` 与 `openai` 官方 SDK。
 * **Day 12**：硬编码注入 **MAS TRM 审计专家 System Prompt**，拦截前端上传的 Bicep 文本，迫使 OpenAI 100% 输出无任何 Markdown 包裹的纯净安全风险评分 JSON 数组。
 * **Day 13**：打通前端 Next.js 与云端 Function 的数据面对接。前端拉起漂亮的 Dashboard 仪表盘组件，动态解析并高亮渲染 Function 反弹回来的漏洞 JSON 数据。
 * **Day 14 (7月2日)**：全面进行生产级集成压测。故意上传包含公网暴露漏洞的旧版 Bicep，验证红线警报组件与一键修复（Remediation）代码复制功能。

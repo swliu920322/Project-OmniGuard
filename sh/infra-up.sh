@@ -73,6 +73,7 @@ az functionapp config appsettings set \
     AZURE_OPENAI_API_KEY="$REAL_KEY" \
     AZURE_STORAGE_ACCOUNT_NAME="$REAL_ST_NAME" \
     LOCAL_MOCK_MODE="false" \
+    WEBSITE_VNET_ROUTE_ALL="0" \
   --output none
 
 # 强制执行机架容器冷启动，压入全新环境变量
@@ -93,7 +94,7 @@ VAR_RG="omni-guard-infra-rg"
 VAR_ST_NAME=$(az storage account list --resource-group "$VAR_RG" --query "[0].name" -o tsv)
 VAR_ST_KEY=$(az storage account keys list --account-name "$VAR_ST_NAME" --resource-group "$VAR_RG" --query "[0].value" -o tsv)
 
-cat <<EOF > src/cloud-orchestrator/BicepAuditor/local.settings.json
+cat <<EOF > src/cloud-orchestrator/digitalhuman/local.settings.json
 {
   "IsEncrypted": false,
   "Values": {
