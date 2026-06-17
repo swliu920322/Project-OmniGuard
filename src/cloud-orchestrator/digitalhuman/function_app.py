@@ -57,6 +57,7 @@ async def chat_proxy(request: Request):
   try:
     req_body = await request.json()
     user_message = req_body.get("message", "")
+    page_context = req_body.get("context", "/") # 🟩 核心对账：拦截提取前端路由坐标
 
     OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
     DEPLOYMENT_NAME = os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-5.4-mini")
@@ -69,10 +70,17 @@ async def chat_proxy(request: Request):
       api_version="2024-10-01-preview"
     )
 
+    # 🟩 动态神经元系统：根据前端发送过来的物理路由，动态追加大模型的专业限定词
+    system_prompt = "You are Shengwei's Streaming Avatar. "
+    if page_context == "/":
+        system_prompt += "The user is browsing Shengwei's resume page. Prioritize explaining his 10+ years full-stack expert experience, Accenture lead outcomes, Scania engineering history, and Azure Expert certificates."
+    elif "canvas" in page_context:
+        system_prompt += "The user is browsing the Architecture Canvas page. Focus on providing architectural explanations for VNet setup, Private Endpoints, Bicep automation, and secure enterprise cloud configurations."
+
     response = await client.chat.completions.create(
       model=DEPLOYMENT_NAME,
       messages=[
-        {"role": "developer", "content": "You are Shengwei's Streaming Avatar."},
+        {"role": "developer", "content": system_prompt},
         {"role": "user", "content": user_message}
       ],
       max_completion_tokens=4000,
@@ -100,7 +108,7 @@ async def chat_proxy(request: Request):
                     media_type="application/json")
 
 
-# 🟩 2. 🏁 【顶级合拢】：彻底抹除非法 route 传参，只保留最正统合规的默认入参
+# 顶级主权全量合拢
 app = func.AsgiFunctionApp(
   app=fastapi_app,
   http_auth_level=func.AuthLevel.ANONYMOUS
