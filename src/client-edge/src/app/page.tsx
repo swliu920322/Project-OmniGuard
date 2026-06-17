@@ -34,7 +34,9 @@ export default function PortfolioEdgePage() {
     setIsStreaming(true);
 
     try {
-      const response = await fetch(`/api/chat/stream?t=${Date.now()}`, {
+      // const base = "https://omni-brain-vfxbzr2bd4oii.azurewebsites.net";
+      const base = ""
+      const response = await fetch(`${base}/api/chat/stream?t=${Date.now()}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage }),

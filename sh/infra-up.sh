@@ -2,7 +2,7 @@
 set -e
 
 # =========================================================================
-# 🔒 Project-OmniGuard: 专属雷达换装与凭证安全倒灌脚本 (庚金总工保固版)
+# 🔒 Project-OmniGuard: 专属雷达换装与凭证安全倒灌脚本 (庚金总工完全体自愈版)
 # =========================================================================
 
 PREFIX="omni"
@@ -13,6 +13,8 @@ DEPLOYMENT_NAME="omni-permanent-base-sea"
 # 💡 刚性校准：死锁已有大模型的真实物理坐标
 TARGET_COG_RG="eastSouthAsiaForAI"
 REAL_OPENAI_NAME="southeastaisa-0322-resource"
+# 🎯 提取顶级变量，确保两端对账绝对幂等
+VAR_OPENAI_NAME="gpt-5.4-mini"
 
 echo "========================================================="
 echo "🔒 [Step 1/4] 正在执行控制面登录态与订阅审计..."
@@ -37,8 +39,6 @@ az deployment sub create \
 echo -e "\n========================================================="
 echo "📡 [Step 3/4] 正在跨订阅突袭东南亚资产凭证 (Cross-Subscription Harvest)..."
 echo "========================================================="
-# 🟩 核心自愈：暂时强行切换当前 CLI 上下文至新账号的学生订阅，打通越境收割通道
-
 echo "🎯 正在锁定目标东南亚资源组: $TARGET_COG_RG -> 实例: $REAL_OPENAI_NAME"
 REAL_ENDPOINT="https://${REAL_OPENAI_NAME}.openai.azure.com/"
 REAL_KEY=$(az cognitiveservices account keys list --name "$REAL_OPENAI_NAME" --resource-group "$TARGET_COG_RG" --query "key1" -o tsv)
@@ -52,7 +52,6 @@ echo "🟩 东南亚大模型凭证定向解密成功。"
 echo -e "\n========================================================="
 echo "⚡ [Step 4/4] 动态解算新计算平面并执行密匙安全倒灌..."
 echo "========================================================="
-# 💡 绝杀：直接换用专属命令，强制剔除 kind 匹配带来的随机性盲区
 REAL_FUNC_NAME=$(az functionapp list --resource-group "$RG" --query "[0].name" -o tsv)
 
 if [ -z "$REAL_FUNC_NAME" ]; then
@@ -61,10 +60,9 @@ if [ -z "$REAL_FUNC_NAME" ]; then
 fi
 
 echo "🎯 成功锁定真机计算大脑: $REAL_FUNC_NAME"
-
-# 🟩 核心修复：用标准的 functionapp 专属控制权取代 webapp，并顺手注入存储账户上下文
 REAL_ST_NAME=$(az storage account list --resource-group "$RG" --query "[0].name" -o tsv)
 
+# 🟩 核心修复：远程配置同步开火，强行把大模型部署名塞入云端 App Settings 矩阵
 az functionapp config appsettings set \
   --name "$REAL_FUNC_NAME" \
   --resource-group "$RG" \
@@ -72,10 +70,12 @@ az functionapp config appsettings set \
     AZURE_OPENAI_ENDPOINT="$REAL_ENDPOINT" \
     AZURE_OPENAI_API_KEY="$REAL_KEY" \
     AZURE_STORAGE_ACCOUNT_NAME="$REAL_ST_NAME" \
+    # 🎯 【核心绝杀】：将变量由本地专属刚性同步至云端物理内存！
+    AZURE_OPENAI_DEPLOYMENT_NAME="$VAR_OPENAI_NAME" \
     LOCAL_MOCK_MODE="false" \
     WEBSITE_VNET_ROUTE_ALL="0" \
-    FUNCTIONS_WORKER_PROCESS_COUNT=4 \
-    PYTHON_THREADPOOL_THREAD_COUNT=32 \
+    FUNCTIONS_WORKER_PROCESS_COUNT=2 \
+    PYTHON_THREADPOOL_THREAD_COUNT=16 \
     PYTHON_ENABLE_INIT_INDEXING=1 \
   --output none
 
@@ -93,10 +93,10 @@ echo "--------------------------------------------------------"
 
 # 💡 追加至 infra-up.sh 尾部：自动同步本地调试密匙账本
 echo "📥 正在同步本地实弹调试账本 local.settings.json ..."
-VAR_RG="omni-guard-infra-se-rg"
+# 🟩 修正对齐：更正资源组变量名拼写断层，确保本地对账通畅
+VAR_RG="$RG"
 VAR_ST_NAME=$(az storage account list --resource-group "$VAR_RG" --query "[0].name" -o tsv)
 VAR_ST_KEY=$(az storage account keys list --account-name "$VAR_ST_NAME" --resource-group "$VAR_RG" --query "[0].value" -o tsv)
-VAR_OPENAI_NAME="gpt-5.4-mini"
 
 cat <<EOF > src/cloud-orchestrator/digitalhuman/local.settings.json
 {

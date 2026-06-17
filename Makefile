@@ -25,14 +25,11 @@ destroy:
 dev:
 	cd src/cloud-orchestrator/digitalhuman && func start
 
-
 # 4. 极致压缩版定向轰击部署
 deploy:
-	@echo "⚡ 正在切入全新 digitalhuman 后端腹地执行远程编译..."
-	cd src/cloud-orchestrator/digitalhuman && func azure functionapp publish $$(az functionapp list --resource-group $(VAR_RG) --query "[0].name" -o tsv) --python --build remote
-	@echo "🔄 强行触发云端冷启动，粉碎 Basic 平面幽灵缓存..."
-	az functionapp restart --name $$(az functionapp list --resource-group $(VAR_RG) --query "[0].name" -o tsv) --resource-group $(VAR_RG)
+	@chmod +x ./sh/deploy-core.sh
+	./sh/deploy-core.sh
+
 devops:
 	@chmod +x ./sh/empty_push.sh
 	./sh/empty_push.sh
-

@@ -1,33 +1,40 @@
 import json
 import os
 import datetime
+import traceback
 import azure.functions as func
-from openai import AsyncAzureOpenAI
-from azure.storage.blob import generate_account_sas, ResourceTypes, AccountSasPermissions
-# 🟩 核心引入：拉入标准 Response 契约，彻底将旧时代 HttpResponse 物理驱逐
-from azurefunctions.extensions.http.fastapi import Request, StreamingResponse
-from fastapi import Response
 
-app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
+
+# 1. 实例化纯快猫
+fastapi_app = FastAPI()
+
+fastapi_app.add_middleware(
+  CORSMiddleware,
+  allow_origins=["*"],
+  # 🎯 【核心绝杀】：关闭无意义的凭证携带，全面释放 * 号通配符的跨域主权， 以后再关掉防止跨域
+  allow_credentials=False,
+  allow_methods=["*"],
+  allow_headers=["*"],
+)
 
 
-@app.route(route="assets/auth", methods=["POST", "GET"])
-def get_sas_token(req: Request) -> Response:  # 👈 1. 刚性更正返回类型注解为新版 Response
-  """
-  Module Alpha: 动态向前端签发 60秒 极短时效只读 SAS 令牌
-  """
+@fastapi_app.api_route("/api/assets/auth", methods=["GET", "POST"])
+def get_sas_token(request: Request) -> Response:
   try:
     ACCOUNT_NAME = os.environ.get("AZURE_STORAGE_ACCOUNT_NAME")
     ACCOUNT_KEY = os.environ.get("AZURE_STORAGE_ACCOUNT_KEY")
 
     if not ACCOUNT_KEY or not ACCOUNT_NAME:
-      # 2. 刚性更正：改用标准 Response 实体反弹错误
       return Response(
-        content=json.dumps({"error": "Missing Private Storage Credentials in Runtime Application Settings."}),
+        content=json.dumps({"error": "Missing Private Storage Credentials."}),
         status_code=500,
         media_type="application/json"
       )
 
+    from azure.storage.blob import generate_account_sas, ResourceTypes, AccountSasPermissions
     sas_token = generate_account_sas(
       account_name=ACCOUNT_NAME,
       account_key=ACCOUNT_KEY,
@@ -40,50 +47,39 @@ def get_sas_token(req: Request) -> Response:  # 👈 1. 刚性更正返回类型
       "sasToken": sas_token,
       "blobEndpoint": f"https://{ACCOUNT_NAME}.blob.core.windows.net"
     }
-
-    # 3. 刚性更正：全量对齐新模型，安全返回标准的 Response 实例
-    return Response(
-      content=json.dumps(payload),
-      media_type="application/json",
-      status_code=200
-    )
-
+    return Response(content=json.dumps(payload), media_type="application/json", status_code=200)
   except Exception as e:
-    return Response(
-      content=json.dumps({"error": f"Internal Core Error: {str(e)}"}),
-      media_type="application/json",
-      status_code=500
-    )
+    return Response(content=json.dumps({"error": str(e)}), media_type="application/json", status_code=500)
 
 
-@app.route(route="chat/stream", methods=["POST"])
-async def chat_proxy(req: Request) -> StreamingResponse:
+@fastapi_app.post("/api/chat/stream")
+async def chat_proxy(request: Request):
   try:
-    req_body = await req.json()
+    req_body = await request.json()
     user_message = req_body.get("message", "")
 
     OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
-    DEPLOYMENT_NAME = os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4o")
+    DEPLOYMENT_NAME = os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-5.4-mini")
     OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY", "")
 
+    from openai import AsyncAzureOpenAI
     client = AsyncAzureOpenAI(
       azure_endpoint=OPENAI_ENDPOINT,
       api_key=OPENAI_API_KEY,
-      api_version="2024-02-15-preview"
+      api_version="2024-10-01-preview"
+    )
+
+    response = await client.chat.completions.create(
+      model=DEPLOYMENT_NAME,
+      messages=[
+        {"role": "developer", "content": "You are Shengwei's Streaming Avatar."},
+        {"role": "user", "content": user_message}
+      ],
+      max_completion_tokens=4000,
+      stream=True
     )
 
     async def stream_factory():
-      response = await client.chat.completions.create(
-        model=DEPLOYMENT_NAME,
-        messages=[
-          {"role": "system", "content": "You are Shengwei's Streaming Avatar."},
-          {"role": "user", "content": user_message}
-        ],
-        max_completion_tokens=4000,
-        temperature=0.7,
-        stream=True
-      )
-
       async for chunk in response:
         if chunk.choices and len(chunk.choices) > 0:
           text = chunk.choices[0].delta.content or ""
@@ -92,16 +88,20 @@ async def chat_proxy(req: Request) -> StreamingResponse:
 
     return StreamingResponse(
       stream_factory(),
-      media_type="text/event-stream",  # 1. 👈 升级为事件流媒体类型，暗示代理不要拦截
+      media_type="text/event-stream",
       headers={
-        "Cache-Control": "no-cache",  # 2. 👈 斩断浏览器本地缓存
-        "Connection": "keep-alive",  # 3. 👈 保持长连接通道不被中途掐断
-        "X-Accel-Buffering": "no"  # 4. 🎯 【绝杀】强制通知 Azure/Nginx 代理层：关闭 4KB 缓冲，出厂一字立刻冲刷外扔！
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no"
       }
     )
-
   except Exception as e:
-    async def error_handler():
-      yield json.dumps({"error": str(e)})
+    return Response(content=json.dumps({"error": str(e), "traceback": traceback.format_exc()}), status_code=400,
+                    media_type="application/json")
 
-    return StreamingResponse(error_handler(), media_type="application/json", status_code=500)
+
+# 🟩 2. 🏁 【顶级合拢】：彻底抹除非法 route 传参，只保留最正统合规的默认入参
+app = func.AsgiFunctionApp(
+  app=fastapi_app,
+  http_auth_level=func.AuthLevel.ANONYMOUS
+)
