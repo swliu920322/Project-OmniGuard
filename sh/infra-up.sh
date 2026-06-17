@@ -6,13 +6,13 @@ set -e
 # =========================================================================
 
 PREFIX="omni"
-RG="${PREFIX}-guard-infra-rg"
-LOCATION="japaneast"
-DEPLOYMENT_NAME="omni-permanent-base"
+RG="${PREFIX}-guard-infra-sea-rg"
+LOCATION="southeastasia"
+DEPLOYMENT_NAME="omni-permanent-base-sea"
 
 # 💡 刚性校准：死锁已有大模型的真实物理坐标
-TARGET_COG_RG="jpe0387621"
-REAL_OPENAI_NAME="0387621-2410-resource"
+TARGET_COG_RG="eastSouthAsiaForAI"
+REAL_OPENAI_NAME="southeastaisa-0322-resource"
 
 echo "========================================================="
 echo "🔒 [Step 1/4] 正在执行控制面登录态与订阅审计..."
@@ -35,19 +35,19 @@ az deployment sub create \
   --output table
 
 echo -e "\n========================================================="
-echo "📡 [Step 3/4] 正在定向突袭跨资源组资产凭证 (Cross-RG Harvest)..."
+echo "📡 [Step 3/4] 正在跨订阅突袭东南亚资产凭证 (Cross-Subscription Harvest)..."
 echo "========================================================="
-echo "🎯 正在锁定目标资源组: $TARGET_COG_RG -> 实例: $REAL_OPENAI_NAME"
+# 🟩 核心自愈：暂时强行切换当前 CLI 上下文至新账号的学生订阅，打通越境收割通道
 
-# 🟩 核心修复：强行修正为 OpenAI 原生终结点，阻止 Azure SDK 路由崩溃
+echo "🎯 正在锁定目标东南亚资源组: $TARGET_COG_RG -> 实例: $REAL_OPENAI_NAME"
 REAL_ENDPOINT="https://${REAL_OPENAI_NAME}.openai.azure.com/"
 REAL_KEY=$(az cognitiveservices account keys list --name "$REAL_OPENAI_NAME" --resource-group "$TARGET_COG_RG" --query "key1" -o tsv)
 
 if [ -z "$REAL_KEY" ]; then
-    echo "❌ 错误: 提取密匙失败！请确保你的 CLI 有权访问资源组 '$TARGET_COG_RG'。"
+    echo "❌ 错误: 跨订阅提取新大模型密匙失败！请确保你已用新账号在本地执行过 az login。"
     exit 1
 fi
-echo "🟩 大模型凭证定向解密成功，环境内存护航就绪。"
+echo "🟩 东南亚大模型凭证定向解密成功。"
 
 echo -e "\n========================================================="
 echo "⚡ [Step 4/4] 动态解算新计算平面并执行密匙安全倒灌..."
@@ -96,6 +96,7 @@ echo "📥 正在同步本地实弹调试账本 local.settings.json ..."
 VAR_RG="omni-guard-infra-rg"
 VAR_ST_NAME=$(az storage account list --resource-group "$VAR_RG" --query "[0].name" -o tsv)
 VAR_ST_KEY=$(az storage account keys list --account-name "$VAR_ST_NAME" --resource-group "$VAR_RG" --query "[0].value" -o tsv)
+VAR_OPENAI_NAME="gpt-5.4-mini"
 
 cat <<EOF > src/cloud-orchestrator/digitalhuman/local.settings.json
 {
@@ -107,8 +108,8 @@ cat <<EOF > src/cloud-orchestrator/digitalhuman/local.settings.json
     "AZURE_STORAGE_ACCOUNT_KEY": "${VAR_ST_KEY}",
     "AZURE_OPENAI_ENDPOINT": "${REAL_ENDPOINT}",
     "AZURE_OPENAI_API_KEY": "${REAL_KEY}",
-    "AZURE_OPENAI_DEPLOYMENT_NAME": "gpt-4o",
-    "PYTHON_ENABLE_INIT_INDEXING": 1,
+    "AZURE_OPENAI_DEPLOYMENT_NAME": "${VAR_OPENAI_NAME}",
+    "PYTHON_ENABLE_INIT_INDEXING": 1
   }
 }
 EOF

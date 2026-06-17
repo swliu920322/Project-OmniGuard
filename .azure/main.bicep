@@ -3,7 +3,7 @@ targetScope = 'subscription'
 param location string = 'southeastasia'
 param prefix string = 'omni'
 
-var resourceGroupName = '${prefix}-guard-infra-rg'
+var resourceGroupName = '${prefix}-guard-infra-sea-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
 
