@@ -297,4 +297,4 @@ function CertBadge({ title, desc, status, time }: { title: string, desc: string,
       </span>
     </div>
   );
-}
+} 
