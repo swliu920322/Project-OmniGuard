@@ -1,11 +1,11 @@
 # =========================================================================
 # 🛠️ Project-OmniGuard 统一控制总线 (Makefile)
 # =========================================================================
-.PHONY: infra up destroy deploy devops init
+.PHONY: infra up destroy deploy devops fe
 
 VAR_RG=omni-guard-infra-rg
 
-init:
+fe:
 	cd src/client-edge && npm install
 # 1. 一键拉起云端底座并倒灌密钥
 infra: provision

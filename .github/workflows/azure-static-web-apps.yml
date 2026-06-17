@@ -1,27 +1,58 @@
-name: Azure Static Web Apps CI/CD
+name: 🚀 PROJECT-OMNIGUARD FRONTEND SPEED-OPTIMIZED DEPLOY
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+    paths:
+      - 'src/client-edge/**'
 
 jobs:
-  build_and_deploy_job:
+  build_and_deploy:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - name: Check out source code
+      - name: 1. 检出源码
         uses: actions/checkout@v4
-        with:
-          submodules: true
 
-      - name: Inject Oryx Engine and Deploy Static Assets
+      - name: 2. 部署 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # 🟩 3. 核心加速引信 A：拦截并常驻 node_modules 缓存
+      - name: 3. 挂载 npm 依赖本地缓存
+        uses: actions/cache@v4
+        with:
+          path: src/client-edge/node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('src/client-edge/package-lock.json', 'src/client-edge/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      # 🟩 4. 核心加速引信 B：拦截并常驻 Next.js SWC 编译缓存
+      - name: 4. 挂载 Next.js 静态增量编译缓存
+        uses: actions/cache@v4
+        with:
+          path: src/client-edge/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('src/client-edge/package-lock.json') }}-${{ hashFiles('src/client-edge/**/*.[jt]s', 'src/client-edge/**/*.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+
+      # 5. 在 GitHub 侧本地执行高速增量编译
+      - name: 5. 执行本地极限静态编译
+        run: |
+          cd src/client-edge
+          npm ci || npm install  # 命中缓存时此处耗时接近 0 秒
+          npm run build         # 命中 SWC 缓存时秒级导出 out
+
+      # 6. 🚀 【终极合拢】：保留你的全部参数，但执行“盲上传”
+      - name: 6. 将编译完的纯静态产物定向冲刷上云
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "src/client-edge"      # 前端 Next.js 源码根目录
-          api_location: ""                     # 刚性置空，拒绝对接内嵌托管计算层
-          output_location: "out"               # 🎯 【核心修正】将原先的空置或 build 更改为 Next.js 导出的静态目录 out
+          # 🎯 【关键微调】：将 app_location 指向你已经本地编译就绪的静态出渣口 out！
+          app_location: "src/client-edge/out"
+          api_location: "" # 依旧刚性置空
+          output_location: "" # 👈 【绝杀】：置空！告诉 Oryx 引擎不要在云端自作聪明执行任何 npm install
