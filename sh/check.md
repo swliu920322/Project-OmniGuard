@@ -29,7 +29,7 @@
 
 ```bash
 # 1. 动态索取云端当前存活的 Function App 真实名称
-VAR_RG="omni-guard-infra-rg"
+VAR_RG="omni-guard-infra-sea-rg"
 REAL_FUNC_NAME=$(az functionapp list --resource-group "$VAR_RG" --query "[0].name" -o tsv)
 
 # 2. 刚性盘点该实例旗下的函数路由列表
