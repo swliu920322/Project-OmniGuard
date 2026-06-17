@@ -79,7 +79,7 @@ async def chat_proxy(req: Request) -> StreamingResponse:
           {"role": "system", "content": "You are Shengwei's Streaming Avatar."},
           {"role": "user", "content": user_message}
         ],
-        max_tokens=800,
+        max_completion_tokens=4000,
         temperature=0.7,
         stream=True
       )
