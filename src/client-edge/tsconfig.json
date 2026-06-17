@@ -6,6 +6,8 @@
       "dom.iterable",
       "esnext"
     ],
+    // 🟩 刚性补强：强制编译器在面对老旧运行时环境时，自动安全下行解算迭代器
+    "downlevelIteration": true,
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

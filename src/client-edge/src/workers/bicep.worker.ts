@@ -8,16 +8,25 @@ addEventListener('message', (event: MessageEvent) => {
   const moduleRegex = /module\s+([a-zA-Z0-9_]+)\s+'([^']+)'/g;
 
   let index = 0;
-  for (const [filePath, content] of files.entries()) {
+  files.forEach((content, filePath) => {
     let match;
 
     while ((match = resourceRegex.exec(content)) !== null) {
       nodes.push({
         id: match[1],
         type: 'default',
-        data: { label: `📦 [Resource]\n${match[1]}\n(${match[2]})` },
-        position: { x: 150 + (index * 220), y: 100 + (Math.random() * 150) },
-        style: { background: '#1e293b', color: '#f8fafc', border: '1px solid #334155', borderRadius: '6px', fontFamily: 'monospace', fontSize: '11px', whiteSpace: 'pre-wrap', width: 200 }
+        data: {label: `📦 [Resource]\n${match[1]}\n(${match[2]})`},
+        position: {x: 150 + (index * 220), y: 100 + (Math.random() * 150)},
+        style: {
+          background: '#1e293b',
+          color: '#f8fafc',
+          border: '1px solid #334155',
+          borderRadius: '6px',
+          fontFamily: 'monospace',
+          fontSize: '11px',
+          whiteSpace: 'pre-wrap',
+          width: 200
+        }
       });
     }
 
@@ -27,11 +36,11 @@ addEventListener('message', (event: MessageEvent) => {
         source: filePath,
         target: match[1],
         animated: true,
-        style: { stroke: '#00f2fe', strokeWidth: 1.5 }
+        style: {stroke: '#00f2fe', strokeWidth: 1.5}
       });
     }
     index++;
-  }
+  });
 
-  postMessage({ nodes, edges });
+  postMessage({nodes, edges});
 });
