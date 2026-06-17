@@ -86,7 +86,7 @@ resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
 resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: '${prefix}-proto-plan'
   location: location
-  sku: { name: 'B1', tier: 'Basic' }
+  sku: { name: 'B2', tier: 'Basic' }
   kind: 'linux'
   properties: { reserved: true }
 }
