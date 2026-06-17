@@ -1,10 +1,12 @@
 # =========================================================================
 # 🛠️ Project-OmniGuard 统一控制总线 (Makefile)
 # =========================================================================
-.PHONY: infra up destroy deploy devops
+.PHONY: infra up destroy deploy devops init
 
 VAR_RG=omni-guard-infra-rg
 
+init:
+	cd src/client-edge && npm install
 # 1. 一键拉起云端底座并倒灌密钥
 infra: provision
 
@@ -21,7 +23,7 @@ destroy:
 
 # 3. 本地双端热拔插联动肉搏 (自动同步最新 local.settings.json)
 dev:
-	npx @azure/static-web-apps-cli start src/client-edge --api-port 7071 & cd src/cloud-orchestrator/digitalhuman && func start
+	cd src/cloud-orchestrator/digitalhuman && func start
 
 
 # 4. 极致压缩版定向轰击部署

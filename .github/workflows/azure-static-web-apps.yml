@@ -22,7 +22,6 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "src/client-edge" # 前端端侧解耦目录
-          ###### 🟩 Route B 铁律：置空 API 路径，彻底绝育 SWA 内部函数，阻断幽灵缓存 ######
-          api_location: ""
-          output_location: ""
+          app_location: "src/client-edge"      # 前端 Next.js 源码根目录
+          api_location: ""                     # 刚性置空，拒绝对接内嵌托管计算层
+          output_location: "out"               # 🎯 【核心修正】将原先的空置或 build 更改为 Next.js 导出的静态目录 out
