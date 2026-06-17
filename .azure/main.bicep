@@ -1,6 +1,6 @@
 targetScope = 'subscription'
 
-param location string = 'japaneast'
+param location string = 'southeastasia'
 param prefix string = 'omni'
 
 var resourceGroupName = '${prefix}-guard-infra-rg'
