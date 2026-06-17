@@ -3,7 +3,7 @@ param prefix string
 param serverlessPlanId string
 param storageAccountName string
 param backendSubnetId string
-param existingOpenAiName string = '0387621-2410-resource'
+param existingOpenAiName string = 'southeastaisa-0322-resource'
 
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: '${prefix}-brain-${uniqueString(resourceGroup().id)}'
