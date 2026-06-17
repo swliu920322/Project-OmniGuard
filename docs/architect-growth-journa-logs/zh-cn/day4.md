@@ -33,7 +33,7 @@
 
 6. **精算 Landing Zone 闲置成本并固化一键强拆后手 (Optimized FinOps & Scripted Instant Destruction)**
 * **精算**：解耦大模型新建后，云端闲置固定开销被暴砍 80%，B1 专属平面 ($12.41) + SWA Standard ($9.00) + 存储三叉戟 (<$0.50)，月度闲置底盘锁死在 **$22.00 USD/月**（每天约 5.3 元人民币）。
-* **执行**：固化 `infra-destroy.sh` 脚本，支持一键物理湮灭整个 `omni-guard-infra-rg`。计费大闸随时可以归零 ($0/M)，且绝对不伤及既有 OpenAI 资产，随时通过 `./infra-up.sh` 原位无损复活。
+* **执行**：固化 `infra-destroy.sh` 脚本，支持一键物理湮灭整个 `omni-guard-infra-sea-rg`。计费大闸随时可以归零 ($0/M)，且绝对不伤及既有 OpenAI 资产，随时通过 `./infra-up.sh` 原位无损复活。
 
 
 

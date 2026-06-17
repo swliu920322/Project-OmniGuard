@@ -93,7 +93,7 @@ echo "--------------------------------------------------------"
 
 # 💡 追加至 infra-up.sh 尾部：自动同步本地调试密匙账本
 echo "📥 正在同步本地实弹调试账本 local.settings.json ..."
-VAR_RG="omni-guard-infra-rg"
+VAR_RG="omni-guard-infra-se-rg"
 VAR_ST_NAME=$(az storage account list --resource-group "$VAR_RG" --query "[0].name" -o tsv)
 VAR_ST_KEY=$(az storage account keys list --account-name "$VAR_ST_NAME" --resource-group "$VAR_RG" --query "[0].value" -o tsv)
 VAR_OPENAI_NAME="gpt-5.4-mini"

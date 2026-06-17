@@ -3,7 +3,7 @@
 # =========================================================================
 .PHONY: infra up destroy deploy devops fe
 
-VAR_RG=omni-guard-infra-rg
+VAR_RG=omni-guard-infra-sea-rg
 
 fe:
 	cd src/client-edge && npm install

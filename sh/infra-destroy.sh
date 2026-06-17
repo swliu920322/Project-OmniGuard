@@ -5,7 +5,7 @@
 set -euo pipefail
 
 # 刚性锁死目标学术订阅与资源组坐标
-RG_NAME="omni-guard-infra-rg"
+RG_NAME="omni-guard-infra-sea-rg"
 
 echo "================================================================="
 echo "🚨  [CRITICAL WARNING] INITIATING DESTRUCTIVE TEARDOWN PROTOCOL"
