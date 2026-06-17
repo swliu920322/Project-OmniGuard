@@ -1,92 +1,14 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Send, Terminal, Layers, MapPin, Mail, Phone, Linkedin } from 'lucide-react';
+import { Terminal, Layers, MapPin, Mail, Phone, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PortfolioEdgePage() {
-  // 🟩 状态机接管：使用 React 数组强行接管流式对话管道
-  const [messages, setMessages] = useState<{ role: string; content: string; isError?: boolean }[]>([
-    { role: 'ai', content: '你好，我是刘胜伟的 AI 助理。关于他的 Azure 云架构经验或 Agentic Workflows 方案，欢迎随时向我提问。' }
-  ]);
-  const [input, setInput] = useState('');
-  const [isStreaming, setIsStreaming] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
-
-  // 物理对齐：自动滚动到底部
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  // 占位引擎：驱动 WebGPU
-  const triggerDigitalHumanExpression = (chunk: string) => {
-    console.log(`[WebGPU Pipeline] Syncing mesh buffers for chunk: ${chunk}`);
-  };
-
-  // 🟩 核心解算：流式读取管道 React 重构版
-  const triggerStream = async () => {
-    if (!input.trim() || isStreaming) return;
-    const userMessage = input;
-    setInput('');
-
-    // 1. 瞬发渲染用户侧气泡
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
-    setIsStreaming(true);
-
-    try {
-      // const base = "https://omni-brain-vfxbzr2bd4oii.azurewebsites.net";
-      const base = ""
-      const response = await fetch(`${base}/api/chat/stream?t=${Date.now()}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage }),
-      });
-
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      if (!response.body) throw new Error('No stream pipeline found');
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder('utf-8');
-
-      // 2. 压入空置 AI 气泡指针
-      setMessages(prev => [...prev, { role: 'ai', content: '' }]);
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        if (chunk) {
-          // 3. 高频原位刷写数组末端状态
-          setMessages(prev => {
-            const newMsgs = [...prev];
-            newMsgs[newMsgs.length - 1].content += chunk;
-            return newMsgs;
-          });
-          triggerDigitalHumanExpression(chunk);
-        }
-      }
-    } catch (error) {
-      console.error('Streaming pipeline broken:', error);
-      setMessages(prev => {
-        const newMsgs = [...prev];
-        // 异常防御边界
-        if (newMsgs[newMsgs.length - 1].role === 'user') {
-          newMsgs.push({ role: 'ai', content: '边缘节点通信异常，请检查本地开发环境的 AzFunction 代理状态。', isError: true });
-        } else {
-          newMsgs[newMsgs.length - 1].content = '边缘节点通信异常，请检查本地开发环境的 AzFunction 代理状态。';
-          newMsgs[newMsgs.length - 1].isError = true;
-        }
-        return newMsgs;
-      });
-    } finally {
-      setIsStreaming(false);
-    }
-  };
+  // 🟩 物理洗涤：全量流式状态已移交全局布局层挂件，简历主页回归 0 噪点高信噪比状态
 
   return (
-    <div className="relative min-h-screen text-gray-100 font-sans pb-32">
-      {/* 科技感背景网格：物理层像素级复刻 */}
+    <div className="relative min-h-screen text-gray-100 font-sans">
+      {/* 科技感背景网格 */}
       <div
         className="fixed inset-0 pointer-events-none z-[-1] opacity-15"
         style={{
@@ -218,61 +140,13 @@ export default function PortfolioEdgePage() {
               </div>
             </Section>
           </div>
-        </div>
-      </div>
 
-      {/* 🚀 物理挂件：数字人流式窗口 */}
-      <div className="fixed bottom-6 right-6 w-80 bg-gray-900 border border-[#00f2fe] shadow-2xl shadow-black/50 rounded-lg overflow-hidden z-50 flex flex-col transition-all">
-        {/* Module Alpha WebGPU 占位 */}
-        <div className="w-full h-40 bg-gradient-to-b from-gray-800 to-[#0a0f1d] relative flex items-center justify-center">
-          <div className="w-20 h-20 border-2 border-dashed border-[#00f2fe] rounded-full animate-[spin_10s_linear_infinite]"></div>
-          <div className="absolute bottom-2 text-[0.65rem] text-[#00f2fe] tracking-widest font-mono">
-            WEBGPU MESH REFRESHING...
-          </div>
-        </div>
-
-        {/* 聊天缓冲区 */}
-        <div className="h-44 overflow-y-auto p-3 border-t border-gray-800 bg-[#0a0f1d]/60 font-mono text-xs flex flex-col gap-2">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`p-2 rounded max-w-[85%] leading-relaxed ${
-              msg.role === 'user' 
-                ? 'bg-gray-800 text-white self-end text-right' 
-                : msg.isError 
-                  ? 'bg-red-900/30 border-l-2 border-red-500 text-red-400 self-start'
-                  : 'bg-[#00f2fe]/10 border-l-2 border-[#00f2fe] text-[#00f2fe] self-start'
-            }`}>
-              {msg.content || '▋'}
-            </div>
-          ))}
-          <div ref={chatEndRef} />
-        </div>
-
-        {/* 指令发射器 */}
-        <div className="flex border-t border-gray-800 bg-gray-900">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && triggerStream()}
-            placeholder="输入指令询问架构细节..."
-            className="flex-1 bg-transparent border-none p-3 text-white text-xs focus:outline-none"
-            autoComplete="off"
-            disabled={isStreaming}
-          />
-          <button
-            onClick={triggerStream}
-            disabled={isStreaming}
-            className="bg-[#00f2fe] hover:bg-[#00c8d4] disabled:bg-gray-600 text-[#0a0f1d] font-bold px-4 transition-colors flex items-center justify-center"
-          >
-            <Send size={14} />
-          </button>
         </div>
       </div>
     </div>
   );
 }
 
-// 辅助组件：复用面板与装饰角
 function Section({ title, children }: { title: string, children: React.ReactNode }) {
   return (
     <section className="bg-gray-900 border border-gray-800 rounded p-6 relative">
@@ -285,7 +159,6 @@ function Section({ title, children }: { title: string, children: React.ReactNode
   );
 }
 
-// 辅助组件：复用证书徽章
 function CertBadge({ title, desc, status, time }: { title: string, desc: string, status: 'Achieved' | 'Pending', time?: string }) {
   const isAchieved = status === 'Achieved';
   return (
@@ -299,4 +172,4 @@ function CertBadge({ title, desc, status, time }: { title: string, desc: string,
       </span>
     </div>
   );
-} 
+}
