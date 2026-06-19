@@ -4,135 +4,148 @@ export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges:
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
-  // 清洗换装：精细化正则雷达，捕获资源名称、类型及腹地大括号内容
-  const resourceBlockRegex = /resource\s+(\w+)\s+'([^']+)'\s*=\s*\{([\s\S]*?)\}/g;
+  // 1. 🔍 【第一阶段】：符号字典扫描雷达 (Symbol Table Extraction)
+  // 匹配隐式资源符号: resource <symbolicName> '<provider>'
+  const resourceRegex = /resource\s+(\w+)\s+'([^']+)'/g;
+  // 匹配架构模块符号: module <symbolicName> '<path>'
+  const moduleRegex = /module\s+(\w+)\s+'([^']+)'/g;
 
-  const bicepBlocks: { name: string; type: string; body: string }[] = [];
-  let match;
-
-  // 🏁 阶段一：全量扫描并结构化清洗文本块
-  while ((match = resourceBlockRegex.exec(bicepText)) !== null) {
-    bicepBlocks.push({
-      name: match[1],
-      type: match[2].split('@')[0], // 剥离版本号，保留 Microsoft.Network/virtualNetworks
-      body: match[3]
-    });
+  interface BicepEntity {
+    name: string;
+    type: 'resource' | 'module';
+    providerOrPath: string;
+    body: string;
   }
 
-  // 布局控制常数
-  const LAYER_Y_MAP: Record<string, number> = {
-    'Microsoft.Network/virtualNetworks': 50,
-    'Microsoft.Network/virtualNetworks/subnets': 40, // 局部相对坐标
-    'Microsoft.Network/networkInterfaces': 240,
-    'Microsoft.Compute/virtualMachines': 320,
-    'Microsoft.Storage/storageAccounts': 520,
-  };
+  const entityRegistry: BicepEntity[] = [];
+  const symbolNames: string[] = []; // 全局物理符号表
 
-  let xCounters: Record<string, number> = { group: 0, global: 0, sub: 0 };
+  // 提取资源块文本腹地
+  const lines = bicepText.split('\n');
 
-  // 🏁 阶段二：执行多活分流与容器解算
-  bicepBlocks.forEach((block) => {
-    const isVNet = block.type === 'Microsoft.Network/virtualNetworks';
+  // 极简文本分块器（利用大括号平衡原理捕获完整 Block）
+  function extractBlocks() {
+    let currentEntity: BicepEntity | null = null;
+    let braceCount = 0;
+    let bodyBuffer = '';
 
-    // 1. 拦截虚网：刚性将其编译为 type: 'group' 的模块化物理外框
-    if (isVNet) {
-      nodes.push({
-        id: block.name,
-        type: 'group',
-        data: { label: block.name },
-        position: { x: 50 + (xCounters.group * 450), y: LAYER_Y_MAP[block.type] || 50 },
-        style: {
-          width: 380,
-          height: 140,
-          backgroundColor: 'rgba(0, 242, 254, 0.03)',
-          border: '2px dashed #00f2fe',
-          borderRadius: '12px',
-        },
-      });
-      xCounters.group++;
-      return;
-    }
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
 
-    // 2. 拦截子网：探测是否显式属于某个父级容器
-    const parentMatch = /parent:\s*(\w+)/.exec(block.body);
-    const isSubnet = block.type === 'Microsoft.Network/virtualNetworks/subnets';
-
-    if (isSubnet && parentMatch) {
-      const parentId = parentMatch[1];
-      nodes.push({
-        id: block.name,
-        parentId: parentId, // 🎯 建立 React Flow 嵌套契约
-        extent: 'parent',   // 锁定死在父容器内部，严禁拖拽出界
-        data: {
-          label: (
-            <div className="text-left font-mono text-[9px] p-1">
-              <div className="text-amber-400 font-bold border-b border-gray-800 pb-0.5 mb-1">[Subnet] {block.name}</div>
-              <div className="text-gray-500 scale-90 origin-left">Secure Private Enclave</div>
-            </div>
-          )
-        },
-        position: { x: 20 + (xCounters.sub * 180), y: LAYER_Y_MAP[block.type] || 40 },
-        style: {
-          background: '#0f172a',
-          color: '#fff',
-          border: '1px solid #f59e0b',
-          borderRadius: '6px',
-          width: 160,
+      if (!currentEntity) {
+        // 探测资源
+        const resMatch = /resource\s+(\w+)\s+'([^']+)'/.exec(line);
+        if (resMatch) {
+          currentEntity = { name: resMatch[1], type: 'resource', providerOrPath: resMatch[2].split('@')[0], body: '' };
+          symbolNames.push(resMatch[1]);
+          bodyBuffer = '';
+          braceCount = 0;
         }
-      });
-      xCounters.sub++;
-      return;
+        // 探测模块
+        const modMatch = /module\s+(\w+)\s+'([^']+)'/.exec(line);
+        if (modMatch) {
+          currentEntity = { name: modMatch[1], type: 'module', providerOrPath: modMatch[2], body: '' };
+          symbolNames.push(modMatch[1]);
+          bodyBuffer = '';
+          braceCount = 0;
+        }
+      }
+
+      if (currentEntity) {
+        bodyBuffer += line + '\n';
+        if (line.includes('{')) braceCount += (line.match(/{/g) || []).length;
+        if (line.includes('}')) braceCount -= (line.match(/}/g) || []).length;
+
+        if (braceCount === 0 && bodyBuffer.includes('{')) {
+          currentEntity.body = bodyBuffer;
+          entityRegistry.push(currentEntity);
+          currentEntity = null;
+        }
+      }
+    }
+  }
+
+  extractBlocks();
+
+  // 2. 🔍 【第二阶段】：层级矩阵编排与物理定位
+  let xOffset = 0;
+  entityRegistry.forEach((entity) => {
+    const isModule = entity.type === 'module'; 
+
+    // 刚性纵向分层轴线 (Layered Axis)
+    let yPos = 300; // 默认层（计算与宿主层）
+    let borderStroke = '#10b981'; // 资源绿
+    let labelColor = 'text-emerald-400';
+
+    if (entity.providerOrPath.includes('virtualNetworks')) {
+      yPos = 50; // 顶层：网络网络安全边界
+      borderStroke = '#00f2fe';
+      labelColor = 'text-cyan-400';
+    } else if (entity.providerOrPath.includes('storageAccounts')) {
+      yPos = 550; // 底层：数据资产与持久化分类
+      borderStroke = '#f59e0b';
+      labelColor = 'text-amber-400';
+    } else if (isModule) {
+      yPos = 320; // 核心：高阶模块容器
+      borderStroke = '#a855f7'; // 模块紫
+      labelColor = 'text-purple-400';
     }
 
-    // 3. 纵向分层解算：普通全球静态资源（VM, NIC, Storage）
-    let yPos = LAYER_Y_MAP[block.type] || 200;
     nodes.push({
-      id: block.name,
-      type: 'default',
+      id: entity.name,
+      type: isModule ? 'group' : 'default', // 将 module 物理编译为包裹外框
       data: {
         label: (
           <div className="text-left font-mono text-[10px] p-1">
-            <div className="text-emerald-400 font-bold border-b border-gray-800 pb-0.5 mb-1">{block.name}</div>
+            <div className={`${labelColor} font-bold border-b border-gray-800 pb-0.5 mb-1`}>
+              {isModule ? `[Module] ${entity.name}` : entity.name}
+            </div>
             <div className="text-gray-400 scale-90 origin-left overflow-hidden text-ellipsis whitespace-nowrap w-32">
-              {block.type.split('/')[1]}
+              {entity.providerOrPath.includes('/') ? entity.providerOrPath.split('/')[1] : entity.providerOrPath}
             </div>
           </div>
         )
       },
-      position: { x: 80 + (xCounters.global * 200), y: yPos },
+      position: { x: 60 + (xOffset * 190), y: yPos },
       style: {
-        background: '#1e293b',
+        background: isModule ? 'rgba(168, 85, 247, 0.02)' : '#1e293b', 
         color: '#fff',
-        border: '1px solid #10b981',
-        borderRadius: '8px',
-        width: 150,
+        border: `1px solid ${borderStroke}`,
+        borderRadius: isModule ? '12px' : '8px', 
+        width: isModule ? 220 : 160, 
+        height: isModule ? 100 : 'auto' 
       }
     });
-    xCounters.global++;
+    xOffset++;
   });
 
-  // 🏁 阶段三：自动化解算dependsOn纵向控制总线
-  bicepBlocks.forEach((block) => {
-    const dependsOnMatch = /dependsOn:\s*\[([\s\S]*?)\]/.exec(block.body);
-    if (dependsOnMatch) {
-      const dependencies = dependsOnMatch[1]
-        .split(/[\s,\[\]]+/)
-        .map(d => d.trim())
-        .filter(d => d && d !== block.name);
+  // 3. 🔍 【第三阶段】：隐式符号全文检索（彻底蒸发 dependsOn 限制）
+  entityRegistry.forEach((targetEntity) => {
+    symbolNames.forEach((sourceSymbol) => {
+      // 排除法：防止自己依赖自己
+      if (targetEntity.name === sourceSymbol) return;
 
-      dependencies.forEach((dep) => {
-        // 健壮性验证：确保依赖源真实存在于节点网格中
-        if (nodes.some(n => n.id === dep)) {
+      // 🎯 核心核心拦截：如果目标实体的代码正文（body）里包含了源资源的 symbolicName
+      // 说明存在隐式依赖引用 (例如：subnet: spokeVnet.id)
+      const symbolRegex = new RegExp(`\\b${sourceSymbol}\\b`);
+      if (symbolRegex.test(targetEntity.body)) {
+
+        // 规避重复边机制
+        const edgeId = `edge-${sourceSymbol}-${targetEntity.name}`;
+        if (!edges.some(e => e.id === edgeId)) {
           edges.push({
-            id: `edge-${dep}-${block.name}`,
-            source: dep,
-            target: block.name,
+            id: edgeId,
+            source: sourceSymbol,
+            target: targetEntity.name,
             animated: true,
-            style: { stroke: '#00f2fe', strokeWidth: 1.5 },
+            style: {
+              stroke: targetEntity.type === 'module' ? '#a855f7' : '#00f2fe', // 容器线为模块紫
+              strokeWidth: 1.5
+            },
           });
         }
-      });
-    }
+      }
+    });
   });
 
   return { nodes, edges };
