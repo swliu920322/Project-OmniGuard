@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import Draggable from 'react-draggable'; // 物理挂载高性能自由拖拽引擎
-import { MessageSquare, Move } from 'lucide-react';
+import Draggable from 'react-draggable'; // 高性能拖拽底座
+import { MessageSquare } from 'lucide-react';
 import AvatarPopup from './AvatarPopup';
 import { bootEdgeComputeKernel, evaluateLocalRAGContext, runLocalGPUPipeline, cloudInferencePipeline } from './kernel';
 
@@ -20,12 +20,15 @@ export default function CognitiveAvatarWidget() {
   const [engineStatus, setEngineStatus] = useState<'BOOTING' | 'HYBRID_READY' | 'CLOUD_ONLY'>('BOOTING');
   const [bootProgress, setBootProgress] = useState('');
 
-  // 🎯 弹窗象限状态：'br'(右下), 'tr'(右上), 'bl'(左下), 'tl'(左上)
+  // 弹窗象限阵位
   const [placement, setPlacement] = useState<'br' | 'tr' | 'bl' | 'tl'>('br');
 
   const widgetRef = useRef<HTMLDivElement>(null);
 
-  // 🟩 1. 物理象限空间检测引信：松开鼠标刹那，重写弹窗阵位，永远往开阔方向弹射
+  // 🎯【新增意图锁防线】：死锁长按与点击的物理穿透阻尼
+  const isDragging = useRef(false);
+  const clickBlocker = useRef(false);
+
   const handleRecalculateQuadrant = () => {
     if (!widgetRef.current) return;
     const rect = widgetRef.current.getBoundingClientRect();
@@ -38,13 +41,13 @@ export default function CognitiveAvatarWidget() {
     const isLeftHalf = centerX < screenWidth / 2;
     const isTopHalf = centerY < screenHeight / 2;
 
-    if (!isLeftHalf && !isTopHalf) setPlacement('br');      // 右下 ➔ 向上向左展
-    else if (!isLeftHalf && isTopHalf) setPlacement('tr');   // 右上 ➔ 向下向左展
-    else if (isLeftHalf && !isTopHalf) setPlacement('bl');   // 左下 ➔ 向上向右展
-    else if (isLeftHalf && isTopHalf) setPlacement('tl');    // 左上 ➔ 向下向右展
+    if (!isLeftHalf && !isTopHalf) setPlacement('br');
+    else if (!isLeftHalf && isTopHalf) setPlacement('tr');
+    else if (isLeftHalf && !isTopHalf) setPlacement('bl');
+    else if (isLeftHalf && isTopHalf) setPlacement('tl');
   };
 
-  // 🟩 2. 微内核开机点火
+  // 微内核引导
   useEffect(() => {
     let isMounted = true;
     bootEdgeComputeKernel((prog) => {
@@ -62,7 +65,7 @@ export default function CognitiveAvatarWidget() {
     return () => { isMounted = false; };
   }, []);
 
-  // 🟩 3. 跨页面软路由断连刷新守护
+  // 软路由路径监听
   useEffect(() => {
     window.speechSynthesis.cancel(); setIsTalking(false);
     let notice = '已为您切换页面。本地 RAG 特征盾已重置，随时扫描您的提问。';
@@ -85,7 +88,6 @@ export default function CognitiveAvatarWidget() {
     window.speechSynthesis.speak(utterance);
   };
 
-  // 🟩 4. 双轨总线流控中心
   const handleExecuteInference = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userPrompt.trim() || isProcessing) return;
@@ -133,18 +135,51 @@ export default function CognitiveAvatarWidget() {
     }
   };
 
+  // 🟩 5. 阻断点击流控：点击按键激活门禁
+  const handleBallClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    // 如果门禁锁或长按锁处于闭锁状态，刚性截断事件，不准展开弹窗
+    if (clickBlocker.current || isDragging.current) {
+      return;
+    }
+
+    if (!isOpen) {
+      setIsOpen(true);
+      setTimeout(handleRecalculateQuadrant, 50);
+    }
+  };
+
   return (
-    // nodeRef 锁死当前容器，handle 指定必须拖动小十字图标，规避输入框聚焦冲突
     <Draggable
       nodeRef={widgetRef}
-      handle=".drag-handle-trigger"
-      onStop={handleRecalculateQuadrant}
+      delay={150} // 150ms 缓动引信
+      onStart={() => {
+        isDragging.current = false; // 引导启动
+      }}
+      onDrag={() => {
+        isDragging.current = true; // 发生物理位移，锁死长按状态
+      }}
+      onStop={() => {
+        handleRecalculateQuadrant();
+        if (isDragging.current) {
+          // 🎯【绝杀穿透】：如果是长放，释放瞬间闭锁点击闸门 80 毫秒，物理洗净残余冒泡
+          clickBlocker.current = true;
+          const timer = setTimeout(() => {
+            clickBlocker.current = false;
+            isDragging.current = false;
+          }, 80);
+          return () => clearTimeout(timer);
+        }
+      }}
       defaultPosition={{ x: 0, y: 0 }}
     >
       <div
         ref={widgetRef}
         className="fixed bottom-6 right-6 z-50 font-sans text-slate-200 flex flex-col items-center select-none"
       >
+
         {/* 🎨 独立抽离的受控展示视窗 */}
         {isOpen && (
           <AvatarPopup
@@ -156,23 +191,27 @@ export default function CognitiveAvatarWidget() {
             isProcessing={isProcessing}
             placement={placement}
             setUserPrompt={setUserPrompt}
-            onClose={() => setIsOpen(false)}
+            onClose={() => {
+              setIsOpen(false);
+              setTimeout(handleRecalculateQuadrant, 50);
+            }}
             onSubmit={handleExecuteInference}
           />
         )}
 
-        {/* 🚦 带手柄的物理控制挂件 */}
-        <div className="flex flex-col items-center gap-1 group">
-          <div className="drag-handle-trigger cursor-move opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 border border-slate-700 p-1 rounded-full shadow-2xl flex items-center justify-center text-cyan-400">
-            <Move size={10} />
-          </div>
-          <button
-            onClick={() => { setIsOpen(!isOpen); setTimeout(handleRecalculateQuadrant, 60); }}
-            className="w-14 h-14 bg-gradient-to-tr from-cyan-500 to-emerald-400 hover:from-cyan-600 hover:to-emerald-500 text-slate-950 font-bold rounded-full shadow-[0_10px_30px_rgba(0,242,254,0.3)] flex items-center justify-center border border-slate-950 active:scale-95 transition-transform duration-150"
-          >
-            <MessageSquare size={20} className="text-slate-950" />
-          </button>
-        </div>
+        {/* 🚦 变换形态自愈小球 */}
+        {/* 💡 移除指针事件阻断，交由受控的 handleBallClick 集中调度 */}
+        <button
+          onPointerDown={(e) => e.stopPropagation()} // 刚性拦截拖拽组件原生的多余事件冒泡
+          onClick={handleBallClick}
+          className={`w-14 h-14 bg-gradient-to-tr from-cyan-500 to-emerald-400 hover:from-cyan-600 hover:to-emerald-500 
+            text-slate-950 font-bold rounded-full shadow-[0_10px_30px_rgba(0,242,254,0.3)] 
+            flex items-center justify-center border border-slate-950 cursor-grab active:cursor-grabbing
+            transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]
+            ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
+        >
+          <MessageSquare size={20} className="text-slate-950" />
+        </button>
 
       </div>
     </Draggable>
