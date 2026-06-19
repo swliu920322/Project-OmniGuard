@@ -4,146 +4,94 @@ export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges:
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
-  // 1. 🔍 【第一阶段】：符号字典扫描雷达 (Symbol Table Extraction)
-  // 匹配隐式资源符号: resource <symbolicName> '<provider>'
-  const resourceRegex = /resource\s+(\w+)\s+'([^']+)'/g;
-  // 匹配架构模块符号: module <symbolicName> '<path>'
-  const moduleRegex = /module\s+(\w+)\s+'([^']+)'/g;
+  const resourceBlockRegex = /(resource|module)\s+(\w+)\s+'([^']+)'\s*=\s*\{([\s\S]*?)\}/g;
+  const bicepBlocks: { name: string; type: string; isModule: boolean; body: string }[] = [];
+  const symbolNames: string[] = [];
+  let match;
 
-  interface BicepEntity {
-    name: string;
-    type: 'resource' | 'module';
-    providerOrPath: string;
-    body: string;
+  // 1. 字典建立
+  while ((match = resourceBlockRegex.exec(bicepText)) !== null) {
+    const isModule = match[1] === 'module';
+    bicepBlocks.push({
+      name: match[2],
+      type: match[3].split('@')[0],
+      isModule: isModule,
+      body: match[4]
+    });
+    symbolNames.push(match[2]);
   }
 
-  const entityRegistry: BicepEntity[] = [];
-  const symbolNames: string[] = []; // 全局物理符号表
+  // 2. 隐式依赖度矩阵解算 (用于计算布局梯度，消除水平平铺)
+  const dependencyDegrees: Record<string, number> = {};
+  symbolNames.forEach(s => dependencyDegrees[s] = 0);
 
-  // 提取资源块文本腹地
-  const lines = bicepText.split('\n');
-
-  // 极简文本分块器（利用大括号平衡原理捕获完整 Block）
-  function extractBlocks() {
-    let currentEntity: BicepEntity | null = null;
-    let braceCount = 0;
-    let bodyBuffer = '';
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-
-      if (!currentEntity) {
-        // 探测资源
-        const resMatch = /resource\s+(\w+)\s+'([^']+)'/.exec(line);
-        if (resMatch) {
-          currentEntity = { name: resMatch[1], type: 'resource', providerOrPath: resMatch[2].split('@')[0], body: '' };
-          symbolNames.push(resMatch[1]);
-          bodyBuffer = '';
-          braceCount = 0;
-        }
-        // 探测模块
-        const modMatch = /module\s+(\w+)\s+'([^']+)'/.exec(line);
-        if (modMatch) {
-          currentEntity = { name: modMatch[1], type: 'module', providerOrPath: modMatch[2], body: '' };
-          symbolNames.push(modMatch[1]);
-          bodyBuffer = '';
-          braceCount = 0;
-        }
+  bicepBlocks.forEach(target => {
+    symbolNames.forEach(source => {
+      if (target.name === source) return;
+      const regex = new RegExp(`\\b${source}\\b`);
+      if (regex.test(target.body)) {
+        dependencyDegrees[target.name] = (dependencyDegrees[target.name] || 0) + 1;
       }
+    });
+  });
 
-      if (currentEntity) {
-        bodyBuffer += line + '\n';
-        if (line.includes('{')) braceCount += (line.match(/{/g) || []).length;
-        if (line.includes('}')) braceCount -= (line.match(/}/g) || []).length;
+  // 3. 物理阶梯坐标渲染
+  const xCounters: Record<number, number> = {};
 
-        if (braceCount === 0 && bodyBuffer.includes('{')) {
-          currentEntity.body = bodyBuffer;
-          entityRegistry.push(currentEntity);
-          currentEntity = null;
-        }
-      }
-    }
-  }
+  bicepBlocks.forEach((block) => {
+    const depth = dependencyDegrees[block.name] || 0;
+    if (xCounters[depth] === undefined) xCounters[depth] = 0;
 
-  extractBlocks();
+    // 根据依赖深度计算 Y 轴阶梯，横向根据计数器分散
+    const posX = 40 + (xCounters[depth] * 240);
+    const posY = 60 + (depth * 160);
+    xCounters[depth]++;
 
-  // 2. 🔍 【第二阶段】：层级矩阵编排与物理定位
-  let xOffset = 0;
-  entityRegistry.forEach((entity) => {
-    const isModule = entity.type === 'module'; 
-
-    // 刚性纵向分层轴线 (Layered Axis)
-    let yPos = 300; // 默认层（计算与宿主层）
-    let borderStroke = '#10b981'; // 资源绿
-    let labelColor = 'text-emerald-400';
-
-    if (entity.providerOrPath.includes('virtualNetworks')) {
-      yPos = 50; // 顶层：网络网络安全边界
-      borderStroke = '#00f2fe';
-      labelColor = 'text-cyan-400';
-    } else if (entity.providerOrPath.includes('storageAccounts')) {
-      yPos = 550; // 底层：数据资产与持久化分类
-      borderStroke = '#f59e0b';
-      labelColor = 'text-amber-400';
-    } else if (isModule) {
-      yPos = 320; // 核心：高阶模块容器
-      borderStroke = '#a855f7'; // 模块紫
-      labelColor = 'text-purple-400';
-    }
+    const isNet = block.type.includes('Network') || block.type.includes('virtualNetworks');
+    const borderStroke = block.isModule ? '#a855f7' : isNet ? '#00f2fe' : '#10b981';
+    const labelColor = block.isModule ? 'text-purple-400' : isNet ? 'text-cyan-400' : 'text-emerald-400';
 
     nodes.push({
-      id: entity.name,
-      type: isModule ? 'group' : 'default', // 将 module 物理编译为包裹外框
+      id: block.name,
+      type: block.isModule ? 'default' : 'default', // 模块在主页作为高阶节点展示，双击即可击穿下钻
       data: {
         label: (
-          <div className="text-left font-mono text-[10px] p-1">
-            <div className={`${labelColor} font-bold border-b border-gray-800 pb-0.5 mb-1`}>
-              {isModule ? `[Module] ${entity.name}` : entity.name}
+          <div className="text-left font-mono text-[10px] p-1 select-none">
+            <div className={`${labelColor} font-bold border-b border-gray-800 pb-0.5 mb-1 flex justify-between items-center`}>
+              <span>{block.isModule ? `📦 ${block.name}` : block.name}</span>
+              {block.isModule && <span className="text-[8px] bg-purple-900/50 px-1 rounded border border-purple-500 text-purple-300 scale-90">双击下钻</span>}
             </div>
-            <div className="text-gray-400 scale-90 origin-left overflow-hidden text-ellipsis whitespace-nowrap w-32">
-              {entity.providerOrPath.includes('/') ? entity.providerOrPath.split('/')[1] : entity.providerOrPath}
+            <div className="text-gray-400 scale-90 origin-left overflow-hidden text-ellipsis whitespace-nowrap w-36">
+              {block.type.includes('/') ? block.type.split('/')[1] : block.type}
             </div>
           </div>
         )
       },
-      position: { x: 60 + (xOffset * 190), y: yPos },
+      position: { x: posX, y: posY },
       style: {
-        background: isModule ? 'rgba(168, 85, 247, 0.02)' : '#1e293b', 
+        background: '#131927',
         color: '#fff',
         border: `1px solid ${borderStroke}`,
-        borderRadius: isModule ? '12px' : '8px', 
-        width: isModule ? 220 : 160, 
-        height: isModule ? 100 : 'auto' 
+        borderRadius: '8px',
+        width: 170,
+        boxShadow: block.isModule ? '0 0 15px rgba(168, 85, 247, 0.15)' : 'none'
       }
     });
-    xOffset++;
   });
 
-  // 3. 🔍 【第三阶段】：隐式符号全文检索（彻底蒸发 dependsOn 限制）
-  entityRegistry.forEach((targetEntity) => {
-    symbolNames.forEach((sourceSymbol) => {
-      // 排除法：防止自己依赖自己
-      if (targetEntity.name === sourceSymbol) return;
-
-      // 🎯 核心核心拦截：如果目标实体的代码正文（body）里包含了源资源的 symbolicName
-      // 说明存在隐式依赖引用 (例如：subnet: spokeVnet.id)
-      const symbolRegex = new RegExp(`\\b${sourceSymbol}\\b`);
-      if (symbolRegex.test(targetEntity.body)) {
-
-        // 规避重复边机制
-        const edgeId = `edge-${sourceSymbol}-${targetEntity.name}`;
-        if (!edges.some(e => e.id === edgeId)) {
-          edges.push({
-            id: edgeId,
-            source: sourceSymbol,
-            target: targetEntity.name,
-            animated: true,
-            style: {
-              stroke: targetEntity.type === 'module' ? '#a855f7' : '#00f2fe', // 容器线为模块紫
-              strokeWidth: 1.5
-            },
-          });
-        }
+  // 4. 连线合拢
+  bicepBlocks.forEach(target => {
+    symbolNames.forEach(source => {
+      if (target.name === source) return;
+      const regex = new RegExp(`\\b${source}\\b`);
+      if (regex.test(target.body)) {
+        edges.push({
+          id: `edge-${source}-${target.name}`,
+          source: source,
+          target: target.name,
+          animated: true,
+          style: { stroke: target.isModule ? '#a855f7' : '#00f2fe', strokeWidth: 1.5 },
+        });
       }
     });
   });
