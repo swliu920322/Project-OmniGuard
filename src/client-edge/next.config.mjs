@@ -24,6 +24,13 @@ const nextConfig = {
     // 🟩 保持原有配置：重焊 Webpack 别名指针
     config.resolve.alias['@'] = path.resolve(__dirname, './src');
 
+		// 🎯 【核心绝杀】：让 Webpack 5 原生以纯文本字符串（type: 'asset/source'）读取全量 .bicep 文件
+    // 这能彻底斩断在 TS 里人肉拼写字符串的业余做法
+    config.module.rules.push({
+      test: /\.bicep$/,
+      type: 'asset/source',
+    });
+
     // 🟩 核心拦截：当编译目标为客户端浏览器 (!isServer) 时，强行将 node 原生二进制包降维抹除
     if (!isServer) {
       config.resolve.fallback = {
