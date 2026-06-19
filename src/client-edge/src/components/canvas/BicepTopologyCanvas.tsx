@@ -14,14 +14,11 @@ interface BicepTopologyCanvasProps {
 
 export default function BicepTopologyCanvas({ bicepCode, currentFile, onModuleNavigate }: BicepTopologyCanvasProps) {
 
-  // 🟩 1. 拦截解析引信：在内存中计算拓扑，捕获任何潜在的语法毒性
   const topologyResult = useMemo(() => {
     if (!bicepCode.trim()) return { nodes: [], edges: [], error: '文件内容为空，请注入 Bicep 源码。' };
     try {
       const { nodes, edges } = parseBicepToElements(bicepCode);
-      if (nodes.length === 0) {
-        return { nodes: [], edges: [], error: '未探测到标准的 resource 或 module 声明。配置解析失败。' };
-      }
+      if (nodes.length === 0) return { nodes: [], edges: [], error: '未探测到标准的 resource 或 module 声明。配置解析失败。' };
       return { nodes, edges, error: null };
     } catch (err) {
       return { nodes: [], edges: [], error: 'Bicep 语法结构发生严重断层，无法完成隐式符号对账。' };
@@ -29,18 +26,14 @@ export default function BicepTopologyCanvas({ bicepCode, currentFile, onModuleNa
   }, [bicepCode]);
 
   const handleNodeDoubleClick = (event: React.MouseEvent, node: Node) => {
-    // 探测当前双击的节点是否包含 module 路径声明
     const regex = new RegExp(`module\\s+${node.id}\\s+'([^']+)'`);
     const match = regex.exec(bicepCode);
-    if (match) {
-      onModuleNavigate(match[1]); // 触发外置的 VFS 路径跳转总线
-    }
+    if (match) onModuleNavigate(match[1]);
   };
 
-  // 🟩 2. 降级安全边界：如果解析翻车，原地卸载 React Flow，升起错误贴片
   if (topologyResult.error) {
     return (
-      <div className="w-full h-full bg-[#0a0f1d] flex flex-col items-center justify-center font-mono p-6 animate-in fade-in duration-200">
+      <div className="w-full h-full bg-[#0a0f1d] flex flex-col items-center justify-center font-mono p-6">
         <div className="max-w-md bg-red-950/20 border-2 border-dashed border-red-500/50 rounded-xl p-6 text-center shadow-2xl">
           <AlertTriangle className="text-red-400 size-12 mx-auto mb-3 animate-bounce" />
           <h3 className="text-red-400 font-bold text-sm mb-1 uppercase tracking-widest">CONFIGURATION_PARSE_ERROR</h3>
@@ -59,21 +52,25 @@ export default function BicepTopologyCanvas({ bicepCode, currentFile, onModuleNa
       </div>
 
       <ReactFlow
-        key={currentFile} // 刚性文件名键，发生下钻时强制刷新周期，确保 fitView 100% 垂直居中
+        key={currentFile}
         nodes={topologyResult.nodes}
         edges={topologyResult.edges}
         onNodeDoubleClick={handleNodeDoubleClick}
         fitView
-        fitViewOptions={{ padding: 0.35 }}
-        colorMode="dark" // 官方原生暗黑模式控制面，彻底消灭白色幽灵污染
+        fitViewOptions={{ padding: 0.4 }} // 预留 40% 呼吸防线，强行逼迫图元收拢
+        colorMode="dark"
         className="w-full h-full"
       >
         <Background color="#1e293b" gap={16} size={1} />
         <Controls className="m-4 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg shadow-2xl" />
+
+        {/* 🎯【小地图满血自愈】：开启 zoomable 与 pannable，允许用户在右下角进行独立视角缩放拖动 */}
         <MiniMap
+          zoomable
+          pannable
           nodeColor={(n) => n.id.includes('Brain') || n.id.includes('Deployment') ? '#a855f7' : '#00f2fe'}
-          maskColor="rgba(7, 11, 21, 0.7)"
-          className="m-4 rounded-xl border border-slate-800"
+          maskColor="rgba(7, 11, 21, 0.6)"
+          className="m-4 rounded-xl border border-slate-800 bg-slate-950/90"
         />
       </ReactFlow>
     </div>
