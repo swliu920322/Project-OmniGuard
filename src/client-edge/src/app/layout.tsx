@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 // 🟩 核心引入：空降数字人全局挂件
-import CognitiveAvatarWidget from "@/components/digital-human/CognitiveAvatarWidget";
+import CognitiveAvatarWidget from "@/components/digital-human";
 
 export const metadata: Metadata = {
   title: "LIU SHENGWEI // Solutions Architect Portfolio",
