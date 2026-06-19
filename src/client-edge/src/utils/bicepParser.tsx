@@ -9,7 +9,7 @@ export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges:
   const symbolNames: string[] = [];
   let match;
 
-  // 1. 字典建立
+  // 🏁 阶段一：建立全局符号字典
   while ((match = resourceBlockRegex.exec(bicepText)) !== null) {
     const isModule = match[1] === 'module';
     bicepBlocks.push({
@@ -21,7 +21,10 @@ export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges:
     symbolNames.push(match[2]);
   }
 
-  // 2. 隐式依赖度矩阵解算 (用于计算布局梯度，消除水平平铺)
+  // 延迟对账队列：专门收拢网络 Peering 关系流
+  const deferredPeeringEdges: Edge[] = [];
+
+  // 🏁 阶段二：计算隐式依赖梯度
   const dependencyDegrees: Record<string, number> = {};
   symbolNames.forEach(s => dependencyDegrees[s] = 0);
 
@@ -35,16 +38,37 @@ export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges:
     });
   });
 
-  // 3. 物理阶梯坐标渲染
+  // 🏁 阶段三：物理节点排布（前置拦截 Peering 二进制空下方块）
   const xCounters: Record<number, number> = {};
 
   bicepBlocks.forEach((block) => {
+    // 🎯 【核心绝杀】：拦截 Azure 原生虚网对等组件，拒绝生成独立方块
+    if (block.type === 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings') {
+      const parentMatch = /parent:\s*(\w+)/.exec(block.body);
+      const remoteMatch = /remoteVirtualNetwork:\s*\{\s*id:\s*([\w.]+)/.exec(block.body);
+
+      const sourceVNet = parentMatch ? parentMatch[1] : null;
+      const targetVNet = remoteMatch ? remoteMatch[1].split('.')[0] : null;
+
+      if (sourceVNet && targetVNet) {
+        deferredPeeringEdges.push({
+          id: `peering-edge-${block.name}`,
+          source: sourceVNet,
+          target: targetVNet,
+          animated: true,
+          label: 'VNet Peering 高速互联',
+          labelStyle: { fill: '#f43f5e', fontSize: 8, fontWeight: 'bold', fontFamily: 'monospace' },
+          style: { stroke: '#f43f5e', strokeWidth: 2, strokeDasharray: '4,4' }, // 霓虹粉高亮虚线管道
+        });
+      }
+      return; // 截断，不将其推入节点网格
+    }
+
     const depth = dependencyDegrees[block.name] || 0;
     if (xCounters[depth] === undefined) xCounters[depth] = 0;
 
-    // 根据依赖深度计算 Y 轴阶梯，横向根据计数器分散
     const posX = 40 + (xCounters[depth] * 240);
-    const posY = 60 + (depth * 160);
+    const posY = 80 + (depth * 160);
     xCounters[depth]++;
 
     const isNet = block.type.includes('Network') || block.type.includes('virtualNetworks');
@@ -53,13 +77,13 @@ export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges:
 
     nodes.push({
       id: block.name,
-      type: block.isModule ? 'default' : 'default', // 模块在主页作为高阶节点展示，双击即可击穿下钻
+      type: 'default',
       data: {
         label: (
           <div className="text-left font-mono text-[10px] p-1 select-none">
             <div className={`${labelColor} font-bold border-b border-gray-800 pb-0.5 mb-1 flex justify-between items-center`}>
               <span>{block.isModule ? `📦 ${block.name}` : block.name}</span>
-              {block.isModule && <span className="text-[8px] bg-purple-900/50 px-1 rounded border border-purple-500 text-purple-300 scale-90">双击下钻</span>}
+              {block.isModule && <span className="text-[7px] bg-purple-900/40 px-1 rounded border border-purple-500 text-purple-300">双击下钻</span>}
             </div>
             <div className="text-gray-400 scale-90 origin-left overflow-hidden text-ellipsis whitespace-nowrap w-36">
               {block.type.includes('/') ? block.type.split('/')[1] : block.type}
@@ -74,13 +98,14 @@ export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges:
         border: `1px solid ${borderStroke}`,
         borderRadius: '8px',
         width: 170,
-        boxShadow: block.isModule ? '0 0 15px rgba(168, 85, 247, 0.15)' : 'none'
+        boxShadow: block.isModule ? '0 0 12px rgba(168, 85, 247, 0.12)' : 'none'
       }
     });
   });
 
-  // 4. 连线合拢
+  // 🏁 阶段四：符号对账全量闭环
   bicepBlocks.forEach(target => {
+    if (target.type === 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings') return; // 跳过已抽离组件
     symbolNames.forEach(source => {
       if (target.name === source) return;
       const regex = new RegExp(`\\b${source}\\b`);
@@ -96,5 +121,6 @@ export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges:
     });
   });
 
-  return { nodes, edges };
+  // 🟩 倒灌特制网络 Peering 通道管道线
+  return { nodes, edges: [...edges, ...deferredPeeringEdges] };
 }
