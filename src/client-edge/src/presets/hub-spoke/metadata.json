@@ -1,0 +1,6 @@
+{
+  "name": "🛡️ 微软官方标准 Hub-Spoke 骨干网架构",
+  "description": "刘胜伟跨云战役核心网络沙盘。强制收拢跨国专线对等（VNet Peering），并挂载零信任网络安全组（NSG）出站反向洗涤规则。",
+  "version": "1.0.0",
+  "author": "Shengwei"
+}

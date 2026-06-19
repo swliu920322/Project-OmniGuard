@@ -3,10 +3,24 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Home, FileCode, Code, BarChart3, Upload, Layers, FolderTree, ChevronRight, FolderOpen, LayoutGrid, Sliders } from 'lucide-react';
+import {
+  Home,
+  FileCode,
+  Code,
+  BarChart3,
+  Upload,
+  Layers,
+  FolderTree,
+  ChevronRight,
+  Sliders,
+  LayoutGrid
+} from 'lucide-react';
 import BicepTopologyCanvas from '@/components/canvas/BicepTopologyCanvas';
 import { BICEP_ARCH_PRESETS } from '@/config/bicepPresets';
 
+// =========================================================================
+// 🚦 逻辑依赖链编排引擎 (Logical Dependency Tree Compiler)
+// =========================================================================
 interface LogicalTreeNode {
   name: string;
   path: string;
@@ -31,9 +45,6 @@ function compileLogicalModuleTree(vfs: Record<string, string>, currentFile: stri
   return node;
 }
 
-/**
- * 🟩 🚀【新增核心寻轨引擎】：利用递归 DFS 在内存中瞬间算解从 main.bicep 抵达指定文件的完整面包屑历史栈
- */
 function computeLogicalPathTo(vfs: Record<string, string>, targetFile: string, current = 'main.bicep', currentStack: string[] = [], visited = new Set<string>()): string[] | null {
   if (current === targetFile) return [...currentStack, current];
   if (visited.has(current)) return null;
@@ -51,12 +62,20 @@ function computeLogicalPathTo(vfs: Record<string, string>, targetFile: string, c
   return null;
 }
 
+// =========================================================================
+// 🎨 画布总线核心视窗 (自愈对账版)
+// =========================================================================
 function CanvasDashboardCore() {
   const searchParams = useSearchParams();
   const presetQuery = searchParams.get('preset');
-  const initialPresetKey = presetQuery && BICEP_ARCH_PRESETS[presetQuery] ? presetQuery : 'hub-spoke-network';
 
-  const [virtualVFS, setVirtualVFS] = useState<Record<string, string>>(BICEP_ARCH_PRESETS[initialPresetKey].files);
+  // 🎯【核心对账自愈】：清场旧残留，刚性兜底至当前字典中绝对存在的 'enterprise-landing-zone'
+  const initialPresetKey = presetQuery && BICEP_ARCH_PRESETS[presetQuery] ? presetQuery : 'enterprise-landing-zone';
+
+  // 安全防线：使用可选链与空对象兜底，即使未来配置再次震荡，也绝不允许阻塞前端渲染流
+  const currentPresetWorkspace = BICEP_ARCH_PRESETS[initialPresetKey] || Object.values(BICEP_ARCH_PRESETS)[0];
+  const [virtualVFS, setVirtualVFS] = useState<Record<string, string>>(currentPresetWorkspace.files || {});
+
   const [activeFile, setActiveFile] = useState<string>('main.bicep');
   const [pathStack, setPathStack] = useState<string[]>(['main.bicep']);
   const [activeTab, setActiveTab] = useState<'code' | 'diagram'>('diagram');
@@ -117,15 +136,13 @@ function CanvasDashboardCore() {
     }
   };
 
-  // 🟩 递归树节点点击处理器：加装寻轨引信
   const handleFileTreeClick = (targetPath: string) => {
     setActiveFile(targetPath);
-    // 🎯 刚性对账：计算完整依赖链条，自愈回灌历史栈，绝不再平铺扁平化
     const computedStack = computeLogicalPathTo(virtualVFS, targetPath);
     if (computedStack) {
       setPathStack(computedStack);
     } else {
-      setPathStack([targetPath]); // 极端孤立文件兜底
+      setPathStack([targetPath]);
     }
   };
 
@@ -164,7 +181,7 @@ function CanvasDashboardCore() {
     <div className="flex flex-col flex-1 h-full overflow-hidden">
       <div className="flex-1 grid grid-cols-1 md:grid-cols-12 overflow-hidden h-full">
 
-        {/* 左舷：逻辑树 */}
+        {/* 左舷：逻辑依赖树 */}
         <div className="md:col-span-3 border-r border-slate-800 bg-[#070b15] p-4 flex flex-col overflow-y-auto select-none">
           <div className="flex items-center space-x-2 pb-2 border-b border-slate-900 mb-3">
             <FolderTree size={14} className="text-slate-400" />
@@ -175,7 +192,7 @@ function CanvasDashboardCore() {
           </div>
         </div>
 
-        {/* 右舷：Tab */}
+        {/* 右舷：Tab 面板 */}
         <div className="md:col-span-9 flex flex-col h-full bg-[#0a0f1d] overflow-hidden relative">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 border-b border-slate-900 bg-slate-950/60 backdrop-blur-md z-10 gap-3">
             <div className="flex items-center space-x-1.5 font-mono text-xs">
