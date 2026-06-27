@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { LayoutGrid, ArrowUpRight, ShieldCheck, HardDrive, Terminal } from 'lucide-react';
+import { ArrowUpRight, ShieldCheck, HardDrive, Terminal } from 'lucide-react';
 import { BICEP_ARCH_PRESETS } from '@/config/bicepPresets';
 
 export default function IaCPlatformHubPage() {
@@ -21,9 +21,14 @@ export default function IaCPlatformHubPage() {
             硬核零代码维护！只需往 <code className="text-cyan-500 bg-slate-900 px-1 py-0.5 rounded">src/presets/</code> 扔进新 Bicep 文件夹，系统编译期自动识别并就地动态物化上架。
           </p>
         </div>
-        <Link href="/iac/canvas" className="text-xs font-mono border border-slate-800 bg-slate-900 hover:border-cyan-500 px-4 py-2 rounded-lg text-slate-300 transition-all shadow-xl">
-          开辟空白沙盘 ➔
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/" className="text-xs font-mono border border-slate-800 bg-slate-900 hover:border-cyan-500 px-4 py-2 rounded-lg text-slate-300 transition-all shadow-xl">
+            返回启动台
+          </Link>
+          <Link href="/iac/canvas" className="text-xs font-mono border border-slate-800 bg-slate-900 hover:border-cyan-500 px-4 py-2 rounded-lg text-slate-300 transition-all shadow-xl">
+            开辟空白沙盘 ➔
+          </Link>
+        </div>
       </div>
 
       {/* 方案网格流 */}

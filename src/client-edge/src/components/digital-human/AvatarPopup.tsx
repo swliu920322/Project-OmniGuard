@@ -30,7 +30,9 @@ export default function AvatarPopup({
   const mouthRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({behavior: 'smooth'});
+  }, [messages]);
 
   useEffect(() => {
     let animId: number;
@@ -73,24 +75,29 @@ export default function AvatarPopup({
     >
 
       {/* 顶栏 */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-slate-950 border-b border-slate-800 font-mono text-[10px] text-[#00f2fe] tracking-widest uppercase">
+      <div
+        className="flex items-center justify-between px-4 py-2.5 bg-slate-950 border-b border-slate-800 font-mono text-[10px] text-[#00f2fe] tracking-widest uppercase">
         <div className="flex items-center space-x-1.5">
-          <span className={`w-1.5 h-1.5 rounded-full ${engineStatus === 'HYBRID_READY' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`}></span>
+          <span
+            className={`w-1.5 h-1.5 rounded-full ${engineStatus === 'HYBRID_READY' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`}></span>
           <span>HYBRID_CORE // SYS_{engineStatus} {bootProgress}</span>
         </div>
         <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
-          <Minimize2 size={13} />
+          <Minimize2 size={13}/>
         </button>
       </div>
 
       {/* 2.5D 口型画布 */}
-      <div className="w-full h-28 bg-gradient-to-b from-slate-800 to-[#0a0f1d] relative flex items-center justify-center border-b border-slate-800">
-        <div className={`w-20 h-24 bg-slate-950 rounded-full flex flex-col items-center justify-center border transition-all duration-300 ${isTalking ? 'border-rose-500 scale-105 shadow-[0_0_15px_rgba(244,63,94,0.3)]' : 'border-[#00f2fe]'}`}>
+      <div
+        className="w-full h-28 bg-gradient-to-b from-slate-800 to-[#0a0f1d] relative flex items-center justify-center border-b border-slate-800">
+        <div
+          className={`w-20 h-24 bg-slate-950 rounded-full flex flex-col items-center justify-center border transition-all duration-300 ${isTalking ? 'border-rose-500 scale-105 shadow-[0_0_15px_rgba(244,63,94,0.3)]' : 'border-[#00f2fe]'}`}>
           <div className="flex space-x-3 mb-2.5">
             <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
             <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
           </div>
-          <div ref={mouthRef} className="w-6 h-2 bg-rose-500 rounded-full transition-transform duration-75 origin-center scale-y-[0.15]" />
+          <div ref={mouthRef}
+               className="w-6 h-2 bg-rose-500 rounded-full transition-transform duration-75 origin-center scale-y-[0.15]"/>
         </div>
       </div>
 
@@ -103,13 +110,13 @@ export default function AvatarPopup({
             <span>{msg.content || '▋'}</span>
             {msg.role === 'ai' && !msg.isError && (
               <span className="text-[8px] text-slate-500 mt-1 flex items-center gap-0.5 font-sans self-end">
-                {msg.source === 'local' ? <Cpu size={9} /> : <Cloud size={9} />}
+                {msg.source === 'local' ? <Cpu size={9}/> : <Cloud size={9}/>}
                 {msg.source === 'local' ? '本地显存击穿' : '转发新加坡云端'}
               </span>
             )}
           </div>
         ))}
-        <div ref={chatEndRef} />
+        <div ref={chatEndRef}/>
       </div>
 
       {/* 控制输入框 */}
@@ -133,4 +140,4 @@ export default function AvatarPopup({
       </form>
     </div>
   );
-
+}

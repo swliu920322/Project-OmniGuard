@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import Draggable from 'react-draggable'; // 高性能拖拽底座
+import Draggable, { DraggableEventHandler } from 'react-draggable'; // 高性能拖拽底座
 import { MessageSquare } from 'lucide-react';
 import AvatarPopup from './AvatarPopup';
 import { bootEdgeComputeKernel, evaluateLocalRAGContext, runLocalGPUPipeline, cloudInferencePipeline } from './kernel';
@@ -70,7 +70,9 @@ export default function CognitiveAvatarWidget() {
     window.speechSynthesis.cancel(); setIsTalking(false);
     let notice = '已为您切换页面。本地 RAG 特征盾已重置，随时扫描您的提问。';
     if (pathname === '/') {
-      notice = '您已回到履历主页面。日常寒暄与基础简历将由本地 WebGPU 秒回；提问核心项目深水区，流量自动出海。';
+      notice = '您已进入启动台。先选本地订阅与 LLM 组合模式，再进入履历或 IaC 画布；寒暄与基础简历仍可由本地 WebGPU 秒回。';
+    } else if (pathname.includes('/resume')) {
+      notice = '您已进入履历展示区。基础简历与证书信息优先本地渲染。';
     } else if (pathname.includes('/iac')) {
       notice = '进驻分布式 IaC 方案空间。多文件 Bicep 自动化与调用链符号对账库已并轨就绪。';
     }
@@ -151,6 +153,18 @@ export default function CognitiveAvatarWidget() {
     }
   };
 
+  const handleDragStop: DraggableEventHandler = () => {
+    handleRecalculateQuadrant();
+    if (isDragging.current) {
+      // 🎯【绝杀穿透】：如果是长放，释放瞬间闭锁点击闸门 80 毫秒，物理洗净残余冒泡
+      clickBlocker.current = true;
+      setTimeout(() => {
+        clickBlocker.current = false;
+        isDragging.current = false;
+      }, 80);
+    }
+  };
+
   return (
     <Draggable
       nodeRef={widgetRef}
@@ -161,20 +175,18 @@ export default function CognitiveAvatarWidget() {
       onDrag={() => {
         isDragging.current = true; // 发生物理位移，锁死长按状态
       }}
-      onStop={() => {
-        handleRecalculateQuadrant();
-        if (isDragging.current) {
-          // 🎯【绝杀穿透】：如果是长放，释放瞬间闭锁点击闸门 80 毫秒，物理洗净残余冒泡
-          clickBlocker.current = true;
-          const timer = setTimeout(() => {
-            clickBlocker.current = false;
-            isDragging.current = false;
-          }, 80);
-          return () => clearTimeout(timer);
-        }
-      }}
-      defaultPosition={{ x: 0, y: 0 }}
-    >
+      onStop={handleDragStop}
+      defaultPosition={{x: 0, y: 0}} allowAnyClick={false} allowMobileScroll={false} disabled={false}
+      enableUserSelectHack={false} onMouseDown={function (e: MouseEvent): void {
+      throw new Error("Function not implemented.");
+    }} scale={0} cancel={""} offsetParent={undefined} grid={[]} handle={""} axis={"both"} bounds={""}
+      defaultClassName={""} defaultClassNameDragging={""} defaultClassNameDragged={""} positionOffset={{
+      x: "",
+      y: ""
+    }} position={{
+      x: 0,
+      y: 0
+    }}    >
       <div
         ref={widgetRef}
         className="fixed bottom-6 right-6 z-50 font-sans text-slate-200 flex flex-col items-center select-none"

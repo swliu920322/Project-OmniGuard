@@ -34,7 +34,7 @@ function computeCosineSimilarity(vecA: number[], vecB: number[]): number {
  * 自动化系统核心开机引导引信
  */
 export async function bootEdgeComputeKernel(onProgress: (progress: number) => void): Promise<boolean> {
-  if (typeof window === 'undefined' || !navigator.gpu) return false;
+  if (typeof window === 'undefined' || typeof navigator === 'undefined' || !('gpu' in navigator)) return false;
   try {
     const transformersModule = await import('@huggingface/transformers');
     const webLLMModule = await import('@mlc-ai/web-llm');
@@ -122,7 +122,10 @@ export async function cloudInferencePipeline(prompt: string, pathname: string, o
   const response = await fetch(`${base}/api/chat/stream?t=${Date.now()}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: prompt, context: pathname })
+    body: JSON.stringify({
+      message: prompt,
+      context: pathname,
+    })
   });
   if (!response.ok || !response.body) throw new Error(`Remote API Aborted: ${response.status}`);
 
