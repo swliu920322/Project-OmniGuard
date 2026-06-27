@@ -1,35 +1,35 @@
 # =========================================================================
-# 🛠️ Project-OmniGuard 统一控制总线 (Makefile)
+# 🛠️ Project-OmniGuard 统一控制总线
 # =========================================================================
-.PHONY: infra up destroy deploy devops fe
+.PHONY: provision start destroy deploy-function trigger-ci help
 
-VAR_RG=omni-guard-infra-sea-rg
-
-fe:
-	cd src/client-edge && npm install
-# 1. 一键拉起云端底座并倒灌密钥
-infra: provision
-
-up: devops deploy
+help:
+	@echo "======================================================"
+	@echo "Project-OmniGuard 快速命令"
+	@echo "======================================================"
+	@echo "make provision       - 部署 Azure 基础设施"
+	@echo "make start           - 启动前后端本地开发环境"
+	@echo "make destroy         - 销毁所有 Azure 资源"
+	@echo "make deploy-function - 部署 Function 到 serverless"
+	@echo "make trigger-ci      - 触发 GitHub CI/CD 流水线"
+	@echo "======================================================"
 
 provision:
-	@chmod +x ./sh/infra-up.sh
-	./sh/infra-up.sh
+	@chmod +x ./sh/provision.sh
+	./sh/provision.sh
 
-# 2. 一键蒸发云端资产（FinOps 止血）
+start:
+	@chmod +x ./sh/start.sh
+	./sh/start.sh
+
 destroy:
-	@chmod +x ./sh/infra-destroy.sh
-	./sh/infra-destroy.sh
+	@chmod +x ./sh/destroy.sh
+	./sh/destroy.sh
 
-# 3. 本地双端热拔插联动肉搏 (自动同步最新 local.settings.json)
-dev:
-	cd src/cloud-orchestrator/digitalhuman && func start
+deploy-function:
+	@chmod +x ./sh/deploy-function.sh
+	./sh/deploy-function.sh
 
-# 4. 极致压缩版定向轰击部署
-deploy:
-	@chmod +x ./sh/deploy-core.sh
-	./sh/deploy-core.sh
-
-devops:
-	@chmod +x ./sh/empty_push.sh
-	./sh/empty_push.sh
+trigger-ci:
+	@chmod +x ./sh/trigger-ci.sh
+	./sh/trigger-ci.sh
