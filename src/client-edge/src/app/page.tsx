@@ -132,12 +132,15 @@ export default function StartupConsolePage() {
                 启动台：配置、启动日志、销毁入口
               </h1>
               <p className="text-sm text-slate-400 mt-3 max-w-4xl leading-relaxed">
-                这个页面只负责“先配置，再启动，再看日志”，并提供一键回收 Bicep 资源的命令预览。履历已经拆到 <Link className="text-[#00f2fe] underline" href="/resume">/resume</Link>，Bicep 模板最佳实践在 <Link className="text-[#00f2fe] underline" href="/iac">/iac</Link>。
+                这个页面只负责“先配置，再启动，再看日志”，并提供一键回收 Bicep 资源的命令预览。履历已经拆到 <Link className="text-[#00f2fe] underline" href="/resume">/resume</Link>，Bicep 模板最佳实践在 <Link className="text-[#00f2fe] underline" href="/iac">/iac</Link>，大 V 预测在 <Link className="text-[#00f2fe] underline" href="/prediction">/prediction</Link>。
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link href="/resume" className="px-4 py-2 rounded-xl border border-slate-700 bg-slate-900 hover:border-[#00f2fe] transition-colors text-sm font-mono inline-flex items-center gap-2">
                 查看履历 <ArrowRight size={14} />
+              </Link>
+              <Link href="/prediction" className="px-4 py-2 rounded-xl border border-slate-700 bg-slate-900 hover:border-[#00f2fe] transition-colors text-sm font-mono inline-flex items-center gap-2">
+                大 V 预测 <ArrowRight size={14} />
               </Link>
               <Link href="/iac" className="px-4 py-2 rounded-xl bg-[#00f2fe] hover:bg-[#00c8d4] text-slate-950 transition-colors text-sm font-mono font-bold inline-flex items-center gap-2">
                 进入 IaC Hub <Layers size={14} />

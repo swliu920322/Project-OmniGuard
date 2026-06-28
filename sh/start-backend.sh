@@ -16,7 +16,7 @@ if ! command -v func &> /dev/null; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-cd "$SCRIPT_DIR/../src/cloud-orchestrator/digitalhuman"
+cd "$SCRIPT_DIR/../src/cloud-orchestrator"
 
 if [ ! -f "local.settings.json" ]; then
   echo "⚠️  local.settings.json 未找到，请先复制 local.settings.example.json 并填入 OpenAI 凭证"

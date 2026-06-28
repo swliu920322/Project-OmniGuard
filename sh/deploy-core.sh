@@ -16,7 +16,7 @@ fi
 echo "🎯 成功锁定目标真机：$FUNC_NAME"
 
 # 进入 Python 源码腹地
-cd src/cloud-orchestrator/digitalhuman
+cd src/cloud-orchestrator
 
 echo "📦 正在执行本地依赖预检并打包字节流..."
 # 🟩 核心自愈：强行使用远端 Oryx 引擎进行清爽合规编译，卸载本地磁盘脏数据

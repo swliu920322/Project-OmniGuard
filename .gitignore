@@ -7,7 +7,7 @@ __pycache__/
 src/cloud-orchestrator/.venv/
 src/cloud-orchestrator/__pycache__/
 src/cloud-orchestrator/*/.pyc
-
+*/setting.local.json
 # 过滤前端不必要的依赖
 node_modules/
 .next/

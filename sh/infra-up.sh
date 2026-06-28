@@ -155,7 +155,7 @@ echo "--------------------------------------------------------"
 echo "📥 正在同步本地实弹调试账本 local.settings.json ..."
 
 if [ "$LLM_PROVIDER" = "openai-compatible" ]; then
-  cat <<EOF > src/cloud-orchestrator/digitalhuman/local.settings.json
+  cat <<EOF > src/cloud-orchestrator/local.settings.json
 {
   "IsEncrypted": false,
   "Values": {
@@ -173,7 +173,7 @@ if [ "$LLM_PROVIDER" = "openai-compatible" ]; then
 }
 EOF
 else
-  cat <<EOF > src/cloud-orchestrator/digitalhuman/local.settings.json
+  cat <<EOF > src/cloud-orchestrator/local.settings.json
 {
   "IsEncrypted": false,
   "Values": {

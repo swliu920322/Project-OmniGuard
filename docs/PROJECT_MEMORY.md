@@ -16,7 +16,7 @@
 
 2. **项目应用层**
    - 前端：`src/client-edge/`
-   - 后端：`src/cloud-orchestrator/digitalhuman/`
+   - 后端：`src/cloud-orchestrator/`
    - 后端以 Azure Functions / ASGI 方式部署，同时支持本地 `func start` 调试
 
 此外，仓库根目录还有：
@@ -102,7 +102,7 @@
 
 ---
 
-### 2.3 后端层：`src/cloud-orchestrator/digitalhuman/`
+### 2.3 后端层：`src/cloud-orchestrator/`
 
 后端是一个 **Azure Functions + FastAPI/ASGI** 风格的服务。
 
@@ -254,6 +254,7 @@ Bicep 模板应尽量只负责：
 | 页面 | 路由 | 职责 |
 |---|---|---|
 | 启动台 / 履历页 | `/` | 选择组合模式、展示简历 |
+| 大 V 预测 | `/prediction` | 采集推文、反爬会话配置、AI 时序提炼与宏观投研决策预测 |
 | IaC Hub | `/iac` | 列出预设模板、进入画布 |
 | IaC 画布 | `/iac/canvas` | 预览、编辑、上传 Bicep 多文件拓扑 |
 
@@ -269,6 +270,15 @@ Bicep 模板应尽量只负责：
 - 流式聊天接口
 - 根据 `context` 决定页面上下文提示词
 - 从 `local.settings.json` 读取 Azure OpenAI 配置，不再支持多供应商切换
+
+### `GET /api/kol/list`
+- 获取系统监控的大 V 账户列表
+
+### `GET /api/kol/report`
+- 获取缓存在本地的大 V 投研研报数据
+
+### `POST /api/kol/predict`
+- 更新免登录凭证，运行爬虫，缓存原始 JSON 推文并执行 AI 预测
 
 ---
 
@@ -303,7 +313,7 @@ Bicep 模板应尽量只负责：
    - `src/client-edge/src/app/iac/canvas/page.tsx`
 
 2. **LLM 路由变化**
-   - `src/cloud-orchestrator/digitalhuman/function_app.py` — `build_llm_client()` 直读 `local.settings.json` 配置
+   - `src/cloud-orchestrator/function_app.py` — `build_llm_client()` 直读 `local.settings.json` 配置
 
 3. **基础设施变化**
    - `.azure/main.bicep`
@@ -316,7 +326,7 @@ Bicep 模板应尽量只负责：
 
 5. **架构背景**
    - `docs/adrs/*`
-   - `src/cloud-orchestrator/digitalhuman/readme.md`
+   - `src/cloud-orchestrator/readme.md`
    - `guide.md`
    - `destination.md`
 
