@@ -2,24 +2,10 @@ import json
 import os
 import datetime
 import traceback
-import azure.functions as func
-
-from fastapi import FastAPI, Request, Response
+from fastapi import APIRouter, Request, Response
 from fastapi.responses import StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
 
-# 1. 实例化纯快猫
-fastapi_app = FastAPI()
-
-fastapi_app.add_middleware(
-  CORSMiddleware,
-  allow_origins=["*"],
-  # 🎯 【核心绝杀】：关闭无意义的凭证携带，全面释放 * 号通配符的跨域主权， 以后再关掉防止跨域
-  allow_credentials=False,
-  allow_methods=["*"],
-  allow_headers=["*"],
-)
-
+digital_human_router = APIRouter()
 
 def build_llm_client():
   endpoint = os.environ.get("OPENAI_BASE_URL", "").strip()
@@ -38,7 +24,7 @@ def build_llm_client():
   ), model
 
 
-@fastapi_app.api_route("/api/assets/auth", methods=["GET", "POST"])
+@digital_human_router.api_route("/api/assets/auth", methods=["GET", "POST"])
 def get_sas_token(request: Request) -> Response:
   try:
     ACCOUNT_NAME = os.environ.get("AZURE_STORAGE_ACCOUNT_NAME")
@@ -69,7 +55,7 @@ def get_sas_token(request: Request) -> Response:
     return Response(content=json.dumps({"error": str(e)}), media_type="application/json", status_code=500)
 
 
-@fastapi_app.post("/api/chat/stream")
+@digital_human_router.post("/api/chat/stream")
 async def chat_proxy(request: Request):
   try:
     req_body = await request.json()
@@ -126,10 +112,3 @@ async def chat_proxy(request: Request):
       status_code = 502
     return Response(content=json.dumps({"error": error_text, "traceback": traceback.format_exc()}), status_code=status_code,
                     media_type="application/json")
-
-
-# 顶级主权全量合拢
-app = func.AsgiFunctionApp(
-  app=fastapi_app,
-  http_auth_level=func.AuthLevel.ANONYMOUS
-)

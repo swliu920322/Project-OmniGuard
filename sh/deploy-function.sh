@@ -35,7 +35,7 @@ echo "🎯 目标 Function App: $FUNC_NAME"
 
 # 读取 local.settings.json 中的 OpenAI 配置
 echo -e "\n✅ [2/4] 同步 local.settings.json 配置到云端..."
-SETTINGS_FILE="src/cloud-orchestrator/digitalhuman/local.settings.json"
+SETTINGS_FILE="src/cloud-orchestrator/local.settings.json"
 
 if [ ! -f "$SETTINGS_FILE" ]; then
   echo "❌ 错误: 找不到 $SETTINGS_FILE"
@@ -92,7 +92,7 @@ echo "✅ 配置已上传"
 
 # 部署 Python 代码
 echo -e "\n✅ [4/4] 部署 Function 代码..."
-cd src/cloud-orchestrator/digitalhuman
+cd src/cloud-orchestrator
 
 func azure functionapp publish "$FUNC_NAME" --python --no-bundler
 
