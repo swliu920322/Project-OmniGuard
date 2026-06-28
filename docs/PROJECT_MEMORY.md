@@ -117,7 +117,7 @@
   - FastAPI 路由入口
   - `/api/assets/auth`
   - `/api/chat/stream`
-  - 当前已支持 provider-aware 的 LLM client 选择
+  - LLM 客户端统一从 `local.settings.json` 读取 `OPENAI_BASE_URL` / `OPENAI_API_KEY` / `OPENAI_API_DEPLOYMENT_NAME`，直连 Azure OpenAI，不再做多供应商适配
 - `requirements.txt`
   - Python 依赖清单
 - `local.settings.example.json`
@@ -244,7 +244,7 @@ Bicep 模板应尽量只负责：
 ### 建议的配置来源
 - 前端：`launchProfile`
 - 脚本：环境变量
-- 后端：`LLM_PROVIDER` / `AZURE_OPENAI_*` / `OPENAI_*`
+- 后端：`local.settings.json` → `OPENAI_BASE_URL` / `OPENAI_API_KEY` / `OPENAI_API_DEPLOYMENT_NAME`
 - IaC：Bicep parameters
 
 ---
@@ -268,7 +268,7 @@ Bicep 模板应尽量只负责：
 ### `POST /api/chat/stream`
 - 流式聊天接口
 - 根据 `context` 决定页面上下文提示词
-- 根据 `profile` / 环境变量决定 provider 与模型
+- 从 `local.settings.json` 读取 Azure OpenAI 配置，不再支持多供应商切换
 
 ---
 
@@ -303,9 +303,7 @@ Bicep 模板应尽量只负责：
    - `src/client-edge/src/app/iac/canvas/page.tsx`
 
 2. **LLM 路由变化**
-   - `src/client-edge/src/components/digital-human/kernel.ts`
-   - `src/cloud-orchestrator/digitalhuman/function_app.py`
-   - `sh/infra-up.sh`
+   - `src/cloud-orchestrator/digitalhuman/function_app.py` — `build_llm_client()` 直读 `local.settings.json` 配置
 
 3. **基础设施变化**
    - `.azure/main.bicep`
