@@ -198,3 +198,66 @@ $$Cost_{OpenAI} = (Tokens_{in} \times \$0.005 / 1K) + (Tokens_{out} \times \$0.0
 当你的数字化系统在半夜或没有任何面试演示任务的**绝对闲置状态下**，$Tokens$ 归零，$GB_{data}$ 趋近于零，整套项目在云端的**全量常驻呼吸成本刚性死锁在 $\approx \$36.31$ 美金/月**。
 
 而一旦你需要进行环境物理拆除，一发 `./infra-destroy.sh` 指令横向轰入，云端物理机架瞬间全量解散湮灭，**后续每小时的持有成本归零，达成绝对的 FinOps 弹性自适应控制！** 全栈大通车，账本全部对齐落袋！
+
+
+针对你关于 Azure Function 的部署设计、多文件架构、脚本隔离性以及系统耦合度 的疑问，这里为你做一次深度拆账和解答：
+  ### 1.  deploy-function  现在能否生效？
+  答案：完全可以正常生效。
+  当你执行  make deploy-function  时，系统会运行脚本 deploy-function.sh，其核心逻辑为：
+  1. 提取并同步本地  local.settings.json  中的环境变量配置（如 OpenAI 凭证）到云端 Function App 中。
+  2. 进入 cloud-orchestrator 目录，并执行：
+    func azure functionapp publish "$FUNC_NAME" --python --no-bundler
+    
+  3. 此时 Azure Functions Core Tools 会将该目录下的所有代码及子包打包上传。云端的 Oryx 探测构建引擎 会自动读取 requirements.txt，并在云端安装依赖。
+  ──────
+  ### 2. azFunction 的设计模式与多文件结构
+
+  在 Azure Functions Python V2 编程模型中，单文件和多文件的设计理念如下：
+
+  • 单入口设计：function_app.py 是唯一的物理入口。
+  • FastAPI 代理模式 (ASGI)：为了避免单文件臃肿，本项目采用了业界标准的 AsgiFunctionApp 包装模式。我们在 function_app.py 中创建了一个 FastAPI 实例，并通过 
+  include_router  优雅地挂载了各个子作用域模块：
+      •  digitalhuman  模块的 router.py
+      •  kol_analysis  模块的 router.py
+  • 结论：这种目录和包划分完全符合 Azure Functions 的最佳实践。上传后，云端会将所有子目录作为 Python 包正常导入。
+  ──────
+  ### 3. 关于  run_analysis.py  的隔离与部署设计
+
+  关于你想把  run_analysis.py  作为手动脚本运行、且不希望作为云端 HTTP API 直接调用的诉求：
+
+  #### 现状：天然的数据面解耦 (Decoupling)
+
+  在目前的架构中， run_analysis.py  与云端 HTTP 接口是**完全解耦（数据驱动）**的：
+
+  • router.py 的 HTTP 接口不会去主动执行  run_analysis.py 。
+  • 接口仅仅是从 daily_cache 目录中读取已有的报告 JSON。如果文件不存在，则直接返回  404 (暂无缓存数据) 。
+  • 这种设计非常合理。因为 X 爬虫和 AI 分析非常耗时（容易触发 Azure 1.5 ~ 10 分钟的 HTTP 接入层超时熔断），将它作为本地 CLI 离线运行，API
+  只做静态读取，保证了极高的稳定性和极短的响应时间。
+
+  #### 物理隔离：如何避免不必要的文件上传？
+
+  我刚刚为你在后端根目录下创建了 .funcignore 配置文件。利用该文件，你可以精细化控制部署过滤：
+
+  1. 防止环境与凭证上传：默认忽略了  .venv/ 、 .python_packages/  以及  local.settings.json 。
+  2. 脚本与缓存的上传取舍：
+      • 如果你希望云端 API 拥有离线生成的报告数据：请不要在  .funcignore  中忽略  daily_cache/ 。这样，当你在本地跑完  run_analysis.py  生成 JSON
+      报告后，执行部署时，这些 JSON 缓存文件会作为“静态数据包”一同被打包上传至云端，提供初始数据底座。
+      • 如果你希望完全物理隔离：只需在 .funcignore 中取消注释  run_analysis.py  和  daily_cache/ ，部署时它们就不会占用云端包体积。
+      • 长远演进：如果未来你想在云端自动运行该脚本，由于它已经与后端同源，你只需要在 function_app.py 里增加一个 TimerTrigger（定时任务）或
+      QueueTrigger（队列触发），引入  run_analysis.py  的入口函数，即可低成本转化为云端 serverless 任务。
+
+  ──────
+  ### 4. 架构的耦合度评估：为什么 GitHub 自动流只部署前端？
+
+  本项目采用的是 Standalone Function App (独立 Serverless 模式)，而不是 SWA 托管函数一体化模式。
+
+  • 前端 (Client Edge) 静态资源完全托管在 CDN 边缘节点，由 azure-static-web-apps.yml 自动化流水线极速编译（Next.js  out  静态导出）并盲上传。
+  • 后端 (Cloud Orchestrator) 作为独立的物理机架运行在  japaneast （日本东区），与前端网络隔离。
+  • SWA 边缘网关通过其 Linked Backends 路由配置，自动将  /api/*  请求通过微软内网骨干网代理分流至后端的 Function App，实现 0-CORS 零跨域同源代理。
+  • 结论：两端在代码库中合拢，但在物理部署、运行生命周期和网络拓扑上是强隔离、弱耦合的。
+  ──────
+  ### 🛠️ 工作总结
+
+  1. 创建配置文件：创建了 .funcignore 文件，预配置了本地开发虚拟环境、本地配置及缓存文件的部署过滤规则。
+  2. 架构可行性确认：确认当前多模块路由（ FastAPI  +  AsgiFunctionApp ）和脚本隔离模式完全符合 Azure Functions Python V2 的规范，且  make deploy-function 
+  完全可用。
