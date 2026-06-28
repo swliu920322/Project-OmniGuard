@@ -21,38 +21,21 @@ fastapi_app.add_middleware(
 )
 
 
-def build_llm_client(deployment_override: str = ""):
-  provider = os.environ.get("LLM_PROVIDER", os.environ.get("OPENAI_PROVIDER", "azure")).strip().lower()
-  common_model = os.environ.get("LLM_MODEL", "").strip()
+def build_llm_client():
+  endpoint = os.environ.get("OPENAI_BASE_URL", "").strip()
+  api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+  model = os.environ.get("OPENAI_API_DEPLOYMENT_NAME", "gpt-4o-mini").strip()
 
-  # 🟩 轨道一：标准 OpenAI 或第三方中转网桥
-  if provider in {"openai", "openai-compatible", "thirdparty", "third-party"}:
-    base_url = os.environ.get("OPENAI_BASE_URL", "").strip()
-    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
-    model = common_model or os.environ.get("OPENAI_MODEL", "gpt-4o-mini").strip()
-
-    print(f"[🔥 KERNEL SIGN] 激活标准 OpenAI 客户端 // MODEL: {model} // BASE: {base_url}")
-    if not base_url or not api_key:
-      raise ValueError("Missing OPENAI_BASE_URL or OPENAI_API_KEY for third-party provider mode.")
-
-    from openai import AsyncOpenAI
-    return AsyncOpenAI(base_url=base_url, api_key=api_key), model, "openai-compatible"
-
-  # 🟩 轨道二：正统 Azure OpenAI 专家计算平面
-  endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", "").strip()
-  api_key = os.environ.get("AZURE_OPENAI_API_KEY", "").strip()
-  model = common_model or os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4o").strip()
-
-  print(f"[⚡ AZURE SIGN] 激活 Azure OpenAI 专属客户端 // DEPLOYMENT_NAME: {model} // ENDPOINT: {endpoint}")
+  print(f"[⚡ AZURE SIGN] 激活 Azure OpenAI 客户端 // DEPLOYMENT_NAME: {model} // ENDPOINT: {endpoint}")
   if not endpoint or not api_key:
-    raise ValueError("Missing AZURE_OPENAI_ENDPOINT or AZURE_OPENAI_API_KEY for Azure provider mode.")
+    raise ValueError("Missing OPENAI_BASE_URL or OPENAI_API_KEY in local.settings.json")
 
   from openai import AsyncAzureOpenAI
   return AsyncAzureOpenAI(
     azure_endpoint=endpoint,
     api_key=api_key,
     api_version="2024-10-01-preview"
-  ), model, "azure"
+  ), model
 
 
 @fastapi_app.api_route("/api/assets/auth", methods=["GET", "POST"])
@@ -93,7 +76,7 @@ async def chat_proxy(request: Request):
     user_message = req_body.get("message", "")
     page_context = req_body.get("context", "/") # 🟩 核心对账：拦截提取前端路由坐标
 
-    client, DEPLOYMENT_NAME, provider = build_llm_client()
+    client, DEPLOYMENT_NAME = build_llm_client()
 
     # 🟩 动态神经元系统：根据前端发送过来的物理路由，动态追加大模型的专业限定词
     system_prompt = "You are Shengwei's Streaming Avatar. "
@@ -104,7 +87,7 @@ async def chat_proxy(request: Request):
     elif "canvas" in page_context:
         system_prompt += "The user is browsing the Architecture Canvas page. Focus on providing architectural explanations for VNet setup, Private Endpoints, Bicep automation, and secure enterprise cloud configurations."
     else:
-        system_prompt += f"The active LLM provider is {provider}."
+        system_prompt += "The active LLM provider is Azure OpenAI."
 
     response = await client.chat.completions.create(
       model=DEPLOYMENT_NAME,
@@ -138,7 +121,7 @@ async def chat_proxy(request: Request):
     if "Resource not found" in error_text or "404" in error_text:
       error_text = (
         "Azure OpenAI deployment not found. Check local.settings.json: "
-        "AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_DEPLOYMENT_NAME, AZURE_OPENAI_API_KEY."
+        "OPENAI_BASE_URL, OPENAI_API_DEPLOYMENT_NAME, OPENAI_API_KEY."
       )
       status_code = 502
     return Response(content=json.dumps({"error": error_text, "traceback": traceback.format_exc()}), status_code=status_code,
