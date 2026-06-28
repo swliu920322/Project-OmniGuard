@@ -1,0 +1,15 @@
+# Exclude local virtual environment and package caches
+.venv/
+.python_packages/
+
+# Exclude local settings
+local.settings.json
+
+# [Optional] Exclude local execution scripts if you do not want them uploaded to Azure Functions
+# run_analysis.py
+# execute.bash
+
+# [Optional] Exclude local caches. 
+# Note: If ignored, you must run the scraper/analysis in the cloud, or save cache in Azure Blob Storage.
+# If you keep it commented out, local daily_cache files will be packaged and uploaded as a static baseline.
+# daily_cache/
