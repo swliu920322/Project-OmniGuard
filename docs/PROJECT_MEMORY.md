@@ -257,6 +257,7 @@ Bicep 模板应尽量只负责：
 | 大 V 预测 | `/prediction` | 采集推文、反爬会话配置、AI 时序提炼与宏观投研决策预测 |
 | IaC Hub | `/iac` | 列出预设模板、进入画布 |
 | IaC 画布 | `/iac/canvas` | 预览、编辑、上传 Bicep 多文件拓扑 |
+| 具身智能脑干大盘 | `/dashboard` | 展现多智能体协作、云端延迟与物理刹车物理冲突沙盘 (包含生命值、电池、核心温度与动态沙盒等) |
 
 ---
 
@@ -279,6 +280,9 @@ Bicep 模板应尽量只负责：
 
 ### `POST /api/kol/predict`
 - 更新免登录凭证，运行爬虫，缓存原始 JSON 推文并执行 AI 预测
+
+### `POST /api/simulate_agent`
+- 具身智能三智能体流水线模拟接口，支持接收及更新 HP、Battery、Temp、Velocity 变量，且支持 `override_config` 动态重写 Prompts 规则
 
 ---
 
