@@ -3,122 +3,19 @@ import os
 import json
 import logging
 import time
-import base64
-import hmac
-import hashlib
-from urllib.parse import quote
-import requests
 import azure.functions as func
-from openai import AzureOpenAI
-from azure.cosmos import CosmosClient
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
+from .utils import (
+    get_cosmos_container,
+    load_scenario_config,
+    send_c2d_message,
+    ask_agent
+)
+
 bp = func.Blueprint()
 brain_router = APIRouter()
-
-SCENARIO_REGISTRY_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scenario_registry.json")
-
-def get_brain_client():
-    """Fetch client configuration from environment and initialize AzureOpenAI."""
-    return AzureOpenAI(
-        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT", ""),
-        api_version="2024-02-15-preview",
-        api_key=os.getenv("AZURE_OPENAI_API_KEY", "")
-    )
-
-# 挂载 Cosmos DB (懒加载以避免在缺少环境变量时导入失败)
-cosmos_client = None
-database = None
-container = None
-
-def get_cosmos_container():
-    global cosmos_client, database, container
-    if container is None:
-        endpoint = os.getenv("COSMOS_ENDPOINT")
-        key = os.getenv("COSMOS_KEY")
-        if not endpoint or not key:
-            raise ValueError("COSMOS_ENDPOINT and COSMOS_KEY must be set in environment variables.")
-        cosmos_client = CosmosClient(endpoint, credential=key)
-        database = cosmos_client.get_database_client("OmniGuardDB")
-        container = database.get_container_client("DeviceTwins")
-    return container
-
-def send_c2d_message(device_id: str, message_body: str):
-    """Send Cloud-to-Device (C2D) message via IoT Hub REST API using SAS token."""
-    connection_string = os.getenv("IotHubServiceConnectionString")
-    if not connection_string:
-        raise ValueError("Missing environment variable 'IotHubServiceConnectionString'.")
-    
-    # Parse connection string
-    parts = {}
-    for part in connection_string.split(';'):
-        if '=' in part:
-            k, v = part.split('=', 1)
-            parts[k.strip()] = v.strip()
-            
-    hostname = parts.get("HostName")
-    key_name = parts.get("SharedAccessKeyName")
-    key = parts.get("SharedAccessKey")
-    
-    if not all([hostname, key_name, key]):
-        raise ValueError("Invalid IotHubServiceConnectionString format.")
-        
-    # Generate SAS Token
-    uri = hostname
-    ttl = int(time.time() + 3600)  # Token valid for 1 hour
-    encoded_uri = quote(uri, safe='')
-    signing_string = f"{encoded_uri}\n{ttl}"
-    
-    signature = base64.b64encode(
-        hmac.new(
-            base64.b64decode(key),
-            signing_string.encode('utf-8'),
-            hashlib.sha256
-        ).digest()
-    ).decode('utf-8')
-    
-    sas_token = f"SharedAccessSignature sr={encoded_uri}&sig={quote(signature, safe='')}&se={ttl}&skn={key_name}"
-    
-    # Send C2D message via POST request
-    url = f"https://{hostname}/devices/{device_id}/messages/devicebound?api-version=2020-09-30"
-    headers = {
-        "Authorization": sas_token,
-        "Content-Type": "application/json"
-    }
-    
-    response = requests.post(url, data=message_body, headers=headers)
-    if response.status_code not in (200, 204):
-        raise Exception(f"IoT Hub REST API returned status {response.status_code}: {response.text}")
-
-def ask_agent(system_prompt: str, user_input: str, max_completion_tokens: int = 100) -> str:
-    """Helper to query Azure OpenAI with clean inputs/outputs."""
-    brain = get_brain_client()
-    deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4")
-    response = brain.chat.completions.create(
-        model=deployment,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_input}
-        ],
-        max_completion_tokens=max_completion_tokens,
-        temperature=0.0
-    )
-    return response.choices[0].message.content.strip()
-
-def load_scenario_config(tenant_id: str) -> dict:
-    """Load scenario configuration for a tenant. Fallback to Tenant-Alpha if unknown."""
-    if not os.path.exists(SCENARIO_REGISTRY_PATH):
-        logging.error(f"Scenario registry not found at {SCENARIO_REGISTRY_PATH}")
-        return None
-        
-    try:
-        with open(SCENARIO_REGISTRY_PATH, 'r', encoding='utf-8') as f:
-            registry = json.load(f)
-        return registry.get(tenant_id) or registry.get("Tenant-Alpha")
-    except Exception as e:
-        logging.error(f"Failed to load scenario registry: {e}")
-        return None
 
 @bp.event_hub_message_trigger(
     arg_name="azeventhub",
@@ -180,8 +77,12 @@ def iot_telemetry_processor(azeventhub: func.EventHubEvent):
             # Stage 3: Agent 2 - Compliance & Safety (Audit)
             safety_rules = config.get("agent_safety_rules")
             safety_system_prompt = (
-                "You are the safety firewall. Evaluate the situation based on the strict rules. "
-                "Reply 'PASS' if safe to proceed, or 'BLOCK: [reason]' if it violates safety."
+                "You are the safety firewall. Evaluate the situation based on the strict rules.\n"
+                "Tenant rules configuration:\n"
+                f"- Safety rules: {safety_rules}\n\n"
+                "Task: Compare the current Telemetry against the safety rules. "
+                "If the current distance violates the minimum distance requirement (e.g. if the rule specifies '30cm minimum distance' and the current distance is less than 30), "
+                "or if any other safety rule is violated, you MUST reply 'BLOCK: [reason]'. Otherwise, reply 'PASS'."
             )
             safety_input = (
                 f"Rules: {safety_rules}\n"
@@ -247,6 +148,7 @@ async def simulate_agent_endpoint(request: Request):
     tenant_id = req_body.get("tenant_id")
     obstacle = req_body.get("obstacle_distance_cm")
     current_x = req_body.get("current_x", 0)
+    target_speed = req_body.get("target_speed", 50)
     device_id = "Simulated-Device"
     
     if not tenant_id or obstacle is None:
@@ -286,8 +188,12 @@ async def simulate_agent_endpoint(request: Request):
             # Stage 3: Agent 2 - Compliance & Safety (Audit)
             safety_rules = config.get("agent_safety_rules")
             safety_system_prompt = (
-                "You are the safety firewall. Evaluate the situation based on the strict rules. "
-                "Reply 'PASS' if safe to proceed, or 'BLOCK: [reason]' if it violates safety."
+                "You are the safety firewall. Evaluate the situation based on the strict rules.\n"
+                "Tenant rules configuration:\n"
+                f"- Safety rules: {safety_rules}\n\n"
+                "Task: Compare the current Telemetry against the safety rules. "
+                "If the current distance violates the minimum distance requirement (e.g. if the rule specifies '30cm minimum distance' and the current distance is less than 30), "
+                "or if any other safety rule is violated, you MUST reply 'BLOCK: [reason]'. Otherwise, reply 'PASS'."
             )
             safety_input = (
                 f"Rules: {safety_rules}\n"
@@ -314,7 +220,7 @@ async def simulate_agent_endpoint(request: Request):
                 compiler_input = (
                     f"Schema: {execution_schema}\n"
                     f"Intent: {intent}\n"
-                    f"Telemetry: Distance: {obstacle}cm, X: {current_x}"
+                    f"Telemetry: Distance: {obstacle}cm, X: {current_x}, Target Speed Limit: {target_speed}cm/s"
                 )
                 
                 action_json = ask_agent(compiler_system_prompt, compiler_input, max_completion_tokens=100)
