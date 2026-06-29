@@ -1,7 +1,7 @@
 # =========================================================================
 # 🛠️ Project-OmniGuard 统一控制总线
 # =========================================================================
-.PHONY: provision start-backend start-frontend destroy deploy-function trigger-ci help
+.PHONY: provision start-backend start-frontend destroy deploy-function trigger-ci help add-device
 
 help:
 	@echo "======================================================"
@@ -39,3 +39,6 @@ deploy-function:
 trigger-ci:
 	@chmod +x ./sh/trigger-ci.sh
 	./sh/trigger-ci.sh
+
+add-device:
+	@bash sh/add-device.sh $(DEV)
