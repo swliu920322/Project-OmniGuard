@@ -19,8 +19,8 @@ _cosmos_container = None
 def get_cosmos_container():
     global _cosmos_container
     if _cosmos_container is None:
-        endpoint = os.getenv("COSMOS_DB_ENDPOINT")
-        key = os.getenv("COSMOS_DB_KEY")
+        endpoint = os.getenv("COSMOS_ENDPOINT")
+        key = os.getenv("COSMOS_KEY")
         if not endpoint or not key:
             raise ValueError("Cosmos DB environment variables missing.")
         client = CosmosClient(endpoint, credential=key)
@@ -82,7 +82,7 @@ def send_c2d_message(device_id: str, message_body: str):
 def ask_agent(system_prompt: str, user_input: str, max_completion_tokens: int = 100) -> str:
     api_key = os.getenv("AZURE_OPENAI_API_KEY")
     endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
-    deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-5.4-mini")
+    deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-5.4-mini")
     
     if not api_key or not endpoint:
         raise ValueError("Azure OpenAI credentials missing.")
