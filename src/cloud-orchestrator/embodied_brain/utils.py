@@ -79,19 +79,25 @@ def send_c2d_message(device_id: str, message_body: str):
     except Exception as e:
         logging.error(f"Error calling IoT Hub C2D API: {e}")
 
+_openai_client = None
+
+def get_openai_client():
+    global _openai_client
+    if _openai_client is None:
+        api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+        if not api_key or not endpoint:
+            raise ValueError("Azure OpenAI credentials missing.")
+        _openai_client = AzureOpenAI(
+            api_key=api_key,
+            api_version="2024-02-15-preview",
+            azure_endpoint=endpoint
+        )
+    return _openai_client
+
 def ask_agent(system_prompt: str, user_input: str, max_completion_tokens: int = 100) -> str:
-    api_key = os.getenv("AZURE_OPENAI_API_KEY")
-    endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
     deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-5.4-mini")
-    
-    if not api_key or not endpoint:
-        raise ValueError("Azure OpenAI credentials missing.")
-        
-    client = AzureOpenAI(
-        api_key=api_key,
-        api_version="2024-02-15-preview",
-        azure_endpoint=endpoint
-    )
+    client = get_openai_client()
     
     response = client.chat.completions.create(
         model=deployment,
