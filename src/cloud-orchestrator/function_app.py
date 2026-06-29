@@ -30,6 +30,10 @@ fastapi_app.include_router(digital_human_router)
 # 注册大 V 预测时序管线路由
 fastapi_app.include_router(kol_analysis_router)
 
+# 注册具身智能脑干大盘模拟器路由
+from embodied_brain import brain_router
+fastapi_app.include_router(brain_router)
+
 # 4. 🏁 顶级合拢：将 FastAPI 包裹并交付给 Azure Functions ASGI 运行时
 app = func.AsgiFunctionApp(
     app=fastapi_app,

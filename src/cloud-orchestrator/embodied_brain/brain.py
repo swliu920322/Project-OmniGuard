@@ -11,8 +11,11 @@ import requests
 import azure.functions as func
 from openai import AzureOpenAI
 from azure.cosmos import CosmosClient
+from fastapi import APIRouter, Request
+from fastapi.responses import JSONResponse
 
 bp = func.Blueprint()
+brain_router = APIRouter()
 
 SCENARIO_REGISTRY_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scenario_registry.json")
 
@@ -225,3 +228,122 @@ def iot_telemetry_processor(azeventhub: func.EventHubEvent):
 
     except Exception as e:
         logging.error(f"[FATAL] 系统熔断: {str(e)}")
+
+@brain_router.post("/simulate_agent")
+async def simulate_agent_endpoint(request: Request):
+    """Simulate the Multi-Agent pipeline via HTTP POST request for the dashboard."""
+    start_time = time.time()
+    pipeline_trace = []
+    final_action = []
+    
+    try:
+        req_body = await request.json()
+    except Exception:
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Invalid JSON body"}
+        )
+        
+    tenant_id = req_body.get("tenant_id")
+    obstacle = req_body.get("obstacle_distance_cm")
+    current_x = req_body.get("current_x", 0)
+    device_id = "Simulated-Device"
+    
+    if not tenant_id or obstacle is None:
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Missing required fields: tenant_id, obstacle_distance_cm"}
+        )
+        
+    try:
+        # Load scenario configuration
+        config = load_scenario_config(tenant_id)
+        if not config:
+            return JSONResponse(
+                status_code=404,
+                content={"error": f"Scenario config not found for tenant '{tenant_id}'"}
+            )
+            
+        # We also simulate reading the last state from Cosmos DB
+        last_state = None
+        try:
+            last_state = get_cosmos_container().read_item(item="Robo-A1", partition_key=tenant_id)
+        except Exception:
+            pass
+            
+        # Stage 2: Agent 1 - Intent Router (Classification)
+        router_prompt = config.get("agent_router_prompt")
+        router_input = f"Telemetry: Distance: {obstacle}cm, X: {current_x}, Device: {device_id}."
+        
+        intent = ask_agent(router_prompt, router_input, max_completion_tokens=20)
+        pipeline_trace.append({"agent": "Router", "decision": intent})
+        
+        if "SENSOR_ERROR" in intent.upper():
+            final_action = [{"action": "stop"}]
+            pipeline_trace.append({"agent": "Safety", "decision": "SKIPPED", "status": "SHORT_CIRCUIT"})
+            pipeline_trace.append({"agent": "Action Compiler", "decision": "SKIPPED", "status": "SHORT_CIRCUIT"})
+        else:
+            # Stage 3: Agent 2 - Compliance & Safety (Audit)
+            safety_rules = config.get("agent_safety_rules")
+            safety_system_prompt = (
+                "You are the safety firewall. Evaluate the situation based on the strict rules. "
+                "Reply 'PASS' if safe to proceed, or 'BLOCK: [reason]' if it violates safety."
+            )
+            safety_input = (
+                f"Rules: {safety_rules}\n"
+                f"Intent: {intent}\n"
+                f"Telemetry: Distance: {obstacle}cm, X: {current_x}\n"
+                f"Last State: {json.dumps(last_state) if last_state else 'None'}"
+            )
+            
+            safety_decision = ask_agent(safety_system_prompt, safety_input, max_completion_tokens=50)
+            
+            if safety_decision.upper().startswith("BLOCK"):
+                final_action = [{"action": "stop", "reason": "safety_override"}]
+                pipeline_trace.append({"agent": "Safety", "decision": safety_decision, "status": "BLOCKED"})
+                pipeline_trace.append({"agent": "Action Compiler", "decision": "SKIPPED", "status": "SHORT_CIRCUIT"})
+            else:
+                pipeline_trace.append({"agent": "Safety", "decision": safety_decision, "status": "PASS"})
+                
+                # Stage 4: Agent 3 - Action Compiler (Execution)
+                execution_schema = config.get("agent_execution_schema")
+                compiler_system_prompt = (
+                    "You are the Action Compiler. Generate evasive actions strictly conforming to the JSON schema. "
+                    "NO markdown. NO text. Return ONLY raw JSON array matching the schema."
+                )
+                compiler_input = (
+                    f"Schema: {execution_schema}\n"
+                    f"Intent: {intent}\n"
+                    f"Telemetry: Distance: {obstacle}cm, X: {current_x}"
+                )
+                
+                action_json = ask_agent(compiler_system_prompt, compiler_input, max_completion_tokens=100)
+                
+                if action_json.startswith("```"):
+                    lines = action_json.splitlines()
+                    if lines[0].startswith("```"):
+                        lines = lines[1:]
+                    if lines[-1].startswith("```"):
+                        lines = lines[:-1]
+                    action_json = "\n".join(lines).strip()
+                
+                try:
+                    final_action = json.loads(action_json)
+                except Exception:
+                    final_action = [{"raw_output": action_json}]
+                
+                pipeline_trace.append({"agent": "Action Compiler", "decision": action_json, "status": "COMPILED"})
+                
+        latency_ms = int((time.time() - start_time) * 1000)
+        
+        response_body = {
+            "latency_ms": latency_ms,
+            "final_action": final_action,
+            "pipeline_trace": pipeline_trace
+        }
+        
+        return JSONResponse(status_code=200, content=response_body)
+        
+    except Exception as e:
+        logging.error(f"Error in simulate_agent: {e}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
