@@ -9,9 +9,10 @@ export interface BicepPresetWorkspace {
 export const BICEP_ARCH_PRESETS: Record<string, BicepPresetWorkspace> = {};
 
 try {
-  const bicepContext = require.context('@/presets', true, /\.bicep$/);
-  const jsonContext = require.context('@/presets', true, /metadata\.json$/);
-  const imgContext = require.context('@/presets', true, /cover\.(png|jpg|jpeg|img)$/);
+  const req = require as any;
+  const bicepContext = req.context('@/presets', true, /\.bicep$/);
+  const jsonContext = req.context('@/presets', true, /metadata\.json$/);
+  const imgContext = req.context('@/presets', true, /cover\.(png|jpg|jpeg|img)$/);
 
   // 🎯 【核心绝杀】：用正则表达式无视前缀，强行捞出 presets/ 紧跟的真实文件夹名
   const extractPresetKey = (webpackKey: string): string | null => {
@@ -27,7 +28,7 @@ try {
   const presetFolderSet = new Set<string>();
   const allContextKeys = [...bicepContext.keys(), ...jsonContext.keys(), ...imgContext.keys()];
 
-  allContextKeys.forEach((key) => {
+  allContextKeys.forEach((key: string) => {
     const folderName = extractPresetKey(key);
     if (folderName) {
       presetFolderSet.add(folderName);
@@ -42,7 +43,7 @@ try {
     let workspaceCover: string | undefined = undefined;
 
     // 1. 倒灌属于当前文件夹下的所有多个 .bicep 文件
-    bicepContext.keys().forEach((key) => {
+    bicepContext.keys().forEach((key: string) => {
       if (extractPresetKey(key) === folderName) {
         // 清洗出纯净的 VFS 相对路径指针 (确保在详情页里树状层级对账正确)
         const parts = key.split('/');
@@ -57,7 +58,7 @@ try {
     if (Object.keys(workspaceFiles).length === 0) return;
 
     // 2. 倒灌说明书
-    jsonContext.keys().forEach((key) => {
+    jsonContext.keys().forEach((key: string) => {
       if (extractPresetKey(key) === folderName) {
         try {
           const metadata = jsonContext(key);
@@ -68,7 +69,7 @@ try {
     });
 
     // 3. 倒灌封面图
-    imgContext.keys().forEach((key) => {
+    imgContext.keys().forEach((key: string) => {
       if (extractPresetKey(key) === folderName) {
         workspaceCover = imgContext(key).default || imgContext(key);
       }

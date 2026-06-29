@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Draggable, { DraggableEventHandler } from 'react-draggable'; // 高性能拖拽底座
+const CustomDraggable = Draggable as any;
 import { MessageSquare } from 'lucide-react';
 import AvatarPopup from './AvatarPopup';
 import { bootEdgeComputeKernel, evaluateLocalRAGContext, runLocalGPUPipeline, cloudInferencePipeline } from './kernel';
@@ -166,7 +167,7 @@ export default function CognitiveAvatarWidget() {
   };
 
   return (
-    <Draggable
+    <CustomDraggable
       nodeRef={widgetRef}
       delay={150} // 150ms 缓动引信
       onStart={() => {
@@ -176,17 +177,8 @@ export default function CognitiveAvatarWidget() {
         isDragging.current = true; // 发生物理位移，锁死长按状态
       }}
       onStop={handleDragStop}
-      defaultPosition={{x: 0, y: 0}} allowAnyClick={false} allowMobileScroll={false} disabled={false}
-      enableUserSelectHack={false} onMouseDown={function (e: MouseEvent): void {
-      throw new Error("Function not implemented.");
-    }} scale={0} cancel={""} offsetParent={undefined} grid={[]} handle={""} axis={"both"} bounds={""}
-      defaultClassName={""} defaultClassNameDragging={""} defaultClassNameDragged={""} positionOffset={{
-      x: "",
-      y: ""
-    }} position={{
-      x: 0,
-      y: 0
-    }}    >
+      defaultPosition={{x: 0, y: 0}}
+    >
       <div
         ref={widgetRef}
         className="fixed bottom-6 right-6 z-50 font-sans text-slate-200 flex flex-col items-center select-none"
@@ -226,6 +218,6 @@ export default function CognitiveAvatarWidget() {
         </button>
 
       </div>
-    </Draggable>
+    </CustomDraggable>
   );
 }

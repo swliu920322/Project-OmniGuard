@@ -15,7 +15,7 @@ const nextConfig = {
   trailingSlash: true,
 
   // 🎯 强制转译这几个 ESM 依赖以使 SWC/Webpack 兼容 import.meta 语法
-  transpilePackages: ['onnxruntime-web'],
+  transpilePackages: [],
 
   // 🎯 【新增强调防护罩】：刚性宣告禁止 Next.js 服务端组件去打包 transformers 内部的重型二进制
   experimental: {
@@ -24,18 +24,13 @@ const nextConfig = {
 
   // 3. 强行重焊 Webpack 编译引擎
   webpack: (config, { isServer }) => {
-    // 🟩 允许在 JS/MJS 中使用 import.meta
-    config.module.rules.push({
-      test: /\.mjs$/,
-      parser: {
-        javascript: {
-          importMeta: true,
-        },
-      },
-    });
-
-    // 🟩 保持原有配置：重焊 Webpack 别名指针
-    config.resolve.alias['@'] = path.resolve(__dirname, './src');
+    // 🟩 保持原有配置并增加别名指针：将 onnxruntime-web 强制指向 CommonJS 绝对物理路径，避免 Webpack 触发 package exports 检查并绕过 ESM 的 import.meta 报错
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname, './src'),
+      'onnxruntime-web/webgpu$': path.resolve(__dirname, 'node_modules/onnxruntime-web/dist/ort.webgpu.min.js'),
+      'onnxruntime-web$': path.resolve(__dirname, 'node_modules/onnxruntime-web/dist/ort.min.js'),
+    };
 
 		// 🎯 【核心绝杀】：让 Webpack 5 原生以纯文本字符串（type: 'asset/source'）读取全量 .bicep 文件
     // 这能彻底斩断在 TS 里人肉拼写字符串的业余做法

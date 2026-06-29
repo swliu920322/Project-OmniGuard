@@ -15,13 +15,13 @@ interface BicepTopologyCanvasProps {
 export default function BicepTopologyCanvas({ bicepCode, currentFile, onModuleNavigate }: BicepTopologyCanvasProps) {
 
   const topologyResult = useMemo(() => {
-    if (!bicepCode.trim()) return { nodes: [], edges: [], error: '文件内容为空，请注入 Bicep 源码。' };
+    if (!bicepCode.trim()) return { nodes: [] as Node[], edges: [] as Edge[], error: '文件内容为空，请注入 Bicep 源码。' };
     try {
       const { nodes, edges } = parseBicepToElements(bicepCode);
-      if (nodes.length === 0) return { nodes: [], edges: [], error: '未探测到标准的 resource 或 module 声明。配置解析失败。' };
+      if (nodes.length === 0) return { nodes: [] as Node[], edges: [] as Edge[], error: '未探测到标准的 resource 或 module 声明。配置解析失败。' };
       return { nodes, edges, error: null };
     } catch (err) {
-      return { nodes: [], edges: [], error: 'Bicep 语法结构发生严重断层，无法完成隐式符号对账。' };
+      return { nodes: [] as Node[], edges: [] as Edge[], error: 'Bicep 语法结构发生严重断层，无法完成隐式符号对账。' };
     }
   }, [bicepCode]);
 
