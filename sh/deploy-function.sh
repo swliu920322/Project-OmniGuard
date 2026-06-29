@@ -43,52 +43,45 @@ if [ ! -f "$SETTINGS_FILE" ]; then
   exit 1
 fi
 
-# 提取关键配置
-LLM_PROVIDER=$(grep -o '"LLM_PROVIDER": "[^"]*"' "$SETTINGS_FILE" | cut -d'"' -f4)
-AZURE_OPENAI_ENDPOINT=$(grep -o '"AZURE_OPENAI_ENDPOINT": "[^"]*"' "$SETTINGS_FILE" | cut -d'"' -f4)
-AZURE_OPENAI_API_KEY=$(grep -o '"AZURE_OPENAI_API_KEY": "[^"]*"' "$SETTINGS_FILE" | cut -d'"' -f4)
-AZURE_OPENAI_DEPLOYMENT_NAME=$(grep -o '"AZURE_OPENAI_DEPLOYMENT_NAME": "[^"]*"' "$SETTINGS_FILE" | cut -d'"' -f4)
-OPENAI_BASE_URL=$(grep -o '"OPENAI_BASE_URL": "[^"]*"' "$SETTINGS_FILE" | cut -d'"' -f4)
-OPENAI_API_KEY=$(grep -o '"OPENAI_API_KEY": "[^"]*"' "$SETTINGS_FILE" | cut -d'"' -f4)
-OPENAI_MODEL=$(grep -o '"OPENAI_MODEL": "[^"]*"' "$SETTINGS_FILE" | cut -d'"' -f4)
+# 使用 Python 提取 local.settings.json 中的所有 Values，并安全同步到 Azure App Settings
+# 这样可以自动同步包括 OPENAI_BASE_URL, OPENAI_API_KEY, SMTP_SERVER 等在内的所有配置，且避免 shell 转义/特殊字符截断问题
+python3 -c '
+import json, subprocess, sys
+try:
+    with open("src/cloud-orchestrator/local.settings.json") as f:
+        data = json.load(f)
+    values = data.get("Values", {})
+    
+    # 过滤掉不需要覆盖或云端托管的 key
+    exclude_keys = {"AzureWebJobsStorage", "FUNCTIONS_WORKER_RUNTIME"}
+    settings = []
+    for k, v in values.items():
+        if k not in exclude_keys:
+            settings.append(f"{k}={v}")
+            
+    # 强制注入生产所需的环境变量默认值
+    for k, v in [("LOCAL_MOCK_MODE", "false"), ("PYTHON_ENABLE_INIT_INDEXING", "1"), ("FUNCTIONS_WORKER_PROCESS_COUNT", "4")]:
+        if k == "LOCAL_MOCK_MODE":
+            settings = [s for s in settings if not s.startswith("LOCAL_MOCK_MODE=")]
+            settings.append("LOCAL_MOCK_MODE=false")
+        elif not any(s.startswith(f"{k}=") for s in settings):
+            settings.append(f"{k}={v}")
 
-echo "🔧 检测到的配置:"
-echo "  LLM_PROVIDER: ${LLM_PROVIDER:-N/A}"
-echo "  AZURE_OPENAI_DEPLOYMENT_NAME: ${AZURE_OPENAI_DEPLOYMENT_NAME:-N/A}"
-
-# 构建 appsettings 数组
-APP_SETTINGS=(
-  "LLM_PROVIDER=${LLM_PROVIDER:-azure}"
-  "LOCAL_MOCK_MODE=false"
-  "PYTHON_ENABLE_INIT_INDEXING=1"
-  "FUNCTIONS_WORKER_PROCESS_COUNT=2"
-)
-
-if [ "$LLM_PROVIDER" = "openai-compatible" ] || [ "$LLM_PROVIDER" = "thirdparty" ]; then
-  APP_SETTINGS+=(
-    "OPENAI_BASE_URL=${OPENAI_BASE_URL}"
-    "OPENAI_API_KEY=${OPENAI_API_KEY}"
-    "OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}"
-    "LLM_MODEL=${OPENAI_MODEL:-gpt-4o-mini}"
-  )
-else
-  APP_SETTINGS+=(
-    "AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}"
-    "AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}"
-    "AZURE_OPENAI_DEPLOYMENT_NAME=${AZURE_OPENAI_DEPLOYMENT_NAME:-gpt-4o}"
-    "LLM_MODEL=${AZURE_OPENAI_DEPLOYMENT_NAME:-gpt-4o}"
-  )
-fi
-
-# 上传配置到云端 Function App
-echo -e "\n✅ [3/4] 上传配置到函数应用..."
-az functionapp config appsettings set \
-  --name "$FUNC_NAME" \
-  --resource-group "$RG" \
-  --settings "${APP_SETTINGS[@]}" \
-  --output none
-
-echo "✅ 配置已上传"
+    # 调用 az cli 写入配置
+    cmd = [
+        "az", "functionapp", "config", "appsettings", "set",
+        "--name", "'"$FUNC_NAME"'",
+        "--resource-group", "'"$RG"'",
+        "--settings"
+    ] + settings + ["--output", "none"]
+    
+    print("⏳ 正在同步本地 local.settings.json 中的环境变量到云端...")
+    subprocess.run(cmd, check=True)
+    print("✅ 环境变量同步成功！")
+except Exception as e:
+    print(f"❌ 同步环境变量失败: {e}", file=sys.stderr)
+    sys.exit(1)
+'
 
 # 部署 Python 代码
 echo -e "\n✅ [4/4] 部署 Function 代码..."
