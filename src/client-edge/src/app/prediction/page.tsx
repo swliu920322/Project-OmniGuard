@@ -93,7 +93,7 @@ export default function PredictionPage() {
 
   const fetchKols = async () => {
     try {
-      const res = await fetch('http://localhost:7071/api/kol/list');
+      const res = await fetch('/api/kol/list');
       if (res.ok) {
         const data = await res.json();
         setKols(data);
@@ -107,7 +107,7 @@ export default function PredictionPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`http://localhost:7071/api/kol/report?target_user_id=${kolId}`);
+      const res = await fetch(`/api/kol/report?target_user_id=${kolId}`);
       if (res.ok) {
         const data = await res.json();
         setReport(data);
@@ -118,7 +118,7 @@ export default function PredictionPage() {
       }
     } catch (e) {
       setReport(null);
-      setError('无法连接到后端服务，请确认 Azure Functions (func start) 已经在 7071 端口运行。');
+      setError('无法连接到后端服务，请确认后端 API 正在运行。');
     } finally {
       setLoading(false);
     }
