@@ -208,6 +208,13 @@ async def simulate_agent_endpoint(request: Request):
         battery = int(req_body.get("battery", 100))
         temperature = int(req_body.get("temperature", 40))
 
+        # Initialize metrics
+        t_cosmos_read = 0
+        t_agent_1 = 0
+        t_agent_2 = 0
+        t_agent_3 = 0
+        t_cosmos_write = 0
+
         # Upsert simulated twin data to Cosmos DB
         twin_data = {
             "id": "Robo-A1",
@@ -225,11 +232,13 @@ async def simulate_agent_endpoint(request: Request):
             },
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         }
+        t0 = time.time()
         try:
             get_cosmos_container().upsert_item(twin_data)
             logging.info("[💾 模拟器持久化] 模拟器 twin 状态已写入 Cosmos DB。")
         except Exception as ce:
             logging.warning(f"Failed to write simulated twin to Cosmos DB: {ce}")
+        t_cosmos_write = int((time.time() - t0) * 1000)
 
         # Short-circuit logic for simulated state (Blueprint 005 Section 2)
         if hp <= 0:
@@ -244,17 +253,21 @@ async def simulate_agent_endpoint(request: Request):
             pipeline_trace.append({"agent": "Action Compiler", "decision": "SKIPPED", "status": "SHORT_CIRCUIT"})
         else:
             # We also simulate reading the last state from Cosmos DB
+            t0 = time.time()
             last_state = None
             try:
                 last_state = get_cosmos_container().read_item(item="Robo-A1", partition_key=tenant_id)
             except Exception:
                 pass
+            t_cosmos_read = int((time.time() - t0) * 1000)
                 
             # Stage 2: Agent 1 - Intent Router (Classification)
             router_prompt = config.get("agent_router_prompt")
             router_input = f"Telemetry: Distance: {obstacle}cm, X: {current_x}, Velocity: {velocity}m/s, HP: {hp}, Battery: {battery}%, Temp: {temperature}C, Device: {device_id}."
             
+            t0 = time.time()
             intent = ask_agent(router_prompt, router_input, max_completion_tokens=20)
+            t_agent_1 = int((time.time() - t0) * 1000)
             pipeline_trace.append({"agent": "Router", "decision": intent})
             
             if "SENSOR_ERROR" in intent.upper():
@@ -280,7 +293,9 @@ async def simulate_agent_endpoint(request: Request):
                     f"Last State: {json.dumps(last_state) if last_state else 'None'}"
                 )
                 
+                t0 = time.time()
                 safety_decision = ask_agent(safety_system_prompt, safety_input, max_completion_tokens=50)
+                t_agent_2 = int((time.time() - t0) * 1000)
                 
                 if safety_decision.upper().startswith("BLOCK"):
                     final_action = [{"action": "stop", "reason": "safety_override"}]
@@ -301,7 +316,9 @@ async def simulate_agent_endpoint(request: Request):
                         f"Telemetry: Distance: {obstacle}cm, X: {current_x}, Velocity: {velocity}m/s, Target Speed Limit: {target_speed}cm/s"
                     )
                     
+                    t0 = time.time()
                     action_json = ask_agent(compiler_system_prompt, compiler_input, max_completion_tokens=100)
+                    t_agent_3 = int((time.time() - t0) * 1000)
                     
                     if action_json.startswith("```"):
                         lines = action_json.splitlines()
@@ -326,7 +343,11 @@ async def simulate_agent_endpoint(request: Request):
             "pipeline_trace": pipeline_trace,
             "cloud_metrics": {
                 "cosmos_db_ru_charge": 10.67,
-                "cosmos_write_latency_ms": 5.3,
+                "cosmos_write_latency_ms": t_cosmos_write,
+                "cosmos_read_latency_ms": t_cosmos_read,
+                "agent_1_latency_ms": t_agent_1,
+                "agent_2_latency_ms": t_agent_2,
+                "agent_3_latency_ms": t_agent_3,
                 "execution_environment": "Azure Functions (Linux Consumption)",
                 "vnet_isolation": "Active (BackendSubnet)",
                 "iot_hub_routing": "Event Hubs Compatible Endpoint"
