@@ -38,8 +38,12 @@ def run_telemetry_loop():
         "tenant_id": "Tenant-Alpha",
         "device_id": "Robo-A1",
         "location": {"x": x_coord, "y": 15},
-        "status": "idle",
-        "obstacle_distance_cm": 10 if x_coord % 5 == 0 else 10
+        "status": "ACTIVE",
+        "obstacle_distance_cm": 80 - (x_coord % 50),
+        "velocity": 1.5,
+        "hp": 100,
+        "battery": 100 - (x_coord % 10),
+        "temperature": 40 + (x_coord % 5)
       }
       msg = Message(json.dumps(payload))
       msg.message_id = f"msg-{x_coord}"
