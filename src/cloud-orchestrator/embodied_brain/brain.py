@@ -130,7 +130,7 @@ def iot_telemetry_processor(azeventhub: func.EventHubEvent):
     except Exception as e:
         logging.error(f"[FATAL] 系统熔断: {str(e)}")
 
-@brain_router.post("/simulate_agent")
+@brain_router.post("/api/simulate_agent")
 async def simulate_agent_endpoint(request: Request):
     """Simulate the Multi-Agent pipeline via HTTP POST request for the dashboard."""
     start_time = time.time()
