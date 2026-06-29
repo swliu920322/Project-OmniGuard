@@ -9,6 +9,7 @@ src/cloud-orchestrator/__pycache__/
 src/cloud-orchestrator/*/.pyc
 */setting.local.json
 /src/cloud-orchestrator/edge-simulator/.env
+/.azure/main.json
 # 过滤前端不必要的依赖
 node_modules/
 .next/

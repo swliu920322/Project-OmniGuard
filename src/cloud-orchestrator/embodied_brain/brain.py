@@ -2,10 +2,19 @@
 import os
 import json
 import logging
+import time
+import base64
+import hmac
+import hashlib
+from urllib.parse import quote
+import requests
 import azure.functions as func
 from openai import AzureOpenAI
+from azure.cosmos import CosmosClient
 
 bp = func.Blueprint()
+
+SCENARIO_REGISTRY_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scenario_registry.json")
 
 def get_brain_client():
     """Fetch client configuration from environment and initialize AzureOpenAI."""
@@ -14,6 +23,99 @@ def get_brain_client():
         api_version="2024-02-15-preview",
         api_key=os.getenv("AZURE_OPENAI_API_KEY", "")
     )
+
+# 挂载 Cosmos DB (懒加载以避免在缺少环境变量时导入失败)
+cosmos_client = None
+database = None
+container = None
+
+def get_cosmos_container():
+    global cosmos_client, database, container
+    if container is None:
+        endpoint = os.getenv("COSMOS_ENDPOINT")
+        key = os.getenv("COSMOS_KEY")
+        if not endpoint or not key:
+            raise ValueError("COSMOS_ENDPOINT and COSMOS_KEY must be set in environment variables.")
+        cosmos_client = CosmosClient(endpoint, credential=key)
+        database = cosmos_client.get_database_client("OmniGuardDB")
+        container = database.get_container_client("DeviceTwins")
+    return container
+
+def send_c2d_message(device_id: str, message_body: str):
+    """Send Cloud-to-Device (C2D) message via IoT Hub REST API using SAS token."""
+    connection_string = os.getenv("IotHubServiceConnectionString")
+    if not connection_string:
+        raise ValueError("Missing environment variable 'IotHubServiceConnectionString'.")
+    
+    # Parse connection string
+    parts = {}
+    for part in connection_string.split(';'):
+        if '=' in part:
+            k, v = part.split('=', 1)
+            parts[k.strip()] = v.strip()
+            
+    hostname = parts.get("HostName")
+    key_name = parts.get("SharedAccessKeyName")
+    key = parts.get("SharedAccessKey")
+    
+    if not all([hostname, key_name, key]):
+        raise ValueError("Invalid IotHubServiceConnectionString format.")
+        
+    # Generate SAS Token
+    uri = hostname
+    ttl = int(time.time() + 3600)  # Token valid for 1 hour
+    encoded_uri = quote(uri, safe='')
+    signing_string = f"{encoded_uri}\n{ttl}"
+    
+    signature = base64.b64encode(
+        hmac.new(
+            base64.b64decode(key),
+            signing_string.encode('utf-8'),
+            hashlib.sha256
+        ).digest()
+    ).decode('utf-8')
+    
+    sas_token = f"SharedAccessSignature sr={encoded_uri}&sig={quote(signature, safe='')}&se={ttl}&skn={key_name}"
+    
+    # Send C2D message via POST request
+    url = f"https://{hostname}/devices/{device_id}/messages/devicebound?api-version=2020-09-30"
+    headers = {
+        "Authorization": sas_token,
+        "Content-Type": "application/json"
+    }
+    
+    response = requests.post(url, data=message_body, headers=headers)
+    if response.status_code not in (200, 204):
+        raise Exception(f"IoT Hub REST API returned status {response.status_code}: {response.text}")
+
+def ask_agent(system_prompt: str, user_input: str, max_completion_tokens: int = 100) -> str:
+    """Helper to query Azure OpenAI with clean inputs/outputs."""
+    brain = get_brain_client()
+    deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4")
+    response = brain.chat.completions.create(
+        model=deployment,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_input}
+        ],
+        max_completion_tokens=max_completion_tokens,
+        temperature=0.0
+    )
+    return response.choices[0].message.content.strip()
+
+def load_scenario_config(tenant_id: str) -> dict:
+    """Load scenario configuration for a tenant. Fallback to Tenant-Alpha if unknown."""
+    if not os.path.exists(SCENARIO_REGISTRY_PATH):
+        logging.error(f"Scenario registry not found at {SCENARIO_REGISTRY_PATH}")
+        return None
+        
+    try:
+        with open(SCENARIO_REGISTRY_PATH, 'r', encoding='utf-8') as f:
+            registry = json.load(f)
+        return registry.get(tenant_id) or registry.get("Tenant-Alpha")
+    except Exception as e:
+        logging.error(f"Failed to load scenario registry: {e}")
+        return None
 
 @bp.event_hub_message_trigger(
     arg_name="azeventhub",
@@ -30,43 +132,96 @@ def iot_telemetry_processor(azeventhub: func.EventHubEvent):
         payload = json.loads(raw_data)
         obstacle = payload.get("obstacle_distance_cm", 100)
         tenant_id = payload.get("tenant_id", "Unknown-Tenant")
+        current_x = payload.get("location", {}).get("x", 0)
 
-        # Trigger agent decision when obstacle is close (< 15cm)
+        # 🟩 1.5. 读取 Cosmos DB 中的上一次状态 (用于安全审计)
+        last_state = None
+        try:
+            last_state = get_cosmos_container().read_item(item=device_id, partition_key=tenant_id)
+        except Exception:
+            pass
+
+        # 🟩 2. 状态孪生持久化：无视大模型是否触发，高频刷入 Cosmos DB
+        twin_data = {
+            "id": device_id,  # CosmosDB 主键
+            "tenant_id": tenant_id,  # 物理隔离分区键
+            "last_x": current_x,
+            "last_obstacle": obstacle,
+            "status": "active"
+        }
+        get_cosmos_container().upsert_item(twin_data)
+        logging.info(f"[💾 记忆固化] 探针 {device_id} 状态已写入 Cosmos DB。")
+
+        # 🟩 3. 物理短路判定与 Agent 唤醒
         if obstacle < 15:
-            logging.warning(f"[⚠️ 警报触发] 探针 {device_id} 遭遇障碍阻挡 ({obstacle}cm)！唤醒云端 Agent 大脑...")
+            logging.warning(f"[⚠️ 警报触发] {device_id} 遭遇绝境 ({obstacle}cm)！唤醒云端 Agent...")
 
-            client = get_brain_client()
-            deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4")
+            # Stage 1: Context Loader
+            config = load_scenario_config(tenant_id)
+            if not config:
+                logging.warning(f"No scenario configuration found for tenant {tenant_id}. Dropping message.")
+                return
 
-            # Force strict JSON format output
-            system_prompt = (
-                "You are the Embodied AI Cloud Brain. You must parse the current telemetry and issue a precise, "
-                "structured action sequence. You must output a raw valid JSON array matching the schema, "
-                "with absolutely NO markdown formatting, NO ```json blocks, and NO explanations."
+            # Stage 2: Agent 1 - Intent Router (Classification)
+            router_prompt = config.get("agent_router_prompt")
+            router_input = f"Telemetry: Distance: {obstacle}cm, X: {current_x}, Device: {device_id}."
+            
+            intent = ask_agent(router_prompt, router_input, max_completion_tokens=20)
+            logging.info(f"[🧠 Agent 1: Router] Classified intent: '{intent}'")
+            
+            if "SENSOR_ERROR" in intent.upper():
+                logging.warning(f"[⚠️ Short-Circuit] SENSOR_ERROR detected. Halting pipeline and sending STOP command.")
+                send_c2d_message(device_id, json.dumps([{"action": "stop"}]))
+                return
+
+            # Stage 3: Agent 2 - Compliance & Safety (Audit)
+            safety_rules = config.get("agent_safety_rules")
+            safety_system_prompt = (
+                "You are the safety firewall. Evaluate the situation based on the strict rules. "
+                "Reply 'PASS' if safe to proceed, or 'BLOCK: [reason]' if it violates safety."
             )
-
-            user_input = f"Tenant: {tenant_id}, Device: {device_id}, Status: Obstacle encountered at {obstacle}cm. Issue navigation actions."
-
-            # Query Azure OpenAI for navigation actions
-            response = client.chat.completions.create(
-                model=deployment,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_input}
-                ],
-                max_completion_tokens=150,
-                temperature=0.0
+            safety_input = (
+                f"Rules: {safety_rules}\n"
+                f"Intent: {intent}\n"
+                f"Telemetry: Distance: {obstacle}cm, X: {current_x}\n"
+                f"Last State: {json.dumps(last_state) if last_state else 'None'}"
             )
+            
+            safety_decision = ask_agent(safety_system_prompt, safety_input, max_completion_tokens=50)
+            logging.info(f"[🛡️ Agent 2: Safety] Decision: '{safety_decision}'")
+            
+            if safety_decision.upper().startswith("BLOCK"):
+                logging.warning(f"[⚠️ Short-Circuit] Safety BLOCK triggered: {safety_decision}. Halting pipeline and overriding actions.")
+                send_c2d_message(device_id, json.dumps([{"action": "stop", "reason": "safety_override"}]))
+                return
 
-            action_json = response.choices[0].message.content.strip()
-            # Log decision result
-            logging.info(f"[🧠 大脑决策生成] 下发强类型动作序列: {action_json}")
-
-            # TODO: Send command back to physical device via IoT Hub RegistryManager (C2D)
-
-        else:
-            # Report state if obstacle is far away (heartbeat only)
-            logging.info(f"[📊 状态平稳] 设备 {device_id} 平稳运行中... 阻距: {obstacle}cm")
+            # Stage 4: Agent 3 - Action Compiler (Execution)
+            execution_schema = config.get("agent_execution_schema")
+            compiler_system_prompt = (
+                "You are the Action Compiler. Generate evasive actions strictly conforming to the JSON schema. "
+                "NO markdown. NO text. Return ONLY raw JSON array matching the schema."
+            )
+            compiler_input = (
+                f"Schema: {execution_schema}\n"
+                f"Intent: {intent}\n"
+                f"Telemetry: Distance: {obstacle}cm, X: {current_x}"
+            )
+            
+            action_json = ask_agent(compiler_system_prompt, compiler_input, max_completion_tokens=100)
+            
+            if action_json.startswith("```"):
+                lines = action_json.splitlines()
+                if lines[0].startswith("```"):
+                    lines = lines[1:]
+                if lines[-1].startswith("```"):
+                    lines = lines[:-1]
+                action_json = "\n".join(lines).strip()
+            
+            logging.info(f"[🧠 Agent 3: Action Compiler] Compiled actions: {action_json}")
+            
+            # Send C2D message
+            send_c2d_message(device_id, action_json)
+            logging.info(f"[⚡️ 物理下行] 动作序列已砸回探针 {device_id} 的电机。")
 
     except Exception as e:
-        logging.error(f"[FATAL] 大脑神经元破裂: {str(e)}")
+        logging.error(f"[FATAL] 系统熔断: {str(e)}")
