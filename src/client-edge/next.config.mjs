@@ -14,6 +14,9 @@ const nextConfig = {
   images: { unoptimized: true },
   trailingSlash: true,
 
+  // 🎯 强制转译这几个 ESM 依赖以使 SWC/Webpack 兼容 import.meta 语法
+  transpilePackages: ['@huggingface/transformers', 'onnxruntime-web'],
+
   // 🎯 【新增强调防护罩】：刚性宣告禁止 Next.js 服务端组件去打包 transformers 内部的重型二进制
   experimental: {
     serverComponentsExternalPackages: ['@huggingface/transformers'],
@@ -21,6 +24,16 @@ const nextConfig = {
 
   // 3. 强行重焊 Webpack 编译引擎
   webpack: (config, { isServer }) => {
+    // 🟩 允许在 JS/MJS 中使用 import.meta
+    config.module.rules.push({
+      test: /\.mjs$/,
+      parser: {
+        javascript: {
+          importMeta: true,
+        },
+      },
+    });
+
     // 🟩 保持原有配置：重焊 Webpack 别名指针
     config.resolve.alias['@'] = path.resolve(__dirname, './src');
 
