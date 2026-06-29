@@ -39,7 +39,7 @@ def run_telemetry_loop():
         "device_id": "Robo-A1",
         "location": {"x": x_coord, "y": 15},
         "status": "idle",
-        "obstacle_distance_cm": 42
+        "obstacle_distance_cm": 10 if x_coord % 5 == 0 else 42
       }
       msg = Message(json.dumps(payload))
       msg.message_id = f"msg-{x_coord}"

@@ -36,33 +36,6 @@ app = func.AsgiFunctionApp(
     http_auth_level=func.AuthLevel.ANONYMOUS
 )
 
-
-# 绑定云端大脑的事件监听总线
-@app.event_hub_message_trigger(
-    arg_name="azeventhub",
-    event_hub_name="messages/events",  # IoT Hub 默认的内部事件流名称
-    connection="IotHubEventHubConnectionString"  # 绑定 local.settings.json 中的变量
-)
-def iot_telemetry_processor(azeventhub: func.EventHubEvent):
-    """
-    大脑脑干：拦截并反序列化物理设备的高频遥测数据
-    """
-    # 1. 物理层解包
-    raw_data = azeventhub.get_body().decode('utf-8')
-    device_id = azeventhub.iothub_metadata.get('connection-device-id', 'Unknown-Device')
-
-    logging.info(f"[⚡️ 脑干激活] 接收到来自物理探针 {device_id} 的神经信号。")
-
-    try:
-        # 2. 状态降维
-        payload = json.loads(raw_data)
-        x_coord = payload.get("location", {}).get("x", "N/A")
-        obstacle = payload.get("obstacle_distance_cm", "N/A")
-
-        logging.info(f"[📊 状态解析] X坐标: {x_coord} | 障碍物距离: {obstacle}cm")
-
-        # 3. TODO: 挂载 Azure OpenAI，组装 Prompt，下发 C2D 动作指令
-        # (下一阶段实现)
-
-    except json.JSONDecodeError:
-        logging.error(f"[FATAL] 探针数据污染，无法反序列化: {raw_data}")
+# Register Embodied AI brain blueprint
+from embodied_brain import brain_bp
+app.register_blueprint(brain_bp)
