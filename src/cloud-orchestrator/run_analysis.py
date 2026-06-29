@@ -125,10 +125,10 @@ def main():
             pass
 
     target_user_id = os.getenv("TARGET_USER_ID", "1940360837547565056")
-    # 抓取默认向前追溯天数
-    range_days = int(os.getenv("RANGE_DAYS", "15"))
+    # 抓取默认向前追溯天数 (归档模式下，我们默认多抓取一些天数)
+    range_days = int(os.getenv("RANGE_DAYS", "30"))
 
-    print(f"🚀 [CLI] 正在启动增量推文采集与翻译...")
+    print(f"🚀 [CLI] 正在启动时序归档增量采集与翻译...")
     print(f"📡 监控目标用户 ID: {target_user_id}")
     
     cutoff_date = datetime.now(timezone.utc) - timedelta(days=range_days)
@@ -136,21 +136,42 @@ def main():
 
     cache = DailyCacheManager()
     
-    # 1. 尝试从本地加载已有的中英对照报告
-    existing_report = {}
+    # 1. 尝试从本地加载已有的中英对照归档或进行平滑迁移
+    archive_data = []
     existing_translations = {}
-    report_path = os.path.join(cache.cache_dir, f"report_translated_{target_user_id}.json")
-    if os.path.exists(report_path):
+    archive_path = os.path.join(cache.cache_dir, f"tweets_archive_{target_user_id}.json")
+    
+    # 优先加载时序归档文件
+    if os.path.exists(archive_path):
         try:
-            with open(report_path, "r", encoding="utf-8") as f:
-                existing_report = json.load(f)
-            # 建立已有推文的翻译对照字典
-            for day in existing_report.get("data", []):
-                for tweet in day.get("tweets", []):
-                    existing_translations[tweet["original"]] = tweet["translation"]
-            print(f"📂 成功加载本地缓存，已包含 {len(existing_translations)} 条推文的翻译数据。")
+            with open(archive_path, "r", encoding="utf-8") as f:
+                archive_data = json.load(f)
+            for item in archive_data:
+                existing_translations[item["original"]] = item["translation"]
+            print(f"📂 成功加载原始推文时序归档，已包含 {len(archive_data)} 条历史推文。")
         except Exception as e:
-            print(f"读取已有缓存报告失败，将进行完整抓取: {e}")
+            print(f"读取原始时序归档失败: {e}")
+    else:
+        # 平滑过渡：如果归档不存在但旧 report 缓存存在，从旧报告里提取翻译并做初始化归档
+        old_report_path = os.path.join(cache.cache_dir, f"report_translated_{target_user_id}.json")
+        if os.path.exists(old_report_path):
+            try:
+                with open(old_report_path, "r", encoding="utf-8") as f:
+                    old_report = json.load(f)
+                for day in old_report.get("data", []):
+                    day_date = day.get("date")
+                    for tweet in day.get("tweets", []):
+                        orig = tweet.get("original")
+                        trans = tweet.get("translation")
+                        existing_translations[orig] = trans
+                        archive_data.append({
+                            "date": day_date,
+                            "original": orig,
+                            "translation": trans
+                        })
+                print(f"📂 从旧报告中成功迁移并初始化了 {len(archive_data)} 条推文到原始归档中。")
+            except Exception as e:
+                print(f"平滑迁移失败: {e}")
 
     cursor = None
     page = 1
@@ -205,11 +226,14 @@ def main():
                             if oldest_date_in_page is None or dt < oldest_date_in_page:
                                 oldest_date_in_page = dt
                                 
-                            # 💡 核心对账：如果该推文文本已经在缓存中，说明这行以后的所有推文我们之前都抓取过！
+                            # 💡 核心对账
                             if full_text in existing_translations:
-                                print(f"📍 [智能增量] 命中本地缓存推文，后续数据必定已同步，停止翻页。")
-                                hit_cache_stop = True
-                                break
+                                if os.getenv("FORCE_REFRESH", "false").lower() in ("true", "1"):
+                                    print(f"📍 [强刷模式] 命中本地缓存推文，但由于开启了 FORCE_REFRESH，将继续向前抓取以补全空洞数据。")
+                                else:
+                                    print(f"📍 [智能增量] 命中本地缓存推文，后续数据必定已同步，停止翻页。")
+                                    hit_cache_stop = True
+                                    break
                                 
                             if dt < cutoff_date:
                                 continue
@@ -217,7 +241,6 @@ def main():
                             if full_text not in seen_texts:
                                 seen_texts.add(full_text)
                                 date_str = dt.strftime("%Y-%m-%d")
-                                daily_tweets[date_str].append(full_text)
                                 all_raw_tweets.append({"date": date_str, "text": full_text})
                                 tweets_in_page += 1
                                 
@@ -238,7 +261,7 @@ def main():
         page += 1
         time.sleep(1.5)
 
-    # 3. 翻译新推文 (跳过已翻译的，极大地节省 AI 开销)
+    # 3. 翻译新推文 (跳过已翻译的)
     new_texts = [tweet["text"] for tweet in all_raw_tweets if tweet["text"] not in existing_translations]
     engine = AzureChatEngine()
     
@@ -250,86 +273,131 @@ def main():
     else:
         print("\n📍 没有发现任何新推文，翻译部分直接读取缓存。")
 
-    # 4. 重建并合并时序推文（合并新抓取的与缓存中的）
-    merged_daily_tweets = defaultdict(list)
-    seen_all_texts = set()
+    # 4. 重建并合并时序归档（无强制截断，保留所有历史）
+    seen_originals = set()
+    merged_archive = []
     
     # 优先加入新抓取的推文
     for item in all_raw_tweets:
-        text = item["text"]
+        orig = item["text"]
         date_str = item["date"]
-        if text not in seen_all_texts:
-            seen_all_texts.add(text)
-            merged_daily_tweets[date_str].append(text)
-            
-    # 再合并原有的缓存推文
-    for day in existing_report.get("data", []):
-        date_str = day.get("date")
-        for tweet in day.get("tweets", []):
-            text = tweet.get("original")
-            if text not in seen_all_texts:
-                seen_all_texts.add(text)
-                merged_daily_tweets[date_str].append(text)
-
-    # 剪裁：为了避免本地 JSON 缓存无限增大，我们只保留最近 30 天的推文数据
-    prune_cutoff = datetime.now() - timedelta(days=30)
-    final_daily_tweets = defaultdict(list)
-    for date_str, tweets in merged_daily_tweets.items():
-        try:
-            dt = datetime.strptime(date_str, "%Y-%m-%d")
-            if dt >= prune_cutoff:
-                final_daily_tweets[date_str] = tweets
-        except Exception:
-            final_daily_tweets[date_str] = tweets
-
-    # 5. 针对最近 7 天的推文进行大盘分析，保证看板比例是最新的
-    analysis_cutoff = datetime.now() - timedelta(days=7)
-    recent_texts = []
-    for date_str, tweets in final_daily_tweets.items():
-        try:
-            dt = datetime.strptime(date_str, "%Y-%m-%d")
-            if dt >= analysis_cutoff:
-                recent_texts.extend(tweets)
-        except Exception:
-            recent_texts.extend(tweets)
-
-    print(f"\n🤖 [AI 投研分析] 针对最近 7 天内 ({len(recent_texts)} 条推文) 进行热门话题、提及行业占比、标的信心等核心投研数据分析...")
-    hot_topics, industries, conviction_watchlist, supply_chain_bottlenecks, value_chain_mapping = analyze_investor_insights(recent_texts, engine)
-
-    # 6. 构造中英对照最终 Payload
-    formatted_data = []
-    for date in sorted(final_daily_tweets.keys(), reverse=True):
-        tweets_list = []
-        for tweet in final_daily_tweets[date]:
-            tweets_list.append({
-                "original": tweet,
-                "translation": existing_translations.get(tweet, "(翻译暂无)")
+        if orig not in seen_originals:
+            seen_originals.add(orig)
+            merged_archive.append({
+                "date": date_str,
+                "original": orig,
+                "translation": existing_translations.get(orig, "(翻译暂无)")
             })
-        formatted_data.append({
-            "date": date,
-            "tweets": tweets_list
-        })
+            
+    # 合并原有归档历史推文
+    for item in archive_data:
+        orig = item["original"]
+        if orig not in seen_originals:
+            seen_originals.add(orig)
+            merged_archive.append(item)
+            
+    # 按照时间从新到旧对归档排序
+    merged_archive.sort(key=lambda x: x.get("date", ""), reverse=True)
+    
+    # 写入归档文件
+    with open(archive_path, "w", encoding="utf-8") as f:
+        json.dump(merged_archive, f, ensure_ascii=False, indent=4)
+    print(f"💾 原始时序归档已成功更新并保存，累计 {len(merged_archive)} 条记录。")
 
-    payload = {
-        "user_id": target_user_id,
-        "range_days": range_days,
-        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "hot_topics": hot_topics,
-        "industries": industries,
-        "conviction_watchlist": conviction_watchlist,
-        "supply_chain_bottlenecks": supply_chain_bottlenecks,
-        "value_chain_mapping": value_chain_mapping,
-        "data": formatted_data
-    }
-
-    # 7. 写入唯一的 report_translated_{user_id}.json 核心账本
-    report_output_path = os.path.join(cache.cache_dir, f"report_translated_{target_user_id}.json")
-    with open(report_output_path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=4)
+    # 5. 分别生成 7d, 30d, 90d, 180d, 365d 的分析报告快照
+    time_windows = [7, 30, 90, 180, 365]
+    previous_analyses = {}
+    
+    for days in time_windows:
+        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        window_items = []
+        for item in merged_archive:
+            try:
+                dt = datetime.strptime(item["date"], "%Y-%m-%d")
+                dt = dt.replace(tzinfo=timezone.utc)
+                if dt >= cutoff:
+                    window_items.append(item)
+            except Exception:
+                # 无法解析日期的默认保留
+                window_items.append(item)
+                
+        if not window_items:
+            print(f"⚠️ [近 {days} 天] 窗口内无推文数据，跳过报告生成。")
+            continue
+            
+        window_texts = [item["original"] for item in window_items]
+        window_text_count = len(window_texts)
         
-    print(f"\n💾 数据抓取与投研数据分析圆满完成！已更新核心账本 JSON。")
+        # 智能比对去重：如果当前大窗口推文数量与前一个小窗口相同且内容集合一致，直接复用分析结果
+        match_key = None
+        for prev_days, prev_data in previous_analyses.items():
+            if prev_data["tweet_count"] == window_text_count:
+                if set(prev_data["tweets"]) == set(window_texts):
+                    match_key = prev_days
+                    break
+                    
+        if match_key:
+            print(f"🔄 [近 {days} 天] 推文内容与 [近 {match_key} 天] 完全一致，执行 0 Token 复用优化！")
+            hot_topics = previous_analyses[match_key]["hot_topics"]
+            industries = previous_analyses[match_key]["industries"]
+            conviction_watchlist = previous_analyses[match_key]["conviction_watchlist"]
+            supply_chain_bottlenecks = previous_analyses[match_key]["supply_chain_bottlenecks"]
+            value_chain_mapping = previous_analyses[match_key]["value_chain_mapping"]
+        else:
+            print(f"\n🤖 [AI 投研分析] 针对近 {days} 天内 ({window_text_count} 条推文) 进行热门话题、行业板块等核心投研数据分析...")
+            hot_topics, industries, conviction_watchlist, supply_chain_bottlenecks, value_chain_mapping = analyze_investor_insights(window_texts, engine)
+            
+        # 缓存当前结果以供后续复用
+        previous_analyses[days] = {
+            "tweet_count": window_text_count,
+            "tweets": window_texts,
+            "hot_topics": hot_topics,
+            "industries": industries,
+            "conviction_watchlist": conviction_watchlist,
+            "supply_chain_bottlenecks": supply_chain_bottlenecks,
+            "value_chain_mapping": value_chain_mapping
+        }
+        
+        # 格式化当前窗口的 tweets 数据结构
+        formatted_tweets = defaultdict(list)
+        for item in window_items:
+            formatted_tweets[item["date"]].append({
+                "original": item["original"],
+                "translation": item["translation"]
+            })
+            
+        formatted_data = []
+        for d in sorted(formatted_tweets.keys(), reverse=True):
+            formatted_data.append({
+                "date": d,
+                "tweets": formatted_tweets[d]
+            })
+            
+        payload = {
+            "user_id": target_user_id,
+            "range_days": days,
+            "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "hot_topics": hot_topics,
+            "industries": industries,
+            "conviction_watchlist": conviction_watchlist,
+            "supply_chain_bottlenecks": supply_chain_bottlenecks,
+            "value_chain_mapping": value_chain_mapping,
+            "data": formatted_data
+        }
+        
+        # 写入独立的 JSON 文档 report_translated_{user_id}_{days}d.json
+        report_output_path = os.path.join(cache.cache_dir, f"report_translated_{target_user_id}_{days}d.json")
+        with open(report_output_path, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=4)
+        print(f"📄 [近 {days} 天] 静态报告分析文档生成成功: {os.path.basename(report_output_path)}")
+        
+        # 兼容老路由：当 days=30 时顺便写一份无后缀版本
+        if days == 30:
+            compat_output_path = os.path.join(cache.cache_dir, f"report_translated_{target_user_id}.json")
+            with open(compat_output_path, "w", encoding="utf-8") as f:
+                json.dump(payload, f, ensure_ascii=False, indent=4)
 
-    # 8. 清理多余临时文件，保持 daily_cache 目录极简干净
+    # 6. 清理多余临时文件
     raw_path = os.path.join(cache.cache_dir, f"raw_{target_user_id}.json")
     txt_path = os.path.join(cache.cache_dir, f"tweets_{target_user_id}.txt")
     for temp_file in [raw_path, txt_path]:
