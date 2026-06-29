@@ -54,9 +54,11 @@ if [ "$UNCOMMITTED" -gt 0 ]; then
   fi
 fi
 
-# 制作空提交
-echo "📤 创建空提交..."
-git commit --allow-empty -m "chore: trigger CI/CD pipeline"
+# 制作提交
+echo "📤 正在修改 src/client-edge/trigger.txt 以触发路径过滤..."
+echo "Triggered on $(date)" > src/client-edge/trigger.txt
+git add src/client-edge/trigger.txt
+git commit -m "chore: force trigger frontend deploy $(date)"
 
 # 推送到远程
 echo "📤 推送到远程仓库..."
