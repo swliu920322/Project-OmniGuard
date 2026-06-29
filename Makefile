@@ -1,7 +1,7 @@
 # =========================================================================
 # 🛠️ Project-OmniGuard 统一控制总线
 # =========================================================================
-.PHONY: provision start-backend start-frontend destroy deploy-function trigger-ci help add-device
+.PHONY: provision start-backend start-frontend destroy deploy-function trigger-ci help add-device research
 
 help:
 	@echo "======================================================"
@@ -42,3 +42,7 @@ trigger-ci:
 
 add-device:
 	@bash sh/add-device.sh $(DEV)
+
+research:
+	@echo "🚀 [CLI] 正在启动增量推文数据采集、双语翻译与投研分析..."
+	@cd src/cloud-orchestrator && ./.venv/bin/python run_analysis.py

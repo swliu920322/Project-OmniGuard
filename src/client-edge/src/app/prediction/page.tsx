@@ -407,25 +407,34 @@ export default function PredictionPage() {
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           
                           {/* Upstream */}
-                          <div className="flex flex-col gap-0.5 bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800 min-w-[120px] max-w-[180px]">
+                          <div
+                            className="flex flex-col gap-0.5 bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800 min-w-[120px] max-w-[180px] hover:max-w-none transition-all duration-200 group/node cursor-help"
+                            title={node.upstream}
+                          >
                             <span className="text-[9px] font-mono text-slate-500">上游组件 (Upstream)</span>
-                            <span className="text-xs font-bold text-white truncate">{node.upstream}</span>
+                            <span className="text-xs font-bold text-white truncate group-hover/node:whitespace-normal group-hover/node:break-all">{node.upstream}</span>
                           </div>
 
                           <ArrowRight className="text-slate-650 hidden sm:block shrink-0" size={12} />
 
                           {/* Midstream */}
-                          <div className="flex flex-col gap-0.5 bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800 min-w-[120px] max-w-[180px]">
+                          <div
+                            className="flex flex-col gap-0.5 bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800 min-w-[120px] max-w-[180px] hover:max-w-none transition-all duration-200 group/node cursor-help"
+                            title={node.midstream}
+                          >
                             <span className="text-[9px] font-mono text-slate-500">中游系统 (Midstream)</span>
-                            <span className="text-xs font-bold text-[#00f2fe] truncate">{node.midstream}</span>
+                            <span className="text-xs font-bold text-[#00f2fe] truncate group-hover/node:whitespace-normal group-hover/node:break-all">{node.midstream}</span>
                           </div>
 
                           <ArrowRight className="text-slate-650 hidden sm:block shrink-0" size={12} />
 
                           {/* Downstream */}
-                          <div className="flex flex-col gap-0.5 bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800 min-w-[120px] max-w-[180px]">
+                          <div
+                            className="flex flex-col gap-0.5 bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800 min-w-[120px] max-w-[180px] hover:max-w-none transition-all duration-200 group/node cursor-help"
+                            title={node.downstream}
+                          >
                             <span className="text-[9px] font-mono text-slate-500">下游客户 (Downstream)</span>
-                            <span className="text-xs font-bold text-emerald-400 truncate">{node.downstream}</span>
+                            <span className="text-xs font-bold text-emerald-400 truncate group-hover/node:whitespace-normal group-hover/node:break-all">{node.downstream}</span>
                           </div>
 
                         </div>
