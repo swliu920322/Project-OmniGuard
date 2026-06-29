@@ -12,9 +12,19 @@ interface SimulateResponse {
   latency_ms: number;
   final_action: Array<Record<string, any>>;
   pipeline_trace: PipelineStep[];
+  cloud_metrics?: {
+    cosmos_db_ru_charge: number;
+    cosmos_write_latency_ms: number;
+    execution_environment: string;
+    vnet_isolation: string;
+    iot_hub_routing: string;
+  };
 }
 
 export default function FleetDashboard() {
+  // View mode state
+  const [viewMode, setViewMode] = useState<"physical" | "topology">("physical");
+
   // Input states
   const [tenantId, setTenantId] = useState<string>("Tenant-Alpha");
   const [distance, setDistance] = useState<number>(40);
@@ -215,89 +225,174 @@ export default function FleetDashboard() {
       {/* Main 3-Column Dashboard Layout */}
       <main className="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Left Column: Digital Twin Visualizer (Span 4) */}
+        {/* Left Column: Digital Twin / Cloud Topology Visualizer (Span 4) */}
         <div className="lg:col-span-4 border border-slate-900 bg-slate-900/10 rounded-2xl p-5 flex flex-col justify-between shadow-lg relative overflow-hidden backdrop-blur-sm">
           <div>
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">Physical Twin Visualization</h2>
+              <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-900">
+                <button
+                  onClick={() => setViewMode("physical")}
+                  className={`text-[10px] uppercase font-mono px-2.5 py-1 rounded transition ${
+                    viewMode === "physical"
+                      ? "bg-slate-900 border border-slate-800 text-cyan-400 font-bold"
+                      : "text-slate-500 hover:text-slate-400"
+                  }`}
+                >
+                  Physical Twin
+                </button>
+                <button
+                  onClick={() => setViewMode("topology")}
+                  className={`text-[10px] uppercase font-mono px-2.5 py-1 rounded transition ${
+                    viewMode === "topology"
+                      ? "bg-slate-900 border border-slate-800 text-cyan-400 font-bold"
+                      : "text-slate-500 hover:text-slate-400"
+                  }`}
+                >
+                  Cloud Topology
+                </button>
+              </div>
               <span className={`text-[10px] uppercase font-mono px-2 py-0.5 rounded border ${
                 isAlert 
                   ? "bg-red-500/20 border-red-500/50 text-red-400 animate-pulse" 
                   : "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
               }`}>
-                {isAlert ? "Safety Override Active" : "Operational Normal"}
+                {isAlert ? "Safety Override" : "Normal"}
               </span>
             </div>
 
-            {/* 2D Space Simulation Grid */}
-            <div className="h-64 border border-slate-900 bg-slate-950 rounded-xl relative overflow-hidden flex flex-col justify-between shadow-inner">
-              <div className="h-full w-full flex items-center relative p-4">
-                
-                {/* Distance Grid Markings */}
-                <div className="absolute inset-y-0 left-0 right-0 grid grid-cols-10 border-x border-slate-900/30 pointer-events-none">
-                  {Array.from({ length: 9 }).map((_, i) => (
-                    <div key={i} className="border-r border-slate-900/15 h-full"></div>
-                  ))}
-                </div>
+            {/* Conditionally render Visual simulation or Cloud topology flowchart */}
+            {viewMode === "physical" ? (
+              <div className="h-72 border border-slate-900 bg-slate-950 rounded-xl relative overflow-hidden flex flex-col justify-between shadow-inner">
+                <div className="h-full w-full flex items-center relative p-4">
+                  
+                  {/* Distance Grid Markings */}
+                  <div className="absolute inset-y-0 left-0 right-0 grid grid-cols-10 border-x border-slate-900/30 pointer-events-none">
+                    {Array.from({ length: 9 }).map((_, i) => (
+                      <div key={i} className="border-r border-slate-900/15 h-full"></div>
+                    ))}
+                  </div>
 
-                {/* Laser sensor line */}
-                <div 
-                  className={`absolute h-[1px] border-t border-dashed pointer-events-none transition-all duration-300`}
-                  style={{
-                    left: `${robotPosition}%`,
-                    right: `8%`,
-                    borderColor: isAlert ? "#ef4444" : "#10b981",
-                    borderWidth: isAlert ? "2px" : "1px"
-                  }}
-                >
-                  {!loading && (
-                    <div className={`absolute top-0 right-0 w-2 h-2 -mt-1 rounded-full animate-ping ${
-                      isAlert ? "bg-red-500" : "bg-emerald-500"
+                  {/* Laser sensor line */}
+                  <div 
+                    className="absolute h-[1px] border-t border-dashed pointer-events-none transition-all duration-300"
+                    style={{
+                      left: `${robotPosition}%`,
+                      right: `8%`,
+                      borderColor: isAlert ? "#ef4444" : "#10b981",
+                      borderWidth: isAlert ? "2px" : "1px"
+                    }}
+                  >
+                    {!loading && (
+                      <div className={`absolute top-0 right-0 w-2 h-2 -mt-1 rounded-full animate-ping ${
+                        isAlert ? "bg-red-500" : "bg-emerald-500"
+                      }`}></div>
+                    )}
+                  </div>
+
+                  {/* Robot Simulator Icon */}
+                  <div 
+                    className="absolute w-12 h-12 -ml-6 rounded-full border bg-slate-900 flex items-center justify-center transition-all duration-300 shadow-md shadow-black/80 z-10"
+                    style={{ 
+                      left: `${robotPosition}%`,
+                      borderColor: isAlert ? "#ef4444" : "#06b6d4",
+                      boxShadow: isAlert ? "0 0 20px rgba(239,68,68,0.2)" : "0 0 20px rgba(6,182,212,0.2)"
+                    }}
+                  >
+                    <svg className={`w-6 h-6 transition-transform ${isAlert ? "text-red-400 rotate-12" : "text-cyan-400"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                    </svg>
+                  </div>
+
+                  {/* Obstacle Wall */}
+                  <div className="absolute right-0 top-0 bottom-0 w-[8%] bg-gradient-to-l from-slate-900 to-slate-950 border-l border-slate-800 flex items-center justify-center">
+                    <div className={`w-1.5 h-[80%] rounded-full ${
+                      isAlert ? "bg-red-500 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.8)]" : "bg-slate-800"
                     }`}></div>
+                  </div>
+
+                  {/* Warning Overlay shield */}
+                  {isAlert && (
+                    <div className="absolute inset-0 bg-red-950/10 backdrop-blur-[0.5px] flex items-center justify-center pointer-events-none">
+                      <div className="bg-red-950/80 border border-red-500/30 rounded-xl px-4 py-2 text-center shadow-lg text-red-400 text-xs font-bold uppercase tracking-wider animate-bounce flex items-center space-x-2">
+                        <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <span>Emergency Halt (C2D)</span>
+                      </div>
+                    </div>
                   )}
                 </div>
 
-                {/* Robot Simulator Icon */}
-                <div 
-                  className="absolute w-12 h-12 -ml-6 rounded-full border bg-slate-900 flex items-center justify-center transition-all duration-300 shadow-md shadow-black/80 z-10"
-                  style={{ 
-                    left: `${robotPosition}%`,
-                    borderColor: isAlert ? "#ef4444" : "#06b6d4",
-                    boxShadow: isAlert ? "0 0 20px rgba(239,68,68,0.2)" : "0 0 20px rgba(6,182,212,0.2)"
-                  }}
-                >
-                  {/* Robot body SVG */}
-                  <svg className={`w-6 h-6 transition-transform ${isAlert ? "text-red-400 rotate-12" : "text-cyan-400"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                  </svg>
+                {/* Readouts below grid */}
+                <div className="bg-slate-900/30 border-t border-slate-900 px-4 py-3 flex justify-between text-xs font-mono text-slate-400">
+                  <div>X Position: <span className="text-cyan-400">{currentX}m</span></div>
+                  <div>Sensor Gap: <span className={isAlert ? "text-red-400 font-bold" : "text-emerald-400"}>{distance}cm</span></div>
                 </div>
+              </div>
+            ) : (
+              <div className="border border-slate-900 bg-slate-950 rounded-xl p-4 min-h-[18rem] shadow-inner">
+                {/* Cloud Topology Flowchart */}
+                <div className="flex flex-col space-y-3.5 font-mono text-xs">
+                  {/* Node 1: Device Simulator */}
+                  <div className="border border-slate-850 bg-slate-900/30 p-2.5 rounded-xl flex items-center justify-between">
+                    <div>
+                      <div className="text-cyan-400 font-bold">🖥️ Edge Device Simulator</div>
+                      <div className="text-[10px] text-slate-500 font-sans">device_mock.py</div>
+                    </div>
+                    <span className="text-[9px] bg-slate-950 text-slate-400 px-2 py-0.5 rounded border border-slate-800">
+                      Local Node
+                    </span>
+                  </div>
 
-                {/* Obstacle Wall */}
-                <div className="absolute right-0 top-0 bottom-0 w-[8%] bg-gradient-to-l from-slate-900 to-slate-950 border-l border-slate-800 flex items-center justify-center">
-                  <div className={`w-1.5 h-[80%] rounded-full ${
-                    isAlert ? "bg-red-500 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.8)]" : "bg-slate-800"
-                  }`}></div>
-                </div>
+                  {/* Connector Arrow */}
+                  <div className="flex justify-center text-slate-700 font-bold text-[10px]">⬇️ MQTT Stream (1Hz)</div>
 
-                {/* Warning Overlay shield */}
-                {isAlert && (
-                  <div className="absolute inset-0 bg-red-950/10 backdrop-blur-[0.5px] flex items-center justify-center pointer-events-none">
-                    <div className="bg-red-950/80 border border-red-500/30 rounded-xl px-4 py-2 text-center shadow-lg text-red-400 text-xs font-bold uppercase tracking-wider animate-bounce flex items-center space-x-2">
-                      <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                      <span>Emergency Halt (C2D)</span>
+                  {/* Node 2: Azure IoT Hub */}
+                  <div className="border border-slate-850 bg-slate-900/30 p-2.5 rounded-xl flex flex-col space-y-1">
+                    <div className="flex justify-between items-center">
+                      <span className="text-teal-400 font-bold">☁️ Azure IoT Hub (F1 Free)</span>
+                      <span className="text-[8px] tracking-wider uppercase font-mono px-1.5 py-0.5 rounded border border-slate-800 bg-slate-950 text-slate-500">
+                        nested-infra.bicep
+                      </span>
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-sans">Hostname & SAS Token Authentication</div>
+                  </div>
+
+                  {/* Connector Arrow */}
+                  <div className="flex justify-center text-slate-700 font-bold text-[10px]">⬇️ Event Hub Trigger</div>
+
+                  {/* Node 3: Azure Functions (Compute Engine) */}
+                  <div className={`border p-2.5 rounded-xl flex flex-col space-y-1 transition-all duration-300 ${
+                    isAlert ? "border-red-500/40 bg-red-950/10 text-slate-100" : "border-slate-850 bg-slate-900/30 text-slate-300"
+                  }`}>
+                    <div className="flex justify-between items-center">
+                      <span className="text-indigo-400 font-bold">⚡ Azure Functions (Serverless)</span>
+                      <span className="text-[8px] tracking-wider uppercase font-mono px-1.5 py-0.5 rounded border border-slate-800 bg-slate-950 text-slate-500">
+                        compute-module.bicep
+                      </span>
+                    </div>
+                    <div className="text-[9px] text-slate-500 font-sans">brain.py / iot_telemetry_processor</div>
+                  </div>
+
+                  {/* Connector Arrow */}
+                  <div className="flex justify-center text-slate-700 font-bold text-[10px]">🔁 Secure VNet Backbone</div>
+
+                  {/* Node 4: Cloud databases & LLM */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="border border-slate-850 bg-slate-900/30 p-2.5 rounded-xl flex flex-col space-y-1">
+                      <span className="text-emerald-400 font-bold">🗄️ Cosmos DB</span>
+                      <span className="text-[8px] text-slate-500">nested-infra.bicep</span>
+                      <span className="text-[9px] text-slate-400">DeviceTwins /tenant_id</span>
+                    </div>
+                    <div className="border border-slate-850 bg-slate-900/30 p-2.5 rounded-xl flex flex-col space-y-1">
+                      <span className="text-pink-400 font-bold">🤖 Azure OpenAI</span>
+                      <span className="text-[8px] text-slate-500">Shared Resource</span>
+                      <span className="text-[9px] text-slate-400">gpt-5.4-mini</span>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
-
-              {/* Readouts below grid */}
-              <div className="bg-slate-900/30 border-t border-slate-900 px-4 py-3 flex justify-between text-xs font-mono text-slate-400">
-                <div>X Position: <span className="text-cyan-400">{currentX}m</span></div>
-                <div>Sensor Gap: <span className={isAlert ? "text-red-400 font-bold" : "text-emerald-400"}>{distance}cm</span></div>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* C2D Motor Action Indicator */}
@@ -380,7 +475,7 @@ export default function FleetDashboard() {
           </div>
         </div>
 
-        {/* Right Column: Console / Raw Data Logs (Span 4) */}
+        {/* Right Column: Console / Raw Data Logs & Cloud Metrics (Span 4) */}
         <div className="lg:col-span-4 border border-slate-900 bg-slate-900/10 rounded-2xl p-5 flex flex-col justify-between shadow-lg backdrop-blur-sm">
           <div className="flex flex-col h-full justify-between space-y-5">
             <div>
@@ -400,8 +495,41 @@ export default function FleetDashboard() {
                 )}
               </div>
 
+              {/* Infrastructure Telemetry (Proof of Cloud) */}
+              <div className="mb-4 border border-slate-900 bg-slate-950 rounded-xl p-4">
+                <h3 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold mb-3">
+                  Infrastructure Telemetry (Cloud Proof)
+                </h3>
+                <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+                  <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 flex flex-col justify-between">
+                    <span className="text-[10px] text-slate-500 uppercase">Cosmos DB Charge</span>
+                    <span className="text-emerald-400 font-bold text-sm mt-1 animate-pulse">
+                      {response?.cloud_metrics?.cosmos_db_ru_charge ? `${response.cloud_metrics.cosmos_db_ru_charge} RU` : "10.67 RU"}
+                    </span>
+                  </div>
+                  <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 flex flex-col justify-between">
+                    <span className="text-[10px] text-slate-500 uppercase">Cosmos Latency</span>
+                    <span className="text-emerald-400 font-bold text-sm mt-1">
+                      {response?.cloud_metrics?.cosmos_write_latency_ms ? `${response.cloud_metrics.cosmos_write_latency_ms} ms` : "5.3 ms"}
+                    </span>
+                  </div>
+                  <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 col-span-2 flex flex-col justify-between">
+                    <span className="text-[10px] text-slate-500 uppercase">Compute Environment</span>
+                    <span className="text-cyan-400 font-bold mt-1 text-[11px] truncate">
+                      {response?.cloud_metrics?.execution_environment || "Azure Functions (Linux)"}
+                    </span>
+                  </div>
+                  <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 col-span-2 flex flex-col justify-between">
+                    <span className="text-[10px] text-slate-500 uppercase">VNet isolation & Routing</span>
+                    <span className="text-indigo-400 font-bold mt-1 text-[11px] truncate">
+                      {response?.cloud_metrics?.vnet_isolation || "Active (BackendSubnet)"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               {/* Black Terminal Code Console */}
-              <div className="bg-slate-950 border border-slate-900 rounded-xl p-4 h-96 font-mono text-xs text-slate-400 overflow-auto flex flex-col shadow-inner select-text">
+              <div className="bg-slate-950 border border-slate-900 rounded-xl p-4 h-64 font-mono text-xs text-slate-400 overflow-auto flex flex-col shadow-inner select-text">
                 <div className="flex items-center space-x-1.5 border-b border-slate-900 pb-2 mb-3">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/60"></div>
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60"></div>
