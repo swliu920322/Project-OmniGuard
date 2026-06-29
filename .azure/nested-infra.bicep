@@ -198,3 +198,48 @@ resource swaApiLink 'Microsoft.Web/staticSites/linkedBackends@2023-12-01' = {
 }
 
 output openAiName string = 'byo-decoupled-instance'
+
+// 🟩 追加：边缘神经丛网关 (IoT Hub) - 强制锁定 F1 免费层
+@description('Force Free Tier (F1) to protect the remaining budget')
+param iotHubSku string = 'F1'
+
+resource iotHub 'Microsoft.Devices/IotHubs@2023-06-30' = {
+  name: 'iot-${prefix}-${uniqueString(resourceGroup().id)}'
+  location: location
+  sku: {
+    name: iotHubSku
+    capacity: 1 // 物理锁定单实例
+  }
+  properties: {
+    // 强制关闭无关协议，收缩暴露面
+    enableFileUploadNotifications: false
+    // 云端到设备 (C2D) 指令生命周期锁定
+    cloudToDevice: {
+      defaultTtlAsIso8601: 'PT1H'
+      maxDeliveryCount: 10
+    }
+    // 路由策略：将遥测数据转发至内置 Event Hub，供后续 Function App 消费
+    routing: {
+      endpoints: {
+        events: []
+        serviceBusQueues: []
+        serviceBusTopics: []
+        storageContainers: []
+      }
+      routes: [
+        {
+          name: 'DeviceTelemetryRoute'
+          source: 'DeviceMessages'
+          condition: 'true'
+          endpointNames: [
+            'events'
+          ]
+          isEnabled: true
+        }
+      ]
+    }
+  }
+}
+
+// 输出 IoT Hub 主键连接串，供本地测试桩直接获取，无需登录 Portal
+output iotHubConnectionString string = 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey}'
