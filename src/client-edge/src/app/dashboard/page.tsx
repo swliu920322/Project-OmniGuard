@@ -1,6 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import PhysicalTwinVisualizer from "./components/PhysicalTwinVisualizer";
+import CloudTopologyFlowchart from "./components/CloudTopologyFlowchart";
+import AgentOrchestratorFlow from "./components/AgentOrchestratorFlow";
+import InfraTelemetryPanel from "./components/InfraTelemetryPanel";
+import AuditTerminalConsole from "./components/AuditTerminalConsole";
 
 interface PipelineStep {
   agent: string;
@@ -22,13 +27,23 @@ interface SimulateResponse {
 }
 
 export default function FleetDashboard() {
+  // Hydration control to prevent Server-Client mismatch issues
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // View mode state
   const [viewMode, setViewMode] = useState<"physical" | "topology">("physical");
 
+  // Autopilot navigation loop state
+  const [autopilot, setAutopilot] = useState<boolean>(false);
+
   // Input states
   const [tenantId, setTenantId] = useState<string>("Tenant-Alpha");
-  const [distance, setDistance] = useState<number>(40);
-  const [currentX, setCurrentX] = useState<number>(10);
+  const [distance, setDistance] = useState<number>(80); // Start farther away for dynamic navigations
+  const [currentX, setCurrentX] = useState<number>(0);
+  const [targetSpeed, setTargetSpeed] = useState<number>(50); // Configurable target speed
   
   // API response states
   const [loading, setLoading] = useState<boolean>(false);
@@ -38,6 +53,19 @@ export default function FleetDashboard() {
   // local telemetry representation for animation
   const [robotPosition, setRobotPosition] = useState<number>(50); // visual X offset percentage
   const [isAlert, setIsAlert] = useState<boolean>(false);
+
+  // Use refs to store state values for the autopilot interval to avoid stale closure issues
+  const distanceRef = useRef(distance);
+  const currentXRef = useRef(currentX);
+  const tenantIdRef = useRef(tenantId);
+  const targetSpeedRef = useRef(targetSpeed);
+  const autopilotRef = useRef(autopilot);
+
+  useEffect(() => { distanceRef.current = distance; }, [distance]);
+  useEffect(() => { currentXRef.current = currentX; }, [currentX]);
+  useEffect(() => { tenantIdRef.current = tenantId; }, [tenantId]);
+  useEffect(() => { targetSpeedRef.current = targetSpeed; }, [targetSpeed]);
+  useEffect(() => { autopilotRef.current = autopilot; }, [autopilot]);
   
   // Dynamic config descriptors (frontend helper only, no logic calculated here)
   const tenantScenarios: Record<string, { name: string; desc: string; triggerDist: string }> = {
@@ -53,7 +81,9 @@ export default function FleetDashboard() {
     }
   };
 
-  const triggerSimulation = async () => {
+  // Run a single simulation step (used by autopilot and manual trigger)
+  // Returns true if autopilot should continue, false if it should stop
+  const runAutopilotStep = async (): Promise<boolean> => {
     setLoading(true);
     setError(null);
     try {
@@ -63,9 +93,10 @@ export default function FleetDashboard() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          tenant_id: tenantId,
-          obstacle_distance_cm: distance,
-          current_x: currentX
+          tenant_id: tenantIdRef.current,
+          obstacle_distance_cm: distanceRef.current,
+          current_x: currentXRef.current,
+          target_speed: targetSpeedRef.current
         })
       });
 
@@ -80,10 +111,77 @@ export default function FleetDashboard() {
       const isBlocked = data.pipeline_trace.some(step => step.status === "BLOCKED");
       setIsAlert(isBlocked);
 
-      // Animate coordinates slightly based on movement
+      // If Safety block is triggered, force shut down Autopilot loop
+      if (isBlocked || data.final_action.some(act => act.action === "stop")) {
+        setAutopilot(false);
+        return false;
+      }
+
+      // Animate coordinates dynamically based on movement response
+      const moveAction = data.final_action.find(act => act.action === "move");
+      if (moveAction) {
+        const speed = moveAction.speed || 20;
+        
+        // Translate speed into physical movement changes
+        const dx = Math.max(1, Math.round(speed / 10)); // increment X
+        const dd = Math.max(2, Math.round(speed / 5));  // decrease gap to obstacle
+        
+        setCurrentX(prev => prev + dx);
+        setDistance(prev => Math.max(0, prev - dd));
+        return true;
+      } else {
+        // Stop autopilot if no movement command returned
+        setAutopilot(false);
+        return false;
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to contact backend API");
+      setResponse(null);
+      setIsAlert(true);
+      setAutopilot(false);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Single-Step Manual evaluation trigger
+  const triggerSimulation = async () => {
+    // If currently running auto patrol, stop it first
+    if (autopilot) {
+      setAutopilot(false);
+    }
+    
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("http://localhost:7071/simulate_agent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          tenant_id: tenantId,
+          obstacle_distance_cm: distance,
+          current_x: currentX,
+          target_speed: targetSpeed
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error(`Server returned error status: ${res.status}`);
+      }
+
+      const data: SimulateResponse = await res.json();
+      setResponse(data);
+      
+      const isBlocked = data.pipeline_trace.some(step => step.status === "BLOCKED");
+      setIsAlert(isBlocked);
+
       if (!isBlocked && data.final_action.some(act => act.action === "move")) {
         const speed = data.final_action.find(act => act.action === "move")?.speed || 20;
-        setCurrentX(prev => prev + Math.min(Math.round(speed / 10), 10));
+        setCurrentX(prev => prev + Math.max(Math.round(speed / 10), 1));
+        setDistance(prev => Math.max(0, prev - Math.max(Math.round(speed / 5), 2)));
       }
     } catch (err: any) {
       setError(err.message || "Failed to contact backend API");
@@ -94,12 +192,47 @@ export default function FleetDashboard() {
     }
   };
 
+  // Autopilot loop trigger using sequential recursive setTimeout to prevent network request pile-up
+  useEffect(() => {
+    if (!autopilot) return;
+
+    let active = true;
+    let timerId: NodeJS.Timeout | null = null;
+
+    const executeCycle = async () => {
+      if (!active) return;
+      const shouldContinue = await runAutopilotStep();
+      if (active && shouldContinue && autopilotRef.current) {
+        timerId = setTimeout(executeCycle, 800); // Schedule next request 800ms AFTER current one fully completes
+      }
+    };
+
+    executeCycle();
+
+    return () => {
+      active = false;
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+    };
+  }, [autopilot]);
+
   // Adjust visual position of robot based on distance
   useEffect(() => {
-    // 0cm obstacle means robot is at the wall (e.g. 80% offset), 100cm means far left (e.g. 10% offset)
     const newPos = Math.max(10, Math.min(80, 80 - (distance * 0.7)));
     setRobotPosition(newPos);
   }, [distance]);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center font-mono">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-cyan-400">Loading Fleet Control Plane...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
@@ -129,7 +262,11 @@ export default function FleetDashboard() {
             <label className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">Active Tenant</label>
             <select
               value={tenantId}
-              onChange={(e) => setTenantId(e.target.value)}
+              onChange={(e) => {
+                setTenantId(e.target.value);
+                setDistance(80); // Reset distance on tenant change to allow room to drive
+                setAutopilot(false);
+              }}
               className="bg-slate-950 border border-slate-800 text-slate-100 rounded-lg px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none transition"
             >
               <option value="Tenant-Alpha">Tenant-Alpha (Data Center)</option>
@@ -157,11 +294,39 @@ export default function FleetDashboard() {
             </p>
           </div>
 
-          {/* Slider for Obstacle Distance */}
-          <div className="flex flex-col space-y-2 md:col-span-2">
+          {/* Slider for Target Speed Limit */}
+          <div className="flex flex-col space-y-2">
             <div className="flex justify-between items-center">
               <label className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">
-                Obstacle Distance (Telemetry)
+                Max Speed Cap
+              </label>
+              <span className="text-sm font-mono font-bold text-cyan-400">
+                {targetSpeed} cm/s
+              </span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <input
+                type="range"
+                min="10"
+                max="100"
+                value={targetSpeed}
+                onChange={(e) => {
+                  setTargetSpeed(Number(e.target.value));
+                }}
+                className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+              />
+            </div>
+            <div className="flex justify-between text-[10px] text-slate-600 font-mono">
+              <span>10cm/s (Slow)</span>
+              <span>100cm/s (Fast)</span>
+            </div>
+          </div>
+
+          {/* Slider for Obstacle Distance */}
+          <div className="flex flex-col space-y-2">
+            <div className="flex justify-between items-center">
+              <label className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">
+                Obstacle Distance
               </label>
               <span className="text-sm font-mono font-bold text-cyan-400">
                 {distance} cm
@@ -173,40 +338,43 @@ export default function FleetDashboard() {
                 min="0"
                 max="100"
                 value={distance}
-                onChange={(e) => setDistance(Number(e.target.value))}
+                onChange={(e) => {
+                  setDistance(Number(e.target.value));
+                  if (autopilot) setAutopilot(false); // pause autopilot if manual adjust
+                }}
                 className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
               />
             </div>
             <div className="flex justify-between text-[10px] text-slate-600 font-mono">
-              <span>0cm (Imminent Collision)</span>
-              <span>30cm (Alpha Limit)</span>
-              <span>100cm (Navigating)</span>
+              <span>0cm (Imminent)</span>
+              <span>100cm (Far)</span>
             </div>
           </div>
         </div>
 
-        {/* Big Trigger Button */}
-        <div className="max-w-7xl mx-auto mt-5 flex justify-end">
+        {/* Action Button Bar */}
+        <div className="max-w-7xl mx-auto mt-5 flex justify-end space-x-4">
+          <button
+            onClick={() => setAutopilot(prev => !prev)}
+            className={`px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide uppercase transition shadow-lg ${
+              autopilot
+                ? "bg-red-500 hover:bg-red-650 text-white animate-pulse border border-red-400/50 shadow-[0_0_15px_rgba(239,68,68,0.4)]"
+                : "bg-slate-900 border border-slate-800 text-cyan-400 hover:border-cyan-500/30 hover:text-cyan-300"
+            }`}
+          >
+            {autopilot ? "🛑 Stop Autopilot" : "🚀 Start Autopilot"}
+          </button>
+
           <button
             onClick={triggerSimulation}
-            disabled={loading}
+            disabled={loading || autopilot}
             className={`px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide uppercase transition shadow-lg ${
-              loading
+              loading || autopilot
                 ? "bg-slate-900 border border-slate-800 text-slate-600 cursor-not-allowed"
                 : "bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 font-bold hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] active:scale-[0.98] border border-cyan-400/20"
             }`}
           >
-            {loading ? (
-              <span className="flex items-center space-x-2 justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Processing Telemetry...
-              </span>
-            ) : (
-              "Simulate Sensor Event & Run Pipeline"
-            )}
+            {loading ? "Processing..." : "Manual Single-Step"}
           </button>
         </div>
       </section>
@@ -260,138 +428,16 @@ export default function FleetDashboard() {
               </span>
             </div>
 
-            {/* Conditionally render Visual simulation or Cloud topology flowchart */}
+            {/* Render Visual twin or Cloud topology flowchart */}
             {viewMode === "physical" ? (
-              <div className="h-72 border border-slate-900 bg-slate-950 rounded-xl relative overflow-hidden flex flex-col justify-between shadow-inner">
-                <div className="h-full w-full flex items-center relative p-4">
-                  
-                  {/* Distance Grid Markings */}
-                  <div className="absolute inset-y-0 left-0 right-0 grid grid-cols-10 border-x border-slate-900/30 pointer-events-none">
-                    {Array.from({ length: 9 }).map((_, i) => (
-                      <div key={i} className="border-r border-slate-900/15 h-full"></div>
-                    ))}
-                  </div>
-
-                  {/* Laser sensor line */}
-                  <div 
-                    className="absolute h-[1px] border-t border-dashed pointer-events-none transition-all duration-300"
-                    style={{
-                      left: `${robotPosition}%`,
-                      right: `8%`,
-                      borderColor: isAlert ? "#ef4444" : "#10b981",
-                      borderWidth: isAlert ? "2px" : "1px"
-                    }}
-                  >
-                    {!loading && (
-                      <div className={`absolute top-0 right-0 w-2 h-2 -mt-1 rounded-full animate-ping ${
-                        isAlert ? "bg-red-500" : "bg-emerald-500"
-                      }`}></div>
-                    )}
-                  </div>
-
-                  {/* Robot Simulator Icon */}
-                  <div 
-                    className="absolute w-12 h-12 -ml-6 rounded-full border bg-slate-900 flex items-center justify-center transition-all duration-300 shadow-md shadow-black/80 z-10"
-                    style={{ 
-                      left: `${robotPosition}%`,
-                      borderColor: isAlert ? "#ef4444" : "#06b6d4",
-                      boxShadow: isAlert ? "0 0 20px rgba(239,68,68,0.2)" : "0 0 20px rgba(6,182,212,0.2)"
-                    }}
-                  >
-                    <svg className={`w-6 h-6 transition-transform ${isAlert ? "text-red-400 rotate-12" : "text-cyan-400"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                    </svg>
-                  </div>
-
-                  {/* Obstacle Wall */}
-                  <div className="absolute right-0 top-0 bottom-0 w-[8%] bg-gradient-to-l from-slate-900 to-slate-950 border-l border-slate-800 flex items-center justify-center">
-                    <div className={`w-1.5 h-[80%] rounded-full ${
-                      isAlert ? "bg-red-500 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.8)]" : "bg-slate-800"
-                    }`}></div>
-                  </div>
-
-                  {/* Warning Overlay shield */}
-                  {isAlert && (
-                    <div className="absolute inset-0 bg-red-950/10 backdrop-blur-[0.5px] flex items-center justify-center pointer-events-none">
-                      <div className="bg-red-950/80 border border-red-500/30 rounded-xl px-4 py-2 text-center shadow-lg text-red-400 text-xs font-bold uppercase tracking-wider animate-bounce flex items-center space-x-2">
-                        <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                        <span>Emergency Halt (C2D)</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Readouts below grid */}
-                <div className="bg-slate-900/30 border-t border-slate-900 px-4 py-3 flex justify-between text-xs font-mono text-slate-400">
-                  <div>X Position: <span className="text-cyan-400">{currentX}m</span></div>
-                  <div>Sensor Gap: <span className={isAlert ? "text-red-400 font-bold" : "text-emerald-400"}>{distance}cm</span></div>
-                </div>
-              </div>
+              <PhysicalTwinVisualizer
+                distance={distance}
+                currentX={currentX}
+                robotPosition={robotPosition}
+                isAlert={isAlert}
+              />
             ) : (
-              <div className="border border-slate-900 bg-slate-950 rounded-xl p-4 min-h-[18rem] shadow-inner">
-                {/* Cloud Topology Flowchart */}
-                <div className="flex flex-col space-y-3.5 font-mono text-xs">
-                  {/* Node 1: Device Simulator */}
-                  <div className="border border-slate-850 bg-slate-900/30 p-2.5 rounded-xl flex items-center justify-between">
-                    <div>
-                      <div className="text-cyan-400 font-bold">🖥️ Edge Device Simulator</div>
-                      <div className="text-[10px] text-slate-500 font-sans">device_mock.py</div>
-                    </div>
-                    <span className="text-[9px] bg-slate-950 text-slate-400 px-2 py-0.5 rounded border border-slate-800">
-                      Local Node
-                    </span>
-                  </div>
-
-                  {/* Connector Arrow */}
-                  <div className="flex justify-center text-slate-700 font-bold text-[10px]">⬇️ MQTT Stream (1Hz)</div>
-
-                  {/* Node 2: Azure IoT Hub */}
-                  <div className="border border-slate-850 bg-slate-900/30 p-2.5 rounded-xl flex flex-col space-y-1">
-                    <div className="flex justify-between items-center">
-                      <span className="text-teal-400 font-bold">☁️ Azure IoT Hub (F1 Free)</span>
-                      <span className="text-[8px] tracking-wider uppercase font-mono px-1.5 py-0.5 rounded border border-slate-800 bg-slate-950 text-slate-500">
-                        nested-infra.bicep
-                      </span>
-                    </div>
-                    <div className="text-[9px] text-slate-500 font-sans">Hostname & SAS Token Authentication</div>
-                  </div>
-
-                  {/* Connector Arrow */}
-                  <div className="flex justify-center text-slate-700 font-bold text-[10px]">⬇️ Event Hub Trigger</div>
-
-                  {/* Node 3: Azure Functions (Compute Engine) */}
-                  <div className={`border p-2.5 rounded-xl flex flex-col space-y-1 transition-all duration-300 ${
-                    isAlert ? "border-red-500/40 bg-red-950/10 text-slate-100" : "border-slate-850 bg-slate-900/30 text-slate-300"
-                  }`}>
-                    <div className="flex justify-between items-center">
-                      <span className="text-indigo-400 font-bold">⚡ Azure Functions (Serverless)</span>
-                      <span className="text-[8px] tracking-wider uppercase font-mono px-1.5 py-0.5 rounded border border-slate-800 bg-slate-950 text-slate-500">
-                        compute-module.bicep
-                      </span>
-                    </div>
-                    <div className="text-[9px] text-slate-500 font-sans">brain.py / iot_telemetry_processor</div>
-                  </div>
-
-                  {/* Connector Arrow */}
-                  <div className="flex justify-center text-slate-700 font-bold text-[10px]">🔁 Secure VNet Backbone</div>
-
-                  {/* Node 4: Cloud databases & LLM */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="border border-slate-850 bg-slate-900/30 p-2.5 rounded-xl flex flex-col space-y-1">
-                      <span className="text-emerald-400 font-bold">🗄️ Cosmos DB</span>
-                      <span className="text-[8px] text-slate-500">nested-infra.bicep</span>
-                      <span className="text-[9px] text-slate-400">DeviceTwins /tenant_id</span>
-                    </div>
-                    <div className="border border-slate-850 bg-slate-900/30 p-2.5 rounded-xl flex flex-col space-y-1">
-                      <span className="text-pink-400 font-bold">🤖 Azure OpenAI</span>
-                      <span className="text-[8px] text-slate-500">Shared Resource</span>
-                      <span className="text-[9px] text-slate-400">gpt-5.4-mini</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <CloudTopologyFlowchart isAlert={isAlert} />
             )}
           </div>
 
@@ -437,36 +483,10 @@ export default function FleetDashboard() {
               Multi-Agent Orchestration Blueprint
             </h2>
 
-            {/* Vertical Flow of Agents */}
-            <div className="space-y-6 relative">
-              
-              {/* Vertical connector line */}
-              <div className="absolute top-6 bottom-6 left-6 w-[2px] bg-slate-800 pointer-events-none -z-10"></div>
-
-              {/* Node 1: Intent Router */}
-              {renderAgentNode(
-                "1. Intent Router",
-                "Classifies raw telemetry to determine the operational context.",
-                getStepByAgent("Router"),
-                "purple"
-              )}
-
-              {/* Node 2: Safety Firewall */}
-              {renderAgentNode(
-                "2. Safety Firewall",
-                `Applies strict compliance policies. Target: ${tenantScenarios[tenantId]?.triggerDist}.`,
-                getStepByAgent("Safety"),
-                "red"
-              )}
-
-              {/* Node 3: Action Compiler */}
-              {renderAgentNode(
-                "3. Action Compiler",
-                "Translates safe intents into compliant physical motor instructions.",
-                getStepByAgent("Action Compiler"),
-                "cyan"
-              )}
-            </div>
+            <AgentOrchestratorFlow
+              response={response}
+              triggerDist={tenantScenarios[tenantId]?.triggerDist || ""}
+            />
           </div>
 
           {/* Quick explanations */}
@@ -495,59 +515,11 @@ export default function FleetDashboard() {
                 )}
               </div>
 
-              {/* Infrastructure Telemetry (Proof of Cloud) */}
-              <div className="mb-4 border border-slate-900 bg-slate-950 rounded-xl p-4">
-                <h3 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold mb-3">
-                  Infrastructure Telemetry (Cloud Proof)
-                </h3>
-                <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 flex flex-col justify-between">
-                    <span className="text-[10px] text-slate-500 uppercase">Cosmos DB Charge</span>
-                    <span className="text-emerald-400 font-bold text-sm mt-1 animate-pulse">
-                      {response?.cloud_metrics?.cosmos_db_ru_charge ? `${response.cloud_metrics.cosmos_db_ru_charge} RU` : "10.67 RU"}
-                    </span>
-                  </div>
-                  <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 flex flex-col justify-between">
-                    <span className="text-[10px] text-slate-500 uppercase">Cosmos Latency</span>
-                    <span className="text-emerald-400 font-bold text-sm mt-1">
-                      {response?.cloud_metrics?.cosmos_write_latency_ms ? `${response.cloud_metrics.cosmos_write_latency_ms} ms` : "5.3 ms"}
-                    </span>
-                  </div>
-                  <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 col-span-2 flex flex-col justify-between">
-                    <span className="text-[10px] text-slate-500 uppercase">Compute Environment</span>
-                    <span className="text-cyan-400 font-bold mt-1 text-[11px] truncate">
-                      {response?.cloud_metrics?.execution_environment || "Azure Functions (Linux)"}
-                    </span>
-                  </div>
-                  <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 col-span-2 flex flex-col justify-between">
-                    <span className="text-[10px] text-slate-500 uppercase">VNet isolation & Routing</span>
-                    <span className="text-indigo-400 font-bold mt-1 text-[11px] truncate">
-                      {response?.cloud_metrics?.vnet_isolation || "Active (BackendSubnet)"}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              {/* Infrastructure Telemetry Panel */}
+              <InfraTelemetryPanel metrics={response?.cloud_metrics} />
 
               {/* Black Terminal Code Console */}
-              <div className="bg-slate-950 border border-slate-900 rounded-xl p-4 h-64 font-mono text-xs text-slate-400 overflow-auto flex flex-col shadow-inner select-text">
-                <div className="flex items-center space-x-1.5 border-b border-slate-900 pb-2 mb-3">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/60"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/60"></div>
-                  <span className="text-[10px] text-slate-600 pl-2">omniguard_audit_console.log</span>
-                </div>
-                <div className="flex-1 font-mono leading-normal">
-                  {response ? (
-                    <pre className="text-cyan-500/90 leading-relaxed">
-                      {JSON.stringify(response, null, 2)}
-                    </pre>
-                  ) : (
-                    <div className="text-slate-600 italic py-10 text-center">
-                      // Initialize simulation to output raw JSON telemetry payload here.
-                    </div>
-                  )}
-                </div>
-              </div>
+              <AuditTerminalConsole response={response} />
             </div>
 
             {/* Platform statistics */}
@@ -574,69 +546,4 @@ export default function FleetDashboard() {
       </main>
     </div>
   );
-
-  // Helper render to clean up nodes rendering
-  function renderAgentNode(title: string, desc: string, step: PipelineStep | null, primaryColor: "purple" | "red" | "cyan") {
-    let statusClass = "bg-slate-900/30 border-slate-900 text-slate-500 opacity-60";
-    let badgeClass = "bg-slate-950 text-slate-600 border-slate-800";
-    let badgeText = "Awaiting";
-
-    if (step) {
-      if (step.status === "PASS" || step.status === "COMPILED" || (step.agent === "Router" && step.decision)) {
-        statusClass = "border-emerald-500/40 bg-emerald-950/5 text-slate-100 shadow-[0_0_15px_rgba(16,185,129,0.05)]";
-        badgeClass = "bg-emerald-950/80 border-emerald-500/30 text-emerald-400";
-        badgeText = step.status || "PASS";
-      } else if (step.status === "BLOCKED") {
-        statusClass = "border-red-500/40 bg-red-950/5 text-slate-100 shadow-[0_0_15px_rgba(239,68,68,0.05)]";
-        badgeClass = "bg-red-950/80 border-red-500/30 text-red-400 animate-pulse";
-        badgeText = "BLOCKED";
-      } else if (step.status === "SHORT_CIRCUIT" || step.decision === "SKIPPED") {
-        statusClass = "border-slate-900 bg-slate-900/10 text-slate-500 opacity-30";
-        badgeClass = "bg-slate-950 text-slate-600 border-slate-800";
-        badgeText = "SKIPPED";
-      }
-    }
-
-    const dotColors = {
-      purple: "bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]",
-      red: "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]",
-      cyan: "bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"
-    };
-
-    return (
-      <div className={`flex items-start space-x-4 border rounded-xl p-4 transition-all duration-300 ${statusClass}`}>
-        
-        {/* Step Indicator Dot */}
-        <div className={`w-4 h-4 rounded-full mt-1.5 flex items-center justify-center z-10 ${dotColors[primaryColor]}`}>
-          <div className="w-1.5 h-1.5 rounded-full bg-slate-950"></div>
-        </div>
-
-        {/* Content details */}
-        <div className="flex-1 space-y-1.5">
-          <div className="flex justify-between items-center">
-            <h3 className="text-sm font-bold tracking-tight">{title}</h3>
-            <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded border ${badgeClass}`}>
-              {badgeText}
-            </span>
-          </div>
-          <p className="text-xs text-slate-500 leading-normal">{desc}</p>
-          
-          {step && step.decision && step.decision !== "SKIPPED" && (
-            <div className="bg-slate-950 border border-slate-900 rounded-lg p-2.5 mt-2">
-              <div className="text-[10px] uppercase font-mono text-slate-500 font-bold mb-1">Decision Output</div>
-              <div className="text-xs font-mono font-bold text-cyan-400 break-all whitespace-pre-wrap">
-                {step.decision}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // Get trace step helper
-  function getStepByAgent(agentName: string): PipelineStep | null {
-    if (!response) return null;
-    return response.pipeline_trace.find(step => step.agent === agentName) || null;
-  }
 }
