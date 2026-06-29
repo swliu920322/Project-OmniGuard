@@ -1,42 +1,42 @@
 {
     "user_id": "1940360837547565056",
     "range_days": 15,
-    "last_updated": "2026-06-29 00:02:38",
+    "last_updated": "2026-06-29 10:33:27",
     "hot_topics": [
         {
-            "topic": "光子学/激光/CPO瓶颈",
-            "count": 10,
-            "percentage": 0.357
+            "topic": "光子学/CW激光瓶颈与CPO/1.6T互联",
+            "count": 11,
+            "percentage": 0.281
         },
         {
-            "topic": "内存供需失衡与涨价",
-            "count": 8,
-            "percentage": 0.286
+            "topic": "HBM/DRAM/NAND内存供需紧张与涨价",
+            "count": 9,
+            "percentage": 0.231
         },
         {
-            "topic": "机器人/人形机器人带动算力需求",
+            "topic": "机器人/具身智能带来的长期算力与内存需求",
+            "count": 7,
+            "percentage": 0.179
+        },
+        {
+            "topic": "OpenAI/Anthropic/Gemini等前沿模型与推理能力竞赛",
+            "count": 7,
+            "percentage": 0.179
+        },
+        {
+            "topic": "汽车/功率半导体/800V DC与工业恢复",
             "count": 6,
-            "percentage": 0.214
-        },
-        {
-            "topic": "OpenAI/Anthropic/大模型竞争与推理算力",
-            "count": 6,
-            "percentage": 0.214
-        },
-        {
-            "topic": "自动驾驶/汽车产业链向机器人延伸",
-            "count": 4,
-            "percentage": 0.143
+            "percentage": 0.154
         }
     ],
     "industries": [
         {
-            "name": "半导体/芯片",
-            "value": 35
+            "name": "光学/光模块",
+            "value": 30
         },
         {
-            "name": "光学/光模块",
-            "value": 25
+            "name": "半导体/芯片",
+            "value": 30
         },
         {
             "name": "硬件/DC服务器",
@@ -55,66 +55,72 @@
         {
             "ticker": "$SIVE",
             "conviction_level": "核心重仓 (Core Long)",
-            "mention_count": 10,
-            "investment_thesis": "被视为光子学/CW激光/CPO和NVLink生态的关键卡位标的，受益于AI算力集群扩张、机器人/物理AI与多家下游客户导入；作者多次表示高置信度并持有大仓位。"
+            "mention_count": 11,
+            "investment_thesis": "被反复视为光子学与CPO/CW激光的关键受益标的，处在NVDA/超大规模云厂商/机器人物理AI的上游卡位点；作者多次强调其在1.6T、NVLink生态、顶级云客户与机器人光互连中的潜力，且自述持有百万股级别仓位，信心极高。"
         },
         {
             "ticker": "$MU",
             "conviction_level": "核心重仓 (Core Long)",
-            "mention_count": 7,
-            "investment_thesis": "内存涨价与长期供需偏紧是核心逻辑，且受益于HBM/DRAM/NAND周期上行；同时人形机器人、AI推理与数据中心扩张会拉长需求周期。"
+            "mention_count": 9,
+            "investment_thesis": "内存涨价与长期供需紧张是主线，且Micron业绩与指引强劲，叠加CEO提到人形机器人将显著抬升长期内存需求，强化了DRAM/HBM周期上行逻辑。"
         },
         {
             "ticker": "$POET",
             "conviction_level": "首仓买入 (Starter Long)",
-            "mention_count": 3,
-            "investment_thesis": "被放在CPO/光互联生态中，可能进入顶级超大规模客户供应链，具备较强的产业映射与成长弹性。"
+            "mention_count": 4,
+            "investment_thesis": "被当作光子学/CPO生态的重要参与者，可能受益于顶级超大规模客户的光互连需求扩张；与SIVE一起被纳入“算力产业节点映射”中。"
         },
         {
             "ticker": "$CBRS",
             "conviction_level": "首仓买入 (Starter Long)",
-            "mention_count": 2,
-            "investment_thesis": "OpenAI新模型在其平台上高性能推理，验证其AI推理算力平台价值；作者明确提到首次建立starter position。"
-        },
-        {
-            "ticker": "$MRVL",
-            "conviction_level": "中性观察 (Neutral)",
-            "mention_count": 3,
-            "investment_thesis": "作为CXL/数据中心与DSP相关受益股，弹性强但更偏主题交易与估值重评，缺少明确“核心重仓”表述。"
-        },
-        {
-            "ticker": "$ALAB",
-            "conviction_level": "中性观察 (Neutral)",
             "mention_count": 1,
-            "investment_thesis": "CXL内存池化主题的强势标的，已大幅上涨，体现市场对内存互联与算力基础设施的高预期。"
+            "investment_thesis": "Cerebras的前沿推理模型性能极强，显示AI推理算力需求仍在爆发，具备受益于推理侧扩张的潜力。"
         },
         {
             "ticker": "$XFAB",
             "conviction_level": "中性观察 (Neutral)",
             "mention_count": 2,
-            "investment_thesis": "欧洲MEMS/功率半导体与汽车回暖受益标的，获得CHIPS Act资金支持，偏产业政策驱动。"
+            "investment_thesis": "CHIPS Act资金与MEMS/汽车/功率半导体恢复形成催化，但更偏政策与周期修复驱动，作者态度偏谨慎乐观。"
+        },
+        {
+            "ticker": "$ALAB",
+            "conviction_level": "中性观察 (Neutral)",
+            "mention_count": 1,
+            "investment_thesis": "CXL内存池化主题的强势标的，涨幅已大，体现市场已在为内存架构升级定价，但当前更偏趋势跟踪而非新建仓。"
+        },
+        {
+            "ticker": "$MRVL",
+            "conviction_level": "中性观察 (Neutral)",
+            "mention_count": 3,
+            "investment_thesis": "作为CXL/数据中心与DSP相关受益者，被用于证明内存池化与数据中心互连主题的强势，但估值与涨幅已显著扩张。"
         },
         {
             "ticker": "$AOSL",
             "conviction_level": "中性观察 (Neutral)",
             "mention_count": 1,
-            "investment_thesis": "功率半导体涨价与800V DC化趋势的早期受益者之一，但更多是主题性跟踪。"
+            "investment_thesis": "功率半导体涨价与800V DC趋势的主题股之一，受行业提价与电气化升级驱动。"
+        },
+        {
+            "ticker": "$POWI",
+            "conviction_level": "中性观察 (Neutral)",
+            "mention_count": 1,
+            "investment_thesis": "同属功率半导体涨价链条，受800V DC转型和产品提价支撑，但更多是主题轮动标的。"
         }
     ],
     "supply_chain_bottlenecks": [
         {
-            "category": "HBM/DRAM/NAND内存供给紧张",
-            "status": "持续紧缺，价格上涨，需求超预期；被提及为AI、机器人与服务器的长期瓶颈",
+            "category": "HBM/DRAM/NAND内存短缺",
+            "status": "需求远超供给，价格上涨，行业进入紧张周期",
             "affected_tickers": [
                 "$MU",
-                "SK Hynix",
-                "Samsung",
-                "$SNDK"
+                "$SNDK",
+                "$SK Hynix",
+                "$Samsung"
             ]
         },
         {
-            "category": "CW DFB/EML激光器供给瓶颈",
-            "status": "AI光互联与CPO扩张带来的稀缺卡点，可能触发架构变化与上游涨价",
+            "category": "CW DFB激光器/光子学供给瓶颈",
+            "status": "被反复提及为AI光互连与CPO扩产的关键卡点，市场曾因该瓶颈迫使架构调整",
             "affected_tickers": [
                 "$SIVE",
                 "$LITE",
@@ -124,29 +130,20 @@
             ]
         },
         {
-            "category": "CPO/光互联器件与封装产能",
-            "status": "CPO相关链条被认为最先承压，相关公司出现大幅回撤但供需缺口仍在",
+            "category": "CPO/光模块上游配套（1.6T OSFP、PIC、DSP、OSAT）",
+            "status": "供给链仍在爬坡，涉及封装、PIC、DSP与子系统整合",
             "affected_tickers": [
                 "$SIVE",
-                "$AAOI",
-                "$TSEM",
+                "$POET",
+                "$JBL",
                 "$MRVL",
-                "$LITE"
+                "$MXL",
+                "$TSEM"
             ]
         },
         {
-            "category": "AI推理算力与云端容量约束",
-            "status": "超大模型发布与云厂商算力受限并存，显示推理/训练资源仍不足",
-            "affected_tickers": [
-                "$META",
-                "$GOOGL",
-                "$NBIS",
-                "$CBRS"
-            ]
-        },
-        {
-            "category": "电源半导体/800V DC转换",
-            "status": "价格开始上调，预示下一轮服务器供电升级周期",
+            "category": "功率半导体产能/提价",
+            "status": "多家厂商启动第二轮提价，供需偏紧",
             "affected_tickers": [
                 "$AOSL",
                 "$POWI",
@@ -154,40 +151,38 @@
             ]
         },
         {
-            "category": "机器人/人形机器人执行器与传感器",
-            "status": "产业放量初期，但对内存、光学、功率和传感器提出更高要求",
+            "category": "MEMS/先进制造本地化产能",
+            "status": "CHIPS Act资金支持，但产线投产要到2028年，短期仍偏紧",
             "affected_tickers": [
-                "$SHA0",
-                "$MU",
-                "$SIVE"
+                "$XFAB"
             ]
         }
     ],
     "value_chain_mapping": [
         {
-            "upstream": "$SIVE / 光子学与CW/DFB激光器",
-            "midstream": "$POET / $JBL / $MRVL / $MXL / $TSEM / OpenLight生态",
-            "downstream": "$NVDA NVLink / CPO / 超大规模云厂商（Amazon、Microsoft、Google）"
+            "upstream": "CW DFB激光器、硅光/光引擎、PIC、DSP、封装/OSAT",
+            "midstream": "$SIVE / $POET / $JBL / $MRVL / $MXL / $TSEM / OpenLight / OE Solutions",
+            "downstream": "$NVDA NVLink生态、超大规模云厂商（Amazon / Microsoft / Google）、机器人/物理AI（Boston Dynamics、Aeva、Apple相关生态）"
         },
         {
-            "upstream": "HBM/DRAM/NAND晶圆与存储制造",
-            "midstream": "模组与服务器内存配置",
-            "downstream": "AI数据中心、推理集群、机器人与自动驾驶"
+            "upstream": "HBM/DRAM/NAND制造",
+            "midstream": "$MU / SK Hynix / Samsung / $SNDK",
+            "downstream": "AI服务器、推理/训练集群、机器人与高算力终端"
         },
         {
-            "upstream": "汽车零部件与传感/执行器（Schaeffler等）",
-            "midstream": "电驱、轴承、齿轮箱、ECU、功率电子",
-            "downstream": "人形机器人与电动车平台"
+            "upstream": "功率器件与SiC/功率半导体制造",
+            "midstream": "$XFAB / $AOSL / $POWI / Yangjie Technology",
+            "downstream": "800V DC数据中心、电动车、电源系统与工业设备"
         },
         {
-            "upstream": "OpenLight / 激光与PIC技术",
-            "midstream": "光引擎封装、OSFP/CPO组件",
-            "downstream": "AI网络、Hyperscaler互联与物理AI平台"
+            "upstream": "MEMS/汽车零部件与传感器/执行器",
+            "midstream": "Schaeffler $SHA0",
+            "downstream": "汽车厂商与人形机器人/具身智能硬件厂商"
         },
         {
-            "upstream": "功率半导体与SiC产业链",
-            "midstream": "电源管理、800V DC架构",
-            "downstream": "AI服务器、电动车与工业电气化"
+            "upstream": "AI模型与推理算力平台",
+            "midstream": "OpenAI / Anthropic / Gemini / Cerebras $CBRS",
+            "downstream": "企业应用、开发者工作流、网络安全与生物医药场景"
         }
     ],
     "data": [

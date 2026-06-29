@@ -60,7 +60,7 @@ try:
             settings.append(f"{k}={v}")
             
     # 强制注入生产所需的环境变量默认值
-    for k, v in [("LOCAL_MOCK_MODE", "false"), ("PYTHON_ENABLE_INIT_INDEXING", "1"), ("FUNCTIONS_WORKER_PROCESS_COUNT", "4")]:
+    for k, v in [("LOCAL_MOCK_MODE", "false"), ("PYTHON_ENABLE_INIT_INDEXING", "1"), ("FUNCTIONS_WORKER_PROCESS_COUNT", "4"), ("SCM_DO_BUILD_DURING_DEPLOYMENT", "true")]:
         if k == "LOCAL_MOCK_MODE":
             settings = [s for s in settings if not s.startswith("LOCAL_MOCK_MODE=")]
             settings.append("LOCAL_MOCK_MODE=false")
@@ -87,7 +87,7 @@ except Exception as e:
 echo -e "\n✅ [4/4] 部署 Function 代码..."
 cd src/cloud-orchestrator
 
-func azure functionapp publish "$FUNC_NAME" --python --no-bundler
+func azure functionapp publish "$FUNC_NAME" --build remote
 
 echo -e "\n======================================================"
 echo "🎉 部署完成！"
