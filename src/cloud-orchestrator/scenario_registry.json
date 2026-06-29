@@ -1,0 +1,14 @@
+{
+  "Tenant-Alpha": {
+    "scenario": "Data Center Patrol",
+    "agent_router_prompt": "Classify telemetry into: [CRITICAL_OBSTACLE, NORMAL_NAV, SENSOR_ERROR]. Return ONLY the classification string.",
+    "agent_safety_rules": "Strict Rule: Actions MUST NOT include 'spray_water' or 'fast_forward'. Maintain 30cm minimum distance.",
+    "agent_execution_schema": "[{'action': 'stop'|'turn'|'move', 'degree': int, 'speed': int}]"
+  },
+  "Tenant-Beta": {
+    "scenario": "Hospital Delivery",
+    "agent_router_prompt": "Classify telemetry into: [HUMAN_DETECTED, STATIC_OBSTACLE, EMERGENCY]. Return ONLY the classification string.",
+    "agent_safety_rules": "Strict Rule: If HUMAN_DETECTED, the only allowed action is 'stop'. No bypassing.",
+    "agent_execution_schema": "[{'action': 'stop'|'backward'|'voice_alert', 'speed': int}]"
+  }
+}
