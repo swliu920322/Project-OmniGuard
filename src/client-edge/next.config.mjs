@@ -15,7 +15,7 @@ const nextConfig = {
   trailingSlash: true,
 
   // 🎯 强制转译这几个 ESM 依赖以使 SWC/Webpack 兼容 import.meta 语法
-  transpilePackages: ['@huggingface/transformers', 'onnxruntime-web'],
+  transpilePackages: ['onnxruntime-web'],
 
   // 🎯 【新增强调防护罩】：刚性宣告禁止 Next.js 服务端组件去打包 transformers 内部的重型二进制
   experimental: {
