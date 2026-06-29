@@ -4,6 +4,8 @@ param serverlessPlanId string
 param storageAccountName string
 param backendSubnetId string
 param existingOpenAiName string = 'southeastaisa-0322-resource'
+param cosmosEndpoint string
+param cosmosKey string
 
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: '${prefix}-brain-${uniqueString(resourceGroup().id)}'
@@ -52,6 +54,14 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         {
           name: 'LOCAL_MOCK_MODE'
           value: 'false'
+        }
+        {
+          name: 'COSMOS_ENDPOINT'
+          value: cosmosEndpoint
+        }
+        {
+          name: 'COSMOS_KEY'
+          value: cosmosKey
         }
       ]
     }

@@ -100,6 +100,8 @@ module computeBrain './compute-module.bicep' = {
     serverlessPlanId: serverlessPlan.id
     storageAccountName: funcStorage.name
     backendSubnetId: '${spokeVnet.id}/subnets/BackendSubnet' // 🟩 刚性下钻透传
+    cosmosEndpoint: cosmosAccount.properties.documentEndpoint
+    cosmosKey: cosmosAccount.listKeys().primaryMasterKey
   }
 }
 
@@ -243,3 +245,51 @@ resource iotHub 'Microsoft.Devices/IotHubs@2023-06-30' = {
 
 // 输出 IoT Hub 主键连接串，供本地测试桩直接获取，无需登录 Portal
 output iotHubConnectionString string = 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey}'
+
+// 🟩 追加：持久化海马体 (Azure Cosmos DB) - 强制锁定 Free Tier
+resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
+  name: '${prefix}-mem-${uniqueString(resourceGroup().id)}'
+  location: location
+  kind: 'GlobalDocumentDB'
+  properties: {
+    databaseAccountOfferType: 'Standard'
+    enableFreeTier: true // 物理锁死免费层，斩断账单击穿风险
+    consistencyPolicy: {
+      defaultConsistencyLevel: 'Session'
+    }
+    locations: [
+      {
+        locationName: location
+        failoverPriority: 0
+        isZoneRedundant: false
+      }
+    ]
+  }
+}
+
+// 挂载数据库
+resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023-11-15' = {
+  parent: cosmosAccount
+  name: 'OmniGuardDB'
+  properties: {
+    resource: { id: 'OmniGuardDB' }
+  }
+}
+
+// 挂载物理孪生容器，强行使用 tenant_id 作为物理隔离分区键
+resource deviceTwinContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2023-11-15' = {
+  parent: cosmosDb
+  name: 'DeviceTwins'
+  properties: {
+    resource: {
+      id: 'DeviceTwins'
+      partitionKey: {
+        paths: [ '/tenant_id' ]
+        kind: 'Hash'
+      }
+    }
+    options: {
+      throughput: 400 // 免费层极限吞吐量
+    }
+  }
+}
