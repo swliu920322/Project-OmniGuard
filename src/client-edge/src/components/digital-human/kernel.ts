@@ -118,8 +118,7 @@ export async function runLocalGPUPipeline(prompt: string, context: string, onTok
  * 流式解算管道 B：新加坡云端 ASGI 网桥
  */
 export async function cloudInferencePipeline(prompt: string, pathname: string, onToken: (token: string) => void): Promise<void> {
-  const base = process.env.NODE_ENV === 'development' ? 'http://localhost:7071' : '';
-  const response = await fetch(`${base}/api/chat/stream?t=${Date.now()}`, {
+  const response = await fetch(`/api/chat/stream?t=${Date.now()}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
