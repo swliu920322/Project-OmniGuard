@@ -87,7 +87,7 @@ export default function FleetDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://localhost:7071/simulate_agent", {
+      const res = await fetch("/api/simulate_agent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -155,7 +155,7 @@ export default function FleetDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://localhost:7071/simulate_agent", {
+      const res = await fetch("/api/simulate_agent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
