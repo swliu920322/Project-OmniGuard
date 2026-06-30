@@ -1,7 +1,7 @@
 # =========================================================================
 # 🛠️ Project-OmniGuard 统一控制总线
 # =========================================================================
-.PHONY: provision start-backend start-frontend destroy deploy-function trigger-ci help add-device research
+.PHONY: provision start-backend start-frontend destroy deploy-aca trigger-ci help add-device research
 
 help:
 	@echo "======================================================"
@@ -11,7 +11,7 @@ help:
 	@echo "make start-backend   - 启动后端 (Azure Functions, 端口 7071)"
 	@echo "make start-frontend  - 启动前端 (Next.js, 端口 3000)"
 	@echo "make destroy         - 销毁所有 Azure 资源"
-	@echo "make deploy-function - 部署 Function 到 serverless"
+	@echo "make deploy-aca      - 部署 容器 到 Azure Container Apps"
 	@echo "make trigger-ci      - 触发 GitHub CI/CD 流水线"
 	@echo "======================================================"
 	@echo "💡 提示: 分别在两个终端中运行 make start-backend 和 make start-frontend"
@@ -32,9 +32,9 @@ destroy:
 	@chmod +x ./sh/destroy.sh
 	./sh/destroy.sh
 
-deploy-function:
-	@chmod +x ./sh/deploy-function.sh
-	./sh/deploy-function.sh
+deploy-aca:
+	@chmod +x ./sh/deploy-aca.sh
+	./sh/deploy-aca.sh
 
 trigger-ci:
 	@chmod +x ./sh/trigger-ci.sh

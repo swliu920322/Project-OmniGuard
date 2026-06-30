@@ -6,7 +6,9 @@ param networkRules object
 param hubVNetName string
 param spokeVNetName string
 
-var swaControlPlaneLocation = 'eastasia'
+@secure()
+param openAiKey string = ''
+param openAiDeploymentName string = 'gpt-5.4-mini'
 
 // NSG 安全防线规则
 resource backendNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
@@ -40,9 +42,9 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
       {
         name: 'BackendSubnet'
         properties: {
-          addressPrefix: '10.1.1.0/24'
+          addressPrefix: '10.1.4.0/23'
           networkSecurityGroup: { id: backendNsg.id }
-          delegations: [{ name: 'serverlessDelegation', properties: { serviceName: 'Microsoft.Web/serverFarms' } }]
+          delegations: [{ name: 'containerAppDelegation', properties: { serviceName: 'Microsoft.App/environments' } }]
         }
       }
       {
@@ -82,26 +84,20 @@ resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-// 专属计算宿主平面 (Basic B1 支持区域 VNet 强制集成)
-resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
-  name: '${prefix}-proto-plan'
-  location: location
-  sku: { name: 'B2', tier: 'Basic' }
-  kind: 'linux'
-  properties: { reserved: true }
-}
-
 // 级联挂载大脑计算核心
 module computeBrain './compute-module.bicep' = {
   name: 'Compute-Brain-Deployment'
   params: {
     location: location
     prefix: prefix
-    serverlessPlanId: serverlessPlan.id
     storageAccountName: funcStorage.name
     backendSubnetId: '${spokeVnet.id}/subnets/BackendSubnet' // 🟩 刚性下钻透传
     cosmosEndpoint: cosmosAccount.properties.documentEndpoint
     cosmosKey: cosmosAccount.listKeys().primaryMasterKey
+    openAiKey: openAiKey
+    openAiDeploymentName: openAiDeploymentName
+    iotHubServiceConnectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey}'
+    iotHubEventHubConnectionString: 'Endpoint=${iotHub.properties.eventHubEndpoints.events.endpoint};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey};EntityPath=${iotHub.properties.eventHubEndpoints.events.path}'
   }
 }
 
@@ -182,22 +178,7 @@ resource queueDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@
   properties: { privateDnsZoneConfigs: [{ name: 'queue-config', properties: { privateDnsZoneId: queueDnsZone.id } }] }
 }
 
-// 前端 Static Web App 绑定
-resource staticWebApp 'Microsoft.Web/staticSites@2023-12-01' = {
-  name: '${prefix}-digitalhuman-portal'
-  location: swaControlPlaneLocation
-  sku: { name: 'Standard', tier: 'Standard' }
-  properties: {}
-}
-
-resource swaApiLink 'Microsoft.Web/staticSites/linkedBackends@2023-12-01' = {
-  parent: staticWebApp
-  name: 'backendApi'
-  properties: {
-    backendResourceId: resourceId('Microsoft.Web/sites', computeBrain.outputs.functionAppName)
-    region: location
-  }
-}
+output frontendUrl string = computeBrain.outputs.frontendUrl
 
 output openAiName string = 'byo-decoupled-instance'
 

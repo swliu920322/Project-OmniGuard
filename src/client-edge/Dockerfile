@@ -1,20 +1,33 @@
-# === 阶段一：依赖安装 ===
-FROM node:18-alpine AS deps
+# --- Stage 1: Build Next.js ---
+FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
-
-# === 阶段二：生产打包 ===
-FROM node:18-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV NODE_ENV=production
-# 刚性执行静态导出
+RUN mkdir -p public
+# Disable telemetry during build
+ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
 
-# === 阶段三：静态分发（利用 Nginx 充当边缘节点） ===
-FROM nginx:stable-alpine AS runner
-COPY --from=builder /app/out /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# --- Stage 2: Production Standalone Server ---
+FROM node:18-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy standalone build directory, static public assets, and cache files
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]

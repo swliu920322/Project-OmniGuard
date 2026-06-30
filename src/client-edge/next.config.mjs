@@ -6,11 +6,12 @@ const __dirname = path.dirname(__filename);
 
 // 🟩 1. 嗅探物理环境：判断当前是本地 dev 还是云端 build
 const isDev = process.env.NODE_ENV === 'development';
+const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:7071';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 2. 动态锁死：本地开发时放开引擎 (undefined)，生产打包时刚性锁死静态 (export)
-  output: isDev ? undefined : 'export',
+  // 2. 动态锁死：生产打包时采用 standalone 格式以机制优化容器镜像体积
+  output: isDev ? undefined : 'standalone',
   images: { unoptimized: true },
   trailingSlash: true,
 
@@ -60,17 +61,6 @@ const nextConfig = {
     return config;
   },
 
-  // 4. 🎯 【核心网桥】：仅在本地开发态开启，强行将 3000 端口的流量倾泻给 7071 真机模拟器
-  ...(isDev && {
-    async rewrites() {
-      return [
-        {
-          source: '/api/:path*',
-          destination: 'http://localhost:7071/api/:path*',
-        },
-      ];
-    },
-  }),
 };
 
 export default nextConfig;

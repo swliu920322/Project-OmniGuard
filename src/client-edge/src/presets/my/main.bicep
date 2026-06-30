@@ -3,6 +3,10 @@ targetScope = 'subscription'
 param location string = 'southeastasia'
 param prefix string = 'omni'
 
+@secure()
+param openAiKey string = ''
+param openAiDeploymentName string = 'gpt-5.4-mini'
+
 var resourceGroupName = '${prefix}-guard-infra-sea-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
@@ -27,5 +31,7 @@ module infraDeployment './nested-infra.bicep' = {
     networkRules: networkRules
     hubVNetName: hubVNetName
     spokeVNetName: spokeVNetName
+    openAiKey: openAiKey
+    openAiDeploymentName: openAiDeploymentName
   }
 }
