@@ -147,7 +147,7 @@ export default function FleetDashboard() {
         await new Promise((resolve) => setTimeout(resolve, 2500));
       }
 
-      const res = await fetch("/api/simulate_agent", {
+      const res = await fetch("/api/simulate_agent/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -310,7 +310,7 @@ export default function FleetDashboard() {
         await new Promise((resolve) => setTimeout(resolve, 2500));
       }
 
-      const res = await fetch("/api/simulate_agent", {
+      const res = await fetch("/api/simulate_agent/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

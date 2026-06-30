@@ -6,7 +6,9 @@ param networkRules object
 param hubVNetName string
 param spokeVNetName string
 
-var swaControlPlaneLocation = 'eastasia'
+@secure()
+param openAiKey string = ''
+param openAiDeploymentName string = 'gpt-5.4-mini'
 
 // NSG 安全防线规则
 resource backendNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
@@ -40,9 +42,9 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
       {
         name: 'BackendSubnet'
         properties: {
-          addressPrefix: '10.1.1.0/24'
+          addressPrefix: '10.1.4.0/23'
           networkSecurityGroup: { id: backendNsg.id }
-          delegations: [{ name: 'serverlessDelegation', properties: { serviceName: 'Microsoft.Web/serverFarms' } }]
+          delegations: [{ name: 'containerAppDelegation', properties: { serviceName: 'Microsoft.App/environments' } }]
         }
       }
       {
@@ -82,24 +84,18 @@ resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-// 专属计算宿主平面 (Basic B1 支持区域 VNet 强制集成)
-resource serverlessPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
-  name: '${prefix}-proto-plan'
-  location: location
-  sku: { name: 'B2', tier: 'Basic' }
-  kind: 'linux'
-  properties: { reserved: true }
-}
-
 // 级联挂载大脑计算核心
 module computeBrain './compute-module.bicep' = {
   name: 'Compute-Brain-Deployment'
   params: {
     location: location
     prefix: prefix
-    serverlessPlanId: serverlessPlan.id
     storageAccountName: funcStorage.name
     backendSubnetId: '${spokeVnet.id}/subnets/BackendSubnet' // 🟩 刚性下钻透传
+    cosmosEndpoint: cosmosAccount.properties.documentEndpoint
+    cosmosKey: cosmosAccount.listKeys().primaryMasterKey
+    openAiKey: openAiKey
+    openAiDeploymentName: openAiDeploymentName
   }
 }
 
@@ -180,21 +176,99 @@ resource queueDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@
   properties: { privateDnsZoneConfigs: [{ name: 'queue-config', properties: { privateDnsZoneId: queueDnsZone.id } }] }
 }
 
-// 前端 Static Web App 绑定
-resource staticWebApp 'Microsoft.Web/staticSites@2023-12-01' = {
-  name: '${prefix}-digitalhuman-portal'
-  location: swaControlPlaneLocation
-  sku: { name: 'Standard', tier: 'Standard' }
-  properties: {}
-}
+output frontendUrl string = computeBrain.outputs.frontendUrl
 
-resource swaApiLink 'Microsoft.Web/staticSites/linkedBackends@2023-12-01' = {
-  parent: staticWebApp
-  name: 'backendApi'
+output openAiName string = 'byo-decoupled-instance'
+
+// 🟩 追加：边缘神经丛网关 (IoT Hub) - 强制锁定 F1 免费层
+@description('Force Free Tier (F1) to protect the remaining budget')
+param iotHubSku string = 'F1'
+
+resource iotHub 'Microsoft.Devices/IotHubs@2023-06-30' = {
+  name: 'iot-${prefix}-${uniqueString(resourceGroup().id)}'
+  location: location
+  sku: {
+    name: iotHubSku
+    capacity: 1 // 物理锁定单实例
+  }
   properties: {
-    backendResourceId: resourceId('Microsoft.Web/sites', computeBrain.outputs.functionAppName)
-    region: location
+    // 强制关闭无关协议，收缩暴露面
+    enableFileUploadNotifications: false
+    // 云端到设备 (C2D) 指令生命周期锁定
+    cloudToDevice: {
+      defaultTtlAsIso8601: 'PT1H'
+      maxDeliveryCount: 10
+    }
+    // 路由策略：将遥测数据转发至内置 Event Hub，供后续 Function App 消费
+    routing: {
+      endpoints: {
+        events: []
+        serviceBusQueues: []
+        serviceBusTopics: []
+        storageContainers: []
+      }
+      routes: [
+        {
+          name: 'DeviceTelemetryRoute'
+          source: 'DeviceMessages'
+          condition: 'true'
+          endpointNames: [
+            'events'
+          ]
+          isEnabled: true
+        }
+      ]
+    }
   }
 }
 
-output openAiName string = 'byo-decoupled-instance'
+// 输出 IoT Hub 主键连接串，供本地测试桩直接获取，无需登录 Portal
+output iotHubConnectionString string = 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey}'
+
+// 🟩 追加：持久化海马体 (Azure Cosmos DB) - 强制锁定 Free Tier
+resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
+  name: '${prefix}-mem-${uniqueString(resourceGroup().id)}'
+  location: location
+  kind: 'GlobalDocumentDB'
+  properties: {
+    databaseAccountOfferType: 'Standard'
+    enableFreeTier: true // 物理锁死免费层，斩断账单击穿风险
+    consistencyPolicy: {
+      defaultConsistencyLevel: 'Session'
+    }
+    locations: [
+      {
+        locationName: location
+        failoverPriority: 0
+        isZoneRedundant: false
+      }
+    ]
+  }
+}
+
+// 挂载数据库
+resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023-11-15' = {
+  parent: cosmosAccount
+  name: 'OmniGuardDB'
+  properties: {
+    resource: { id: 'OmniGuardDB' }
+  }
+}
+
+// 挂载物理孪生容器，强行使用 tenant_id 作为物理隔离分区键
+resource deviceTwinContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2023-11-15' = {
+  parent: cosmosDb
+  name: 'DeviceTwins'
+  properties: {
+    resource: {
+      id: 'DeviceTwins'
+      partitionKey: {
+        paths: [ '/tenant_id' ]
+        kind: 'Hash'
+      }
+    }
+    options: {
+      throughput: 400 // 免费层极限吞吐量
+    }
+  }
+}

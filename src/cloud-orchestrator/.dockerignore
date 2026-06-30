@@ -1,0 +1,6 @@
+.venv
+__pycache__
+.python_packages
+.git
+.funcignore
+*.log

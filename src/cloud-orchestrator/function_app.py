@@ -20,6 +20,19 @@ fastapi_app.add_middleware(
     allow_headers=["*"],
 )
 
+# 2.5. 日志监视中转站，监控运行时所有请求的状态方法
+@fastapi_app.middleware("http")
+async def log_requests(request, call_next):
+    logging.info(f"[🔬 API HIT] Method: {request.method} | Path: {request.url.path} | Query: {request.url.query}")
+    try:
+        response = await call_next(request)
+        logging.info(f"[🔬 API RESPONSE] Status: {response.status_code}")
+        return response
+    except Exception as e:
+        logging.error(f"[🔬 API ERROR] {str(e)}")
+        raise e
+
+
 # 3. 模块化：优雅加载各独立作用域下的子路由组件
 from digitalhuman import digital_human_router
 from kol_analysis import kol_analysis_router

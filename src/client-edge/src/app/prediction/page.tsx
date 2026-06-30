@@ -31,7 +31,7 @@ export default function PredictionPage() {
 
   const fetchKols = async () => {
     try {
-      const res = await fetch('/api/kol/list');
+      const res = await fetch('/api/kol/list/');
       if (res.ok) {
         const data = await res.json();
         setKols(data);
@@ -45,7 +45,7 @@ export default function PredictionPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/kol/report?target_user_id=${kolId}&range_days=${days}`);
+      const res = await fetch(`/api/kol/report/?target_user_id=${kolId}&range_days=${days}`);
       if (res.ok) {
         const data = await res.json();
         setReport(data);
