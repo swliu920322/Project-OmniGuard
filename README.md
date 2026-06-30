@@ -1,80 +1,119 @@
-# Project-OmniGuard
+# Project-OmniGuard: Cloud-Edge Collaborative Security Orchestrator & Zero-Trust Sandbox
 
-Enterprise-grade zero-trust landing zone tailored for low-cost, high-performance edge-cloud orchestration. Built
-specifically as a tactical sandbox to master secure network perimeters and state machines.
+[![Azure Container Apps](https://img.shields.io/badge/Azure-Container%20Apps-blue.svg?style=flat-square)](https://azure.microsoft.com/en-us/products/container-apps/)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2-black.svg?style=flat-square)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100-green.svg?style=flat-square)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-## Key Performance Indicators (KPIs)
+**Project-OmniGuard** is an enterprise-grade cloud-edge collaborative security decision-making sandbox. It acts as both a network routing and status-monitoring shield for embodied IoT device fleets operating at hostile perimeters, and a reference architecture built on **Azure Container Apps (ACA)**, **Private Virtual Networks (VNet)**, and **Azure Private Link** enforcing zero-trust data compliance.
 
-- **Zero-Warning Compilation**: Verified against Bicep Linter core specifications.
-- **Edge-Cloud Rendering Latency**: Shipped 100% of digital human WGSL animation pipelines to client browsers, scaling
-  server-side compute cost to absolute **$0.00**.
-- **Network Isolation Barrier**: 4 discrete Private Endpoint nodes completely decapitated public endpoints for Azure
-  OpenAI and Storage Account.
+---
+
+## 🌟 Key Technical Highlights & Architectural Pillars
+
+### 1. Zero-Trust Network Perimeter & Micro-segmentation
+* **API Gateway Defense (CORS-free):**  
+  The public Next.js frontend container (`external: true`) acts as a secure **API Gateway**, dynamically proxying backend API requests through App Router's **[catch-all route handler](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/client-edge/src/app/api/[...path]/route.ts)** to avoid CORS issues and obscure private backend paths.
+* **Complete Backend Cloaking:**  
+  The backend FastAPI container is configured as VNet-internal only (`external: false`), completely hidden from the public internet. Communication between frontend and backend is routed strictly over Azure internal private DNS (`.internal`) inside the Singapore spoke subnet.
+* **Internalized Cloud Endpoints (Private Link):**  
+  Decommissioned all public endpoint access to Cosmos DB, Storage Account, and Azure OpenAI Service using four independent **Private Endpoints**. All data traffic flows exclusively over private subnets, securing compute-to-storage paths.
+
+### 2. Hybrid Edge-Cloud AI Reasoning Pipeline
+* **Local WebGPU In-Browser Inference ($0.00 Server Compute):**  
+  High-frequency user greetings and local vector matching (RAG) are processed directly inside the client's browser using **WebGPU** (Xenova/all-MiniLM-L6-v2 + Qwen2.5-Instruct). This protects user privacy and reduces cloud backend inferencing costs to absolute zero.
+* **Cloud Stream Fallback (SSE):**  
+  If the local semantic router determines that the query falls outside local knowledge limits, it seamlessly fallbacks to the cloud backend. The frontend proxy forwards the request to the private FastAPI worker, streaming response tokens (Server-Sent Events) from Azure OpenAI.
+
+### 3. Real-Time Telemetry Sandbox
+* Visualizes active edge device fleet metrics (HP, Battery, Velocity, Temp) with network jitter/latency sliders.
+* Renders the dynamic cloud network topology flowchart and multi-agent orchestration states, providing transparency of inference steps.
+
+---
 
 ## 📁 System Repository Structure
 
 ```text
-├── .azure/                    # 基础设施即代码 (IaC) 的神庙
-│   ├── main.bicep             # 订阅级指挥官
-│   ├── nested-infra.bicep     # 网络基建特种部队
-│   ├── compute-module.bicep   # 计算大脑(Function)特种部队
-│   └── network-rules.json     # 安全规则配置矩阵
-├── .github/workflows/       # CI/CD Automation
-│   └── deploy-infra.yml     # Credentialless deployment via GitHub OIDC federation
-├── src/
-│   ├── client-edge/         # Next.js frontend with WebGPU PII guardrails
-│   └── cloud-orchestrator/    # 无服务器后端大脑
-│       ├── requirements.txt   # Python 依赖清单
-│       ├── host.json          # 网关配置
-├── docker-compose.serving.yml# Local high-performance private GPU/CPU inference cluster
-├── docs/adrs/               # Architecture Decision Records (ADRs)
-│   ├── ADR-001-Network-Isolation.md
-│   └── ADR-002-Isomorphic-FinOps.md
-└── README.md                # System Topology & Governance Manifest
+├── .azure/                     # Infrastructure-as-Code (IaC) Templates
+│   ├── main.bicep              # Subscription-level deployment orchestrator
+│   ├── nested-infra.bicep      # Network infrastructure & Private Link configuration
+│   └── compute-module.bicep    # Frontend & Backend Container Apps configuration
+├── sh/                         # Operational Scripts
+│   ├── deploy-aca.sh           # Cache-busting compilation, push, and rolling update trigger
+│   ├── provision.sh            # Idempotent cloud infrastructure provisioning trigger
+│   └── start-backend.sh        # Local backend Functions emulator startup
+├── src/                        # Service Source Code
+│   ├── client-edge/            # Next.js frontend & dynamic API router proxy
+│   └── cloud-orchestrator/     # Python FastAPI ASGI worker inside Functions container
+│       ├── daily_cache/        # Persistent offline tweets scraping cache
+│       └── run_analysis.py     # Batch tweets scraper, translator & investor RAG analyzer
+├── Makefile                    # Unified command execution bus
+└── docs/                       # Diátaxis-compliant Documentation Directory
 ```
-
-## Operational Runbook (Zero-Friction Hot Deployment)
-
-Execute idempotent deployment without deleting the resource group:
-
-```bash
-az deployment sub create \
-  --name omni-permanent-base \
-  --location japaneast \
-  --template-file .azure/main.bicep \
-  --parameters location=japaneast prefix=omni
-```
-
-## 📚 Documentation Index (系统文档地图)
-
-我们遵循行业标准的 **Diátaxis 架构模型**，将项目中的设计、操作和教程文档系统化归档至 `docs/` 目录：
-
-### 1. 🚀 Tutorials (上手引导)
-* **[快速上手部署指南](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/tutorials/quickstart.md)**：介绍如何进行本地启动、微服务配置与 Azure 云部署。
-* **[用户向导手册](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/tutorials/user-guide.md)**：面向使用者的功能使用向导。
-
-### 2. 🛠️ Operations (运行与操作指南)
-* **[命令行调用参考手册](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/operations/command-reference.md)**：包含日常抓取分析、`FORCE_REFRESH` 强刷历史数据等命令字典。
-* **[上线与测试检查清单](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/operations/release-checklist.md)**：保障系统变动时的零故障上线清单。
-
-### 3. 📐 Reference (协议、设计蓝图与架构集成)
-* **[AGY 协议设计文档](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/reference/agy-protocol.md)**：底层设备通信及 Agent 协议核心定义。
-* **[系统集成设计规范](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/reference/system-integration-design.md)**：高层云边一体化协同设计图纸。
-* **设计蓝图集 (Blueprints)**：
-  - [前端监控面板设计](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/reference/blueprints/frontend-dashboard.md)
-  - [多 Agent 编排机制](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/reference/blueprints/multi-agent-orchestration.md)
-  - [设备机队看板设计](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/reference/blueprints/fleet-dashboard.md)
-  - [云上环境验证设计](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/reference/blueprints/proof-of-cloud.md)
-
-### 4. 🧠 Explanation & Decision (设计决策、ADR 与审计)
-* **架构决策记录 (ADRs)**：存放在 `docs/adrs/` 目录下的多份系统演进历史决策记录（ADR-002 至 ADR-007）。
-* **架构审计与重构规范 (Audits)**：
-  - [5W2H 架构重构设计规范](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/audits/5w2h-redesign-spec.md)：系统架构 5W2H 与 Lambda 去重设计标准。
-  - [架构重构修改计划](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/audits/redesign-plan.md)：应对 DeepSeek 报告的重构指南。
-  - [X 爬虫书签一键同步设计](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/audits/bookmarklet-sync-design.md)：本地安全代理防封号重构。
-  - [DeepSeek 架构审计报告](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/audits/deepseek-audit-report.md)：原始架构缺陷审计分析。
-  - [旧版架构重构评估](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/audits/architecture-redesign.md) / [重构总结概要](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/audits/redesign-summary.txt)
 
 ---
 
+## 🌐 Network Topology Flowchart
 
+```mermaid
+graph TD
+    User([Browser Client]) -->|HTTPS / Port 443| Frontend[omni-frontend Container App]
+    subgraph Singapore Spoke VNet [10.1.0.0/16]
+        subgraph ACA Subnet [10.1.4.0/23]
+            Frontend -->|Internal HTTPS / DNS| Backend[omni-backend Container App]
+        end
+        subgraph Storage Subnet [10.1.2.0/24]
+            Backend -->|Private Link| Storage[(Azure Storage)]
+            Backend -->|Private Link| Cosmos[(Cosmos DB)]
+            Backend -->|Private Link| OpenAI[(Azure OpenAI)]
+        end
+    end
+```
+
+---
+
+## 🛠️ Operational Runbook & Developer Workflow
+
+### 1. Spin Up Local Development
+Launch backend and frontend services in separate local terminals:
+```bash
+# Terminal 1: Launch local Functions Host emulator (port 7071)
+make start-backend
+
+# Terminal 2: Launch local Next.js frontend (port 3000)
+make start-frontend
+```
+
+### 2. Run Offline Tweets Harvesting & AI RAG Analysis
+Scrape tweets, run batch translations, and perform AI supply-chain analysis locally:
+```bash
+make research
+```
+
+### 3. Deploy to Cloud (Bypassing Docker & Container Registry Cache)
+Containers are hosted inside a private subnet and referenced by the `:latest` tag. To force deployments to bypass Docker caching and force ACA to pull updated images:
+```bash
+make deploy-aca
+```
+*This command runs a `--no-cache` Docker compilation, pushes the image to ACR, and pollutes the Container App's environment variables with `TRIGGER_VERSION=$(date +%s)` to force Azure to retire the old replica and start a new revision.*
+
+---
+
+## 🎯 Troubleshooting & Lessons Learned (Nourishment for Growth)
+
+* **Subnet Delegation Lock (`InUseSubnetCannotBeUpdated`):**  
+  Legacy Functions VNet integrations locked the `BackendSubnet` delegation. Fixed by running `az resource delete` to explicitly delete the old App Service Plan and free the locks.
+* **ACR Registry Bootstrapping Cold-Start:**  
+  Fresh deployments fail with `MANIFEST_UNKNOWN` when Container Apps start before ACR contains the image. Solved by placing a public dummy image (`aci-helloworld`) in Bicep first, and then deploying the actual image over it.
+* **308 Trailing Slash POST-to-GET Method Stripping:**  
+  Next.js `trailingSlash: true` forced a 308 redirect for non-slashed API requests. Browsers followed the redirect by dropping the method to `GET`, triggering a 405 Method Not Allowed in FastAPI. Resolved by appending trailing slashes in all client-side calls and changing `BACKEND_API_URL` to `https://` to bypass HTTP-to-HTTPS Envoy redirect method stripping.
+* **Path Assembly Slashes:**  
+  Catch-all routing evaluated `/api/chat/stream/` into segments ending with an empty string, creating `chat/stream/` which failed FastAPI routing. Resolved by filtering empty segments using `pathSegments.filter(Boolean).join('/')` in `route.ts`.
+
+---
+
+## 📚 Diátaxis Documentation Index
+
+* 📖 **[Migration & Troubleshooting Retrospective](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/migration_retrospective_aca.md)**: Exhaustive details on Container Apps, VNet routing details, and SWA-vs-ACA decisions.
+* 📐 **[System Design Blueprints](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/reference/system-integration-design.md)**: Architectural schemas for fleet routing and proof-of-cloud validation.
+* 🚀 **[Quickstart Deployment Guide](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/tutorials/quickstart.md)**: Step-by-step setup guides for developers.
