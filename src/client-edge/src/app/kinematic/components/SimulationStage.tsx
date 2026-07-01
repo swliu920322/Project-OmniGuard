@@ -20,14 +20,14 @@ export default function SimulationStage({
   stepCount,
   onStart,
 }: SimulationStageProps) {
-  const { agvSpeedMps, clearanceM, totalDistanceM, cloudLatencyMs, edgeReactionMs } = params;
+  const { agvSpeedMps, clearanceM, totalDistanceM, cloudLatencyMs, brakeLatencyMs } = params;
   const isRunning = status === "running";
   const isCrashed = status === "crashed";
   const isSafeStop = status === "safe_stop";
 
   const clearanceBoundaryM = Math.max(0, totalDistanceM - clearanceM);
-  const latencyS = mode === "cloud" ? cloudLatencyMs / 1000 : edgeReactionMs / 1000;
-  const brakingM = computeBrakingDistanceM(agvSpeedMps, latencyS);
+  const detectionS = mode === "cloud" ? cloudLatencyMs / 1000 : brakeLatencyMs / 1000;
+  const brakingM = computeBrakingDistanceM(agvSpeedMps, brakeLatencyMs / 1000);
 
   const pct = totalDistanceM > 0 ? (positionM / totalDistanceM) * 100 : 0;
   const clearancePct = totalDistanceM > 0 ? (clearanceBoundaryM / totalDistanceM) * 100 : 0;
@@ -165,8 +165,8 @@ export default function SimulationStage({
               <span>💥 Collision</span>
               <span className="text-xs text-red-400/80 font-normal normal-case font-mono max-w-xs">
                 {mode === "cloud"
-                  ? `Cloud latency ${formatLatency(latencyS)} too high.`
-                  : `Edge reaction too slow.`}
+                  ? `Cloud RTT ${cloudLatencyMs}ms too slow.`
+                  : `Edge latency ${brakeLatencyMs}ms too slow.`}
               </span>
             </div>
           </div>
@@ -179,8 +179,8 @@ export default function SimulationStage({
               <span>🛡️ Safe Stop</span>
               <span className="text-xs text-cyan-400/80 font-normal normal-case font-mono max-w-xs">
                 {mode === "edge"
-                  ? `Edge braked in ${edgeReactionMs}ms.`
-                  : `Cloud responded before collision.`}
+                  ? `Brake latency ${brakeLatencyMs}ms.`
+                  : `Cloud detection ${cloudLatencyMs}ms + brake ${brakeLatencyMs}ms.`}
               </span>
             </div>
           </div>
@@ -196,7 +196,7 @@ export default function SimulationStage({
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-[10px] font-mono text-slate-400">
         <Readout label="Mode" value={mode === "cloud" ? "Cloud-Only" : "Edge Fallback"} />
-        <Readout label="Loop latency" value={formatLatency(latencyS)} />
+        <Readout label="Detection delay" value={formatLatency(detectionS)} />
         <Readout label="Braking distance" value={`${brakingM.toFixed(2)} m`} />
         <Readout label="Status" value={status === "running" ? "Running" : status === "idle" ? "Idle" : status === "crashed" ? "Crashed" : "Safe Stop"} danger={status === "crashed"} success={status === "safe_stop"} />
       </div>

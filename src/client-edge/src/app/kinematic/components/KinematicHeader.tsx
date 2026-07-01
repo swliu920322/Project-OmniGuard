@@ -27,6 +27,12 @@ export default function KinematicHeader({ mode, onModeChange, onReset }: Kinemat
       </div>
 
       <div className="flex items-center space-x-3">
+        <a
+          href="/kinematic/compare"
+          className="text-[10px] font-mono font-bold text-cyan-400 hover:text-cyan-300 transition border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1.5 rounded"
+        >
+          ⚖️ Compare
+        </a>
         <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-900">
           <button
             onClick={() => onModeChange("cloud")}
