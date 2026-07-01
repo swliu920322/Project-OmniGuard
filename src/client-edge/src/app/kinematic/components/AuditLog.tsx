@@ -23,7 +23,7 @@ export default function AuditLog({ logs, showEdgeProgress, onToggleEdgeProgress 
         {onToggleEdgeProgress && (
           <button
             onClick={onToggleEdgeProgress}
-            className={`text-[10px] uppercase tracking-wider font-mono font-bold px-2.5 py-1 rounded-lg border transition-colors ${
+            className={`text-xs uppercase tracking-wider font-mono font-bold px-2.5 py-1 rounded-lg border transition-colors ${
               showEdgeProgress
                 ? "bg-cyan-950/60 border-cyan-700/50 text-cyan-400 hover:bg-cyan-900/60"
                 : "bg-slate-900/60 border-slate-700/50 text-slate-500 hover:bg-slate-800/60 hover:text-slate-400"

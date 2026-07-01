@@ -29,14 +29,14 @@ export default function KinematicHeader({ mode, onModeChange, onReset }: Kinemat
       <div className="flex items-center space-x-3">
         <a
           href="/kinematic/compare"
-          className="text-[10px] font-mono font-bold text-cyan-400 hover:text-cyan-300 transition border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1.5 rounded"
+          className="text-xs font-mono font-bold text-cyan-400 hover:text-cyan-300 transition border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1.5 rounded"
         >
           ⚖️ Compare
         </a>
         <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-900">
           <button
             onClick={() => onModeChange("cloud")}
-            className={`text-[10px] uppercase font-mono px-3 py-1.5 rounded transition ${
+            className={`text-xs uppercase font-mono px-3 py-1.5 rounded transition ${
               mode === "cloud"
                 ? "bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 font-bold"
                 : "text-slate-500 hover:text-slate-300"
@@ -46,7 +46,7 @@ export default function KinematicHeader({ mode, onModeChange, onReset }: Kinemat
           </button>
           <button
             onClick={() => onModeChange("edge")}
-            className={`text-[10px] uppercase font-mono px-3 py-1.5 rounded transition ${
+            className={`text-xs uppercase font-mono px-3 py-1.5 rounded transition ${
               mode === "edge"
                 ? "bg-cyan-500/20 border border-cyan-500/40 text-cyan-400 font-bold"
                 : "text-slate-500 hover:text-slate-300"
@@ -58,7 +58,7 @@ export default function KinematicHeader({ mode, onModeChange, onReset }: Kinemat
 
         <button
           onClick={onReset}
-          className="px-4 py-1.5 rounded-lg font-bold text-[10px] tracking-wide uppercase bg-slate-900 border border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition"
+          className="px-4 py-1.5 rounded-lg font-bold text-xs tracking-wide uppercase bg-slate-900 border border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition"
         >
           ↺ Reset
         </button>

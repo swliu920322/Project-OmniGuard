@@ -41,11 +41,11 @@ export default function SimulationStage({
           <h2 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">
             Simulation Stage
           </h2>
-          <span className="text-[10px] font-mono text-slate-600 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
+          <span className="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
             Step {stepCount}
           </span>
           {isRunning && (
-            <span className="text-[10px] font-mono text-cyan-400 animate-pulse">
+            <span className="text-xs font-mono text-cyan-400 animate-pulse">
               {mode === "cloud" ? "☁️ Awaiting cloud response..." : "⚡ Moving..."}
             </span>
           )}
@@ -53,7 +53,7 @@ export default function SimulationStage({
         <button
           onClick={onStart}
           disabled={isRunning}
-          className={`px-5 py-2 rounded-lg font-bold text-[10px] tracking-wide uppercase transition shadow-lg ${
+          className={`px-5 py-2 rounded-lg font-bold text-xs tracking-wide uppercase transition shadow-lg ${
             isRunning
               ? "bg-slate-900 border border-slate-800 text-slate-600 cursor-not-allowed"
               : "bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] active:scale-[0.98] border border-cyan-400/20"
@@ -187,14 +187,14 @@ export default function SimulationStage({
         )}
 
         {/* Distance readouts */}
-        <div className="absolute bottom-2 left-4 right-4 flex justify-between text-[10px] font-mono text-slate-500">
+        <div className="absolute bottom-2 left-4 right-4 flex justify-between text-xs font-mono text-slate-400">
           <span>Position: {positionM.toFixed(2)}m / {totalDistanceM.toFixed(0)}m</span>
           {isRunning && <span>Remaining: {remainingM.toFixed(1)}m</span>}
           <span>Clearance: {clearanceM.toFixed(1)}m</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-[10px] font-mono text-slate-400">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono text-slate-400">
         <Readout label="Mode" value={mode === "cloud" ? "Cloud-Only" : "Edge Fallback"} />
         <Readout label="Detection delay" value={formatLatency(detectionS)} />
         <Readout label="Braking distance" value={`${brakingM.toFixed(2)} m`} />
