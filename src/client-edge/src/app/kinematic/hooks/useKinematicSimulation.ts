@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { KinematicParams, LogEntry, Mode, computeBrakingDistanceM, formatLatency } from "../lib/kinematic";
+import { KinematicParams, LogEntry, Mode, computeBrakingDistanceM } from "../lib/kinematic";
 
 const JITTER_RANGE = 0.2;
 
@@ -45,6 +45,7 @@ export function useKinematicSimulation({
   statusRef.current = status;
 
   const animRef = useRef<number | null>(null);
+  const genRef = useRef(0);
   const posRef = useRef(0);
   const stepRef = useRef(0);
 
@@ -64,6 +65,7 @@ export function useKinematicSimulation({
 
   const reset = useCallback(() => {
     cleanup();
+    genRef.current += 1;
     setStatus("idle");
     setPositionM(0);
     setStepCount(0);
@@ -73,6 +75,7 @@ export function useKinematicSimulation({
 
   const start = useCallback(() => {
     cleanup();
+    genRef.current += 1;
     posRef.current = 0;
     stepRef.current = 0;
     setPositionM(0);
@@ -84,23 +87,33 @@ export function useKinematicSimulation({
   useEffect(() => {
     if (status !== "running") return;
 
-    const { agvSpeedMps, totalDistanceM, clearanceM, cloudLatencyMs, edgeReactionMs } = paramsRef.current;
+    const { agvSpeedMps, totalDistanceM, clearanceM, cloudLatencyMs, edgeLatencyMs, brakeLatencyMs } = paramsRef.current;
     const currentMode = modeRef.current;
     const clearanceBoundaryM = Math.max(0, totalDistanceM - clearanceM);
-    const latencyS = currentMode === "cloud" ? cloudLatencyMs / 1000 : edgeReactionMs / 1000;
+    const effectiveEdgeBoundaryM = clearanceBoundaryM + agvSpeedMps * edgeLatencyMs / 1000;
+    const reactionS = brakeLatencyMs / 1000;
+    const myGen = genRef.current;
+
+    const latencyMs = currentMode === "cloud" ? cloudLatencyMs : edgeLatencyMs;
+    const detectionBoundaryM = currentMode === "cloud" ? clearanceBoundaryM : effectiveEdgeBoundaryM;
+    const logProgress = true;
+    const tag = currentMode === "cloud" ? "" : "Edge ";
+    const clearZoneLabel = `${clearanceM.toFixed(1)}m`;
 
     let lastTimestamp: number | null = null;
-    let running = true;
     let frameCount = 0;
-    let stepLogged = false;
 
-    // Cloud-specific state: step tracking
-    let cloudStepAccumS = 0;
-    let cloudNextLatencyS = currentMode === "cloud" ? jittered(cloudLatencyMs) / 1000 : 0;
-    let cloudStartPos = currentMode === "cloud" ? 0 : 0;
+    let accumS = 0;
+    let nextS = jittered(latencyMs) / 1000;
+    let internalStep = 0;
+
+    onLogRef.current({
+      timestamp: new Date().toLocaleTimeString(),
+      message: `[START] AGV at 0m heading toward wall. ${currentMode === "cloud" ? `Cloud RTT ${cloudLatencyMs}ms (±20% jitter)` : `Edge latency ${edgeLatencyMs}ms`}, brake ${brakeLatencyMs}ms, clearance zone: last ${clearZoneLabel}.`,
+    });
 
     const animate = (timestamp: number) => {
-      if (!running) return;
+      if (myGen !== genRef.current) return;
       if (lastTimestamp === null) lastTimestamp = timestamp;
 
       const deltaS = (timestamp - lastTimestamp) / 1000;
@@ -109,123 +122,56 @@ export function useKinematicSimulation({
       const newPos = Math.min(posRef.current + agvSpeedMps * deltaS, totalDistanceM);
       posRef.current = newPos;
 
-      if (currentMode === "edge") {
-        // Edge: continuous obstacle detection
-        if (newPos >= clearanceBoundaryM) {
-          setPositionM(newPos);
-          const brakingM = computeBrakingDistanceM(agvSpeedMps, edgeReactionMs / 1000);
-          const finalPos = Math.min(newPos + brakingM, totalDistanceM);
+      accumS += deltaS;
 
-          if (finalPos >= totalDistanceM) {
-            onLogRef.current({
-              timestamp: new Date().toLocaleTimeString(),
-              message: `💥 [CRASH] Obstacle detected at ${newPos.toFixed(1)}m but braking distance ${brakingM.toFixed(2)}m exceeds remaining space.`,
-            });
-            setFinal("crashed", totalDistanceM);
-          } else {
-            setPositionM(finalPos);
-            onLogRef.current({
-              timestamp: new Date().toLocaleTimeString(),
-              message: `🛡️ [EDGE SAFE STOP] Obstacle at ${newPos.toFixed(1)}m. Edge reaction ${edgeReactionMs}ms → braking ${brakingM.toFixed(2)}m. Stopped at ${finalPos.toFixed(2)}m.`,
-            });
-            setFinal("safe_stop", finalPos);
-          }
-          return;
-        }
+      if (accumS >= nextS) {
+        internalStep += 1;
+        const stepNum = internalStep;
+        const actualLatencyMs = nextS * 1000;
 
         if (newPos >= totalDistanceM) {
-          setPositionM(newPos);
           onLogRef.current({
             timestamp: new Date().toLocaleTimeString(),
-            message: `💥 [CRASH] AGV reached wall at ${totalDistanceM.toFixed(1)}m!`,
+            message: `💥 [CRASH] ${tag}Step ${stepNum}: response at ${newPos.toFixed(2)}m, already hit wall. (latency ${actualLatencyMs.toFixed(0)}ms)`,
           });
           setFinal("crashed", totalDistanceM);
           return;
         }
 
-        // Throttle React state sync to ~20fps
-        frameCount += 1;
-        if (frameCount % 3 === 0) setPositionM(newPos);
-
-        // Periodic progress log (every ~2s)
-        if (frameCount % 180 === 0) {
+        if (newPos >= detectionBoundaryM) {
+          const brakingM = computeBrakingDistanceM(agvSpeedMps, reactionS);
+          const finalPos = Math.min(newPos + brakingM, totalDistanceM);
+          setPositionM(finalPos);
+          if (currentMode === "cloud") setStepCount(stepNum);
           onLogRef.current({
             timestamp: new Date().toLocaleTimeString(),
-            message: `[PROGRESS] Position ${newPos.toFixed(1)}m / ${totalDistanceM.toFixed(0)}m | Remaining ${(totalDistanceM - newPos).toFixed(1)}m.`,
+            message: `🛡️ [SAFE STOP] ${tag}Step ${stepNum}: response at ${newPos.toFixed(2)}m. Braking ${brakingM.toFixed(3)}m → stop at ${finalPos.toFixed(3)}m. (latency ${actualLatencyMs.toFixed(0)}ms)`,
           });
+          setFinal("safe_stop", finalPos);
+          return;
         }
-      } else {
-        // Cloud: step-based checkpoints
-        cloudStepAccumS += deltaS;
 
-        if (cloudStepAccumS >= cloudNextLatencyS) {
-          stepRef.current += 1;
-          const stepNum = stepRef.current;
-          const actualLatencyMs = cloudNextLatencyS * 1000;
-          const travelM = agvSpeedMps * cloudNextLatencyS;
-          const afterPos = cloudStartPos + travelM;
-          const remainingM = totalDistanceM - afterPos;
-          const brakingM = computeBrakingDistanceM(agvSpeedMps, cloudNextLatencyS);
-          const inClearance = afterPos >= clearanceBoundaryM;
-
-          if (afterPos >= totalDistanceM || (inClearance && brakingM > remainingM)) {
-            const crashPos = Math.min(afterPos, totalDistanceM);
-            posRef.current = crashPos;
-            setPositionM(crashPos);
-            setStepCount(stepNum);
-            onLogRef.current({
-              timestamp: new Date().toLocaleTimeString(),
-              message: `💥 [CRASH] Step ${stepNum}: Entered clearance at ${crashPos.toFixed(1)}m. Braking ${brakingM.toFixed(1)}m > remaining ${Math.max(0, remainingM).toFixed(1)}m. (latency ${actualLatencyMs.toFixed(0)}ms)`,
-            });
-            setFinal("crashed", crashPos);
-            return;
-          }
-
-          if (inClearance) {
-            posRef.current = afterPos;
-            setPositionM(afterPos);
-            setStepCount(stepNum);
-            onLogRef.current({
-              timestamp: new Date().toLocaleTimeString(),
-              message: `🛡️ [SAFE STOP] Step ${stepNum}: Position ${afterPos.toFixed(1)}m. Braking ${brakingM.toFixed(1)}m ≤ remaining ${remainingM.toFixed(1)}m. (latency ${actualLatencyMs.toFixed(0)}ms)`,
-            });
-            setFinal("safe_stop", afterPos);
-            return;
-          }
-
-          stepLogged = true;
+        if (logProgress) {
           setStepCount(stepNum);
           onLogRef.current({
             timestamp: new Date().toLocaleTimeString(),
-            message: `✅ Step ${stepNum}: Position ${afterPos.toFixed(1)}m | Traveled ${travelM.toFixed(1)}m this cycle | ${remainingM.toFixed(1)}m to wall | Latency ${actualLatencyMs.toFixed(0)}ms.`,
+            message: `✅ Step ${stepNum}: ${newPos.toFixed(2)}m, ${(totalDistanceM - newPos).toFixed(2)}m to wall. (latency ${actualLatencyMs.toFixed(0)}ms)`,
           });
-
-          cloudStartPos = afterPos;
-          cloudStepAccumS = 0;
-          cloudNextLatencyS = jittered(cloudLatencyMs) / 1000;
         }
 
-        // Sync position every frame for cloud (updates infrequently, so no perf concern)
-        setPositionM(newPos);
+        accumS = 0;
+        nextS = jittered(latencyMs) / 1000;
       }
 
-      animRef.current = requestAnimationFrame(animate);
-    };
+      if (frameCount % 3 === 0) setPositionM(newPos);
+      frameCount += 1;
 
-    // Log start
-    onLogRef.current({
-      timestamp: new Date().toLocaleTimeString(),
-      message: currentMode === "cloud"
-        ? `[START] AGV at 0m heading toward wall at ${totalDistanceM.toFixed(0)}m. Cloud latency ${formatLatency(latencyS)} (±20% jitter), clearance zone: last ${clearanceM.toFixed(1)}m.`
-        : `[START] AGV at 0m heading toward wall at ${totalDistanceM.toFixed(0)}m. Edge reaction ${edgeReactionMs}ms, clearance zone: last ${clearanceM.toFixed(1)}m.`,
-    });
+      if (myGen === genRef.current) animRef.current = requestAnimationFrame(animate);
+    };
 
     animRef.current = requestAnimationFrame(animate);
 
-    return () => {
-      running = false;
-      if (animRef.current !== null) cancelAnimationFrame(animRef.current);
-    };
+    return () => { if (animRef.current !== null) cancelAnimationFrame(animRef.current); };
   }, [status, setFinal]);
 
   return { status, positionM, stepCount, start, reset };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   DEFAULT_PARAMS,
   KinematicParams,
@@ -19,6 +19,11 @@ export default function KinematicPage() {
   const [mode, setMode] = useState<Mode>("cloud");
   const [logs, setLogs] = useState<LogEntry[]>([]);
 
+  useEffect(() => {
+    const m = new URLSearchParams(window.location.search).get("mode");
+    if (m === "cloud" || m === "edge") setMode(m);
+  }, []);
+
   const handleLog = useCallback((entry: LogEntry) => {
     setLogs((prev) => [entry, ...prev]);
   }, []);
@@ -32,6 +37,18 @@ export default function KinematicPage() {
     mode,
     onLog: handleLog,
   });
+
+  const handleLoadPreset = useCallback((preset: KinematicParams) => {
+    setParams(preset);
+    simulation.reset();
+    setLogs((prev) => [
+      {
+        timestamp: new Date().toLocaleTimeString(),
+        message: `[PRESET] Loaded preset: ${JSON.stringify(preset)}`,
+      },
+      ...prev,
+    ]);
+  }, [simulation]);
 
   const handleModeChange = useCallback((next: Mode) => {
     setMode(next);
@@ -53,6 +70,7 @@ export default function KinematicPage() {
   }, [simulation]);
 
   const handleStart = useCallback(() => {
+    setLogs([]);
     simulation.start();
   }, [simulation]);
 
@@ -65,7 +83,7 @@ export default function KinematicPage() {
 
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-4">
-            <ParameterPanel params={params} mode={mode} onChange={handleParamChange} />
+            <ParameterPanel params={params} mode={mode} onChange={handleParamChange} onLoadPreset={handleLoadPreset} />
           </div>
           <div className="lg:col-span-8">
             <SimulationStage

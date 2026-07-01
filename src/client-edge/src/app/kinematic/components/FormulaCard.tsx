@@ -9,13 +9,18 @@ interface FormulaCardProps {
 }
 
 export default function FormulaCard({ params, mode }: FormulaCardProps) {
-  const { agvSpeedMps, clearanceM, totalDistanceM, cloudLatencyMs, edgeReactionMs } = params;
+  const { agvSpeedMps, clearanceM, totalDistanceM, cloudLatencyMs, edgeLatencyMs, brakeLatencyMs } = params;
   const isCloud = mode === "cloud";
 
-  const latencyS = isCloud ? cloudLatencyMs / 1000 : edgeReactionMs / 1000;
-  const brakingM = computeBrakingDistanceM(agvSpeedMps, latencyS);
-  const vMaxMps = latencyS > 0 ? clearanceM / latencyS : 0;
+  const detectionS = isCloud ? cloudLatencyMs / 1000 : edgeLatencyMs / 1000;
+  const reactionS = brakeLatencyMs / 1000;
+  const totalReactionS = detectionS + reactionS;
+  const brakingM = computeBrakingDistanceM(agvSpeedMps, reactionS);
+  const vMaxMps = totalReactionS > 0 ? clearanceM / totalReactionS : 0;
   const isSafe = agvSpeedMps <= vMaxMps;
+
+  // During detection delay the AGV travels unchecked
+  const detectionDistanceM = agvSpeedMps * detectionS;
 
   return (
     <div className="border border-slate-900 bg-slate-900/10 rounded-2xl p-5 md:p-6 shadow-lg backdrop-blur-sm">
@@ -26,20 +31,22 @@ export default function FormulaCard({ params, mode }: FormulaCardProps) {
           </div>
 
           {/* Formula */}
-          <div className="font-mono text-sm md:text-base text-slate-200 leading-relaxed">
-            V<sub className="text-cyan-400">max</sub> ≤ D
-            <sub className="text-emerald-400">clearance</sub> ÷{" "}
-            <span className="inline-block border border-slate-700 rounded px-2 py-1">
-              T<sub className={isCloud ? "text-amber-400" : "text-cyan-400"}>
-                {isCloud ? "cloud" : "edge"}
-              </sub>
-            </span>
+          <div className="text-xs font-mono text-slate-200 leading-relaxed space-y-1">
+            <div>
+              V<sub>max</sub> = D<sub>clearance</sub> ÷ (T<sub className={isCloud ? "text-amber-400" : "text-cyan-400"}>detect</sub> + T<sub>brake</sub>)
+            </div>
+            <div className="text-[10px] text-slate-500">
+              {isCloud
+                ? `Detection ${formatLatency(detectionS)} + braking ${formatLatency(reactionS)} = ${formatLatency(totalReactionS)} total`
+                : `Edge latency ${edgeLatencyMs}ms + brake ${brakeLatencyMs}ms`}
+            </div>
           </div>
 
           <div className="text-[10px] text-slate-500 font-mono leading-relaxed">
             {isCloud
-              ? "Cloud control loop: one request-response cycle determines max safe speed."
-              : "Edge sensor bypass: local processing avoids network round-trip."}
+              ? `Cloud: AGV travels ~${detectionDistanceM.toFixed(1)}m before response.`
+              : `Edge: AGV travels ~${detectionDistanceM.toFixed(3)}m during processing.`}
+            {` Brake latency ${brakeLatencyMs}ms → ${brakingM.toFixed(2)}m (same hardware).`}
           </div>
 
           <div
@@ -56,12 +63,13 @@ export default function FormulaCard({ params, mode }: FormulaCardProps) {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-[10px] font-mono text-slate-400">
-          <Metric label="Control loop delay" value={formatLatency(latencyS)} />
-          <Metric label="V_max" value={`${vMaxMps.toFixed(2)} m/s`} highlight={isSafe ? "emerald" : "red"} />
-          <Metric label="Braking distance" value={`${brakingM.toFixed(2)} m`} highlight={isSafe ? "emerald" : "red"} />
-          <Metric label="Track length" value={`${totalDistanceM.toFixed(0)} m`} />
+          <Metric label="Detection delay" value={formatLatency(detectionS)} />
+          <Metric label="Detection travel" value={`${detectionDistanceM.toFixed(isCloud ? 1 : 3)} m`} />
+          <Metric label="Braking distance" value={`${brakingM.toFixed(2)} m`} />
+          <Metric label="V_max (worst-case)" value={`${vMaxMps.toFixed(2)} m/s`} highlight={isSafe ? "emerald" : "red"} />
           <Metric label="Clearance zone" value={`${clearanceM.toFixed(1)} m`} />
-          <Metric label={isCloud ? "Cloud latency" : "Edge reaction"} value={isCloud ? `${cloudLatencyMs} ms` : `${edgeReactionMs} ms`} />
+          <Metric label={isCloud ? "Cloud RTT" : "Edge latency"} value={isCloud ? `${cloudLatencyMs} ms` : `${edgeLatencyMs} ms`} />
+          <Metric label="Brake latency" value={`${brakeLatencyMs} ms`} />
         </div>
       </div>
     </div>
