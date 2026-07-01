@@ -42,9 +42,10 @@ export const SLIDERS: SliderConfig[] = [
   { key: "edgeLatencyMs", label: "Edge Latency", unit: "ms", min: 1, max: 500, step: 1, category: "edge" },
 ];
 
-export function computeBrakingDistanceM(speedMps: number, latencySeconds: number): number {
-  return speedMps * latencySeconds;
-}
+import { brakingDistanceM } from "../../shared/physics";
+
+/** @deprecated Use brakingDistanceM from shared/physics directly. This alias preserves imports. */
+export const computeBrakingDistanceM = brakingDistanceM;
 
 export function formatLatency(seconds: number): string {
   if (seconds < 0.001) return `${(seconds * 1000).toFixed(2)} ms`;
