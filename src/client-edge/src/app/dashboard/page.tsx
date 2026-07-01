@@ -24,7 +24,7 @@ export default function FleetDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+    <>
       <FleetHeader fleetStatus={fleet.fleetStatus} />
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-6 space-y-6">
@@ -49,6 +49,6 @@ export default function FleetDashboard() {
         {/* Fleet track view */}
         <FleetTrackView tracks={fleet.tracks} scenario={fleet.activeScenario} tokenLLM={fleet.tokenLLM} />
       </main>
-    </div>
+    </>
   );
 }

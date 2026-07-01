@@ -31,7 +31,7 @@
 
 ### 1. Kinematic Sandbox — The Theorem (2 min)
 
-**Navigate to**: `http://localhost:3000/kinematic`
+**Navigate to**: `http://localhost:3000/dashboard/theorem`
 
 **Presenter action**: The page loads with a single track, AGV at left, wall at right. Sliders on the left panel.
 
@@ -73,7 +73,7 @@
 
 ### 2. Compare Page — Cloud vs Edge Side-by-Side (1 min)
 
-**Navigate to**: `http://localhost:3000/kinematic/compare`
+**Navigate to**: `http://localhost:3000/dashboard/compare`
 
 **Presenter action**: Point to the two tracks side by side.
 
@@ -271,7 +271,7 @@
 
 ### 1. 运动学沙盒 — 定理演示 (2 分钟)
 
-**导航至**: `http://localhost:3000/kinematic`
+**导航至**: `http://localhost:3000/dashboard/theorem`
 
 **动作**: 页面加载后，指向左侧参数面板和右侧轨道。AGV 在左边，墙在右边。
 
@@ -313,7 +313,7 @@
 
 ### 2. 对比页 — 云端 vs 边缘并排对比 (1 分钟)
 
-**导航至**: `http://localhost:3000/kinematic/compare`
+**导航至**: `http://localhost:3000/dashboard/compare`
 
 **动作**: 指向两条并排轨道。
 
@@ -489,7 +489,7 @@
 ### Page flow
 
 ```
-/dashboard (opening) → /kinematic (theorem) → /kinematic/compare (proof) → /dashboard (fleet × 4 scenarios)
+/dashboard (opening) → /dashboard/theorem (theorem) → /dashboard/compare (proof) → /dashboard (fleet × 4 scenarios) → /dashboard/live (optional)
 ```
 
 ### Scenario outcomes (quick lookup)

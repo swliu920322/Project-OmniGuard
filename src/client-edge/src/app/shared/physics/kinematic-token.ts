@@ -1,5 +1,5 @@
 // Shared physics kernel — pure math for the Kinematic-Token Theorem.
-// Used by both /kinematic and /dashboard. Zero React, zero side effects.
+// Used by /dashboard/theorem, /dashboard/compare, and /dashboard. Zero React, zero side effects.
 
 export interface LLMBreakdownParams {
   networkRttMs: number;

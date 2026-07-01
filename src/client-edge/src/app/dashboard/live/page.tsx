@@ -32,7 +32,7 @@ export default function FleetDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+    <>
       {/* Top Banner Header */}
       <header className="border-b border-slate-900 bg-slate-900/30 backdrop-blur-md sticky top-0 z-50 py-4 px-6 flex items-center justify-between">
         <div className="flex items-center space-x-3">
@@ -45,18 +45,6 @@ export default function FleetDashboard() {
           </span>
         </div>
         <div className="flex items-center space-x-4">
-          <a
-            href="/dashboard"
-            className="text-xs font-mono font-bold text-emerald-400 hover:text-emerald-300 transition border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 rounded"
-          >
-            ◀ SIM
-          </a>
-          <a
-            href="/kinematic"
-            className="text-xs font-mono font-bold text-cyan-400 hover:text-cyan-300 transition border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 rounded"
-          >
-            🧮 Kinematic Theorem →
-          </a>
           <div className="text-xs font-mono text-slate-500">
             Sensor Refresh Interval: <span className="text-cyan-400 font-bold">1Hz</span> (Real-Time MQTT Loop)
           </div>
@@ -280,6 +268,6 @@ export default function FleetDashboard() {
           </div>
         </div>
       </main>
-    </div>
+    </>
   );
 }
