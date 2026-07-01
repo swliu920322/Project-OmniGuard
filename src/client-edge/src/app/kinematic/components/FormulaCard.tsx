@@ -1,17 +1,21 @@
 "use client";
 
 import React from "react";
-import { KinematicParams, KinematicResult, Mode, formatLatency } from "../lib/kinematic";
+import { KinematicParams, Mode, formatLatency, computeBrakingDistanceM } from "../lib/kinematic";
 
 interface FormulaCardProps {
   params: KinematicParams;
-  result: KinematicResult;
   mode: Mode;
 }
 
-export default function FormulaCard({ params, result, mode }: FormulaCardProps) {
+export default function FormulaCard({ params, mode }: FormulaCardProps) {
+  const { agvSpeedMps, clearanceM, totalDistanceM, cloudLatencyMs, edgeReactionMs } = params;
   const isCloud = mode === "cloud";
-  const clearanceCm = params.clearanceM * 100;
+
+  const latencyS = isCloud ? cloudLatencyMs / 1000 : edgeReactionMs / 1000;
+  const brakingM = computeBrakingDistanceM(agvSpeedMps, latencyS);
+  const vMaxMps = latencyS > 0 ? clearanceM / latencyS : 0;
+  const isSafe = agvSpeedMps <= vMaxMps;
 
   return (
     <div className="border border-slate-900 bg-slate-900/10 rounded-2xl p-5 md:p-6 shadow-lg backdrop-blur-sm">
@@ -21,58 +25,43 @@ export default function FormulaCard({ params, result, mode }: FormulaCardProps) 
             {isCloud ? "Cloud-Only Theorem" : "Edge Fallback Theorem"}
           </div>
 
-          {isCloud ? (
-            <div className="font-mono text-sm md:text-base text-slate-200 leading-relaxed">
-              V<sub className="text-cyan-400">max</sub> ≤ D
-              <sub className="text-emerald-400">clearance</sub> ÷{" "}
-              <span className="inline-block border border-slate-700 rounded px-2 py-1">
-                L<sub className="text-amber-400">network_rtt</sub> +{" "}
-                <span className="inline-block">
-                  (T<sub className="text-indigo-400">prompt</sub> + T<sub className="text-indigo-400">completion</sub>)
-                </span>{" "}
-                ÷ S<sub className="text-purple-400">token_rate</sub>
-              </span>
-            </div>
-          ) : (
-            <div className="font-mono text-sm md:text-base text-slate-200 leading-relaxed">
-              V<sub className="text-cyan-400">max</sub> ≤ D
-              <sub className="text-emerald-400">clearance</sub> ÷{" "}
-              <span className="inline-block border border-slate-700 rounded px-2 py-1">
-                T<sub className="text-cyan-400">edge_reaction</sub>
-              </span>
-            </div>
-          )}
+          {/* Formula */}
+          <div className="font-mono text-sm md:text-base text-slate-200 leading-relaxed">
+            V<sub className="text-cyan-400">max</sub> ≤ D
+            <sub className="text-emerald-400">clearance</sub> ÷{" "}
+            <span className="inline-block border border-slate-700 rounded px-2 py-1">
+              T<sub className={isCloud ? "text-amber-400" : "text-cyan-400"}>
+                {isCloud ? "cloud" : "edge"}
+              </sub>
+            </span>
+          </div>
+
+          <div className="text-[10px] text-slate-500 font-mono leading-relaxed">
+            {isCloud
+              ? "Cloud control loop: one request-response cycle determines max safe speed."
+              : "Edge sensor bypass: local processing avoids network round-trip."}
+          </div>
 
           <div
             className={`inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded border ${
-              result.isSafe
+              isSafe
                 ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
                 : "bg-red-500/10 border-red-500/30 text-red-400 animate-pulse"
             }`}
           >
-            {result.isSafe
-              ? `Safe: V_agv (${params.agvSpeedMps.toFixed(1)} m/s) ≤ V_max (${result.vMaxMps.toFixed(2)} m/s)`
-              : `Unsafe: V_agv (${params.agvSpeedMps.toFixed(1)} m/s) > V_max (${result.vMaxMps.toFixed(2)} m/s)`}
+            {isSafe
+              ? `Safe: V_agv (${agvSpeedMps.toFixed(1)} m/s) ≤ V_max (${vMaxMps.toFixed(2)} m/s)`
+              : `Unsafe: V_agv (${agvSpeedMps.toFixed(1)} m/s) > V_max (${vMaxMps.toFixed(2)} m/s)`}
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-[10px] font-mono text-slate-400">
-          <Metric label="Control loop delay" value={formatLatency(result.latencySeconds)} />
-          <Metric label="V_max" value={`${result.vMaxMps.toFixed(2)} m/s`} highlight={result.isSafe ? "emerald" : "red"} />
-          <Metric
-            label="Braking distance"
-            value={`${result.brakingDistanceCm.toFixed(1)} cm`}
-            highlight={result.isSafe ? "emerald" : "red"}
-          />
-          <Metric label="Clearance" value={`${clearanceCm.toFixed(1)} cm`} />
-          {isCloud ? (
-            <>
-              <Metric label="Network RTT" value={`${params.networkRttMs} ms`} />
-              <Metric label="Token rate" value={`${params.tokenRate} tokens/s`} />
-            </>
-          ) : (
-            <Metric label="Edge reaction" value={`${params.edgeReactionMs} ms`} />
-          )}
+          <Metric label="Control loop delay" value={formatLatency(latencyS)} />
+          <Metric label="V_max" value={`${vMaxMps.toFixed(2)} m/s`} highlight={isSafe ? "emerald" : "red"} />
+          <Metric label="Braking distance" value={`${brakingM.toFixed(2)} m`} highlight={isSafe ? "emerald" : "red"} />
+          <Metric label="Track length" value={`${totalDistanceM.toFixed(0)} m`} />
+          <Metric label="Clearance zone" value={`${clearanceM.toFixed(1)} m`} />
+          <Metric label={isCloud ? "Cloud latency" : "Edge reaction"} value={isCloud ? `${cloudLatencyMs} ms` : `${edgeReactionMs} ms`} />
         </div>
       </div>
     </div>

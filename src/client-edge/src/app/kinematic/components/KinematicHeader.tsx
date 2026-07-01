@@ -17,12 +17,12 @@ export default function KinematicHeader({ mode, onModeChange, onReset }: Kinemat
         <div className="flex items-center space-x-3">
           <div className="w-3 h-3 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.8)]" />
           <h1 className="text-xl md:text-2xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">
-            Kinematic-Token Theorem Sandbox
+            Kinematic Theorem Sandbox
           </h1>
         </div>
         <p className="text-xs md:text-sm text-slate-500 font-mono max-w-2xl">
-          Quantifies why cloud-only LLMs cannot control fast-moving hardware: physical braking distance
-          is bounded by network RTT + token generation time.
+          Quantifies why cloud-only control loops cannot control fast-moving hardware: physical braking distance
+          is bounded by end-to-end cloud latency vs. instantaneous edge reaction.
         </p>
       </div>
 
