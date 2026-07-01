@@ -552,8 +552,16 @@ export default function FleetDashboard() {
             Digital Twin v2.5
           </span>
         </div>
-        <div className="text-xs font-mono text-slate-500">
-          Sensor Refresh Interval: <span className="text-cyan-400 font-bold">1Hz</span> (Real-Time MQTT Loop)
+        <div className="flex items-center space-x-4">
+          <a
+            href="/kinematic"
+            className="text-xs font-mono font-bold text-cyan-400 hover:text-cyan-300 transition border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 rounded"
+          >
+            🧮 Kinematic Theorem →
+          </a>
+          <div className="text-xs font-mono text-slate-500">
+            Sensor Refresh Interval: <span className="text-cyan-400 font-bold">1Hz</span> (Real-Time MQTT Loop)
+          </div>
         </div>
       </header>
 
