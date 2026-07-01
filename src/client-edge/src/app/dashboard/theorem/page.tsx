@@ -6,15 +6,15 @@ import {
   KinematicParams,
   LogEntry,
   Mode,
-} from "./lib/kinematic";
-import { useKinematicSimulation } from "./hooks/useKinematicSimulation";
-import KinematicHeader from "./components/KinematicHeader";
-import FormulaCard from "./components/FormulaCard";
-import ParameterPanel from "./components/ParameterPanel";
-import SimulationStage from "./components/SimulationStage";
-import AuditLog from "./components/AuditLog";
+} from "../lib/kinematic";
+import { useKinematicSimulation } from "../hooks/useKinematicSimulation";
+import KinematicHeader from "../components/KinematicHeader";
+import FormulaCard from "../components/FormulaCard";
+import ParameterPanel from "../components/ParameterPanel";
+import SimulationStage from "../components/SimulationStage";
+import AuditLog from "../components/AuditLog";
 
-export default function KinematicPage() {
+export default function TheoremPage() {
   const [params, setParams] = useState<KinematicParams>(DEFAULT_PARAMS);
   const [mode, setMode] = useState<Mode>("cloud");
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -75,7 +75,7 @@ export default function KinematicPage() {
   }, [simulation]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+    <>
       <KinematicHeader mode={mode} onModeChange={handleModeChange} onReset={handleReset} />
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-6 md:p-8 space-y-6">
@@ -99,6 +99,6 @@ export default function KinematicPage() {
 
         <AuditLog logs={logs} />
       </main>
-    </div>
+    </>
   );
 }

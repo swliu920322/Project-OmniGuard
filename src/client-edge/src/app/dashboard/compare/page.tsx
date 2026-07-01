@@ -44,8 +44,8 @@ export default function ComparePage() {
   }, [sim]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
-      <KinematicHeader mode="cloud" onModeChange={(m: Mode) => { window.location.href = `/kinematic?mode=${m}`; }} onReset={handleReset} />
+    <>
+      <KinematicHeader mode="cloud" onModeChange={(m: Mode) => { window.location.href = `/dashboard/theorem?mode=${m}`; }} onReset={handleReset} />
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-6 md:p-8 space-y-6">
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -62,6 +62,6 @@ export default function ComparePage() {
           </div>
         </section>
       </main>
-    </div>
+    </>
   );
 }

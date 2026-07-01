@@ -29,17 +29,7 @@ export default function FleetHeader({ fleetStatus }: FleetHeaderProps) {
           {cfg.label}
         </span>
       </div>
-      <div className="flex items-center space-x-3">
-        <a href="/dashboard/live" className="text-xs font-mono font-bold text-emerald-400 hover:text-emerald-300 transition border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 rounded">
-          🔴 LIVE
-        </a>
-        <a href="/kinematic" className="text-xs font-mono font-bold text-cyan-400 hover:text-cyan-300 transition border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 rounded">
-          🧮 Theorem
-        </a>
-        <a href="/kinematic/compare" className="text-xs font-mono font-bold text-cyan-400 hover:text-cyan-300 transition border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 rounded">
-          ⚖️ Compare
-        </a>
-      </div>
+      <div className="flex items-center space-x-3" />
     </header>
   );
 }

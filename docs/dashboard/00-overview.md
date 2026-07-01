@@ -1,12 +1,12 @@
 # Fleet Dashboard — Complete Reference
 
-> Routes: `/dashboard` (simulation), `/dashboard/live` (real cloud integration)
+> Routes under `/dashboard/`: `theorem` (single-AGV sandbox), `compare` (side-by-side proof), `fleet` (3-AGV simulation), `live` (real cloud integration)
 
 ---
 
 ## 1. Overview
 
-The Fleet Dashboard is the main visual interface of Project OmniGuard. It exists in **two modes** that serve complementary purposes:
+The Fleet Dashboard is the main visual interface of Project OmniGuard. It has **four routes** under a shared layout with navigation tabs (Theorem | Compare | Fleet | Live):
 
 | Aspect | `/dashboard` (Simulation) | `/dashboard/live` (Live) |
 |---|---|---|
@@ -265,16 +265,27 @@ Both frontend and backend run in the same ACA environment within the Singapore S
 
 ```
 src/app/dashboard/
-├── page.tsx                        # Simulation dashboard (v2)
-├── config/scenarios.ts             # 4 scenario presets with TrackConfig
-├── hooks/useFleetSimulation2.ts    # Fleet simulation hook (single-rAF, 3 tracks; simPhase state machine; trackSimsRef accumS preservation)
+├── layout.tsx                      # Shared layout with nav tabs (Theorem | Compare | Fleet | Live)
+├── page.tsx                        # Fleet simulation (3-AGV)
+├── lib/kinematic.ts                # Shared kinematic types, presets, utilities
+├── hooks/
+│   ├── useFleetSimulation2.ts      # Fleet simulation hook (single-rAF, 3 tracks; simPhase state machine; trackSimsRef accumS preservation)
+│   ├── useKinematicSimulation.ts   # Single-AGV simulation hook (theorem)
+│   └── useCompareSimulation.ts     # Compare simulation hook (cloud vs edge)
 ├── components/
 │   ├── FleetHeader.tsx             # Sticky header with mode indicator
 │   ├── FleetControlPanel.tsx       # Scenario buttons, playback, global sliders
 │   ├── FleetTrackView.tsx          # 4-column grid layout
 │   ├── AGVTrack.tsx                # Single AGV track bar SVG
 │   ├── AgentPipelineOverlay.tsx    # 3-layer decision pipeline (worst-case AGV)
-│
+│   ├── KinematicHeader.tsx         # Theorem/compare page header (mode toggle, reset)
+│   ├── SimulationStage.tsx         # Single-AGV track visualization (theorem)
+│   ├── FormulaCard.tsx             # Theorem formula + safety check display
+│   ├── ParameterPanel.tsx          # Sliders + preset selector
+│   ├── CompareStage.tsx            # Side-by-side cloud vs edge tracks
+│   └── AuditLog.tsx                # Scrollable event log
+├── theorem/page.tsx                # Kinematic Theorem sandbox (single AGV)
+├── compare/page.tsx                # Cloud vs Edge side-by-side comparison
 ├── live/                           # Live dashboard (restored from v1)
 │   ├── page.tsx
 │   ├── config/simulation.ts
@@ -305,13 +316,13 @@ src/cloud-orchestrator/             # Azure Functions backend (live mode)
 
 # Fleet Dashboard — 完整参考手册
 
-> 路由: `/dashboard`（模拟版），`/dashboard/live`（真实云集成版）
+> `/dashboard/` 下的路由: `theorem`（单 AGV 沙盒），`compare`（并排对比），`fleet`（3-AGV 模拟），`live`（真实云集成）
 
 ---
 
 ## 1. 概述
 
-Fleet Dashboard 是 Project OmniGuard 的核心可视化界面，包含**两种模式**，互为补充：
+Fleet Dashboard 是 Project OmniGuard 的核心可视化界面，包含**四个路由**，共用同一套布局和导航栏（Theorem | Compare | Fleet | Live）：
 
 | 维度 | `/dashboard`（模拟） | `/dashboard/live`（真实） |
 |---|---|---|
@@ -566,16 +577,27 @@ Azure Functions (cloud-orchestrator / brain.py)
 
 ```
 src/app/dashboard/
-├── page.tsx                        # 模拟版 Dashboard (v2)
-├── config/scenarios.ts             # 4 个场景预设 + TrackConfig
-├── hooks/useFleetSimulation2.ts    # 舰队模拟 hook（单 rAF，3 轨道；simPhase 状态机；trackSimsRef accumS 保护）
+├── layout.tsx                      # 共享布局 + 导航栏 (Theorem | Compare | Fleet | Live)
+├── page.tsx                        # 舰队模拟 (3-AGV)
+├── lib/kinematic.ts                # 共享运动学类型、预设、工具函数
+├── hooks/
+│   ├── useFleetSimulation2.ts      # 舰队模拟 hook（单 rAF，3 轨道；simPhase 状态机；trackSimsRef accumS 保护）
+│   ├── useKinematicSimulation.ts   # 单 AGV 模拟 hook（theorem）
+│   └── useCompareSimulation.ts     # 对比模拟 hook（cloud vs edge）
 ├── components/
 │   ├── FleetHeader.tsx             # 粘性头部 + 模式指示器
 │   ├── FleetControlPanel.tsx       # 场景按钮、播放控制、全局滑块
 │   ├── FleetTrackView.tsx          # 4 列网格布局
 │   ├── AGVTrack.tsx                # 单台 AGV 轨道 SVG
 │   ├── AgentPipelineOverlay.tsx    # 3 层决策流水线（最差 AGV）
-│
+│   ├── KinematicHeader.tsx         # Theorem/compare 页头（模式切换、重置）
+│   ├── SimulationStage.tsx         # 单 AGV 轨道可视化（theorem）
+│   ├── FormulaCard.tsx             # 定式公式 + 安全检查展示
+│   ├── ParameterPanel.tsx          # 滑块 + 预设选择器
+│   ├── CompareStage.tsx            # 云端 vs 边缘并排轨道
+│   └── AuditLog.tsx                # 可滚动事件日志
+├── theorem/page.tsx                # 运动学定理沙盒（单 AGV）
+├── compare/page.tsx                # 云端 vs 边缘并排对比
 ├── live/                           # 真实版 Dashboard（从 v1 恢复）
 │   ├── page.tsx
 │   ├── config/simulation.ts
