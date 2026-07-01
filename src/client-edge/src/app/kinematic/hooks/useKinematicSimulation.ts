@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { KinematicParams, KinematicResult, LogEntry, Mode } from "../lib/kinematic";
+import { formatLatency, KinematicParams, KinematicResult, LogEntry, Mode } from "../lib/kinematic";
 
 interface UseKinematicSimulationOptions {
   params: KinematicParams;
@@ -146,10 +146,4 @@ export function useKinematicSimulation({
     start,
     reset,
   };
-}
-
-function formatLatency(seconds: number): string {
-  if (seconds < 0.001) return `${(seconds * 1000).toFixed(2)} ms`;
-  if (seconds < 1) return `${(seconds * 1000).toFixed(0)} ms`;
-  return `${seconds.toFixed(2)} s`;
 }

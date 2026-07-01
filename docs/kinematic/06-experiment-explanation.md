@@ -1,10 +1,215 @@
+# What Is This Experiment Really Verifying?
+
+> This document is for first-time visitors to the `/kinematic` page who are not familiar with robots or AI.
+
+## One-sentence conclusion
+
+**Cloud AI can "think deeply", but the robot's body cannot wait.**
+
+This page uses a small car animation to turn this statement into something you can verify with your own hands.
+
+---
+
+## 1. First, look at the scenario
+
+Imagine an automated guided vehicle (AGV) in a warehouse, with a wall suddenly appearing ahead. It must decide: should I brake?
+
+This decision can be made in two places:
+
+### 1.1 Cloud Brain (Cloud-Only)
+
+The vehicle sends camera footage and laser ranging data to a remote data center.
+The data center has a very powerful AI (like GPT-4).
+The AI reads the data, thinks for a few seconds, and writes back an instruction: "brake".
+The vehicle receives the instruction and executes the brake.
+
+**Problem**: From "sending data" to "receiving instruction", there is a time gap. The vehicle will not stop during this time; it will continue moving forward.
+
+### 1.2 Edge Reflex (Edge Fallback)
+
+The vehicle has an ultrasonic sensor on its bumper.
+When the sensor detects that distance is less than the safe value, it immediately notifies the local controller to brake.
+The entire process does not need to go to the cloud, nor does it wait for AI text generation.
+
+**Advantage**: Extremely fast, typically only a few to a dozen milliseconds.
+
+---
+
+## 2. What does the formula on the page mean?
+
+### Cloud-Only Formula
+
+```
+V_max = D_clearance / ( L_network_rtt + (T_prompt + T_completion) / S_token_rate )
+```
+
+| Symbol | Plain English |
+|--------|---------------|
+| `V_max` | The maximum safe speed the vehicle can travel at under the current configuration |
+| `D_clearance` | How far the vehicle is from the wall |
+| `L_network_rtt` | How long it takes for data to go to the cloud and return |
+| `T_prompt` | How long the sensor description sent to the AI is |
+| `T_completion` | How long the AI's response instruction is |
+| `S_token_rate` | How many words (tokens) the AI can write per second |
+
+**The denominator is the total time for the AI to receive data, make a decision, and send the decision back.**
+
+### Edge Fallback Formula
+
+```
+V_max = D_clearance / T_edge_reaction
+```
+
+| Symbol | Plain English |
+|--------|---------------|
+| `T_edge_reaction` | Time from when the local sensor detects danger to when the vehicle starts braking |
+
+This formula is much simpler because the edge has no AI inference and no network round-trip.
+
+---
+
+## 3. How to understand the parameter panel?
+
+The parameter panel on the left side of the page has two layers:
+
+### 3.1 Physical Parameters (Always visible)
+
+- **AGV Current Speed**: The vehicle's current speed.
+  - Higher speed means longer braking distance.
+  - Exceeding `V_max` is a dangerous state.
+
+- **Safety Clearance**: The distance between the vehicle and the wall.
+  - Shorter distance means lower allowed safe speed.
+  - Like driving too close to the car ahead; higher risk of rear-end collision.
+
+### 3.2 Parameters in the Cloud tab
+
+Only when switching to Cloud-Only mode do these parameters truly affect the result:
+
+- **Network RTT**: Network latency.
+  - Factory Wi-Fi congestion, cross-ocean data centers, poor signal — all increase this number.
+
+- **LLM Token Rate**: How fast the AI generates text.
+  - Larger models are usually slower; smaller models or specialized chips may be faster.
+
+- **Prompt Tokens**: The length of input sent to the AI.
+  - For example: "Front distance 2 meters, speed 1.5 m/s, battery 80%, temperature 45°C..." — the longer it is, the longer the AI takes to read.
+
+- **Completion Tokens**: The length of the AI's response.
+  - For example: "Execute brake, force 80%" is longer than "brake", and takes longer to generate.
+
+### 3.3 Parameters in the Edge tab
+
+- **Edge Reaction Time**: The reaction time of the local sensor + controller.
+  - Default is 15ms, meaning after ultrasonic ranging, the controller brakes the vehicle within 15 milliseconds.
+  - You can increase it (simulating slower local equipment) or decrease it (simulating faster hardware).
+
+---
+
+## 4. What do the red/green indicators on the formula card mean?
+
+The formula card has a badge at the bottom:
+
+- **Green Safe**: `V_agv ≤ V_max`
+  - The vehicle's current speed is below the safety limit.
+  - Even running in the current mode, it can stop before hitting the wall.
+
+- **Red Unsafe**: `V_agv > V_max`
+  - The vehicle's current speed is above the safety limit.
+  - In the current control mode, the vehicle will hit the wall before the brake takes effect.
+
+### Example
+
+Suppose you see:
+
+```
+Unsafe: V_agv (2.8 m/s) > V_max (0.16 m/s)
+```
+
+This means:
+
+> The vehicle is currently running at 2.8 meters per second, but according to the current cloud latency and AI speed, it can only safely travel at a maximum of 0.16 meters per second. If it maintains 2.8 m/s, it will definitely hit the wall before the "brake" instruction arrives.
+
+---
+
+## 5. How to watch the animation?
+
+### Cloud-Only Mode
+
+1. Stay in Cloud-Only mode.
+2. Increase the speed a bit (e.g., above 1.5 m/s).
+3. Increase Prompt Tokens / Completion Tokens a bit, or decrease Token Rate.
+4. Click **Run Simulation**.
+5. Observe:
+   - The vehicle will travel all the way until it hits the wall.
+   - The formula card turns red.
+   - The log shows `[THEOREM VIOLATION]`.
+
+**This shows**: It is not that the AI is not smart enough, but that the AI's "answer" came too late.
+
+### Edge Fallback Mode
+
+1. Switch to Edge Fallback mode.
+2. Keep the speed unchanged.
+3. Click **Run Simulation**.
+4. Observe:
+   - The vehicle only travels a short distance before stopping.
+   - The formula card turns green (as long as speed does not exceed Edge's `V_max`).
+   - The log shows `[EDGE BYPASS]`.
+
+**This shows**: Local sensors react extremely fast and can brake the vehicle before danger occurs.
+
+---
+
+## 6. How should the two modes be compared?
+
+| Comparison Item | Cloud-Only | Edge Fallback |
+|----------------|------------|---------------|
+| Decision Location | Remote data center | Vehicle local |
+| Latency Source | Network RTT + AI token generation | Sensor + controller hardware reaction |
+| Typical Latency | Hundreds of ms to tens of seconds | Milliseconds to tens of ms |
+| Intelligence Level | Can make complex decisions | Can only make simple judgments (e.g., distance < threshold → brake) |
+| Suitable Scenarios | Non-urgent planning tasks | Urgent safety control |
+| Experimental Result | Prone to crashes | Can stop safely |
+
+---
+
+## 7. Common misconceptions
+
+### Misconception 1: "Just make the AI faster, right?"
+
+No. Even the fastest AI has network latency. If the vehicle is only 20cm from the wall and moving fast, even if the AI responds in 0.1 seconds, it is too late.
+
+### Misconception 2: "Edge mode doesn't use AI, isn't it too dumb?"
+
+Not dumb, but a division of labor. Complex decisions (like "which route to take to bypass obstacles") can be left to cloud AI; but life-or-death decisions like "we're about to crash, must brake immediately" must be made locally.
+
+### Misconception 3: "This experiment is only about speed?"
+
+No. It is related to four factors simultaneously:
+
+1. Vehicle speed (faster is more dangerous)
+2. Distance from wall (closer is more dangerous)
+3. Control loop latency (longer is more dangerous)
+4. Control mode (Cloud or Edge)
+
+---
+
+## 8. One-sentence summary
+
+> **Cloud AI is responsible for "how to walk better", edge reflex is responsible for "don't crash".**
+
+> This sandbox proves: only cloud without edge, the robot crashes; only edge without cloud, the robot survives, but may not be smart enough in routing. Both are indispensable.
+
+---
+
 # 这个实验到底在验证什么？
 
 > 本文面向第一次打开 `/kinematic` 页面、对机器人或 AI 不太熟悉的人。
 
 ## 一句话结论
 
-**云端 AI 可以“想得很深”，但身体（机器人）等不起。**
+**云端 AI 可以"想得很深"，但身体（机器人）等不起。**
 
 这个页面用一辆小车的动画，把这句话变成你可以亲手验证的事实。
 
@@ -145,7 +350,7 @@ Unsafe: V_agv (2.8 m/s) > V_max (0.16 m/s)
    - 公式卡片变红。
    - 日志出现 `[THEOREM VIOLATION]`。
 
-**这说明**：不是 AI 不够聪明，而是 AI 的“回答”来得太晚。
+**这说明**：不是 AI 不够聪明，而是 AI 的"回答"来得太晚。
 
 ### Edge Fallback 模式
 
@@ -197,6 +402,6 @@ Unsafe: V_agv (2.8 m/s) > V_max (0.16 m/s)
 
 ## 8. 一句话总结
 
-> **云端 AI 负责“怎么走得更好”，边缘反射负责“别撞死”。**
->
+> **云端 AI 负责"怎么走得更好"，边缘反射负责"别撞死"。**
+
 > 这个沙箱证明：只有云端没有边缘，机器人会撞墙；只有边缘没有云端，机器人活下来了，但可能绕路绕得不够聪明。两者缺一不可。

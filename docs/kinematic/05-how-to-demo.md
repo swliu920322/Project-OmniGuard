@@ -119,7 +119,7 @@ A: Yes. Ultrasonic and LiDAR sensors commonly react in milliseconds, far faster 
 
 > ⚠️ 本文档面向演示者。向观众展示 `/kinematic` 之前请先阅读。
 
-# 如何演示“运动学-Token 定理”沙箱
+# 如何演示"运动学-Token 定理"沙箱
 
 ## 开始前
 
@@ -141,7 +141,7 @@ A: Yes. Ultrasonic and LiDAR sensors commonly react in milliseconds, far faster 
 
 ### 讲解词
 
-> “这是一台仓库机器人，以每秒 2 米的速度前进，离墙只有 2 米。我们要让云端 AI 来决定是否刹车。AI 很聪明，但它需要先读 500 个 token 的传感器数据，再写 100 个 token 的指令。以每秒 50 个 token 的速度，光生成就需要 12 秒。再加上 0.8 秒的网络延迟，总响应时间约为 12.8 秒。”
+> "这是一台仓库机器人，以每秒 2 米的速度前进，离墙只有 2 米。我们要让云端 AI 来决定是否刹车。AI 很聪明，但它需要先读 500 个 token 的传感器数据，再写 100 个 token 的指令。以每秒 50 个 token 的速度，光生成就需要 12 秒。再加上 0.8 秒的网络延迟，总响应时间约为 12.8 秒。"
 
 ### 操作
 
@@ -157,7 +157,7 @@ A: Yes. Ultrasonic and LiDAR sensors commonly react in milliseconds, far faster 
 
 ### 收尾句
 
-> “机器人撞墙不是因为 AI 错了，而是因为物理世界没有给 AI 足够的时间。”
+> "机器人撞墙不是因为 AI 错了，而是因为物理世界没有给 AI 足够的时间。"
 
 ## 演示脚本 B：边缘 fallback 救场
 
@@ -167,7 +167,7 @@ A: Yes. Ultrasonic and LiDAR sensors commonly react in milliseconds, far faster 
 
 ### 讲解词
 
-> “现在我们加入一个本地超声波传感器。它不如云端 AI 聪明，但它能在 15 毫秒内做出反应。同一台机器人、同样的速度、同样的距离——但刹车指令现在来自边缘。”
+> "现在我们加入一个本地超声波传感器。它不如云端 AI 聪明，但它能在 15 毫秒内做出反应。同一台机器人、同样的速度、同样的距离——但刹车指令现在来自边缘。"
 
 ### 操作
 
@@ -181,15 +181,15 @@ A: Yes. Ultrasonic and LiDAR sensors commonly react in milliseconds, far faster 
 
 ### 收尾句
 
-> “云端大脑仍然适合做规划，但边缘传感器才是让机器人活下来的关键。”
+> "云端大脑仍然适合做规划，但边缘传感器才是让机器人活下来的关键。"
 
 ## 演示脚本 C：玩转滑块
 
 讲完两个主故事后，可以邀请观众提建议：
 
-1. “如果 prompt 更短会怎样？” → 把 Prompt Tokens 调到 100。
-2. “如果模型更快会怎样？” → 把 LLM Token Rate 调到 150。
-3. “如果机器人离墙更近会怎样？” → 把 Safety Clearance 调到 0.5 m。
+1. "如果 prompt 更短会怎样？" → 把 Prompt Tokens 调到 100。
+2. "如果模型更快会怎样？" → 把 LLM Token Rate 调到 150。
+3. "如果机器人离墙更近会怎样？" → 把 Safety Clearance 调到 0.5 m。
 
 每次改动都会立即更新公式卡片，观众可以实时看到因果关系。
 
@@ -203,7 +203,7 @@ A: Yes. Ultrasonic and LiDAR sensors commonly react in milliseconds, far faster 
 
 ### 讲解词
 
-> “在拥挤的工厂 Wi-Fi 里，网络往返时间可能飙升到 2 秒。即使模型很快、prompt 很短，只要机器人移动稍快，它也无法及时停下。”
+> "在拥挤的工厂 Wi-Fi 里，网络往返时间可能飙升到 2 秒。即使模型很快、prompt 很短，只要机器人移动稍快，它也无法及时停下。"
 
 ### 操作
 
