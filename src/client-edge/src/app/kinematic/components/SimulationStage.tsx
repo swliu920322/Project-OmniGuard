@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { KinematicParams, KinematicResult, Mode } from "../lib/kinematic";
+import { KinematicParams, KinematicResult, Mode, formatLatency } from "../lib/kinematic";
 
 interface SimulationStageProps {
   params: KinematicParams;
@@ -173,12 +173,6 @@ export default function SimulationStage({
       </div>
     </div>
   );
-}
-
-function formatLatency(seconds: number): string {
-  if (seconds < 0.001) return `${(seconds * 1000).toFixed(2)} ms`;
-  if (seconds < 1) return `${(seconds * 1000).toFixed(0)} ms`;
-  return `${seconds.toFixed(2)} s`;
 }
 
 function Readout({

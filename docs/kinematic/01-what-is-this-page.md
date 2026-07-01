@@ -27,7 +27,7 @@ This sandbox makes that invisible problem **visible**.
 
 - **Header**: Switch between *Cloud-Only* mode and *Edge Fallback* mode, or reset everything.
 - **Formula Card**: The math that defines the safety speed limit.
-- **Parameter Panel**: Six sliders that let you change speed, network delay, token rate, prompt/completion length, and obstacle distance.
+- **Parameter Panel**: Seven sliders that let you change speed, network delay, token rate, prompt/completion length, obstacle distance, and edge reaction time.
 - **Simulation Stage**: A moving robot, a wall, colored safety zones, and crash/safe-stop animations.
 - **Audit Log**: A scrolling terminal that records every event with a timestamp.
 
@@ -39,7 +39,7 @@ This sandbox makes that invisible problem **visible**.
 
 ---
 
-# 这个“运动学-Token 定理”页面是什么？
+# 这个"运动学-Token 定理"页面是什么？
 
 > 路由：`/kinematic`
 
@@ -51,10 +51,10 @@ This sandbox makes that invisible problem **visible**.
 
 想象你正在开车，前方突然出现一堵墙。你有两种方式来决定怎么应对：
 
-1. **纯云端控制**：你把路的照片发到远程数据中心，等一个超级聪明的 AI 回信说“刹车”，然后你才踩刹车。
+1. **纯云端控制**：你把路的照片发到远程数据中心，等一个超级聪明的 AI 回信说"刹车"，然后你才踩刹车。
 2. **边缘 fallback**：保险杠上一个简单的本地传感器发现墙壁，立刻帮你刹停。
 
-第一种听起来很高级，但如果车开得很快，可能在答案回来之前你就已经撞上去了。第二种看起来“笨”，但足够快，能救命。
+第一种听起来很高级，但如果车开得很快，可能在答案回来之前你就已经撞上去了。第二种看起来"笨"，但足够快，能救命。
 
 这个页面把这个想法做成了实时动画。你拖动滑块、点击 **Run Simulation**，看着一个小机器人朝墙驶去。页面会实时计算：机器人有没有足够的距离安全停下。
 
@@ -68,12 +68,12 @@ This sandbox makes that invisible problem **visible**.
 
 - **顶部栏**：切换 *Cloud-Only* 和 *Edge Fallback* 模式，或重置所有参数。
 - **公式卡片**：定义安全速度上限的数学公式。
-- **参数面板**：六个滑块，可调整速度、网络延迟、token 速率、prompt/completion 长度、障碍物距离。
+- **参数面板**：七个滑块，可调整速度、网络延迟、token 速率、prompt/completion 长度、障碍物距离、以及边缘反应时间。
 - **模拟舞台**：移动的机器人、墙壁、彩色安全区、撞击/安全停下动画。
 - **审计日志**：带时间戳的滚动终端，记录每一次事件。
 
 ## 适合谁看？
 
-- 想一眼看出“为什么边缘计算重要”的**面试官 / 答辩老师**。
+- 想一眼看出"为什么边缘计算重要"的**面试官 / 答辩老师**。
 - 设计机器人安全系统的**工程师**。
-- 需要理解“为什么不是云端 AI 越多越好”的**非技术决策者**。
+- 需要理解"为什么不是云端 AI 越多越好"的**非技术决策者**。

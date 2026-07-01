@@ -1,13 +1,12 @@
 # System Blueprint: Fleet Dashboard Control Plane
-# 系统蓝图：边缘车队控制面总设计
 
-> **Document Status**: Active (System Constitution / 法典)
+> **Document Status**: Active (System Constitution)
 > **Target**: Physical topology, telemetry routing paths, sequence diagrams, and API schemas.
 > **Metric Bounds**: Target latency < 2.5s, stateless HTTP/1.1 transactions, VNet subnet isolation.
 
 ---
 
-## 1. Architecture Topology / 物理节点拓扑
+## 1. Architecture Topology
 
 The control plane is deployed inside a dedicated Virtual Network (Singapore Spoke VNet) using Container Apps.
 
@@ -30,13 +29,14 @@ graph TD
 ```
 
 ### Component Boundaries
-* **`omni-frontend`**: Public-facing container. Runs the Next.js runtime, serving static assets and proxying API traffic.
-* **`omni-backend`**: Private container (`external: false`). Exposes FastAPI routes internally inside the virtual network.
-* **Private Link Interceptor**: Restricts database and storage traffic to private IP addresses. Public access to Cosmos DB and Storage accounts is disabled.
+
+- **`omni-frontend`**: Public-facing container. Runs the Next.js runtime, serving static assets and proxying API traffic.
+- **`omni-backend`**: Private container (`external: false`). Exposes FastAPI routes internally inside the virtual network.
+- **Private Link Interceptor**: Restricts database and storage traffic to private IP addresses. Public access to Cosmos DB and Storage accounts is disabled.
 
 ---
 
-## 2. Sequence Diagram / 数据时序图
+## 2. Sequence Diagram
 
 The diagram below details the synchronous telemetry processing and agent decision sequence:
 
@@ -79,13 +79,15 @@ sequenceDiagram
 
 ---
 
-## 3. API Contracts / 接口契约
+## 3. API Contracts
 
 ### Endpoint
-* **Address**: `POST /api/simulate_agent/`
-* **Transport**: Stateless HTTP/1.1 over TLS.
+
+- **Address**: `POST /api/simulate_agent/`
+- **Transport**: Stateless HTTP/1.1 over TLS.
 
 ### Request JSON Schema
+
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -101,6 +103,7 @@ sequenceDiagram
 ```
 
 ### Response JSON Schema
+
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -143,3 +146,46 @@ sequenceDiagram
   "required": ["latency_ms", "final_action", "pipeline_trace", "cloud_metrics"]
 }
 ```
+
+---
+
+# 系统蓝图：边缘车队控制面总设计
+
+> **文档状态**：已激活（系统宪法 / System Constitution）
+> **目标**：物理拓扑、遥测路由路径、时序图和 API 规范。
+> **指标边界**：目标延迟 < 2.5s，无状态 HTTP/1.1 事务，VNet 子网隔离。
+
+---
+
+## 1. 架构拓扑
+
+控制平面使用 Azure Container Apps 部署在专用虚拟网络（新加坡 Spoke VNet）中。
+
+### 组件边界
+
+- **`omni-frontend`**：面向公众的容器。运行 Next.js 运行时，提供静态资产并代理 API 流量。
+- **`omni-backend`**：私有容器（`external: false`）。在虚拟网络内部暴露 FastAPI 路由。
+- **Private Link 拦截器**：将数据库和存储流量限制为私有 IP 地址。禁用 Cosmos DB 和存储账户的公共访问。
+
+---
+
+## 2. 时序图
+
+下图详细说明了同步遥测处理和智能体决策序列：
+
+---
+
+## 3. API 契约
+
+### 端点
+
+- **地址**：`POST /api/simulate_agent/`
+- **传输**：基于 TLS 的无状态 HTTP/1.1。
+
+### 请求 JSON Schema
+
+（见英文部分）
+
+### 响应 JSON Schema
+
+（见英文部分）
