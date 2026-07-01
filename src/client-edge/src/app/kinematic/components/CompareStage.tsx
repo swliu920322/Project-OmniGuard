@@ -45,19 +45,19 @@ function Track({
 
   return (
     <div className="flex-1 border border-slate-900 bg-slate-900/10 rounded-xl p-4 flex flex-col">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center space-x-2">
-          <span className="text-xs font-bold uppercase font-mono" style={{ color }}>{label}</span>
-          {isRunning && <span className="text-[9px] text-cyan-400 animate-pulse font-mono">Running...</span>}
-          {isCrashed && <span className="text-[9px] text-red-400 font-bold font-mono">💥 CRASHED</span>}
-          {isSafeStop && <span className="text-[9px] text-cyan-400 font-bold font-mono">🛡️ SAFE STOP</span>}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center space-x-2">
+            <span className="text-xs font-bold uppercase font-mono" style={{ color }}>{label}</span>
+            {isRunning && <span className="text-xs text-cyan-400 animate-pulse font-mono">Running...</span>}
+            {isCrashed && <span className="text-xs text-red-400 font-bold font-mono">💥 CRASHED</span>}
+            {isSafeStop && <span className="text-xs text-cyan-400 font-bold font-mono">🛡️ SAFE STOP</span>}
+          </div>
+          {!isEdge && stepCount !== undefined && (
+            <span className="text-[11px] font-mono text-slate-400">Step {stepCount}</span>
+          )}
         </div>
-        {!isEdge && stepCount !== undefined && (
-          <span className="text-[9px] font-mono text-slate-600">Step {stepCount}</span>
-        )}
-      </div>
 
-      <div className="text-[9px] text-slate-600 font-mono mb-2">{sub}</div>
+        <div className="text-[11px] text-slate-400 font-mono mb-2">{sub}</div>
 
       <div className="relative border border-slate-800 bg-slate-950 rounded-lg h-16 overflow-hidden flex-shrink-0">
         {/* Green safety zone */}
@@ -85,7 +85,7 @@ function Track({
         </div>
 
         {/* Position readout */}
-        <div className="absolute bottom-1 left-2 text-[8px] font-mono text-slate-600">
+        <div className="absolute bottom-1 left-2 text-[10px] font-mono text-slate-400">
           {positionM.toFixed(2)}m / {totalDistanceM.toFixed(0)}m
         </div>
       </div>
@@ -105,7 +105,7 @@ export default function CompareStage({ params, cloud, edge, onStart }: CompareSt
         <button
           onClick={onStart}
           disabled={isRunning}
-          className={`px-4 py-2 rounded-lg font-bold text-[10px] tracking-wide uppercase transition shadow-lg ${
+          className={`px-4 py-2 rounded-lg font-bold text-xs tracking-wide uppercase transition shadow-lg ${
             isRunning
               ? "bg-slate-900 border border-slate-800 text-slate-600 cursor-not-allowed"
               : "bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)]"

@@ -26,23 +26,23 @@ export default function FormulaCard({ params, mode }: FormulaCardProps) {
     <div className="border border-slate-900 bg-slate-900/10 rounded-2xl p-5 md:p-6 shadow-lg backdrop-blur-sm">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
         <div className="space-y-3">
-          <div className="text-slate-500 uppercase text-[10px] font-mono font-bold">
+          <div className="text-slate-500 uppercase text-xs font-mono font-bold">
             {isCloud ? "Cloud-Only Theorem" : "Edge Fallback Theorem"}
           </div>
 
           {/* Formula */}
-          <div className="text-xs font-mono text-slate-200 leading-relaxed space-y-1">
+          <div className="text-sm font-mono text-slate-200 leading-relaxed space-y-1">
             <div>
               V<sub>max</sub> = D<sub>clearance</sub> ÷ (T<sub className={isCloud ? "text-amber-400" : "text-cyan-400"}>detect</sub> + T<sub>brake</sub>)
             </div>
-            <div className="text-[10px] text-slate-500">
+            <div className="text-[11px] text-slate-400">
               {isCloud
                 ? `Detection ${formatLatency(detectionS)} + braking ${formatLatency(reactionS)} = ${formatLatency(totalReactionS)} total`
                 : `Edge latency ${edgeLatencyMs}ms + brake ${brakeLatencyMs}ms`}
             </div>
           </div>
 
-          <div className="text-[10px] text-slate-500 font-mono leading-relaxed">
+          <div className="text-[11px] text-slate-400 font-mono leading-relaxed">
             {isCloud
               ? `Cloud: AGV travels ~${detectionDistanceM.toFixed(1)}m before response.`
               : `Edge: AGV travels ~${detectionDistanceM.toFixed(3)}m during processing.`}
@@ -50,7 +50,7 @@ export default function FormulaCard({ params, mode }: FormulaCardProps) {
           </div>
 
           <div
-            className={`inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded border ${
+            className={`inline-flex items-center text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded border ${
               isSafe
                 ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
                 : "bg-red-500/10 border-red-500/30 text-red-400 animate-pulse"
@@ -62,7 +62,7 @@ export default function FormulaCard({ params, mode }: FormulaCardProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-[10px] font-mono text-slate-400">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs font-mono text-slate-400">
           <Metric label="Detection delay" value={formatLatency(detectionS)} />
           <Metric label="Detection travel" value={`${detectionDistanceM.toFixed(isCloud ? 1 : 3)} m`} />
           <Metric label="Braking distance" value={`${brakingM.toFixed(2)} m`} />
@@ -96,8 +96,8 @@ function Metric({
 
   return (
     <div className="bg-slate-950/50 border border-slate-900 rounded-lg p-2.5">
-      <div className="text-slate-500 uppercase text-[9px] mb-1">{label}</div>
-      <div className={`font-bold text-xs ${color}`}>{value}</div>
+      <div className="text-slate-500 uppercase text-[10px] mb-1">{label}</div>
+      <div className={`font-bold text-sm ${color}`}>{value}</div>
     </div>
   );
 }
