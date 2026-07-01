@@ -60,11 +60,28 @@ export function computeKinematicResult(params: KinematicParams, mode: Mode): Kin
 
   if (mode === "cloud") {
     const networkLatencySeconds = params.networkRttMs / 1000;
+    // Guard against zero/negative token rate (would yield Infinity/NaN latency).
     const inferenceLatencySeconds =
-      (params.promptTokens + params.completionTokens) / params.tokenRate;
+      params.tokenRate > 0
+        ? (params.promptTokens + params.completionTokens) / params.tokenRate
+        : Infinity;
     latencySeconds = networkLatencySeconds + inferenceLatencySeconds;
   } else {
     latencySeconds = params.edgeReactionMs / 1000;
+  }
+
+  // Defensive guards: a non-positive clearance or latency makes the safe-speed
+  // bound meaningless. Fall back to an unsafe result instead of NaN/Infinity.
+  const clearanceValid = Number.isFinite(params.clearanceM) && params.clearanceM > 0;
+  const latencyValid = Number.isFinite(latencySeconds) && latencySeconds > 0;
+
+  if (!clearanceValid || !latencyValid) {
+    return {
+      latencySeconds,
+      vMaxMps: 0,
+      isSafe: false,
+      brakingDistanceCm: latencyValid ? params.agvSpeedMps * latencySeconds * 100 : Infinity,
+    };
   }
 
   const vMaxMps = params.clearanceM / latencySeconds;
