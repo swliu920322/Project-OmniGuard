@@ -1,42 +1,55 @@
 "use client";
 
 import React from "react";
-import { KinematicParams, KinematicResult, Mode, formatLatency } from "../lib/kinematic";
+import { KinematicParams, Mode, formatLatency, computeBrakingDistanceM } from "../lib/kinematic";
 
 interface SimulationStageProps {
   params: KinematicParams;
-  result: KinematicResult;
   mode: Mode;
-  isRunning: boolean;
-  agvOffsetPercent: number;
-  hasCrashed: boolean;
-  hasStopped: boolean;
+  status: "idle" | "running" | "crashed" | "safe_stop";
+  positionM: number;
+  stepCount: number;
   onStart: () => void;
 }
 
 export default function SimulationStage({
   params,
-  result,
   mode,
-  isRunning,
-  agvOffsetPercent,
-  hasCrashed,
-  hasStopped,
+  status,
+  positionM,
+  stepCount,
   onStart,
 }: SimulationStageProps) {
-  const { latencySeconds, vMaxMps, isSafe, brakingDistanceCm } = result;
-  const clearanceCm = params.clearanceM * 100;
+  const { agvSpeedMps, clearanceM, totalDistanceM, cloudLatencyMs, edgeReactionMs } = params;
+  const isRunning = status === "running";
+  const isCrashed = status === "crashed";
+  const isSafeStop = status === "safe_stop";
 
-  const trackLengthCm = Math.max(clearanceCm * 1.5, 100);
-  const wallPercent = (clearanceCm / trackLengthCm) * 100;
-  const stopPercent = Math.min(wallPercent, (brakingDistanceCm / trackLengthCm) * 100);
+  const clearanceBoundaryM = Math.max(0, totalDistanceM - clearanceM);
+  const latencyS = mode === "cloud" ? cloudLatencyMs / 1000 : edgeReactionMs / 1000;
+  const brakingM = computeBrakingDistanceM(agvSpeedMps, latencyS);
+
+  const pct = totalDistanceM > 0 ? (positionM / totalDistanceM) * 100 : 0;
+  const clearancePct = totalDistanceM > 0 ? (clearanceBoundaryM / totalDistanceM) * 100 : 0;
+  const brakingPct = totalDistanceM > 0 ? Math.min(100, ((clearanceBoundaryM + brakingM) / totalDistanceM) * 100) : 0;
+  const remainingM = Math.max(0, totalDistanceM - positionM);
 
   return (
     <div className="border border-slate-900 bg-slate-900/10 rounded-2xl p-5 md:p-6 shadow-lg backdrop-blur-sm flex flex-col space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">
-          Simulation Stage
-        </h2>
+        <div className="flex items-center space-x-3">
+          <h2 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">
+            Simulation Stage
+          </h2>
+          <span className="text-[10px] font-mono text-slate-600 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
+            Step {stepCount}
+          </span>
+          {isRunning && (
+            <span className="text-[10px] font-mono text-cyan-400 animate-pulse">
+              {mode === "cloud" ? "☁️ Awaiting cloud response..." : "⚡ Moving..."}
+            </span>
+          )}
+        </div>
         <button
           onClick={onStart}
           disabled={isRunning}
@@ -51,73 +64,86 @@ export default function SimulationStage({
       </div>
 
       <div className="border border-slate-900 bg-slate-950 rounded-xl relative overflow-hidden h-72 md:h-80">
-        {/* Track grid */}
-        <div className="absolute inset-y-0 left-0 right-0 grid grid-cols-10 border-x border-slate-900/30 pointer-events-none">
-          {Array.from({ length: 9 }).map((_, i) => (
-            <div key={i} className="border-r border-slate-900/15 h-full" />
-          ))}
+        {/* Track background */}
+        <div className="absolute inset-0">
+          {/* Distance markings */}
+          <div className="absolute inset-x-0 top-0 h-5 flex">
+            {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((pct) => (
+              <div key={pct} className="flex-1 flex items-start justify-center">
+                <div className="w-px h-2 bg-slate-800" />
+              </div>
+            ))}
+          </div>
+          <div className="absolute inset-x-0 top-5 flex text-[8px] font-mono text-slate-700">
+            {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((pct) => {
+              const val = ((totalDistanceM * pct) / 100).toFixed(pct === 0 || pct === 100 ? 0 : 0);
+              return (
+                <div key={pct} className="flex-1 text-center">{val}m</div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Safety envelope */}
+        {/* Safety envelope (green zone) */}
         <div
-          className="absolute top-0 bottom-0 bg-emerald-500/5 border-r border-emerald-500/20 pointer-events-none"
-          style={{ left: "0%", right: `${100 - stopPercent}%` }}
+          className="absolute bottom-8 h-16 bg-emerald-500/5 border-r border-emerald-500/20 pointer-events-none"
+          style={{ left: "0%", width: `${clearancePct}%` }}
         />
 
-        {/* Warning zone */}
+        {/* Clearance zone (yellow/red danger zone) */}
         <div
-          className="absolute top-0 bottom-0 bg-amber-500/5 border-l border-dashed border-amber-500/30 pointer-events-none"
-          style={{ left: `${stopPercent}%`, right: `${100 - wallPercent}%` }}
+          className="absolute bottom-8 h-16 bg-red-500/10 border-l border-dashed border-red-500/30 pointer-events-none"
+          style={{ left: `${clearancePct}%`, right: "0%" }}
         />
 
         {/* Wall */}
         <div
-          className="absolute top-0 bottom-0 w-[3%] bg-gradient-to-l from-slate-900 to-slate-950 border-l border-slate-800 flex items-center justify-center"
-          style={{ right: `${100 - wallPercent}%` }}
+          className="absolute bottom-8 h-16 w-[3%] bg-gradient-to-l from-slate-900 to-slate-950 border-l border-slate-800 flex items-center justify-center"
+          style={{ right: "0%" }}
         >
           <div
-            className={`w-1.5 h-[80%] rounded-full transition-all duration-300 ${
-              hasCrashed
+            className={`w-1.5 h-[60%] rounded-full transition-all duration-300 ${
+              isCrashed
                 ? "bg-red-500 animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.8)]"
-                : isSafe
-                ? "bg-slate-700"
-                : "bg-amber-500/60"
+                : "bg-slate-700"
             }`}
           />
         </div>
 
         {/* Stop boundary marker */}
-        <div
-          className="absolute top-0 bottom-0 w-[2px] pointer-events-none"
-          style={{
-            left: `${stopPercent}%`,
-            background: mode === "edge" ? "rgba(6,182,212,0.6)" : "rgba(245,158,11,0.6)",
-            boxShadow: mode === "edge" ? "0 0 10px rgba(6,182,212,0.5)" : "0 0 10px rgba(245,158,11,0.3)",
-          }}
-        />
+        {mode === "edge" && (
+          <div
+            className="absolute bottom-8 h-16 w-[2px] pointer-events-none z-10"
+            style={{
+              left: `${brakingPct}%`,
+              background: "rgba(6,182,212,0.6)",
+              boxShadow: "0 0 10px rgba(6,182,212,0.5)",
+            }}
+          />
+        )}
 
-        {/* AGV */}
+        {/* AGV Robot */}
         <div
-          className="absolute top-1/2 -mt-7 -ml-7 w-14 h-14 rounded-full border-2 bg-slate-950 flex items-center justify-center transition-all duration-75 z-10"
+          className="absolute bottom-14 -ml-7 w-14 h-14 rounded-full border-2 bg-slate-950 flex items-center justify-center z-20"
           style={{
-            left: `${agvOffsetPercent}%`,
-            borderColor: hasCrashed
+            left: `${Math.min(pct, 100)}%`,
+            borderColor: isCrashed
               ? "#ef4444"
-              : mode === "edge"
+              : isSafeStop
               ? "#06b6d4"
-              : isSafe
+              : mode === "edge"
               ? "#10b981"
               : "#f59e0b",
-            boxShadow: hasCrashed
+            boxShadow: isCrashed
               ? "0 0 30px rgba(239,68,68,0.6)"
-              : mode === "edge"
+              : isSafeStop
               ? "0 0 25px rgba(6,182,212,0.4)"
               : "0 0 20px rgba(16,185,129,0.3)",
           }}
         >
           <svg
             className={`w-7 h-7 ${
-              hasCrashed ? "text-red-400" : mode === "edge" ? "text-cyan-400" : "text-emerald-400"
+              isCrashed ? "text-red-400" : isSafeStop ? "text-cyan-400" : "text-emerald-400"
             }`}
             fill="none"
             viewBox="0 0 24 24"
@@ -133,43 +159,46 @@ export default function SimulationStage({
         </div>
 
         {/* Crash overlay */}
-        {hasCrashed && (
-          <div className="absolute inset-0 bg-red-950/30 backdrop-blur-[1px] flex items-center justify-center pointer-events-none z-20 animate-pulse">
+        {isCrashed && (
+          <div className="absolute inset-0 bg-red-950/30 backdrop-blur-[1px] flex items-center justify-center pointer-events-none z-30 animate-pulse">
             <div className="bg-red-950/90 border border-red-500/50 rounded-xl px-6 py-4 text-center shadow-2xl text-red-400 text-base font-extrabold uppercase tracking-widest flex flex-col items-center space-y-2">
               <span>💥 Collision</span>
               <span className="text-xs text-red-400/80 font-normal normal-case font-mono max-w-xs">
-                Cloud-only control loop ({formatLatency(latencySeconds)}) exceeded physical braking
-                distance.
+                {mode === "cloud"
+                  ? `Cloud latency ${formatLatency(latencyS)} too high.`
+                  : `Edge reaction too slow.`}
               </span>
             </div>
           </div>
         )}
 
         {/* Safe stop overlay */}
-        {hasStopped && mode === "edge" && (
-          <div className="absolute inset-0 bg-cyan-950/20 backdrop-blur-[0.5px] flex items-center justify-center pointer-events-none z-20">
+        {isSafeStop && (
+          <div className="absolute inset-0 bg-cyan-950/20 backdrop-blur-[0.5px] flex items-center justify-center pointer-events-none z-30">
             <div className="bg-cyan-950/90 border border-cyan-500/50 rounded-xl px-6 py-4 text-center shadow-2xl text-cyan-400 text-base font-extrabold uppercase tracking-widest flex flex-col items-center space-y-2">
-              <span>🛡️ Edge Safe Stop</span>
+              <span>🛡️ Safe Stop</span>
               <span className="text-xs text-cyan-400/80 font-normal normal-case font-mono max-w-xs">
-                Ultrasonic/LiDAR bypass halted AGV within {params.edgeReactionMs} ms.
+                {mode === "edge"
+                  ? `Edge braked in ${edgeReactionMs}ms.`
+                  : `Cloud responded before collision.`}
               </span>
             </div>
           </div>
         )}
 
         {/* Distance readouts */}
-        <div className="absolute bottom-4 left-4 right-4 flex justify-between text-[10px] font-mono text-slate-500">
-          <span>Track: {trackLengthCm.toFixed(0)} cm</span>
-          <span>Stop boundary: {brakingDistanceCm.toFixed(1)} cm</span>
-          <span>Wall: {clearanceCm.toFixed(1)} cm</span>
+        <div className="absolute bottom-2 left-4 right-4 flex justify-between text-[10px] font-mono text-slate-500">
+          <span>Position: {positionM.toFixed(2)}m / {totalDistanceM.toFixed(0)}m</span>
+          {isRunning && <span>Remaining: {remainingM.toFixed(1)}m</span>}
+          <span>Clearance: {clearanceM.toFixed(1)}m</span>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-[10px] font-mono text-slate-400">
         <Readout label="Mode" value={mode === "cloud" ? "Cloud-Only" : "Edge Fallback"} />
-        <Readout label="Loop latency" value={formatLatency(latencySeconds)} />
-        <Readout label="Braking distance" value={`${brakingDistanceCm.toFixed(1)} cm`} />
-        <Readout label="Status" value={isSafe ? "SAFE" : "UNSAFE"} danger={!isSafe} />
+        <Readout label="Loop latency" value={formatLatency(latencyS)} />
+        <Readout label="Braking distance" value={`${brakingM.toFixed(2)} m`} />
+        <Readout label="Status" value={status === "running" ? "Running" : status === "idle" ? "Idle" : status === "crashed" ? "Crashed" : "Safe Stop"} danger={status === "crashed"} success={status === "safe_stop"} />
       </div>
     </div>
   );
@@ -179,15 +208,17 @@ function Readout({
   label,
   value,
   danger,
+  success,
 }: {
   label: string;
   value: string;
   danger?: boolean;
+  success?: boolean;
 }) {
   return (
     <div className="bg-slate-950/50 border border-slate-900 rounded-lg p-2.5">
       <div className="text-slate-500 uppercase text-[9px] mb-1">{label}</div>
-      <div className={`font-bold text-xs ${danger ? "text-red-400" : "text-slate-200"}`}>{value}</div>
+      <div className={`font-bold text-xs ${danger ? "text-red-400" : success ? "text-cyan-400" : "text-slate-200"}`}>{value}</div>
     </div>
   );
 }
