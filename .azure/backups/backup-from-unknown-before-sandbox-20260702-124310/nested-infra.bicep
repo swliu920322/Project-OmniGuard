@@ -2,27 +2,75 @@ targetScope = 'resourceGroup'
 
 param location string
 param prefix string
-param networkRules object
 param hubVNetName string
 param spokeVNetName string
 param deployManagedIdentities bool = false
 param deployStaticWebApp bool = false
 
+param vnetAddressPrefix string = '10.1.0.0/16'
+param backendSubnetPrefix string = '10.1.4.0/23'
+param storageSubnetPrefix string = '10.1.2.0/24'
+
 @secure()
 param openAiKey string = ''
 param openAiDeploymentName string = 'gpt-5.4-mini'
+
+var backendNsgRules = [
+  {
+    name: 'Deny-Direct-Internet-Inbound'
+    properties: {
+      priority: 1000
+      access: 'Deny'
+      direction: 'Inbound'
+      protocol: '*'
+      sourceAddressPrefix: 'Internet'
+      sourcePortRange: '*'
+      destinationAddressPrefix: '*'
+      destinationPortRange: '*'
+    }
+  }
+]
+
+var storageNsgRules = [
+  {
+    name: 'Allow-Backend-Only-Inbound'
+    properties: {
+      priority: 100
+      access: 'Allow'
+      direction: 'Inbound'
+      protocol: 'Tcp'
+      sourceAddressPrefix: backendSubnetPrefix
+      sourcePortRange: '*'
+      destinationAddressPrefix: storageSubnetPrefix
+      destinationPortRange: '443'
+    }
+  }
+  {
+    name: 'Deny-All-Other-Inbound-To-Storage'
+    properties: {
+      priority: 1000
+      access: 'Deny'
+      direction: 'Inbound'
+      protocol: '*'
+      sourceAddressPrefix: '*'
+      sourcePortRange: '*'
+      destinationAddressPrefix: '*'
+      destinationPortRange: '*'
+    }
+  }
+]
 
 // Network Subnets
 resource backendNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: '${prefix}-backend-nsg'
   location: location
-  properties: { securityRules: networkRules.backendNsgRules }
+  properties: { securityRules: backendNsgRules }
 }
 
 resource storageNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: '${prefix}-storage-nsg'
   location: location
-  properties: { securityRules: networkRules.storageNsgRules }
+  properties: { securityRules: storageNsgRules }
 }
 
 resource hubVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
@@ -38,12 +86,12 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   name: spokeVNetName
   location: location
   properties: {
-    addressSpace: { addressPrefixes: ['10.1.0.0/16'] }
+    addressSpace: { addressPrefixes: [vnetAddressPrefix] }
     subnets: [
       {
         name: 'BackendSubnet'
         properties: {
-          addressPrefix: '10.1.4.0/23'
+          addressPrefix: backendSubnetPrefix
           networkSecurityGroup: { id: backendNsg.id }
           delegations: [{ name: 'containerAppDelegation', properties: { serviceName: 'Microsoft.App/environments' } }]
         }
@@ -51,7 +99,7 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
       {
         name: 'StorageSubnet'
         properties: {
-          addressPrefix: '10.1.2.0/24'
+          addressPrefix: storageSubnetPrefix
           networkSecurityGroup: { id: storageNsg.id }
         }
       }

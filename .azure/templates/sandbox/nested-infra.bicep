@@ -107,6 +107,44 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
   }
 }
 
+// User-Assigned Identity (conditional)
+resource backendIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = if (deployManagedIdentities) {
+  name: '${prefix}-backend-identity'
+  location: location
+}
+
+// Key Vault with public access (sandbox-allow)
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
+  name: take('${prefix}kv${uniqueString(resourceGroup().id)}', 24)
+  location: location
+  properties: {
+    sku: { family: 'A', name: 'standard' }
+    tenantId: subscription().tenantId
+    enableRbacAuthorization: true
+    publicNetworkAccess: 'Enabled'
+  }
+}
+
+// OpenAI Key Secret
+resource openAiSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = if (!empty(openAiKey)) {
+  parent: keyVault
+  name: 'openAiKey'
+  properties: {
+    value: openAiKey
+  }
+}
+
+// Key Vault RBAC: grant backendIdentity Key Vault Secrets User
+resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (deployManagedIdentities) {
+  name: guid(keyVault.id, backendIdentity.id, '46334581-17ef-401a-b113-35a0419c4b5e')
+  scope: keyVault
+  properties: {
+    principalId: backendIdentity.properties.principalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '46334581-17ef-401a-b113-35a0419c4b5e')
+    principalType: 'ServicePrincipal'
+  }
+}
+
 // Storage for Sandbox (Classic connection keys)
 resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: '${prefix}st${uniqueString(resourceGroup().id)}'
@@ -114,7 +152,7 @@ resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   sku: { name: 'Standard_LRS' }
   kind: 'StorageV2'
   properties: {
-    publicNetworkAccess: 'Enabled' // Sandbox Mode: keep simple
+    publicNetworkAccess: 'Enabled'
   }
 }
 
@@ -125,7 +163,7 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
   kind: 'GlobalDocumentDB'
   properties: {
     databaseAccountOfferType: 'Standard'
-    enableFreeTier: true // Free tier locked
+    enableFreeTier: true
     consistencyPolicy: { defaultConsistencyLevel: 'Session' }
     locations: [{ locationName: location, failoverPriority: 0 }]
   }
@@ -145,7 +183,7 @@ resource deviceTwinContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases
       id: 'DeviceTwins'
       partitionKey: { paths: [ '/tenant_id' ], kind: 'Hash' }
     }
-    options: { throughput: 400 } // Free Tier limit
+    options: { throughput: 400 }
   }
 }
 
@@ -184,6 +222,8 @@ module computeBrain './compute-module.bicep' = {
     iotHubServiceConnectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey}'
     iotHubEventHubConnectionString: 'Endpoint=${iotHub.properties.eventHubEndpoints.events.endpoint};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey};EntityPath=${iotHub.properties.eventHubEndpoints.events.path}'
     deployManagedIdentities: deployManagedIdentities
+    backendIdentityId: deployManagedIdentities ? backendIdentity.id : ''
+    keyVaultUri: keyVault.properties.vaultUri
     deployStaticWebApp: deployStaticWebApp
   }
 }

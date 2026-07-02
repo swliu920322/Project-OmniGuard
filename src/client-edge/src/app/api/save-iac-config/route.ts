@@ -6,6 +6,20 @@ import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
+function findProjectRoot(): string {
+  const candidates = [
+    path.join(process.cwd(), '..', '..'),
+    path.join(process.cwd(), '..'),
+    process.cwd(),
+  ];
+  for (const dir of candidates) {
+    if (fs.existsSync(path.join(dir, '.azure'))) {
+      return dir;
+    }
+  }
+  return path.join(process.cwd(), '..', '..');
+}
+
 function parseCidr(cidr: string) {
   const parts = cidr.split('/');
   const mask = parseInt(parts[1], 10);
@@ -22,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     // Preflight action: directly invoke the preflight-validate.py script
     if (action === 'preflight') {
-      const projectRoot = path.join(process.cwd(), '..');
+      const projectRoot = findProjectRoot();
       const preflightScriptPath = path.join(projectRoot, 'sh', 'preflight-validate.py');
       const command = `python3 "${preflightScriptPath}"`;
       try {
@@ -117,7 +131,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const projectRoot = path.join(process.cwd(), '..');
+    const projectRoot = findProjectRoot();
     const paramFilePath = path.join(projectRoot, '.azure', 'main.parameters.json');
     const assemblerScriptPath = path.join(projectRoot, 'sh', 'iac-assembler.py');
 
@@ -202,7 +216,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const projectRoot = path.join(process.cwd(), '..');
+    const projectRoot = findProjectRoot();
     const configPath = path.join(projectRoot, '.azure', 'configurator-ui-state.json');
 
     if (fs.existsSync(configPath)) {

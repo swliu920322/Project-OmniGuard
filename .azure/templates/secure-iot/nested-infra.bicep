@@ -126,6 +126,66 @@ resource backendIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-
   location: location
 }
 
+// Key Vault with public access disabled (secure-iot)
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
+  name: take('${prefix}kv${uniqueString(resourceGroup().id)}', 24)
+  location: location
+  properties: {
+    sku: { family: 'A', name: 'standard' }
+    tenantId: subscription().tenantId
+    enableRbacAuthorization: true
+    publicNetworkAccess: 'Disabled'
+  }
+}
+
+// OpenAI Key Secret
+resource openAiSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = if (!empty(openAiKey)) {
+  parent: keyVault
+  name: 'openAiKey'
+  properties: {
+    value: openAiKey
+  }
+}
+
+// Key Vault RBAC: grant backendIdentity Key Vault Secrets User
+resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (deployManagedIdentities) {
+  name: guid(keyVault.id, backendIdentity.id, '46334581-17ef-401a-b113-35a0419c4b5e')
+  scope: keyVault
+  properties: {
+    principalId: backendIdentity.properties.principalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '46334581-17ef-401a-b113-35a0419c4b5e')
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Key Vault Private Endpoint & DNS (secure-iot only)
+resource kvDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+  name: 'privatelink.vaultcore.azure.net'
+  location: 'global'
+}
+
+resource kvDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
+  parent: kvDnsZone
+  name: 'kv-link'
+  location: 'global'
+  properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
+}
+
+resource kvPE 'Microsoft.Network/privateEndpoints@2023-11-01' = {
+  name: '${prefix}-kv-pe'
+  location: location
+  properties: {
+    subnet: { id: '${spokeVnet.id}/subnets/StorageSubnet' }
+    privateLinkServiceConnections: [{ name: 'kv-conn', properties: { privateLinkServiceId: keyVault.id, groupIds: ['vault'] } }]
+  }
+}
+
+resource kvDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
+  parent: kvPE
+  name: 'kv-dns-group'
+  properties: { privateDnsZoneConfigs: [{ name: 'kv-config', properties: { privateDnsZoneId: kvDnsZone.id } }] }
+}
+
 // Isolated Storage
 resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: '${prefix}st${uniqueString(resourceGroup().id)}'
@@ -213,7 +273,7 @@ resource deviceTwinContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases
       partitionKey: { paths: [ '/tenant_id' ], kind: 'Hash' }
     }
     options: {
-      autoscaleSettings: { maxThroughput: 4000 } // Autoscale enabled
+      autoscaleSettings: { maxThroughput: 4000 }
     }
   }
 }
@@ -236,7 +296,7 @@ resource iotHub 'Microsoft.Devices/IotHubs@2023-06-30' = {
   sku: { name: 'S1', capacity: 1 }
   properties: {
     routing: {
-      endpoints: { eventHubs: [] } // Corrected property to avoid type issues warnings
+      endpoints: { eventHubs: [] }
       routes: [
         {
           name: 'DeviceTelemetryRoute'
@@ -279,6 +339,7 @@ module computeBrain './compute-module.bicep' = {
     iotHubEventHubConnectionString: 'Endpoint=${iotHub.properties.eventHubEndpoints.events.endpoint};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey};EntityPath=${iotHub.properties.eventHubEndpoints.events.path}'
     deployManagedIdentities: deployManagedIdentities
     backendIdentityId: deployManagedIdentities ? backendIdentity.id : ''
+    keyVaultUri: keyVault.properties.vaultUri
     deployStaticWebApp: deployStaticWebApp
   }
 }
