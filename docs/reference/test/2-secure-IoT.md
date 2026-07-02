@@ -78,11 +78,45 @@ MY_USER_ID=$(az ad signed-in-user show --query id -o tsv)
 # 2. 临时授予该用户 Key Vault Secrets Reader (只读) 角色
 az role assignment create \
   --assignee "$MY_USER_ID" \
-  --role "Key Vault Secrets Reader" \
+  --role "Key Vault Reader" \
   --scope "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/$RG/providers/Microsoft.KeyVault/vaults/$KV_NAME"
+
+# 2.输出
+{
+  "condition": null,
+  "conditionVersion": null,
+  "createdBy": "f07389ce-00bd-42e1-9f16-930c4df9c01a",
+  "createdOn": "2026-07-02T13:46:16.496067+00:00",
+  "delegatedManagedIdentityResourceId": null,
+  "description": null,
+  "id": "/subscriptions/970ded9b-33a0-4745-8240-c8f6e7b73705/resourceGroups/omni3-guard-infra-sea-rg/providers/Microsoft.KeyVault/vaults/omni3kvvjq2hppd3wpeu/providers/Microsoft.Authorization/roleAssignments/3a6641d7-c665-40a1-818a-8bc6f14f3eb7",
+  "name": "3a6641d7-c665-40a1-818a-8bc6f14f3eb7",
+  "principalId": "f07389ce-00bd-42e1-9f16-930c4df9c01a",
+  "principalName": "1064084779_qq.com#EXT#@1064084779qq.onmicrosoft.com",
+  "principalType": "User",
+  "resourceGroup": "omni3-guard-infra-sea-rg",
+  "roleDefinitionId": "/subscriptions/970ded9b-33a0-4745-8240-c8f6e7b73705/providers/Microsoft.Authorization/roleDefinitions/21090545-7ca7-4776-b22c-e363652d74d2",
+  "roleDefinitionName": "Key Vault Reader",
+  "scope": "/subscriptions/970ded9b-33a0-4745-8240-c8f6e7b73705/resourceGroups/omni3-guard-infra-sea-rg/providers/Microsoft.KeyVault/vaults/omni3kvvjq2hppd3wpeu",
+  "type": "Microsoft.Authorization/roleAssignments",
+  "updatedBy": "f07389ce-00bd-42e1-9f16-930c4df9c01a",
+  "updatedOn": "2026-07-02T13:46:16.496067+00:00"
+}
 
 # 3. 角色指派通常需要 10-30 秒在全球同步。稍等片刻后，再次尝试公网列出 Secrets：
 az keyvault secret list --vault-name "$KV_NAME"
+
+# 3.输出
+(Forbidden) Public network access is disabled and request is not from a trusted service nor via an approved private link.
+Caller: appid=04b07795-8ddb-461a-bbee-02f9e1bf7b46;oid=f07389ce-00bd-42e1-9f16-930c4df9c01a;iss=https://sts.windows.net/8d6aa2ba-cd3a-419f-9eb9-c614bfd57b1a/     
+Vault: omni3kvvjq2hppd3wpeu;location=southeastasia                                                                                                                
+Code: Forbidden                                                                                                                                                   
+Message: Public network access is disabled and request is not from a trusted service nor via an approved private link.                                            
+Caller: appid=04b07795-8ddb-461a-bbee-02f9e1bf7b46;oid=f07389ce-00bd-42e1-9f16-930c4df9c01a;iss=https://sts.windows.net/8d6aa2ba-cd3a-419f-9eb9-c614bfd57b1a/     
+Vault: omni3kvvjq2hppd3wpeu;location=southeastasia                                                                                                                
+Inner error: {                                                                                                                                                    
+    "code": "ForbiddenByConnection"                                                                                                                               
+}   
 
 # 返回（安全拦截：公网防火墙网络拦截）
 (PublicAccessDisabled) Public network access is not permitted on this site. To connect to this site, use the private endpoint from inside your virtual network or associated networks.
@@ -93,6 +127,18 @@ Message: Public network access is not permitted on this site.
 
 ---
 
+### 🛡️ 架构深度总结：什么是“身网双锁 (Dual Identity-and-Network Lock)”验证？
+
+我们在对 Key Vault 的真实数值进行读取验收时，完整经历并物理证明了零信任架构中的**“身网双锁”**防线：
+1. **第一重锁：身份锁（RBAC 鉴权）**
+   * *表现*：即使您是订阅的所有者，在未显式分配 Key Vault 专用只读角色前，数据面请求会被 **`ForbiddenByRbac`** 强行拦截。这证明“Owner 权限不等于数据访问权”，遵循最小特权原则（POLP）。
+2. **第二重锁：网络锁（私网防火墙）**
+   * *表现*：在您通过 CLI 给自己授予了 `Key Vault Secrets Reader` 角色、打通了身份锁之后，再次发起访问，依然被 **`ForbiddenByConnection` (`PublicAccessDisabled`)** 强行拦截。这证明“即便身份合法，一旦连接通道不合规（从公网发起），依然被物理拦截”。
+3. **安全闭环**：
+   * 只有**【合法的身份（托管身份/Secrets User）】**通过**【合法的路径（VNet 内部的 Private Endpoint 私网网卡）】**双重就绪时，数据才允许被读取。这正是零信任（Never Trust, Always Verify）在 Landing Zone 拓扑中的完美物理投射！
+
+---
+
 ### 🧹 阶段三：清理临时角色指派（符合 Zero-Trust 权限回收）
 验证完毕后，回收刚才的临时只读权限，恢复双锁锁定状态：
 
@@ -100,7 +146,7 @@ Message: Public network access is not permitted on this site.
 # 删除刚才指派给自己的只读角色
 az role assignment delete \
   --assignee "$MY_USER_ID" \
-  --role "Key Vault Secrets Reader" \
+  --role "Key Vault Reader" \
   --scope "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/$RG/providers/Microsoft.KeyVault/vaults/$KV_NAME"
 ```
 
@@ -123,15 +169,21 @@ omni3kvvjq2hppd3wpeu  10.1.2.4
 # 2. 检查 Cosmos DB 私网 DNS 解析记录
 az network private-dns record-set a list \
   -g "$RG" \
-  -z privatelink.documents.azure.net \
+  -z privatelink.documents.azure.com \
   --query "[].{Host:name, IP:aRecords[0].ipv4Address}" -o table
+  
+# 最终输出
+-------------------------------------  --------
+omni3-mem-vjq2hppd3wpeu                10.1.2.6
+omni3-mem-vjq2hppd3wpeu-southeastasia  10.1.2.7 
 ```
 *期望输出*：返回的解析 IP 地址均应处于内网 `10.1.2.x`（StorageSubnet）网段内，证明内网私路解析已成功自愈建立！
 
-*实际输出*:
-ParentResourceNotFound) Failed to perform 'read' on resource(s) of type 'privateDnsZones/A', because the parent resource '/subscriptions/970ded9b-33a0-4745-8240-c8f6e7b73705/resourceGroups/omni3-guard-infra-sea-rg/providers/Microsoft.Network/privateDnsZones/privatelink.documents.azure.net' could not be found.             
-Code: ParentResourceNotFound                                                                                                                                      
-Message: Failed to perform 'read' on resource(s) of type 'privateDnsZones/A', because the parent resource '/subscriptions/970ded9b-33a0-4745-8240-c8f6e7b73705/resourceGroups/omni3-guard-infra-sea-rg/providers/Microsoft.Network/privateDnsZones/privatelink.documents.azure.net' could not be found. 
+> **📌 诊断说明**：
+> 之前由于验证指令中拼写错误（使用了 `.net` 结尾），导致提示 `ParentResourceNotFound`。
+> 更改为官方的 Cosmos DB 私有 DNS 域名 **`privatelink.documents.azure.com`** 再次查询即可获取解析到 `10.1.2.x` 的 A 记录。
+
+
 ---
 
 ## 4. 容器运行状态与 Key Vault 秘密挂载校验
@@ -144,12 +196,29 @@ az containerapp show \
   -n "$BACKEND_APP" \
   --query "{State:properties.provisioningState, MI:identity.userAssignedIdentities}"
 
+# 输出
+{
+  "MI": {
+    "/subscriptions/970ded9b-33a0-4745-8240-c8f6e7b73705/resourcegroups/omni3-guard-infra-sea-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/omni3-backend-identity": {
+      "clientId": "60f5a524-5224-4b02-a37e-1ac20cbe7d3d",
+      "principalId": "01ab878d-41ca-4242-af60-13557cb2e8e5"
+    }
+  },
+  "State": "Succeeded"
+}
+
 # 2. 查看容器应用实时日志，确认无数据库或 Key Vault 握手报错
 az containerapp logs show \
   -g "$RG" \
   -n "$BACKEND_APP" \
   --follow
+  
+# 输出
+{"TimeStamp": "2026-07-02T13:53:58.62494", "Log": "Connecting to the container 'backend'..."}
+{"TimeStamp": "2026-07-02T13:53:58.66448", "Log": "Successfully Connected to container: 'backend' [Revision: 'omni3-backend--crvfjar', Replica: 'omni3-backend--crvfjar-75ff75c7c8-txlfx']"}
+{"TimeStamp": "2026-07-02T12:28:46.2155082+00:00", "Log": "F listening on port 80"}
 ```
 *期望输出*：
 * 状态为 `Succeeded`，且挂载了 `omni3-backend-identity` 托管身份；
 * 运行日志流中无数据库报错，能成功与内网隔离的 Cosmos DB 完成通信。
+
