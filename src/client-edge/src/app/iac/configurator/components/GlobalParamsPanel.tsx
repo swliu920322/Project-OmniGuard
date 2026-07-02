@@ -112,7 +112,7 @@ export const GlobalParamsPanel: React.FC<GlobalParamsPanelProps> = ({
               type="text" 
               value={prefix}
               onChange={(e) => { setPrefix(e.target.value); onManualTweak(); }}
-              className={`w-full bg-slate-950 border rounded-lg p-2.5 text-slate-300 focus:border-cyan-500 outline-none ${validationErrors.prefix ? 'border-rose-500 focus:border-rose-500' : 'border-slate-900'}`}
+              className={`w-full h-11 px-3.5 bg-slate-950 border rounded-lg text-slate-300 focus:border-cyan-500 outline-none font-mono text-sm ${validationErrors.prefix ? 'border-rose-500 focus:border-rose-500' : 'border-slate-900'}`}
               placeholder="e.g. omni"
             />
             {validationErrors.prefix && (
@@ -125,7 +125,7 @@ export const GlobalParamsPanel: React.FC<GlobalParamsPanelProps> = ({
               type="text" 
               value={customResourceGroupName}
               onChange={(e) => { setCustomResourceGroupName(e.target.value); onManualTweak(); }}
-              className="w-full bg-slate-950 border border-slate-900 rounded-lg p-2.5 text-slate-300 focus:border-cyan-500 outline-none"
+              className="w-full h-11 px-3.5 bg-slate-950 border border-slate-900 rounded-lg text-slate-300 focus:border-cyan-500 outline-none font-mono text-sm"
               placeholder="留空则自动根据前缀生成"
             />
           </div>
@@ -134,7 +134,7 @@ export const GlobalParamsPanel: React.FC<GlobalParamsPanelProps> = ({
             <select 
               value={location}
               onChange={(e) => { setLocation(e.target.value); onManualTweak(); }}
-              className="w-full bg-slate-950 border border-slate-900 rounded-lg p-2.5 text-slate-300 focus:border-cyan-500 outline-none"
+              className="w-full h-11 px-3.5 bg-slate-950 border border-slate-900 rounded-lg text-slate-300 focus:border-cyan-500 outline-none font-mono text-sm appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M7%209l3%203%203-3%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-[position:right_0.75rem_center] bg-[size:1.25rem_1.25rem] bg-no-repeat pr-10"
             >
               <option value="southeastasia">southeastasia (新加坡 - 默认)</option>
               <option value="japaneast">japaneast (日本东部)</option>
@@ -148,7 +148,7 @@ export const GlobalParamsPanel: React.FC<GlobalParamsPanelProps> = ({
               type="password" 
               value={openAiKey}
               onChange={(e) => { setOpenAiKey(e.target.value); onManualTweak(); }}
-              className="w-full bg-slate-950 border border-slate-900 rounded-lg p-2.5 text-slate-300 focus:border-cyan-500 outline-none"
+              className="w-full h-11 px-3.5 bg-slate-950 border border-slate-900 rounded-lg text-slate-300 focus:border-cyan-500 outline-none font-mono text-sm"
               placeholder="输入密钥"
             />
           </div>
@@ -165,7 +165,7 @@ export const GlobalParamsPanel: React.FC<GlobalParamsPanelProps> = ({
                 type="text" 
                 value={vnetAddressPrefix}
                 onChange={(e) => { setVnetAddressPrefix(e.target.value); onManualTweak(); }}
-                className={`w-full bg-slate-950 border rounded-lg p-2.5 text-slate-300 focus:border-cyan-500 outline-none ${validationErrors.vnetAddressPrefix ? 'border-rose-500 focus:border-rose-500' : 'border-slate-900'}`}
+                className={`w-full h-11 px-3.5 bg-slate-950 border rounded-lg text-slate-300 focus:border-cyan-500 outline-none font-mono text-sm ${validationErrors.vnetAddressPrefix ? 'border-rose-500 focus:border-rose-500' : 'border-slate-900'}`}
                 placeholder="e.g. 10.1.0.0/16"
               />
               {validationErrors.vnetAddressPrefix && (
@@ -179,7 +179,7 @@ export const GlobalParamsPanel: React.FC<GlobalParamsPanelProps> = ({
                 type="text" 
                 value={backendSubnetPrefix}
                 onChange={(e) => { setBackendSubnetPrefix(e.target.value); onManualTweak(); }}
-                className={`w-full bg-slate-950 border rounded-lg p-2.5 text-slate-300 focus:border-cyan-500 outline-none ${validationErrors.backendSubnetPrefix ? 'border-rose-500 focus:border-rose-500' : 'border-slate-900'}`}
+                className={`w-full h-11 px-3.5 bg-slate-950 border rounded-lg text-slate-300 focus:border-cyan-500 outline-none font-mono text-sm ${validationErrors.backendSubnetPrefix ? 'border-rose-500 focus:border-rose-500' : 'border-slate-900'}`}
                 placeholder="e.g. 10.1.4.0/23"
               />
               {validationErrors.backendSubnetPrefix && (
@@ -193,7 +193,7 @@ export const GlobalParamsPanel: React.FC<GlobalParamsPanelProps> = ({
                 type="text" 
                 value={storageSubnetPrefix}
                 onChange={(e) => { setStorageSubnetPrefix(e.target.value); onManualTweak(); }}
-                className={`w-full bg-slate-950 border rounded-lg p-2.5 text-slate-300 focus:border-cyan-500 outline-none ${validationErrors.storageSubnetPrefix ? 'border-rose-500 focus:border-rose-500' : 'border-slate-900'}`}
+                className={`w-full h-11 px-3.5 bg-slate-950 border rounded-lg text-slate-300 focus:border-cyan-500 outline-none font-mono text-sm ${validationErrors.storageSubnetPrefix ? 'border-rose-500 focus:border-rose-500' : 'border-slate-900'}`}
                 placeholder="e.g. 10.1.2.0/24"
               />
               {validationErrors.storageSubnetPrefix && (
