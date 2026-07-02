@@ -11,6 +11,10 @@ interface GlobalParamsPanelProps {
   setOpenAiKey: (v: string) => void;
   customResourceGroupName: string;
   setCustomResourceGroupName: (v: string) => void;
+  costCenter: string;
+  setCostCenter: (v: string) => void;
+  finOpsOwner: string;
+  setFinOpsOwner: (v: string) => void;
   
   // Security & Hosting
   deployManagedIdentities: boolean;
@@ -40,6 +44,10 @@ export const GlobalParamsPanel: React.FC<GlobalParamsPanelProps> = ({
   setOpenAiKey,
   customResourceGroupName,
   setCustomResourceGroupName,
+  costCenter,
+  setCostCenter,
+  finOpsOwner,
+  setFinOpsOwner,
   deployManagedIdentities,
   setDeployManagedIdentities,
   deployStaticWebApp,
@@ -150,6 +158,26 @@ export const GlobalParamsPanel: React.FC<GlobalParamsPanelProps> = ({
               onChange={(e) => { setOpenAiKey(e.target.value); onManualTweak(); }}
               className="w-full h-11 px-3.5 bg-slate-950 border border-slate-900 rounded-lg text-slate-300 focus:border-cyan-500 outline-none font-mono text-sm"
               placeholder="输入密钥"
+            />
+          </div>
+          <div>
+            <label className="block text-slate-300 mb-2 uppercase font-semibold text-xs tracking-wider">成本中心 (Cost Center)</label>
+            <input 
+              type="text" 
+              value={costCenter}
+              onChange={(e) => { setCostCenter(e.target.value); onManualTweak(); }}
+              className="w-full h-11 px-3.5 bg-slate-950 border border-slate-900 rounded-lg text-slate-300 focus:border-cyan-500 outline-none font-mono text-sm"
+              placeholder="e.g. IT-Dept"
+            />
+          </div>
+          <div>
+            <label className="block text-slate-300 mb-2 uppercase font-semibold text-xs tracking-wider">负责人 (FinOps Owner)</label>
+            <input 
+              type="text" 
+              value={finOpsOwner}
+              onChange={(e) => { setFinOpsOwner(e.target.value); onManualTweak(); }}
+              className="w-full h-11 px-3.5 bg-slate-950 border border-slate-900 rounded-lg text-slate-300 focus:border-cyan-500 outline-none font-mono text-sm"
+              placeholder="e.g. Shengwei"
             />
           </div>
         </div>

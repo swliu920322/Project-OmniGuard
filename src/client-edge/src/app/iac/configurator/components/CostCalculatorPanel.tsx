@@ -1,5 +1,5 @@
 import React from 'react';
-import { Coins, Gauge, ShieldCheck, ShieldAlert, Save, Cloud } from 'lucide-react';
+import { Coins, Gauge, ShieldCheck, ShieldAlert, Save, Cloud, Download } from 'lucide-react';
 
 interface CostCalculatorPanelProps {
   remainingBudget: number;
@@ -16,6 +16,7 @@ interface CostCalculatorPanelProps {
   saveMessage: { type: 'success' | 'error'; text: string } | null;
   onSaveConfig: () => void;
   onPreflightValidate: () => Promise<void>;
+  onDownloadPackage: () => void;
 }
 
 export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
@@ -32,7 +33,8 @@ export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
   isValidatingCloud,
   saveMessage,
   onSaveConfig,
-  onPreflightValidate
+  onPreflightValidate,
+  onDownloadPackage
 }) => {
   return (
     <div className="bg-[#0b101d]/60 border border-slate-900 rounded-2xl p-6 shadow-2xl relative flex flex-col gap-5">
@@ -148,6 +150,15 @@ export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
           <span>{isSaving ? '正在动态编译拓扑...' : '一键生成拓扑并验证 .azure/'}</span>
         </button>
       </div>
+
+      {/* Download IaC Package */}
+      <button
+        onClick={onDownloadPackage}
+        className="w-full py-3 border border-amber-800/40 bg-transparent hover:bg-amber-950/20 text-amber-400 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all"
+      >
+        <Download size={14} />
+        <span>📦 导出 IaC 压缩包</span>
+      </button>
 
       {/* Save Status Message */}
       {saveMessage && (
