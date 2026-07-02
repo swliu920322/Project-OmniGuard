@@ -334,6 +334,7 @@ module computeBrain './compute-module.bicep' = {
     cosmosEndpoint: cosmosAccount.properties.documentEndpoint
     cosmosKey: cosmosAccount.listKeys().primaryMasterKey
     openAiKey: openAiKey
+    openAiDeploymentName: openAiDeploymentName
     iotHubServiceConnectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey}'
     iotHubEventHubConnectionString: 'Endpoint=${iotHub.properties.eventHubEndpoints.events.endpoint};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey};EntityPath=${iotHub.properties.eventHubEndpoints.events.path}'
     deployManagedIdentities: deployManagedIdentities
