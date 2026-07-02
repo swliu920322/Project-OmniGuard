@@ -51,7 +51,8 @@ docs/reference/blueprints/
 ├── 14-iot-dps-zero-touch-provisioning.md        ← IoT 零接触预配 (新)
 ├── 15-cloud-architect-methodology.md             ← 云架构师方法论与集成场景 (核心)
 ├── 16-enterprise-iac-governance-plan.md          ← 企业级 IaC 产品化与治理规划 (新)
-└── 17-deepseek-implementation-target.md          ← DeepSeek V4 任务规范: 路由网段校验与预检 (新)
+├── 17-deepseek-implementation-target.md          ← DeepSeek V4 任务规范: 路由网段校验与预检 (新)
+└── 18-web-preflight-integration.md               ← Web 云端预飞行校验深度集成 (新)
 ```
 
 ---
