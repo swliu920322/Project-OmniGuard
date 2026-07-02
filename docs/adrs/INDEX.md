@@ -27,6 +27,7 @@
 | 007 | [IoT Hub Long-Lived Connection and Event Hub Trigger](./ADR-007-%5Binfra%5D-IoT-Hub-Long-Lived-Connection.md) | ✅ |
 | 022 | [ACA IaC Topology Refactoring](./ADR-022-%5Binfra%5D-ACA-IaC-Topology-Refactoring.md) | ✅ |
 | 031 | [Shadow Environment E2E Test Suite — Isolated Deployment & Self-Healing Teardown](./ADR-031-%5Binfra%5D-Shadow-E2E-Test-Suite.md) | ✅ |
+| 032 | [Dual-Track Identity Decoupling, Bicep Parameter Filtering, and Preset Fallback Governance](./ADR-032-%5Barchitecture%5D-Dual-Track-Identity-Decoupling-and-Fallback-Governance.md) — also `[backend]`, `[frontend]`, `[architecture]` | ✅ |
 
 ### ⚙️ Backend `[backend]`
 
@@ -35,6 +36,7 @@
 | 005 | [Migration to Pure ASGI](./ADR-005-%5Bbackend%5D-Migration-to-Pure-ASGI.md) | ✅ |
 | 006 | [Tenant Policy Fallback via Connection String](./ADR-006-%5Bbackend%5D-Tenant-Fallback-Strategy.md) | ✅ |
 | 024 | [Dynamic Orchestration Sandbox API](./ADR-024-%5Bbackend%5D-Dynamic-Orchestration-Sandbox-API.md) | ✅ |
+| 032 | [Dual-Track Identity Decoupling, Bicep Parameter Filtering, and Preset Fallback Governance](./ADR-032-%5Barchitecture%5D-Dual-Track-Identity-Decoupling-and-Fallback-Governance.md) — also `[infra]`, `[frontend]`, `[architecture]` | ✅ |
 
 ### 🎨 Frontend `[frontend]`
 
@@ -53,6 +55,7 @@
 | 026 | [Fleet Control Plane Dashboard](./ADR-026-%5Bfrontend%5D-Fleet-Control-Plane-Dashboard.md) | ✅ |
 | 027 | [Frontend Dashboard as Dumb Terminal](./ADR-027-%5Bfrontend%5D-Frontend-Dashboard-Dumb-Terminal.md) | ✅ |
 | 029 | [Proof of Cloud Metadata Exfiltration](./ADR-029-%5Bfrontend%5D-Proof-of-Cloud-Metadata-Exfiltration.md) | ✅ |
+| 032 | [Dual-Track Identity Decoupling, Bicep Parameter Filtering, and Preset Fallback Governance](./ADR-032-%5Barchitecture%5D-Dual-Track-Identity-Decoupling-and-Fallback-Governance.md) — also `[infra]`, `[backend]`, `[architecture]` | ✅ |
 
 ### 🏗️ Cross-Domain Architecture `[architecture]`
 
@@ -66,6 +69,7 @@
 | 023 | [Dark Warehouse Survival State Machine](./ADR-023-%5Barchitecture%5D-Dark-Warehouse-Survival-State-Machine.md) | ✅ |
 | 028 | [Multi-Agent Orchestration Engine](./ADR-028-%5Barchitecture%5D-Multi-Agent-Orchestration-Engine.md) | ✅ |
 | 030 | [IaC Configurator — Enterprise Compliance, Key Vault Integration & GitOps Pipeline](./ADR-030-%5Barchitecture%5D-IaC-Configurator-Enterprise-Compliance.md) — also `[infra]`, `[frontend]` | ✅ |
+| 032 | [Dual-Track Identity Decoupling, Bicep Parameter Filtering, and Preset Fallback Governance](./ADR-032-%5Barchitecture%5D-Dual-Track-Identity-Decoupling-and-Fallback-Governance.md) — also `[infra]`, `[backend]`, `[frontend]` | ✅ |
 
 ---
 
