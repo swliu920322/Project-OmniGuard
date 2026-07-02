@@ -57,7 +57,8 @@ docs/reference/blueprints/
 ├── 20-gitops-pipeline-integration.md             ← GitOps 自动流水线动态注入 (新)
 ├── 21-thorough-gitops-scenarios.md               ← 三轨式企业 GitOps 流程深度注入 (新)
 ├── 22-key-vault-physical-integration.md          ← Key Vault 物理整合与零信任身份闭环 (新)
-└── 23-shadow-e2e-integration.md                  ← 隔离影子环境 E2E 部署自愈测试 (新)
+├── 23-shadow-e2e-integration.md                  ← 隔离影子环境 E2E 部署自愈测试 (新)
+└── 99-project-backlog.md                         ← 项目待办与架构路线备忘 (新)
 ```
 
 ---
