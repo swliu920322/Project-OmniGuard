@@ -1,5 +1,5 @@
 import React from 'react';
-import { Coins, Gauge, ShieldCheck, ShieldAlert, Save } from 'lucide-react';
+import { Coins, Gauge, ShieldCheck, ShieldAlert, Save, Cloud } from 'lucide-react';
 
 interface CostCalculatorPanelProps {
   remainingBudget: number;
@@ -12,8 +12,10 @@ interface CostCalculatorPanelProps {
   isBudgetSafe: boolean;
   perfRating: { grade: string; color: string; desc: string };
   isSaving: boolean;
+  isValidatingCloud: boolean;
   saveMessage: { type: 'success' | 'error'; text: string } | null;
   onSaveConfig: () => void;
+  onPreflightValidate: () => Promise<void>;
 }
 
 export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
@@ -27,8 +29,10 @@ export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
   isBudgetSafe,
   perfRating,
   isSaving,
+  isValidatingCloud,
   saveMessage,
-  onSaveConfig
+  onSaveConfig,
+  onPreflightValidate
 }) => {
   return (
     <div className="bg-[#0b101d]/60 border border-slate-900 rounded-2xl p-6 shadow-2xl relative flex flex-col gap-5">
@@ -125,15 +129,25 @@ export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
         )}
       </div>
 
-      {/* Save trigger button */}
-      <button
-        onClick={onSaveConfig}
-        disabled={isSaving}
-        className="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-cyan-950/30 disabled:opacity-50"
-      >
-        <Save size={14} />
-        <span>{isSaving ? '正在动态编译拓扑...' : '一键生成拓扑并验证 .azure/'}</span>
-      </button>
+      {/* Cloud Preflight & Save trigger buttons */}
+      <div className="flex gap-2">
+        <button
+          onClick={onPreflightValidate}
+          disabled={isValidatingCloud}
+          className="flex-1 py-3 border border-cyan-800/50 bg-transparent hover:bg-cyan-950/30 text-cyan-400 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+        >
+          <Cloud size={14} />
+          <span>{isValidatingCloud ? '正在云端预检...' : '☁️ 云端预检'}</span>
+        </button>
+        <button
+          onClick={onSaveConfig}
+          disabled={isSaving}
+          className="flex-1 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-cyan-950/30 disabled:opacity-50"
+        >
+          <Save size={14} />
+          <span>{isSaving ? '正在动态编译拓扑...' : '一键生成拓扑并验证 .azure/'}</span>
+        </button>
+      </div>
 
       {/* Save Status Message */}
       {saveMessage && (
