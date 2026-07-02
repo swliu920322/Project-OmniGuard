@@ -3,16 +3,18 @@ param prefix string
 param storageAccountName string
 param backendSubnetId string
 param cosmosEndpoint string
+@secure()
 param cosmosKey string
-param deployManagedIdentities bool = false
+param deployManagedIdentities bool = true
 param backendIdentityId string = ''
 param keyVaultUri string = ''
 param deployStaticWebApp bool = false
 
 @secure()
 param openAiKey string
-param openAiDeploymentName string = 'gpt-5.4-mini'
+@secure()
 param iotHubServiceConnectionString string
+@secure()
 param iotHubEventHubConnectionString string
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
@@ -83,7 +85,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
         {
           name: 'backend'
           image: 'mcr.microsoft.com/azuredocs/aci-helloworld:latest'
-          resources: { cpu: json('0.5'), memory: '1.0Gi' }
+          resources: { cpu: json('1.0'), memory: '2.0Gi' }
           env: [
             { name: 'USE_MANAGED_IDENTITY', value: string(deployManagedIdentities) }
             { name: 'COSMOS_ENDPOINT', value: cosmosEndpoint }
@@ -97,7 +99,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
           ]
         }
       ]
-      scale: { minReplicas: 0, maxReplicas: 2 }
+      scale: { minReplicas: 1, maxReplicas: 3 }
     }
   }
 }
@@ -110,7 +112,7 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = if (!deployStati
     managedEnvironmentId: acaEnvironment.id
     configuration: {
       activeRevisionsMode: 'Single'
-      ingress: { external: true, targetPort: 3000, transport: 'auto' }
+      ingress: { external: true, targetPort: 80, transport: 'auto' }
       registries: [{ server: acr.properties.loginServer, username: acr.listCredentials().username, passwordSecretRef: 'acr-password' }]
       secrets: [{ name: 'acr-password', value: acr.listCredentials().passwords[0].value }]
     }
@@ -123,7 +125,7 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = if (!deployStati
           env: [{ name: 'BACKEND_API_URL', value: 'http://${backendApp.name}.internal.${acaEnvironment.properties.defaultDomain}' }]
         }
       ]
-      scale: { minReplicas: 0, maxReplicas: 2 }
+      scale: { minReplicas: 1, maxReplicas: 2 }
     }
   }
 }
@@ -139,4 +141,4 @@ resource staticWebApp 'Microsoft.Web/staticSites@2023-01-01' = if (deployStaticW
   properties: {}
 }
 
-output frontendUrl string = deployStaticWebApp ? 'https://${staticWebApp.properties.defaultHostname}' : 'https://${frontendApp.properties.configuration.ingress.fqdn}'
+output frontendUrl string = deployStaticWebApp ? 'https://${staticWebApp.?properties.defaultHostname ?? ''}' : 'https://${frontendApp.?properties.configuration.ingress.fqdn ?? ''}'

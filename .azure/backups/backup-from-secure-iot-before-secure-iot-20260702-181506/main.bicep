@@ -10,20 +10,29 @@ param openAiDeploymentName string = 'gpt-5.4-mini'
 // Configurator Parameter Set
 param deployStaticWebApp bool = false
 param customResourceGroupName string = ''
+param vnetAddressPrefix string = '10.1.0.0/16'
+param backendSubnetPrefix string = '10.1.4.0/23'
+param storageSubnetPrefix string = '10.1.2.0/24'
+
+// Enterprise Tag Governance
+param costCenter string = 'IT-Dept'
+param finOpsOwner string = 'Shengwei'
 
 var resourceGroupName = !empty(customResourceGroupName) ? customResourceGroupName : '${prefix}-guard-infra-sea-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
-var networkRules = json(loadTextContent('network-rules.json'))
+
+var defaultTags = {
+  Environment: 'Production-Intake'
+  Scenario: 'SecureIoTPipeline'
+  FinOpsOwner: finOpsOwner
+  CostCenter: costCenter
+}
 
 resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
   name: resourceGroupName
   location: location
-  tags: {
-    Environment: 'Production-Intake'
-    Scenario: 'SecureIoTPipeline'
-    FinOpsOwner: 'Shengwei'
-  }
+  tags: union(defaultTags, {})
 }
 
 module infraDeployment './nested-infra.bicep' = {
@@ -32,7 +41,9 @@ module infraDeployment './nested-infra.bicep' = {
   params: {
     location: location
     prefix: prefix
-    networkRules: networkRules
+    vnetAddressPrefix: vnetAddressPrefix
+    backendSubnetPrefix: backendSubnetPrefix
+    storageSubnetPrefix: storageSubnetPrefix
     hubVNetName: hubVNetName
     spokeVNetName: spokeVNetName
     openAiKey: openAiKey

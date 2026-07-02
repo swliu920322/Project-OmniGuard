@@ -14,22 +14,29 @@ param vnetAddressPrefix string = '10.1.0.0/16'
 param backendSubnetPrefix string = '10.1.4.0/23'
 param storageSubnetPrefix string = '10.1.2.0/24'
 
+// Enterprise Tag Governance
+param costCenter string = 'IT-Dept'
+param finOpsOwner string = 'Shengwei'
+
 var resourceGroupName = !empty(customResourceGroupName) ? customResourceGroupName : '${prefix}-guard-infra-sea-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
 
+var defaultTags = {
+  Environment: 'Production-Intake'
+  Scenario: 'SecureIoTPipeline'
+  FinOpsOwner: finOpsOwner
+  CostCenter: costCenter
+}
+
 resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
   name: resourceGroupName
   location: location
-  tags: {
-    Environment: 'Sandbox'
-    Scenario: 'DevSandbox'
-    FinOpsOwner: 'Shengwei'
-  }
+  tags: union(defaultTags, {})
 }
 
 module infraDeployment './nested-infra.bicep' = {
-  name: 'Nested-Sandbox-Deployment'
+  name: 'Nested-SecureIoT-Deployment'
   scope: resourceGroup(rg.name)
   params: {
     location: location
@@ -41,7 +48,7 @@ module infraDeployment './nested-infra.bicep' = {
     spokeVNetName: spokeVNetName
     openAiKey: openAiKey
     openAiDeploymentName: openAiDeploymentName
-    deployManagedIdentities: false
+    deployManagedIdentities: true
     deployStaticWebApp: deployStaticWebApp
   }
 }
