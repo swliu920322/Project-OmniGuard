@@ -276,3 +276,32 @@ DPS_NAME="${PREFIX}-dps"
   * 确保前端 Ingress 被正确声明为公网：`--type external`。
   * 检查 `targetPort` 端口是否与容器内服务监听端口（占位测试镜像默认为 `80`，实际 Next.js 生产镜像默认为 `3000`）完全匹配。
   * 修改 Ingress 属性后，**在本地静置 2 分钟以上**，等待 Azure 路由完全解析完毕，再发起 curl 验证。
+
+### 5.3 Key Vault 身份与网络（双锁）物理隔离测试方法
+* **触发机制**：
+  在 Secure-IoT 场景下，Key Vault 设置了 `publicNetworkAccess: 'Disabled'` 且启用了 RBAC 授权。当未授权的外部用户访问时，默认会触发 **`ForbiddenByRbac`** 拦截。为了单独测试公网网络防火墙的拦截，需要给当前访问者临时指派读取权限。
+* **物理验证与清理规程**：
+  ```bash
+  # 1. 尝试默认态公网访问（触发未授权拦截）
+  KV_NAME=$(az keyvault list -g "$RG" --query "[0].name" -o tsv)
+  az keyvault secret list --vault-name "$KV_NAME"
+  # => 期望返回 (ForbiddenByRbac) 报错
+  
+  # 2. 获取当前 Azure CLI 登录用户 ID 并临时授予 Secrets Reader 角色
+  MY_USER_ID=$(az ad signed-in-user show --query id -o tsv)
+  az role assignment create \
+    --assignee "$MY_USER_ID" \
+    --role "Key Vault Secrets Reader" \
+    --scope "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/$RG/providers/Microsoft.KeyVault/vaults/$KV_NAME"
+    
+  # 3. 等待 20 秒同步后，再次尝试公网访问（触发防火墙拦截）
+  az keyvault secret list --vault-name "$KV_NAME"
+  # => 期望返回 (PublicAccessDisabled) 报错，证明公网防火墙网络拦截 100% 生效
+  
+  # 4. 回收临时只读角色，恢复双锁状态
+  az role assignment delete \
+    --assignee "$MY_USER_ID" \
+    --role "Key Vault Secrets Reader" \
+    --scope "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/$RG/providers/Microsoft.KeyVault/vaults/$KV_NAME"
+  ```
+
