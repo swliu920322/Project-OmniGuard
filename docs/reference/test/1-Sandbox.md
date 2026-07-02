@@ -1,40 +1,18 @@
 # 部署完资源列表
-omni-aca-env-2ldbii7jgilfq
-Container Apps Environment
-Southeast Asia
-omni-backend
-Container App
-Southeast Asia
-omni-backend-nsg
-Network security group
-Southeast Asia
-omni-frontend
-Container App
-Southeast Asia
-omni-hub-vnet
-Virtual network
-Southeast Asia
-omni-logs-2ldbii7jgilfq
-Log Analytics workspace
-Southeast Asia
-omni-mem-2ldbii7jgilfq
-Azure Cosmos DB account
-Southeast Asia
-omni-spoke-vnet
-Virtual network
-Southeast Asia
-omni-storage-nsg
-Network security group
-Southeast Asia
-omniacr2ldbii7jgilfq
-Container registry
-Southeast Asia
-omnikv2ldbii7jgilfq
-Key vault
-Southeast Asia
-omnist2ldbii7jgilfq
-Storage account
-Southeast Asia
+| **资源名称 (Resource Name)** | **资源类型 (Type)** | **区域 (Location)** |
+| --- | --- | --- |
+| **omni-aca-env-2ldbii7jgilfq** | Container Apps Environment | Southeast Asia |
+| **omni-backend** | Container App | Southeast Asia |
+| **omni-backend-nsg** | Network security group | Southeast Asia |
+| **omni-frontend** | Container App | Southeast Asia |
+| **omni-hub-vnet** | Virtual network | Southeast Asia |
+| **omni-logs-2ldbii7jgilfq** | Log Analytics workspace | Southeast Asia |
+| **omni-mem-2ldbii7jgilfq** | Azure Cosmos DB account | Southeast Asia |
+| **omni-spoke-vnet** | Virtual network | Southeast Asia |
+| **omni-storage-nsg** | Network security group | Southeast Asia |
+| **omniacr2ldbii7jgilfq** | Container registry | Southeast Asia |
+| **omnikv2ldbii7jgilfq** | Key vault | Southeast Asia |
+| **omnist2ldbii7jgilfq** | Storage account | Southeast Asia |
 
 ## 验收脚本
 1.  验证步骤与命令行
@@ -162,5 +140,61 @@ Could not find a replica for this app
 ```
 # 方案 A 验收 
 # curl -i "https://$FE_FQDN" 时间很久
+
+# 修改了默认端口
+PREFIX="omni"
+RG="${PREFIX}-guard-infra-sea-rg"
+
+# 1. 动态更新云端前端 Ingress 的 targetPort 端口为 80 
+az containerapp ingress enable \
+  -g "$RG" \
+  -n "${PREFIX}-frontend" \
+  --target-port 80 \
+  --type external \
+  --transport auto
+
+# 返回
+Ingress enabled. Access your app at https://omni-frontend.thankfulgrass-ca6dbee4.southeastasia.azurecontainerapps.io/
+
+{
+  "additionalPortMappings": null,
+  "allowInsecure": false,
+  "clientCertificateMode": null,
+  "corsPolicy": null,
+  "customDomains": null,
+  "exposedPort": 0,
+  "external": true,
+  "fqdn": "omni-frontend.thankfulgrass-ca6dbee4.southeastasia.azurecontainerapps.io",
+  "ipSecurityRestrictions": null,
+  "stickySessions": null,
+  "targetPort": 80,
+  "traffic": [
+    {
+      "latestRevision": true,
+      "weight": 100
+    }
+  ],
+  "transport": "Auto"
+}
+
+# 再次执行方案 A 秒回
+HTTP/2 404 
+content-type: text/html; charset=utf-8
+content-length: 1946
+date: Thu, 02 Jul 2026 09:29:47 GMT
+
+<!DOCTYPE html>
+...
+<//html>
+# 继续验收
+az containerapp logs show -g "$RG" -n "$BACKEND_APP" --follow
+Could not find a replica for this app
+
+
+# 测试方案 B
+
+{"TimeStamp": "2026-07-02T09:40:33.59982", "Log": "Connecting to the container 'backend'..."}
+{"TimeStamp": "2026-07-02T09:40:33.64349", "Log": "Successfully Connected to container: 'backend' [Revision: 'omni-backend--0000001', Replica: 'omni-backend--0000001-75fc795ff7-kjb86']"}
+{"TimeStamp": "2026-07-02T09:40:04.535543+00:00", "Log": "F listening on port 80"}
 
 ```
