@@ -1,246 +1,337 @@
 {
     "user_id": "1940360837547565056",
     "range_days": 365,
-    "last_updated": "2026-07-01 09:38:28",
+    "last_updated": "2026-07-02 10:33:01",
     "hot_topics": [
         {
-            "topic": "光子学/CPO/激光瓶颈",
-            "count": 76,
-            "percentage": 0.497
+            "topic": "光子学/CPO/800V DC供给链",
+            "count": 65,
+            "percentage": 0.4025
         },
         {
-            "topic": "内存需求与涨价周期",
-            "count": 21,
-            "percentage": 0.137
+            "topic": "存储器与HBM/DRAM短缺",
+            "count": 22,
+            "percentage": 0.1363
         },
         {
             "topic": "机器人/人形机器人",
+            "count": 20,
+            "percentage": 0.1235
+        },
+        {
+            "topic": "Neocloud/AI算力与云资本开支",
             "count": 16,
-            "percentage": 0.105
+            "percentage": 0.0988
         },
         {
-            "topic": "AI算力/超大规模资本开支",
+            "topic": "地缘供应链瓶颈与材料管制（InP/WF6/epiwafer/laser）",
             "count": 15,
-            "percentage": 0.098
-        },
-        {
-            "topic": "供应链/关键信号跟踪（InP、WF6、玻璃基板等）",
-            "count": 14,
-            "percentage": 0.092
+            "percentage": 0.0926
         }
     ],
     "industries": [
         {
             "name": "光学/光模块",
-            "value": 38
+            "value": 36
         },
         {
             "name": "半导体/芯片",
-            "value": 27
+            "value": 28
         },
         {
             "name": "硬件/DC服务器",
             "value": 14
         },
         {
-            "name": "汽车/机器人",
-            "value": 11
-        },
-        {
             "name": "软件/AI模型",
-            "value": 5
+            "value": 8
         },
         {
-            "name": "卫星/空间通信",
-            "value": 3
-        },
-        {
-            "name": "消费/零售/媒体",
-            "value": 2
+            "name": "汽车/机器人",
+            "value": 14
         }
     ],
     "conviction_watchlist": [
         {
             "ticker": "$SIVE",
             "conviction_level": "核心重仓 (Core Long)",
-            "mention_count": 43,
-            "investment_thesis": "核心光子学/激光卡脖子标的，受益于CPO、1.6T pluggable、NVLink fusion、Ayar/GlobalFoundries/Hyperion等生态导入；又有Jabil、JPM等机构持仓和产能扩张催化。"
+            "mention_count": 38,
+            "investment_thesis": "被视为下一代光子学与CPO/1.6T互连的关键激光瓶颈，覆盖pluggable、CPO scale-up/scale-out、NVLink生态及潜在Top-3 hyperscaler需求；同时受NASDQ上市、产能扩张、机构持仓提升与多项战略合作催化。"
         },
         {
             "ticker": "$AAOI",
             "conviction_level": "核心重仓 (Core Long)",
             "mention_count": 15,
-            "investment_thesis": "美国光模块与激光相关高弹性标的，具备800G/1.6T需求放量、AMD/NVDA/AMZN/MSFT客户验证和产能稀缺优势，作者多次强调是最看好的US photonics long之一。"
+            "investment_thesis": "美国光模块与激光/光器件核心标的，受益于800G/1.6T光模块放量、与AMZN/MSFT/NVDA相关客户验证及供给紧缺；被反复强调为高胜率的US photonics long。"
+        },
+        {
+            "ticker": "$NBIS",
+            "conviction_level": "核心重仓 (Core Long)",
+            "mention_count": 13,
+            "investment_thesis": "Neocloud龙头，受益于AI算力外包、超大规模云租赁与企业级AI推理需求；被作者视为Neocloud板块中的最佳标的之一。"
         },
         {
             "ticker": "$MU",
             "conviction_level": "核心重仓 (Core Long)",
             "mention_count": 12,
-            "investment_thesis": "内存超级周期核心受益者，AI服务器与人形机器人带来长期需求扩张，且供需紧张、价格上涨、长期协议签署强化盈利上修。"
-        },
-        {
-            "ticker": "$NBIS",
-            "conviction_level": "核心重仓 (Core Long)",
-            "mention_count": 12,
-            "investment_thesis": "作者最看好的Neocloud龙头之一，受益于AI云基础设施扩张、估值重估和算力租赁需求爆发，已被反复验证为高胜率主题股。"
+            "investment_thesis": "内存超级周期核心受益者，AI/HBM/DRAM需求强劲且供给偏紧；多次提到与Tesla/机器人/数据中心带来的长期记忆体需求增长。"
         },
         {
             "ticker": "$LITE",
             "conviction_level": "核心重仓 (Core Long)",
             "mention_count": 11,
-            "investment_thesis": "光通信/EML与CPO链条的关键龙头，作者视其为上一轮光子学大行情的标杆，并认为其对CPO/scale-up的指引最重要。"
-        },
-        {
-            "ticker": "$AXTI",
-            "conviction_level": "核心重仓 (Core Long)",
-            "mention_count": 11,
-            "investment_thesis": "InP衬底上游关键节点，受中国出口限制、AI DC与光子学扩产驱动；作者长期押注其作为上游瓶颈的弹性与战略价值。"
-        },
-        {
-            "ticker": "$IQE",
-            "conviction_level": "首仓买入 (Starter Long)",
-            "mention_count": 10,
-            "investment_thesis": "InP epiwafer/外延片关键供应商，受益于光子学与西方供应链重建，作者多次提到其为重要西方光学供应链节点。"
-        },
-        {
-            "ticker": "$MRVL",
-            "conviction_level": "中性观察 (Neutral)",
-            "mention_count": 9,
-            "investment_thesis": "网络互连/Celestial相关的AI连接方案受益者，Jensen多次点名其在网络/互联/接口中的重要性，但作者更偏向把它视作产业链受益股而非最高信心核心仓。"
-        },
-        {
-            "ticker": "$XFAB",
-            "conviction_level": "首仓买入 (Starter Long)",
-            "mention_count": 8,
-            "investment_thesis": "欧洲硅光/SiC/GaN/MEMS foundry替代方案，受EU/US CHIPS Act与本土化政策支持，具备光子与功率半导体双主题弹性。"
+            "investment_thesis": "光网络/光器件龙头，作为CW laser与CPO时代的重要受益者，既是行业定价与产能紧张的映射，也被视为光子学大周期的历史赢家复刻。"
         },
         {
             "ticker": "$AAOI",
             "conviction_level": "核心重仓 (Core Long)",
             "mention_count": 15,
-            "investment_thesis": "（重复合并口径）作者多次加仓、认为其具备稀缺激光能力和高速光模块放量潜力，是US photonics最强进攻标的之一。"
+            "investment_thesis": "美国光模块与激光/光器件核心标的，受益于800G/1.6T光模块放量、与AMZN/MSFT/NVDA相关客户验证及供给紧缺；被反复强调为高胜率的US photonics long。"
+        },
+        {
+            "ticker": "$IQE",
+            "conviction_level": "首仓买入 (Starter Long)",
+            "mention_count": 9,
+            "investment_thesis": "InP epiwafer关键供应商，属于光子学上游稀缺节点；受价格上调、供给吃紧、与Tower/其他客户的长期合作及西方供应链安全叙事驱动。"
+        },
+        {
+            "ticker": "$XFAB",
+            "conviction_level": "首仓买入 (Starter Long)",
+            "mention_count": 8,
+            "investment_thesis": "被定位为欧洲硅光/SiC/GaN/MEMS foundry替代选项，受EU/US CHIPS Act支持，具备向光子学与功率半导体延伸的可选性。"
+        },
+        {
+            "ticker": "$LPK",
+            "conviction_level": "首仓买入 (Starter Long)",
+            "mention_count": 8,
+            "investment_thesis": "玻璃基板/先进封装潜在受益者，市场份额与客户选择进展被强调，作者认为其卡位包装工艺变革，具有较高非线性弹性。"
+        },
+        {
+            "ticker": "$MRVL",
+            "conviction_level": "首仓买入 (Starter Long)",
+            "mention_count": 7,
+            "investment_thesis": "AI网络与互连基础设施的重要受益者，Marvell Celestial与CPO/NVLink生态相关，且被Jensen反复点名为网络连接/互连方向的潜在万亿市值标的。"
+        },
+        {
+            "ticker": "$NBIS",
+            "conviction_level": "核心重仓 (Core Long)",
+            "mention_count": 13,
+            "investment_thesis": "Neocloud龙头，受益于AI算力外包、超大规模云租赁与企业级AI推理需求；被作者视为Neocloud板块中的最佳标的之一。"
+        },
+        {
+            "ticker": "$ALAB",
+            "conviction_level": "首仓买入 (Starter Long)",
+            "mention_count": 4,
+            "investment_thesis": "CXL/内存池化与AI数据中心互连的高弹性赢家，已被反复用作高Beta基础设施股的成功案例。"
+        },
+        {
+            "ticker": "$TSEM",
+            "conviction_level": "首仓买入 (Starter Long)",
+            "mention_count": 7,
+            "investment_thesis": "台系/代工与封装生态的重要节点，被视为硅光/封装/汽车与先进工艺景气回升的受益者。"
+        },
+        {
+            "ticker": "$INTC",
+            "conviction_level": "中性观察 (Neutral)",
+            "mention_count": 6,
+            "investment_thesis": "政策与产业链叙事带来的交易机会，但更多是事件驱动而非长期高确信度核心仓位。"
+        },
+        {
+            "ticker": "$META",
+            "conviction_level": "中性观察 (Neutral)",
+            "mention_count": 8,
+            "investment_thesis": "被讨论的重点在于AI算力资本开支、云业务扩张与潜在的过剩算力变现，而非单纯广告主线。"
+        },
+        {
+            "ticker": "$NVDA",
+            "conviction_level": "中性观察 (Neutral)",
+            "mention_count": 18,
+            "investment_thesis": "作为AI基础设施“总需求发动机”与技术标准制定者，更多是整个供给链验证对象而非明确alpha来源。"
+        },
+        {
+            "ticker": "$AMD",
+            "conviction_level": "中性观察 (Neutral)",
+            "mention_count": 5,
+            "investment_thesis": "被用来验证CW laser/CPO供给紧张与AI芯片扩张的外溢需求，但方向性更偏主题追踪。"
+        },
+        {
+            "ticker": "$ASTS",
+            "conviction_level": "中性观察 (Neutral)",
+            "mention_count": 3,
+            "investment_thesis": "LEO卫星网络与Starlink竞争的事件驱动标的，主题相关性强但确信度不如核心供给链。"
+        },
+        {
+            "ticker": "$TSLA",
+            "conviction_level": "中性观察 (Neutral)",
+            "mention_count": 4,
+            "investment_thesis": "更多作为人形机器人/Optimus与汽车电子叙事的参照系，不属于作者最核心的高确信度标的。"
         }
     ],
     "supply_chain_bottlenecks": [
         {
-            "category": "CW DFB激光/ InP激光产能",
-            "status": "持续紧张，产能受限且有扩产/外包分配问题",
+            "category": "CW DFB激光器 / CW laser",
+            "status": "供给紧缺、产能被锁定，预计延续至2028-2029",
             "affected_tickers": [
                 "$SIVE",
                 "$AAOI",
                 "$LITE",
                 "$AMD",
-                "$NVDA"
+                "$NVDA",
+                "$MRVL"
             ]
         },
         {
-            "category": "HBM/DRAM/NAND内存供应",
-            "status": "价格上涨、长期供需紧张，多家厂商与客户预示多年短缺",
+            "category": "HBM/DRAM/Memory",
+            "status": "AI需求拉动导致供不应求、价格上涨周期延长",
             "affected_tickers": [
                 "$MU",
-                "SK Hynix",
-                "Samsung",
                 "$SNDK",
-                "$NVDA"
+                "$SK Hynix",
+                "$Samsung",
+                "$EWY"
             ]
         },
         {
-            "category": "InP衬底出口限制",
-            "status": "中国出口管制被提及为光子学与AI DC链条关键风险点，后续又有缓和迹象",
+            "category": "InP衬底 / InP epiwafer",
+            "status": "出口管制与产能瓶颈缓解/波动并存，属于关键上游卡点",
             "affected_tickers": [
                 "$AXTI",
                 "$IQE",
+                "$SIVE",
                 "$AAOI",
-                "$SIVE"
+                "$MTSI"
             ]
         },
         {
-            "category": "WF6（六氟化钨）/前驱体供应",
-            "status": "供应链受地缘政治冲击，影响半导体制造及全球供给",
-            "affected_tickers": [
-                "$TSM",
-                "SK Hynix",
-                "Samsung",
-                "$AXTI",
-                "$SOI"
-            ]
-        },
-        {
-            "category": "CPO/800V DC光引擎与光模块",
-            "status": "市场传出延迟担忧，但多方表态称无明显延迟、需求仍强",
+            "category": "CPO / 800V DC光互连",
+            "status": "技术路线加速落地，供给链仍在爬坡，短期瓶颈在激光与封装",
             "affected_tickers": [
                 "$NVDA",
+                "$SIVE",
                 "$LITE",
-                "$SIVE",
+                "$AAOI",
                 "$MRVL",
-                "$AAOI"
-            ]
-        },
-        {
-            "category": "玻璃基板/先进封装",
-            "status": "处于验证与扩产初期，量产时间点多指向2026-2028",
-            "affected_tickers": [
-                "$LPK",
-                "$TSEM",
-                "$XFAB",
-                "$AMAT"
-            ]
-        },
-        {
-            "category": "SiPh/CPO foundry产能",
-            "status": "订单和合作增加，foundry/封装产能是下一阶段约束",
-            "affected_tickers": [
-                "$TSEM",
-                "$GFS",
-                "$XFAB",
-                "$SIVE",
                 "$POET"
             ]
         },
         {
-            "category": "机器人关键零部件（减速器/执行器/轴承）",
-            "status": "人形机器人放量前的供应链卡点，国内外玩家争夺产能与客户",
+            "category": "Probe cards / test sockets",
+            "status": "贵金属涨价与严重短缺推动涨价",
             "affected_tickers": [
-                "LeaderDrive(688017)",
-                "$SHA0",
+                "$MTSI",
+                "$CAMT"
+            ]
+        },
+        {
+            "category": "WF6（六氟化钨）",
+            "status": "中国对日出口管制导致全球供应受扰，影响量产",
+            "affected_tickers": [
+                "$TSM",
+                "$SK Hynix",
+                "$Samsung",
+                "$AXTI"
+            ]
+        },
+        {
+            "category": "玻璃基板 / advanced packaging substrate",
+            "status": "仍处早期放量前夜，客户选型与量产时间点是关键卡口",
+            "affected_tickers": [
+                "$LPK",
+                "$XFAB",
+                "$TSEM",
+                "$GFS",
+                "$TSM"
+            ]
+        },
+        {
+            "category": "机器人减速器/关节执行器",
+            "status": "人形机器人放量前的核心零部件瓶颈",
+            "affected_tickers": [
+                "$SCHA (SHA0)",
+                "LeaderDrive (688017)",
                 "$TSLA",
-                "$GM"
+                "$CCXI"
             ]
         }
     ],
     "value_chain_mapping": [
         {
-            "upstream": "InP衬底 / epiwafer / CW DFB激光器",
-            "midstream": "Sivers $SIVE / $AAOI / $IQE / $AXTI / $LITE",
-            "downstream": "Jabil、Ayar Labs、GlobalFoundries SiPh平台、$NVDA NVLink/CPO、Hyperscalers"
+            "upstream": "InP衬底 / epiwafer / CW DFB lasers",
+            "midstream": "$SIVE / $IQE / $AXTI / $AAOI",
+            "downstream": "$LITE / $JBL / $MRVL / $GFS / $NVDA / hyperscalers"
         },
         {
-            "upstream": "内存晶圆与封测",
-            "midstream": "Micron $MU / SK Hynix / Samsung / $SNDK",
-            "downstream": "AI服务器、Hyperscalers、人形机器人推理与存储"
+            "upstream": "内存芯片（HBM/DRAM/NAND）",
+            "midstream": "$MU / SK Hynix / Samsung / $SNDK",
+            "downstream": "AI服务器、GPU系统、Neocloud与终端AI推理"
         },
         {
-            "upstream": "硅光/SiC/GaN foundry",
-            "midstream": "$TSEM / $GFS / $XFAB",
-            "downstream": "$NVDA 800V DC、CPO、光引擎、汽车电力电子"
+            "upstream": "硅光foundry / 封装与测试",
+            "midstream": "$XFAB / $TSEM / OpenLight / Xintec / Advantest",
+            "downstream": "$NVDA / $AVGO / $MRVL / $AMD / hyperscaler生态"
         },
         {
-            "upstream": "光引擎/封装/OSFP模块",
-            "midstream": "$JBL / $MRVL / Mesh / OpenLight / POET",
-            "downstream": "$SPCX/卫星通信、$NVDA 网络、云厂商与数据中心"
+            "upstream": "玻璃基板 / 先进封装材料",
+            "midstream": "$LPK / SKC Absolics / Samsung Electro-Mechanics",
+            "downstream": "AI ASIC、CPO、先进封装需求方"
         },
         {
-            "upstream": "机器人核心零部件",
-            "midstream": "LeaderDrive(688017) / Schaeffler $SHA0 / Harmonic Drive",
-            "downstream": "Agility Robotics / Unitree / Tesla Optimus / GM factory robotics"
+            "upstream": "机器人零部件（减速器/轴承/执行器/ECU）",
+            "midstream": "LeaderDrive (688017) / Schaeffler / Harmonic Drive",
+            "downstream": "$TSLA Optimus / Agility Robotics / Unitree / humanoid OEMs"
         },
         {
-            "upstream": "LEO卫星与光通信零部件",
-            "midstream": "$ASTS / $SPCX / $SIVE Beamforming ICs",
-            "downstream": "Rakuten、Japan LEO satellite networks、Space/Defense applications"
+            "upstream": "AI模型与算力需求",
+            "midstream": "OpenAI / Anthropic / Google / Meta",
+            "downstream": "Neoclouds（$NBIS、$WULF、$CIFR、$HUT）与GPU/CPO供应链"
         }
     ],
     "data": [
+        {
+            "date": "2026-07-01",
+            "tweets": [
+                {
+                    "original": "Just dropping these 3 slides from Agility Robotics ( $CCXI ) presentations.\n\nFor the US robotic program doomposters:\n\n1. “75% of parts” - sourced from the USA\n\n2. Just eyeballing the graph, looks like &lt;$30k BOM mass production.\n\nPeople were just looking at the ~$145K cost. \n\n3. https://t.co/zs2msucOk6",
+                    "translation": "先贴一下 Agility Robotics（$CCXI）演示中的这 3 页幻灯片。\n\n给那些对美国机器人项目唱衰的人看：\n\n1. “75% 的零部件”——来自美国本土采购。\n\n2. 仅从图表粗略判断，量产后 BOM 成本看起来低于 3 万美元。\n\n大家之前只盯着约 14.5 万美元的整机成本。\n\n3. https://t.co/zs2msucOk6"
+                },
+                {
+                    "original": "There’s a lot of disinformation going around about $META “cutting capex” because they “overbuilt”.\n\nThis is an “if” they have excess capacity.\n\nAnd it looks like the opposite right now:\n\nHyperscalers like $GOOGL are so compute constrained that they had to cut allocations to Meta",
+                    "translation": "市场上有很多关于 $META 因为“过度建设”而“削减资本开支”的误导性说法。\n\n前提是他们真的存在产能过剩。\n\n而从目前来看，情况似乎恰恰相反：\n\n像 $GOOGL 这样的超大规模云厂商算力极度紧张，甚至不得不削减分配给 Meta 的资源。"
+                },
+                {
+                    "original": "Basically pre-market right now with the Neoclouds like $NBIS in simpler terms.\n\nCostco: sells $5 chickens.\n\nWalmart: mass buys those rotisserie chickens and sells excess as “Walmart Chickens”.\n\nStock Market: sells off Costco.",
+                    "translation": "用更简单的话说，现在盘前市场对 $NBIS 这类 Neocloud 的反应大致就是这样。\n\nCostco：卖 5 美元的鸡。\n\nWalmart：批量买这些烤鸡，然后把多出来的当作“Walmart 鸡”卖出去。\n\n股市：却在抛售 Costco。"
+                },
+                {
+                    "original": "Finally, $META to build a Cloud Business to sell excess AI compute per Bloomberg.\n\nThought Meta should go up against GCP, Azure, and AWS eventually to increase revenue streams. \n\nMeta up 6.65% premarket. https://t.co/UUolnwtYJY",
+                    "translation": "根据彭博报道，$META 终于要打造云业务来出售多余的 AI 算力。\n\n我一直认为 Meta 迟早会与 GCP、Azure 和 AWS 正面竞争，以拓展收入来源。\n\nMeta 盘前上涨 6.65%。https://t.co/UUolnwtYJY"
+                },
+                {
+                    "original": "Just a random thought, leading US humanoid players strangely me of the current LLM dynamics:\n\nAgility ( $CCXI ) kinda feels like Anthropic for robotics.\n\nWith $AMZN and $NVDA heavily backing it, ingrained with $GOOGL Deepmind (like TPUs). And it starts off with enterprise",
+                    "translation": "随便想一句，美国领先的人形机器人玩家与当前 LLM 行业格局有些出人意料地相似：\n\nAgility（$CCXI）某种程度上很像机器人领域的 Anthropic。\n\n背后有 $AMZN 和 $NVDA 的重磅支持，并深度结合了 $GOOGL DeepMind（类似 TPU 的角色）。而且它一开始就是从企业市场切入。"
+                },
+                {
+                    "original": "This market feels like an ADHD goldfish with a 5 second attention span, trading popular themes. \n\nIt's like markets only care about physical AI and energy right now?\n\nAnd sold off memory and photonics that are bottlenecked past 2028?",
+                    "translation": "这个市场感觉就像一条注意力只有 5 秒钟的 ADHD 金鱼，只会追逐热门主题。\n\n难道现在市场只关心物理 AI 和能源吗？\n\n而对那些在 2028 年之后仍存在瓶颈的存储和光子学板块却选择抛售？"
+                },
+                {
+                    "original": "$SIVE: \"Intent to complete the [NASDAQ] listing process over the next few quarters\"\n\nThis statement was largely missed by many screeners.\n\nVery material improvement from evaluation, to formal confirmation of timelines. https://t.co/iOceCgJTG4",
+                    "translation": "$SIVE：“计划在未来几个季度内完成 [NASDAQ] 上市流程”\n\n这一表述在很多筛选器中基本被忽略了。\n\n相比此前仅停留在评估阶段，这已经是对时间表的正式确认，属于非常实质性的进展。https://t.co/iOceCgJTG4"
+                },
+                {
+                    "original": "Just some of the more interesting news I came across recently:\n\n1. MS: Revised China humanoid shipments to reach 50,000 in 2026 from 14,000u and 28,000u earlier this year.\n\n2. MS: Probe cards and test sockets likely to be priced hike (precious metal hikes + severe shortage of",
+                    "translation": "最近我看到的一些较有意思的消息：\n\n1. MS：将中国人形机器人出货量预测上调至 2026 年达到 5 万台，而今年早些时候的预测分别为 1.4 万台和 2.8 万台。\n\n2. MS：探针卡和测试座可能会提价（贵金属涨价 + 供应严重短缺导致）"
+                },
+                {
+                    "original": "I told you making the robots look hot might be a bottleneck:\n\nToday, UBTech has now announced its first full-size hyper realistic humanoid robot girlfriend.\n\nFor adults only to purchase for only ~$145,717.90.\n\n-\"The U1 series emphasizes attractive appearance and is only available https://t.co/Lyit8L8Fw1",
+                    "translation": "我早就说过，把机器人做得“好看”可能会成为瓶颈：\n\n今天，UBTech 已宣布推出其首款全尺寸、超写实人形机器人女友。\n\n仅限成人购买，售价约 145,717.90 美元。\n\n- “U1 系列强调外观吸引力，仅限于……” https://t.co/Lyit8L8Fw1"
+                },
+                {
+                    "original": "Congrats to $SIVE, they have now raised an upside round of 700m SEK from institutional investors.\n\nThe round was “Multiple Times Oversubscribed” and slightly upsided.\n\nValidating immense institutional demand around current market prices.\n\nThis raise was specifically for https://t.co/SOP7XNjgT0",
+                    "translation": "祝贺 $SIVE，其已从机构投资者处完成一轮上行融资，募资 7 亿瑞典克朗。\n\n本轮融资“获多倍超额认购”，且估值略有上修。\n\n这验证了机构投资者对当前市场价格存在强劲需求。\n\n此次融资专门用于 https://t.co/SOP7XNjgT0"
+                }
+            ]
+        },
         {
             "date": "2026-06-30",
             "tweets": [

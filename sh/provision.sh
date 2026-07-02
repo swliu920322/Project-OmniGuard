@@ -5,9 +5,18 @@ set -euo pipefail
 # 🏗️  Project-OmniGuard: 部署 Azure 基础设施
 # =========================================================================
 
+# 默认开发规格参数
 PREFIX="omni"
-RG="${PREFIX}-guard-infra-sea-rg"
 LOCATION="southeastasia"
+PARAM_FILE=".azure/main.parameters.json"
+
+# 如果参数文件存在，动态从中提取真实的前缀和区域，保证后续资源提取的准确性
+if [ -f "$PARAM_FILE" ]; then
+  PREFIX=$(python3 -c "import json; print(json.load(open('$PARAM_FILE'))['parameters'].get('prefix', {}).get('value', 'omni'))" 2>/dev/null || echo "omni")
+  LOCATION=$(python3 -c "import json; print(json.load(open('$PARAM_FILE'))['parameters'].get('location', {}).get('value', 'southeastasia'))" 2>/dev/null || echo "southeastasia")
+fi
+
+RG="${PREFIX}-guard-infra-sea-rg"
 DEPLOYMENT_NAME="omni-permanent-base"
 
 echo "======================================================"
@@ -39,14 +48,26 @@ if [ -z "$OPENAI_KEY" ]; then
   OPENAI_KEY="dummy-openai-key-replace-me"
 fi
 
-# 部署 Bicep 模板
+# 部署 Bicep 基础设施
 echo -e "\n✅ [2/3] 部署 Bicep 基础设施..."
-az deployment sub create \
-  --name "$DEPLOYMENT_NAME" \
-  --location "$LOCATION" \
-  --template-file .azure/main.bicep \
-  --parameters location="$LOCATION" prefix="$PREFIX" openAiKey="$OPENAI_KEY" openAiDeploymentName="$OPENAI_DEPLOYMENT" \
-  --output table
+
+if [ -f "$PARAM_FILE" ]; then
+  echo "📌 检测到配置台生成的本地参数文件 ($PARAM_FILE)，正在以自定义规格部署..."
+  az deployment sub create \
+    --name "$DEPLOYMENT_NAME" \
+    --location "$LOCATION" \
+    --template-file .azure/main.bicep \
+    --parameters "@$PARAM_FILE" \
+    --output table
+else
+  echo "📌 未检测到参数文件，回退到默认开发规格进行部署..."
+  az deployment sub create \
+    --name "$DEPLOYMENT_NAME" \
+    --location "$LOCATION" \
+    --template-file .azure/main.bicep \
+    --parameters location="$LOCATION" prefix="$PREFIX" openAiKey="$OPENAI_KEY" openAiDeploymentName="$OPENAI_DEPLOYMENT" \
+    --output table
+fi
 
 # 提取资源信息
 echo -e "\n✅ [3/3] 提取资源信息..."

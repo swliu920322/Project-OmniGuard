@@ -21,6 +21,8 @@
 | 10 | **成本与 FinOps** | Cost Management, Budgets, Reservations, Advisor | ~5% | 无 | P1 |
 | 11 | **高可用与灾备 (HA/DR)** | Availability Zones, Geo-replication, Backup Vault | ~5% | 单区域 Singapore | P2 |
 | 12 | **合规与治理** | Policy, Landing Zones, Blueprints, Purview Compliance | ~3% | 无 | P2 |
+| 13 | **企业网络与私有 DNS** | VNet, Private Link, Private Endpoint, Private DNS Zone | ~15% | Hub-Spoke 无隔离, PE DNS 解析缺失 | P1 |
+| 14 | **IoT 零接触预配** | Device Provisioning Service (DPS), X.509 CA Certs | ~10% | 静态连接字符串, 无 DPS 动态预配 | P1 |
 
 ---
 
@@ -31,6 +33,8 @@
 ```
 docs/reference/blueprints/
 ├── 00-azure-architect-blueprints-index.md      ← 本文 (导航索引)
+├── cloud-architecture-review.md                ← 云架构审查与修复报告 (新)
+├── configurator-development-plan.md            ← 启动配置器与估算台开发计划 (新)
 ├── 01-identity-foundation.md                    ← 身份基座
 ├── 02-api-management-gateway.md                 ← API 网关
 ├── 03-security-posture.md                       ← 安全态势
@@ -42,7 +46,20 @@ docs/reference/blueprints/
 ├── 09-cost-finops.md                            ← 成本优化
 ├── 10-ha-dr-business-continuity.md              ← 高可用与灾备
 ├── 11-compliance-governance.md                  ← 合规与治理
-└── 12-ai-ml-platform.md                         ← AI/ML 平台 (预留)
+├── 12-ai-ml-platform.md                         ← AI/ML 平台 (预留)
+├── 13-enterprise-networking-private-dns.md      ← 企业网络与私有 DNS (新)
+├── 14-iot-dps-zero-touch-provisioning.md        ← IoT 零接触预配 (新)
+├── 15-cloud-architect-methodology.md             ← 云架构师方法论与集成场景 (核心)
+├── 16-enterprise-iac-governance-plan.md          ← 企业级 IaC 产品化与治理规划 (新)
+├── 17-deepseek-implementation-target.md          ← DeepSeek V4 任务规范: 路由网段校验与预检 (新)
+├── 18-web-preflight-integration.md               ← Web 云端预飞行校验深度集成 (新)
+├── 19-tags-and-package-downloader.md             ← 企业标签治理与 IaC 配置包打包下载 (新)
+├── 20-gitops-pipeline-integration.md             ← GitOps 自动流水线动态注入 (新)
+├── 21-thorough-gitops-scenarios.md               ← 三轨式企业 GitOps 流程深度注入 (新)
+├── 22-key-vault-physical-integration.md          ← Key Vault 物理整合与零信任身份闭环 (新)
+├── 23-shadow-e2e-integration.md                  ← 隔离影子环境 E2E 部署自愈测试 (新)
+├── 24-e2e-troubleshooting-playbook.md            ← 多场景交叉验证与云端排障手册 (新)
+└── 99-project-backlog.md                         ← 项目待办与架构路线备忘 (新)
 ```
 
 ---
@@ -75,6 +92,11 @@ docs/reference/blueprints/
 | 配置 Cosmos DB 自动备份 + 异地恢复 | 10 | 中 | 1天 |
 | Azure Policy 强制合规 (标签/区域/SKU 审计) | 11 | 中 | 2天 |
 | 部署 Landing Zone 架构 (管理组/订阅治理) | 11 | 高 | 5天 |
+| 部署 Hub-Spoke 拓扑并配置 Private DNS 自动注册 | 13 | 高 | 3天 |
+| 配置 IoT Hub Device Provisioning Service X.509 注册 | 14 | 高 | 4天 |
+| [集成场景 A] 零特权极简沙箱部署与网络防火墙补偿 | 15 | 中 | 2天 |
+| [集成场景 B] 零信任“身网双锁”内网拓扑与 DNS 自愈 | 15 | 高 | 4天 |
+| [集成场景 C] 异步背压自愈与双通道控制链路解耦 | 15 | 极高 | 5天 |
 
 ---
 
@@ -92,4 +114,35 @@ docs/reference/blueprints/
 > 核心思路: 先打好身份安全基座 → 建立可观测性 → 完善 CI/CD → 再拓展高阶领域
 
 ---
-*Generated: 2026-07-02 | Architect: AI Cloud Architect | Project: OmniGuard v1.0.0*
+
+## 当前工作交接与进度备忘 (Handover & Current Session Progress)
+
+### 🟢 当前已完成的核心里程碑 (Milestones Achieved)
+1. **Bicep 编译警告 100% 肃清**：
+   * 修复了 BCP318 空安全性警告（在所有条件资源属性上增加了 `.?` 与 `?? ''` 空安全守护）。
+   * 修复了 BCP081 警告，将 DPS 的 API 对应版本对齐为支持离线类型校验的 `2021-10-15` 稳定版。
+   * 修正了 IoT Hub 路由 `endpoints` 中的笔误，并将老式 `listKeys()` 调用全部重构为 Bicep 符号引用函数。
+2. **IaC 配置器逻辑对齐与防降级治理**：
+   * 解决了 React 页面修改基础表单参数转为 `custom` 场景导致后端 API 强制退避降级为 `sandbox` 模板的隐蔽漏洞。目前后端路由根据是否启用托管身份（`deployManagedIdentities`）自适应装载正确的 Bicep 模块。
+   * 优化了基础参数微调 UX：修改变量不会将当前高亮 Preset 标签切换为自定义，只有变动功能包或 SKU 等级才会触发。
+   * 解决了主编排 `main.bicep` 的 11 参数限制与页面多 SKU 输出的校验失衡问题，通过前端输出过滤器彻底治愈了部署预检时的 `InvalidTemplate` 报错。
+3. **“身网双锁”物理隔离 E2E 验证成功**：
+   * 在 `omni3`、`omni4` 和 `omni5` 下全量通过了极简沙箱、内网隔离、全球门户（SWA）以及拉满配置（All Packs Enabled）的多场景部署。
+   * **物理证明零信任边界**：未授权访问 Key Vault 提示 `ForbiddenByRbac` 身份锁拦截；临时授权后，公网访问依然被 `ForbiddenByConnection` (`PublicAccessDisabled`) 物理拦截。只有合规托管身份通过 Spoke 内网的 PE 节点才能成功连通。
+   * **DNS 解析自愈**：Cosmos DB 与 Key Vault 分别解析绑定到了 `10.1.2.6` 和 `10.1.2.4` 私网 IP，容器环境运行状态为 `Succeeded`，实测日志流一切就绪。
+4. **DevOps 效率与架构资产沉淀**：
+   * 增加了 `make whatif` 预检工具，调用 `sh/provision-whatif.sh` 支持自适应租户前缀提取的 Dry-run 干跑，节约 80%+ 的排队等待时间。
+   * 归档了 **ADR-032** 架构决策记录，并在 `2-secure-IoT.md`、`3-global-portal.md`、`4-all.md` 验收报告中补充了完整的真实 CLI 运行输出与 SKU 等级记录。
+
+---
+
+### 📅 下阶段建议启动的架构任务 (Next Sprints Recommendations)
+* **任务 1：高阶组件物理装载 (APIM / Front Door Premium)**
+  * *Context*：目前 APIM、Front Door WAF、Redis 在 React 配置台上为逻辑估算模型。既然 Hub-Spoke 骨干网和零信任身份已物理扎根，下一阶段可以根据 [02-api-management-gateway.md](file:///Users/liushengwei/project/Project-OmniGuard/docs/reference/blueprints/02-api-management-gateway.md) 的设计，在 `templates/secure-iot/nested-infra.bicep` 中实际填充物理资源模块。
+* **任务 2：CI/CD 自动化流水线构建**
+  * *Context*：当前主要依靠本地 shell 脚本（`make provision`）进行手工测试发布。下一阶段可引入 GitHub Actions，结合 [08-cicd-devops-pipeline.md](file:///Users/liushengwei/project/Project-OmniGuard/docs/reference/blueprints/08-cicd-devops-pipeline.md)，在流水线中加入 Bicep lint、静态分析和 `az deployment sub what-if` 的自动预检机制。
+* **任务 3：跨区域高可用 (Geo-replication) 多写配置**
+  * *Context*：进一步拓宽 Cosmos DB 的异地多区域多写和高可用灾备，并对多区域的网络拓扑连接进行物理建模。
+
+---
+*Last updated: 2026-07-03 | Handover Architect: AI Cloud Architect*
