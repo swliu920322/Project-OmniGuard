@@ -138,6 +138,8 @@ export async function POST(request: NextRequest) {
     let cliScenario = 'sandbox';
     if (uiState.activeScenario === 'secure-iot' || uiState.activeScenario === 'global-portal') {
       cliScenario = 'secure-iot';
+    } else if (uiState.activeScenario === 'custom') {
+      cliScenario = uiState.deployManagedIdentities ? 'secure-iot' : 'sandbox';
     }
 
     console.log(`[IaC Configurator] Selected Scenario: ${uiState.activeScenario} -> Mapping to Bicep Assembly Preset: ${cliScenario}`);
