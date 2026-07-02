@@ -5,7 +5,7 @@ set -euo pipefail
 # 💣 Project-OmniGuard: 销毁所有 Azure 云端资源
 # =========================================================================
 
-RG_NAME="omni2-guard-infra-sea-rg"
+RG_NAME="omni-guard-infra-sea-rg"
 
 echo "================================================================="
 echo "🚨 [CRITICAL WARNING] 即将删除所有 Azure 云资源"
