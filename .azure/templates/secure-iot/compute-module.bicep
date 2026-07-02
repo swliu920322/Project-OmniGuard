@@ -6,6 +6,7 @@ param cosmosEndpoint string
 param cosmosKey string
 param deployManagedIdentities bool = true
 param backendIdentityId string = ''
+param keyVaultUri string = ''
 param deployStaticWebApp bool = false
 
 @secure()
@@ -82,7 +83,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
         {
           name: 'backend'
           image: 'mcr.microsoft.com/azuredocs/aci-helloworld:latest'
-          resources: { cpu: json('1.0'), memory: '2.0Gi' } // Sandbox scale down
+          resources: { cpu: json('1.0'), memory: '2.0Gi' }
           env: [
             { name: 'USE_MANAGED_IDENTITY', value: string(deployManagedIdentities) }
             { name: 'COSMOS_ENDPOINT', value: cosmosEndpoint }
@@ -92,6 +93,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
             { name: 'AzureWebJobsStorage', secretRef: 'storage-connection-string' }
             { name: 'IotHubServiceConnectionString', secretRef: 'iothub-service-conn' }
             { name: 'IotHubEventHubConnectionString', secretRef: 'iothub-eventhub-conn' }
+            { name: 'OPENAI_API_KEY', value: deployManagedIdentities ? '@Microsoft.KeyVault(SecretUri=${keyVaultUri}secrets/openAiKey)' : openAiKey }
           ]
         }
       ]
@@ -129,7 +131,7 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = if (!deployStati
 // Option 2: Azure Static Web App (SWA)
 resource staticWebApp 'Microsoft.Web/staticSites@2023-01-01' = if (deployStaticWebApp) {
   name: '${prefix}-frontend-swa'
-  location: 'eastus2' // SWA metadata regional support
+  location: 'eastus2'
   sku: {
     name: 'Free'
     tier: 'Free'

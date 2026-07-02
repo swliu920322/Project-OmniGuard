@@ -64,6 +64,7 @@
 | 021 | [Dual-Mode Architecture — Sim vs Live](./ADR-021-%5Barchitecture%5D-Dual-Mode-Architecture.md) | ✅ |
 | 023 | [Dark Warehouse Survival State Machine](./ADR-023-%5Barchitecture%5D-Dark-Warehouse-Survival-State-Machine.md) | ✅ |
 | 028 | [Multi-Agent Orchestration Engine](./ADR-028-%5Barchitecture%5D-Multi-Agent-Orchestration-Engine.md) | ✅ |
+| 030 | [IaC Configurator — Enterprise Compliance, Key Vault Integration & GitOps Pipeline](./ADR-030-%5Barchitecture%5D-IaC-Configurator-Enterprise-Compliance.md) — also `[infra]`, `[frontend]` | ✅ |
 
 ---
 

@@ -181,8 +181,22 @@ const README_MD = `# OmniGuard 导出的 IaC 部署包 (GitOps Ready)
 4. 推送部署。Bicep 会自动裁剪所有特权 roleAssignments 资源，退避使用 Storage Key / Cosmos Master Key，保障 100% 成功部署！
 `;
 
+function findProjectRoot(): string {
+  const candidates = [
+    path.join(process.cwd(), '..', '..'),
+    path.join(process.cwd(), '..'),
+    process.cwd(),
+  ];
+  for (const dir of candidates) {
+    if (fs.existsSync(path.join(dir, '.azure'))) {
+      return dir;
+    }
+  }
+  return path.join(process.cwd(), '..', '..');
+}
+
 export async function GET() {
-  const projectRoot = path.join(process.cwd(), '..');
+  const projectRoot = findProjectRoot();
   const azureDir = path.join(projectRoot, '.azure');
 
   const allowedFiles = [
