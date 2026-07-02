@@ -239,3 +239,40 @@ DPS_NAME="${PREFIX}-dps"
      --query "[].{Hub:connectionString, State:applyAllocationPolicy}" -o table
    ```
    *期望输出*：成功显示已关联的 `${PREFIX}-hub` 域名，策略状态正常。
+
+---
+
+## 5. ACA 绿能休眠与内网隔离专项排障调试技巧 (Special Debugging Tips)
+
+在对 Container Apps 进行连通性验收时，开发者常遇到以下两个网络与副本状态问题，其排查与自愈规程如下：
+
+### 5.1 抓取日志时提示 `Could not find a replica for this app`
+* **触发机制**：由于极简沙箱或配置中启用了“绿能自动休眠 (Scale-to-Zero)”（`minReplicas: 0`），当容器在一段时间内没有接收到网络流量时，Azure 会自动将其所有运行实例释放归零以省钱。因此在获取日志时，后台因没有运行中的副本而提示找不到实例。
+* **自愈排障规程**：
+  * **方案 A：通过前端连锁唤醒**：
+    由于后端是内网隔离的，您可以先查询公网前端域名，然后向其发起请求，由前端通过内网 VNet 地址向后端中转，实现链路级冷启动唤醒：
+    ```bash
+    # 获取前端公网域名
+    FE_FQDN=$(az containerapp show -g "$RG" -n "${PREFIX}-frontend" --query "properties.configuration.ingress.fqdn" -o tsv)
+    # 发送心跳包唤醒链路
+    curl -i "https://$FE_FQDN"
+    ```
+  * **方案 B：临时强制常驻（推荐调试法）**：
+    若想彻底规避休眠，可以直接在命令行将容器的最小常驻副本数调整为 1：
+    ```bash
+    # 强制将最小副本数更新为 1
+    az containerapp update -g "$RG" -n "$BACKEND_APP" --min-replicas 1
+    # 此时副本常驻，直接抓取运行日志
+    az containerapp logs show -g "$RG" -n "$BACKEND_APP" --follow
+    # 验收完成后，记得重置回自动休眠（设为 0）以省钱
+    az containerapp update -g "$RG" -n "$BACKEND_APP" --min-replicas 0
+    ```
+
+### 5.2 访问公网前端时提示 `Error 404 - Stopped or does not exist`
+* **触发机制**：
+  1. **前后端内网隔离区别**：后端应用为了 API 安全，必须被闭锁为内网应用（`external: false`），公网直接 curl 后端域名一定会秒回 404。前端作为入口则必须设为外网应用（`external: true`）。
+  2. **Ingress 端口同步延迟**：当您使用 `az containerapp ingress enable ...` 修改了 Ingress 属性（如修改 `targetPort` 端口或切换内外网类型）后，Azure 边缘网关需要 **1 - 2 分钟** 才能将路由规则全球同步。在同步期内尝试 curl 该地址，会因为网关还未指向新配置而暂时弹出 404 错误。
+* **自愈排障规程**：
+  * 确保前端 Ingress 被正确声明为公网：`--type external`。
+  * 检查 `targetPort` 端口是否与容器内服务监听端口（占位测试镜像默认为 `80`，实际 Next.js 生产镜像默认为 `3000`）完全匹配。
+  * 修改 Ingress 属性后，**在本地静置 2 分钟以上**，等待 Azure 路由完全解析完毕，再发起 curl 验证。
