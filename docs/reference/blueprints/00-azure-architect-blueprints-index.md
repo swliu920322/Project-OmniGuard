@@ -50,7 +50,8 @@ docs/reference/blueprints/
 ├── 13-enterprise-networking-private-dns.md      ← 企业网络与私有 DNS (新)
 ├── 14-iot-dps-zero-touch-provisioning.md        ← IoT 零接触预配 (新)
 ├── 15-cloud-architect-methodology.md             ← 云架构师方法论与集成场景 (核心)
-└── 16-enterprise-iac-governance-plan.md          ← 企业级 IaC 产品化与治理规划 (新)
+├── 16-enterprise-iac-governance-plan.md          ← 企业级 IaC 产品化与治理规划 (新)
+└── 17-deepseek-implementation-target.md          ← DeepSeek V4 任务规范: 路由网段校验与预检 (新)
 ```
 
 ---
