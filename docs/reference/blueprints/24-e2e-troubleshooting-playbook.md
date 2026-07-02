@@ -133,7 +133,7 @@ BACKEND_APP="${PREFIX}-backend"
      ```
      *期望输出*：如果您是在普通网络下执行此命令，必须返回 **`(PublicAccessDisabled)` Access denied** 报错。这证明公网已经被 100% 阻断，符合“网络锁”安全规范。
    * **RBAC 授权验证**：
-     确认刚才的 MI 拥有 Key Vault Secrets User（`46334581-17ef-401a-b113-35a0419c4b5e`）读取权限：
+     确认刚才的 MI 拥有 Key Vault Secrets User（`4633458b-17de-408a-b874-0445c86b69e6`）读取权限：
      ```bash
      az role assignment list \
        --scope "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/$RG/providers/Microsoft.KeyVault/vaults/$KV_NAME" \
