@@ -341,9 +341,7 @@ export default function BicepConfiguratorPage() {
     setValidationErrors(errors);
   }, [prefix, vnetAddressPrefix, backendSubnetPrefix, storageSubnetPrefix]);
 
-  // Budget management state
-  const [remainingBudget, setRemainingBudget] = useState<number>(196);
-  const [daysRemaining, setDaysRemaining] = useState<number>(20);
+
 
   // Feature Packs (Business Capability Toggles)
   const [packZeroTrust, setPackZeroTrust] = useState<boolean>(false);
@@ -436,8 +434,6 @@ export default function BicepConfiguratorPage() {
             if (state.vnetAddressPrefix) setVnetAddressPrefix(state.vnetAddressPrefix);
             if (state.backendSubnetPrefix) setBackendSubnetPrefix(state.backendSubnetPrefix);
             if (state.storageSubnetPrefix) setStorageSubnetPrefix(state.storageSubnetPrefix);
-            if (state.remainingBudget !== undefined) setRemainingBudget(state.remainingBudget);
-            if (state.daysRemaining !== undefined) setDaysRemaining(state.daysRemaining);
             if (state.selectedSkus) setSelectedSkus(state.selectedSkus);
             
             // Infer feature packs
@@ -512,8 +508,6 @@ export default function BicepConfiguratorPage() {
   // Calculations
   const [monthlyTotal, setMonthlyTotal] = useState<number>(0);
   const [dailyTotal, setDailyTotal] = useState<number>(0);
-  const [projectedCost, setProjectedCost] = useState<number>(0);
-  const [isBudgetSafe, setIsBudgetSafe] = useState<boolean>(true);
   const [perfRating, setPerfRating] = useState<{ grade: string; color: string; desc: string }>({ grade: 'C', color: 'text-emerald-400', desc: '沙箱PoC环境' });
 
   useEffect(() => {
@@ -530,12 +524,9 @@ export default function BicepConfiguratorPage() {
     });
 
     const daily = monthly / 30;
-    const projected = daily * daysRemaining;
 
     setMonthlyTotal(monthly);
     setDailyTotal(daily);
-    setProjectedCost(projected);
-    setIsBudgetSafe(projected <= remainingBudget);
 
     // Compute Performance Rating Tier based on architectural layout
     let points = 0;
@@ -554,7 +545,7 @@ export default function BicepConfiguratorPage() {
       setPerfRating({ grade: 'Class C (低耗开发沙箱)', color: 'text-emerald-400', desc: '极简测试级：无特权需求，按量计费，随用随停' });
     }
 
-  }, [selectedSkus, daysRemaining, remainingBudget, deployStaticWebApp, deployManagedIdentities]);
+  }, [selectedSkus, deployStaticWebApp, deployManagedIdentities]);
 
   const handleDownloadPackage = () => {
     window.open('/api/download-iac', '_blank');
@@ -613,9 +604,7 @@ export default function BicepConfiguratorPage() {
         finOpsOwner,
         vnetAddressPrefix,
         backendSubnetPrefix,
-        storageSubnetPrefix,
-        remainingBudget,
-        daysRemaining
+        storageSubnetPrefix
       },
       parameters: generateParametersObj()
     };
@@ -805,14 +794,8 @@ export default function BicepConfiguratorPage() {
         {/* Right Column: Cost and Deployment Trigger */}
         <div className="lg:col-span-4 flex flex-col gap-6">
           <CostCalculatorPanel
-            remainingBudget={remainingBudget}
-            setRemainingBudget={setRemainingBudget}
-            daysRemaining={daysRemaining}
-            setDaysRemaining={setDaysRemaining}
             monthlyTotal={monthlyTotal}
             dailyTotal={dailyTotal}
-            projectedCost={projectedCost}
-            isBudgetSafe={isBudgetSafe}
             perfRating={perfRating}
             isSaving={isSaving}
             isValidatingCloud={isValidatingCloud}

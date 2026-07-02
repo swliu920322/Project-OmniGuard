@@ -1,15 +1,9 @@
 import React from 'react';
-import { Coins, Gauge, ShieldCheck, ShieldAlert, Save, Cloud, Download } from 'lucide-react';
+import { Coins, Gauge, Save, Cloud, Download } from 'lucide-react';
 
 interface CostCalculatorPanelProps {
-  remainingBudget: number;
-  setRemainingBudget: (v: number) => void;
-  daysRemaining: number;
-  setDaysRemaining: (v: number) => void;
   monthlyTotal: number;
   dailyTotal: number;
-  projectedCost: number;
-  isBudgetSafe: boolean;
   perfRating: { grade: string; color: string; desc: string };
   isSaving: boolean;
   isValidatingCloud: boolean;
@@ -20,14 +14,8 @@ interface CostCalculatorPanelProps {
 }
 
 export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
-  remainingBudget,
-  setRemainingBudget,
-  daysRemaining,
-  setDaysRemaining,
   monthlyTotal,
   dailyTotal,
-  projectedCost,
-  isBudgetSafe,
   perfRating,
   isSaving,
   isValidatingCloud,
@@ -38,53 +26,29 @@ export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
 }) => {
   return (
     <div className="bg-[#0b101d]/60 border border-slate-900 rounded-2xl p-6 shadow-2xl relative flex flex-col gap-5">
-      <h2 className="text-xs font-bold font-mono text-slate-400 border-b border-slate-900 pb-2 flex items-center gap-2 uppercase tracking-wider">
+      <h2 className="text-xs font-bold font-mono text-slate-400 border-b border-slate-900 pb-2 flex items-center gap-2 uppercase tracking-wider font-sans">
         <Coins size={15} className="text-cyan-400" />
-        <span>03. 账单测算与架构评级</span>
+        <span>03. 拓扑估算与架构评级</span>
       </h2>
-
-      {/* Configurable subscription info */}
-      <div className="grid grid-cols-2 gap-4 font-mono text-xs border-b border-slate-900 pb-4">
-        <div>
-          <label className="block text-slate-400 mb-1 uppercase font-semibold">当前订阅余额 (USD)</label>
-          <div className="flex items-center bg-slate-950 border border-slate-800 rounded px-2 py-1">
-            <span className="text-slate-400 mr-1">$</span>
-            <input 
-              type="number" 
-              value={remainingBudget}
-              onChange={(e) => setRemainingBudget(Number(e.target.value))}
-              className="bg-transparent text-slate-200 outline-none w-full font-bold"
-            />
-          </div>
-        </div>
-        <div>
-          <label className="block text-slate-400 mb-1 uppercase font-semibold">距离到期天数 (Day)</label>
-          <div className="flex items-center bg-slate-950 border border-slate-800 rounded px-2 py-1">
-            <input 
-              type="number" 
-              value={daysRemaining}
-              onChange={(e) => setDaysRemaining(Number(e.target.value))}
-              className="bg-transparent text-slate-200 outline-none w-full font-bold"
-            />
-            <span className="text-slate-400 ml-1">天</span>
-          </div>
-        </div>
-      </div>
 
       {/* Calculations display */}
       <div className="flex flex-col gap-3 font-mono text-xs">
         <div className="flex justify-between">
-          <span className="text-slate-400">拓扑估算月度总价:</span>
-          <span className="text-slate-200 font-bold">${monthlyTotal.toFixed(2)} / 月</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-slate-400">折合每日消费:</span>
+          <span className="text-slate-400">每日估算费用 (Daily):</span>
           <span className="text-slate-200 font-bold">${dailyTotal.toFixed(2)} / 天</span>
         </div>
-        <div className="flex justify-between border-t border-slate-900 pt-3 text-sm">
-          <span className="text-slate-400 font-sans font-bold">测试期 ({daysRemaining}天) 预计总消费:</span>
-          <span className={`font-bold ${isBudgetSafe ? 'text-emerald-400' : 'text-rose-500'}`}>
-            ${projectedCost.toFixed(2)}
+        <div className="flex justify-between">
+          <span className="text-slate-400">月度估算费用 (Monthly):</span>
+          <span className="text-slate-200 font-bold">${monthlyTotal.toFixed(2)} / 月</span>
+        </div>
+        <div className="flex justify-between border-b border-slate-900 pb-3">
+          <span className="text-slate-400">季度估算费用 (Quarterly):</span>
+          <span className="text-slate-200 font-bold">${(monthlyTotal * 3).toFixed(2)} / 季</span>
+        </div>
+        <div className="flex justify-between text-sm pt-1">
+          <span className="text-slate-300 font-sans font-bold">年度估算总费用 (Annual):</span>
+          <span className="text-cyan-400 font-bold">
+            ${(monthlyTotal * 12).toFixed(2)} / 年
           </span>
         </div>
       </div>
@@ -100,35 +64,6 @@ export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
         <p className="text-xs text-slate-300 leading-relaxed font-sans">
           {perfRating.desc}
         </p>
-      </div>
-
-      {/* Health alert badge */}
-      <div className={`p-4 rounded-xl border flex items-start space-x-3 text-xs leading-relaxed ${
-        isBudgetSafe 
-          ? 'bg-emerald-950/20 border-emerald-900/60 text-emerald-400' 
-          : 'bg-rose-950/20 border-rose-900/60 text-rose-400'
-      }`}>
-        {isBudgetSafe ? (
-          <>
-            <ShieldCheck size={20} className="shrink-0 text-emerald-400" />
-            <div>
-              <h5 className="font-bold">预算水位正常 (Safe)</h5>
-              <p className="mt-0.5 text-slate-400 font-sans leading-relaxed">
-                预计到期后您的订阅账户仍将富余 <b>${(remainingBudget - projectedCost).toFixed(2)}</b>，可以放心部署。
-              </p>
-            </div>
-          </>
-        ) : (
-          <>
-            <ShieldAlert size={20} className="shrink-0 text-rose-400" />
-            <div>
-              <h5 className="font-bold">预算存在击穿风险 (Over Budget)</h5>
-              <p className="mt-0.5 text-slate-400 font-sans leading-relaxed">
-                预估总费用已超标 <b>${(projectedCost - remainingBudget).toFixed(2)}</b>。建议开启<b>“FinOps 绿能休眠包”</b>或切换为 Sandbox 规格。
-              </p>
-            </div>
-          </>
-        )}
       </div>
 
       {/* Cloud Preflight & Save trigger buttons */}
@@ -164,8 +99,8 @@ export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
       {saveMessage && (
         <div className={`p-3 rounded-lg border text-[11px] font-mono leading-relaxed ${
           saveMessage.type === 'success' 
-            ? 'bg-emerald-950/40 border-emerald-900/40 text-emerald-400' 
-            : 'bg-rose-950/40 border-rose-900/40 text-rose-400'
+            ? 'bg-emerald-950/20 border-emerald-900/60 text-emerald-400' 
+            : 'bg-rose-950/20 border-rose-900/60 text-rose-400'
         }`}>
           {saveMessage.text}
         </div>
