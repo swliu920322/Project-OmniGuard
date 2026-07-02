@@ -156,7 +156,7 @@ BACKEND_APP="${PREFIX}-backend"
    # 2. 检查 Cosmos DB 私网 DNS 解析记录
    az network private-dns record-set a list \
      -g "$RG" \
-     -z privatelink.documents.azure.net \
+     -z privatelink.documents.azure.com \
      --query "[].{Host:name, IP:aRecords[0].ipv4Address}" -o table
    ```
    *期望输出*：返回您的 Cosmos DB 域名，对应的 IP 解析地址同样位于 `10.x.2.x` 网段内。
