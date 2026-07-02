@@ -133,13 +133,28 @@ az containerapp logs show \
 Could not find a replica for this app
 ```
 
-> **📌 诊断说明**：返回 `Could not find a replica for this app` 是因为极简沙箱开启了“自动休眠功能包 (Scale-to-Zero)”且此时没有流量，副本数已缩容到 0 台。
-> **唤醒与抓取日志步骤**：
-> ```bash
-> # 1. 获取公网域名
-> FQDN=$(az containerapp show -g "$RG" -n "$BACKEND_APP" --query "properties.configuration.ingress.fqdn" -o tsv)
-> # 2. 发起一次 HTTP 心跳唤醒实例
-> curl -i "https://$FQDN"
-> # 3. 重新获取日志流
-> az containerapp logs show -g "$RG" -n "$BACKEND_APP" --follow
-> ```
+> **📌 诊断说明**：
+> 1. 后端应用 `omni-backend` 配置为**仅限内网访问 (`external: false`)**，以保障 API 安全。所以在外部公网直接 `curl` 后端会返回 `404 Stopped or does not exist`。
+> 2. 由于开启了“自动休眠 (Scale-to-Zero)”，无流量时后端副本数已缩容到 0 台，所以提示 `Could not find a replica`。
+>
+> **🛠️ 自愈唤醒与调试日志抓取步骤**：
+> 
+> * **方案 A：通过公网前端连锁唤醒**
+>   ```bash
+>   # 1. 获取公网暴露的前端 FQDN 域名
+>   FE_FQDN=$(az containerapp show -g "$RG" -n "omni-frontend" --query "properties.configuration.ingress.fqdn" -o tsv)
+>   # 2. 发起心跳请求，前端容器将通过 VNet 私网唤醒后端
+>   curl -i "https://$FE_FQDN"
+>   # 3. 重新获取后端日志
+>   az containerapp logs show -g "$RG" -n "$BACKEND_APP" --follow
+>   ```
+> 
+> * **方案 B：临时将后端扩容为常驻 1 台实例（推荐本地直接调试）**
+>   ```bash
+>   # 1. 强制将后端最小副本数设为 1 
+>   az containerapp update -g "$RG" -n "$BACKEND_APP" --min-replicas 1
+>   # 2. 此时实例常驻在线，直接抓取运行日志
+>   az containerapp logs show -g "$RG" -n "$BACKEND_APP" --follow
+>   # 3. 调试结束后，恢复自动休眠（重置为 0）
+>   az containerapp update -g "$RG" -n "$BACKEND_APP" --min-replicas 0
+>   ```
