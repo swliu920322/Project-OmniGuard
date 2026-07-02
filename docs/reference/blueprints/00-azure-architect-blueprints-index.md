@@ -55,7 +55,8 @@ docs/reference/blueprints/
 ├── 18-web-preflight-integration.md               ← Web 云端预飞行校验深度集成 (新)
 ├── 19-tags-and-package-downloader.md             ← 企业标签治理与 IaC 配置包打包下载 (新)
 ├── 20-gitops-pipeline-integration.md             ← GitOps 自动流水线动态注入 (新)
-└── 21-thorough-gitops-scenarios.md               ← 三轨式企业 GitOps 流程深度注入 (新)
+├── 21-thorough-gitops-scenarios.md               ← 三轨式企业 GitOps 流程深度注入 (新)
+└── 22-key-vault-physical-integration.md          ← Key Vault 物理整合与零信任身份闭环 (新)
 ```
 
 ---
