@@ -4,8 +4,9 @@ param storageAccountName string
 param backendSubnetId string
 param cosmosEndpoint string
 param cosmosKey string
-param deployManagedIdentities bool = true
+param deployManagedIdentities bool = false
 param backendIdentityId string = ''
+param deployStaticWebApp bool = false
 
 @secure()
 param openAiKey string
@@ -50,12 +51,6 @@ resource acaEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' = {
 resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
   name: '${prefix}-backend'
   location: location
-  identity: deployManagedIdentities ? {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${backendIdentityId}': {}
-    }
-  } : null
   properties: {
     managedEnvironmentId: acaEnvironment.id
     configuration: {
@@ -81,7 +76,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
         {
           name: 'backend'
           image: 'mcr.microsoft.com/azuredocs/aci-helloworld:latest'
-          resources: { cpu: json('1.0'), memory: '2.0Gi' } // Sandbox scale down
+          resources: { cpu: json('0.5'), memory: '1.0Gi' } // Sandbox scale down
           env: [
             { name: 'USE_MANAGED_IDENTITY', value: string(deployManagedIdentities) }
             { name: 'COSMOS_ENDPOINT', value: cosmosEndpoint }
@@ -94,12 +89,13 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
           ]
         }
       ]
-      scale: { minReplicas: 1, maxReplicas: 3 }
+      scale: { minReplicas: 0, maxReplicas: 2 } // Auto sleep
     }
   }
 }
 
-resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = {
+// Option 1: Azure Container Apps Frontend
+resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = if (!deployStaticWebApp) {
   name: '${prefix}-frontend'
   location: location
   properties: {
@@ -119,9 +115,20 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = {
           env: [{ name: 'BACKEND_API_URL', value: 'http://${backendApp.name}.internal.${acaEnvironment.properties.defaultDomain}' }]
         }
       ]
-      scale: { minReplicas: 1, maxReplicas: 2 }
+      scale: { minReplicas: 0, maxReplicas: 2 } // Auto sleep
     }
   }
 }
 
-output frontendUrl string = 'https://${frontendApp.properties.configuration.ingress.fqdn}'
+// Option 2: Azure Static Web App (SWA)
+resource staticWebApp 'Microsoft.Web/staticSites@2023-01-01' = if (deployStaticWebApp) {
+  name: '${prefix}-frontend-swa'
+  location: 'eastus2' // SWA metadata regional support
+  sku: {
+    name: 'Free'
+    tier: 'Free'
+  }
+  properties: {}
+}
+
+output frontendUrl string = deployStaticWebApp ? 'https://${staticWebApp.properties.defaultHostname}' : 'https://${frontendApp.properties.configuration.ingress.fqdn}'

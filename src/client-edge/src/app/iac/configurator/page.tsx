@@ -20,6 +20,13 @@ import {
   Activity
 } from 'lucide-react';
 
+import { GlobalParamsPanel } from './components/GlobalParamsPanel';
+import { FeaturePacksSelector } from './components/FeaturePacksSelector';
+import { SkuTuningSection } from './components/SkuTuningSection';
+import { CostCalculatorPanel } from './components/CostCalculatorPanel';
+import { ConsoleOutputPanel } from './components/ConsoleOutputPanel';
+
+
 interface SkuOption {
   id: string;
   name: string;
@@ -264,6 +271,73 @@ export default function BicepConfiguratorPage() {
   const [openAiKey, setOpenAiKey] = useState<string>('YOUR_AZURE_OPENAI_KEY');
   const [prefix, setPrefix] = useState<string>('omni');
   const [location, setLocation] = useState<string>('southeastasia');
+  const [customResourceGroupName, setCustomResourceGroupName] = useState<string>('');
+
+  // New Network Prefix States
+  const [vnetAddressPrefix, setVnetAddressPrefix] = useState<string>('10.1.0.0/16');
+  const [backendSubnetPrefix, setBackendSubnetPrefix] = useState<string>('10.1.4.0/23');
+  const [storageSubnetPrefix, setStorageSubnetPrefix] = useState<string>('10.1.2.0/24');
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  // Network Validation Hook
+  useEffect(() => {
+    const errors: Record<string, string> = {};
+
+    // 1. Prefix simple check
+    if (!prefix || prefix.length < 2 || prefix.length > 8) {
+      errors.prefix = '前缀长度需在 2 到 8 个字符之间';
+    } else if (!/^[a-z0-9]+$/.test(prefix)) {
+      errors.prefix = '前缀仅能包含小写字母与数字';
+    }
+
+    // Helpers
+    const cidrRegex = /^([0-9]{1,3}\.){3}[0-9]{1,3}\/([0-9]|[1-2][0-9]|3[0-2])$/;
+    const parseCidr = (cidr: string) => {
+      if (!cidrRegex.test(cidr)) return null;
+      const parts = cidr.split('/');
+      const ip = parts[0];
+      const mask = parseInt(parts[1], 10);
+      const ipParts = ip.split('.').map(x => parseInt(x, 10));
+      if (ipParts.some(x => x > 255)) return null;
+      const start = ipParts[0] * 16777216 + ipParts[1] * 65536 + ipParts[2] * 256 + ipParts[3];
+      const end = start + Math.pow(2, 32 - mask) - 1;
+      return { start, end, mask };
+    };
+
+    // Parse CIDRs
+    const vnet = parseCidr(vnetAddressPrefix);
+    const backend = parseCidr(backendSubnetPrefix);
+    const storage = parseCidr(storageSubnetPrefix);
+
+    if (!vnet) {
+      errors.vnetAddressPrefix = 'VNet CIDR 格式不正确，例如 10.1.0.0/16';
+    }
+    if (!backend) {
+      errors.backendSubnetPrefix = '容器子网 CIDR 格式不正确，例如 10.1.4.0/23';
+    } else if (backend.mask > 23) {
+      errors.backendSubnetPrefix = '容器子网掩码长度必须 <= 23（即子网至少包含 512 个 IP），否则 ACA 部署将拒绝';
+    }
+    if (!storage) {
+      errors.storageSubnetPrefix = '存储子网 CIDR 格式不正确，例如 10.1.2.0/24';
+    }
+
+    // Containment & Collision logic
+    if (vnet && backend && storage) {
+      const isBackendInVnet = backend.start >= vnet.start && backend.end <= vnet.end;
+      const isStorageInVnet = storage.start >= vnet.start && storage.end <= vnet.end;
+      const isOverlap = (backend.start <= storage.end) && (storage.start <= backend.end);
+
+      if (!isBackendInVnet) {
+        errors.networkCollision = `容器子网 (${backendSubnetPrefix}) 必须完全包含在 VNet (${vnetAddressPrefix}) 的地址空间范围内。`;
+      } else if (!isStorageInVnet) {
+        errors.networkCollision = `存储子网 (${storageSubnetPrefix}) 必须完全包含在 VNet (${vnetAddressPrefix}) 的地址空间范围内。`;
+      } else if (isOverlap) {
+        errors.networkCollision = `网络分配重叠：容器子网 (${backendSubnetPrefix}) 与存储子网 (${storageSubnetPrefix}) 的 IP 地址段存在重合冲突！`;
+      }
+    }
+
+    setValidationErrors(errors);
+  }, [prefix, vnetAddressPrefix, backendSubnetPrefix, storageSubnetPrefix]);
 
   // Budget management state
   const [remainingBudget, setRemainingBudget] = useState<number>(196);
@@ -340,9 +414,40 @@ export default function BicepConfiguratorPage() {
     }
   };
 
-  // Sync toggles when Feature Packs are checked (Simplified Mode)
+  // Hydrate saved config state from server on mount
   useEffect(() => {
-    if (activeScenario === 'custom') return; // let user adjust freely in custom mode
+    const loadSavedConfig = async () => {
+      try {
+        const res = await fetch('/api/save-iac-config');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.uiState) {
+            const state = data.uiState;
+            if (state.activeScenario) setActiveScenario(state.activeScenario);
+            if (state.prefix) setPrefix(state.prefix);
+            if (state.location) setLocation(state.location);
+            if (state.customResourceGroupName !== undefined) setCustomResourceGroupName(state.customResourceGroupName);
+            if (state.deployManagedIdentities !== undefined) setDeployManagedIdentities(state.deployManagedIdentities);
+            if (state.deployStaticWebApp !== undefined) setDeployStaticWebApp(state.deployStaticWebApp);
+            if (state.vnetAddressPrefix) setVnetAddressPrefix(state.vnetAddressPrefix);
+            if (state.backendSubnetPrefix) setBackendSubnetPrefix(state.backendSubnetPrefix);
+            if (state.storageSubnetPrefix) setStorageSubnetPrefix(state.storageSubnetPrefix);
+            if (state.remainingBudget !== undefined) setRemainingBudget(state.remainingBudget);
+            if (state.daysRemaining !== undefined) setDaysRemaining(state.daysRemaining);
+            if (state.selectedSkus) setSelectedSkus(state.selectedSkus);
+            
+            // Infer feature packs
+            setPackZeroTrust(state.deployManagedIdentities);
+            setPackGlobalWaf(state.selectedSkus.frontDoor === 'premium');
+            setPackScaleToZero(state.selectedSkus.aca === 'dev-sleep');
+            setPackIoTDps(state.selectedSkus.iotHub === 'standard-s1');
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to load saved configuration state:', err);
+      }
+    };
+    loadSavedConfig();
   }, []);
 
   const handleTogglePack = (packType: string, val: boolean) => {
@@ -451,8 +556,12 @@ export default function BicepConfiguratorPage() {
       location: location,
       prefix: prefix,
       openAiKey: openAiKey,
+      customResourceGroupName: customResourceGroupName,
       deployManagedIdentities: deployManagedIdentities,
-      deployStaticWebApp: deployStaticWebApp
+      deployStaticWebApp: deployStaticWebApp,
+      vnetAddressPrefix: vnetAddressPrefix,
+      backendSubnetPrefix: backendSubnetPrefix,
+      storageSubnetPrefix: storageSubnetPrefix
     };
 
     Object.entries(selectedSkus).forEach(([resType, optionId]) => {
@@ -470,6 +579,16 @@ export default function BicepConfiguratorPage() {
     setSaveMessage(null);
     setAssemblerConsole(null);
 
+    // Intercept saving if there are validation errors
+    if (Object.keys(validationErrors).length > 0) {
+      setSaveMessage({
+        type: 'error',
+        text: '保存已拦截：请先在“02. 网络拓扑”或“01. 基础标识”标签页中修正配置错误！'
+      });
+      setIsSaving(false);
+      return;
+    }
+
     const configPayload = {
       uiState: {
         activeScenario,
@@ -478,6 +597,10 @@ export default function BicepConfiguratorPage() {
         deployStaticWebApp,
         prefix,
         location,
+        customResourceGroupName,
+        vnetAddressPrefix,
+        backendSubnetPrefix,
+        storageSubnetPrefix,
         remainingBudget,
         daysRemaining
       },
@@ -592,395 +715,63 @@ export default function BicepConfiguratorPage() {
           </div>
 
           {/* Section 2: Business Feature Packs (Capability Toggles) */}
-          <div className="bg-[#0b101d]/60 border border-slate-900 rounded-2xl p-6 shadow-2xl relative">
-            <h2 className="text-xs font-bold font-mono text-slate-400 mb-4 flex items-center gap-2 border-b border-slate-900 pb-2 uppercase tracking-wider">
-              <Activity size={15} className="text-cyan-400" />
-              <span>业务功能包快速启闭 (Feature Packs Toggles)</span>
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              
-              {/* Pack 1: Zero Trust Network */}
-              <div className={`p-4 rounded-xl border transition-all ${packZeroTrust ? 'bg-cyan-950/10 border-cyan-900/60' : 'bg-slate-950/30 border-slate-900'}`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Lock className={`size-4 ${packZeroTrust ? 'text-cyan-400' : 'text-slate-500'}`} />
-                    <h4 className="text-xs font-bold font-mono text-slate-200">零信任网络安全包</h4>
-                  </div>
-                  <input 
-                    type="checkbox" 
-                    checked={packZeroTrust}
-                    onChange={(e) => handleTogglePack('zeroTrust', e.target.checked)}
-                    className="accent-cyan-400 cursor-pointer size-4"
-                  />
-                </div>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                  开启后强制停用数据组件（Cosmos/Storage）公网端点，自动编排 Private Link 和私有 DNS 劫持。
-                </p>
-                <div className="mt-2.5 font-mono text-xs flex items-center justify-between text-cyan-400 bg-cyan-950/30 px-2 py-1.5 rounded">
-                  <span>性能指标: 虚网内网隔离 | 时延 &lt;5ms</span>
-                  <span>成本影响: +$24/月</span>
-                </div>
-              </div>
-
-              {/* Pack 2: Global traffic accelerator */}
-              <div className={`p-4 rounded-xl border transition-all ${packGlobalWaf ? 'bg-amber-950/10 border-amber-900/60' : 'bg-slate-950/30 border-slate-900'}`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Globe className={`size-4 ${packGlobalWaf ? 'text-amber-400' : 'text-slate-500'}`} />
-                    <h4 className="text-xs font-bold font-mono text-slate-200">全球边缘分发与 WAF 防护包</h4>
-                  </div>
-                  <input 
-                    type="checkbox" 
-                    checked={packGlobalWaf}
-                    onChange={(e) => handleTogglePack('globalWaf', e.target.checked)}
-                    className="accent-amber-400 cursor-pointer size-4"
-                  />
-                </div>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                  部署 Front Door Premium 全球专线 CDN 与高级 WAF 防御规则，并挂载 APIM 网关，实施边缘反爬虫与 JWT 验证。
-                </p>
-                <div className="mt-2.5 font-mono text-xs flex items-center justify-between text-amber-400 bg-amber-950/30 px-2 py-1.5 rounded">
-                  <span>性能指标: 全球时延 &lt;30ms | 智能 WAF 防御</span>
-                  <span>成本影响: +$477/月</span>
-                </div>
-              </div>
-
-              {/* Pack 3: Scale to Zero FinOps */}
-              <div className={`p-4 rounded-xl border transition-all ${packScaleToZero ? 'bg-emerald-950/10 border-emerald-900/60' : 'bg-slate-950/30 border-slate-900'}`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Cpu className={`size-4 ${packScaleToZero ? 'text-emerald-400' : 'text-slate-500'}`} />
-                    <h4 className="text-xs font-bold font-mono text-slate-200">FinOps 绿能冷启动休眠包</h4>
-                  </div>
-                  <input 
-                    type="checkbox" 
-                    checked={packScaleToZero}
-                    onChange={(e) => handleTogglePack('scaleToZero', e.target.checked)}
-                    className="accent-emerald-400 cursor-pointer size-4"
-                  />
-                </div>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                  开启后强制设置 ACA 最低副本数为 0。闲置时计算实例完全归零，测试请求时唤醒。
-                </p>
-                <div className="mt-2.5 font-mono text-xs flex items-center justify-between text-emerald-400 bg-emerald-950/30 px-2 py-1.5 rounded">
-                  <span>性能指标: 存在 2-5秒 的容器冷启动时延</span>
-                  <span>成本影响: 缩减 90% 闲置开销</span>
-                </div>
-              </div>
-
-              {/* Pack 4: IoT DPS device provisioning */}
-              <div className={`p-4 rounded-xl border transition-all ${packIoTDps ? 'bg-purple-950/10 border-purple-900/60' : 'bg-slate-950/30 border-slate-900'}`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Network className={`size-4 ${packIoTDps ? 'text-purple-400' : 'text-slate-500'}`} />
-                    <h4 className="text-xs font-bold font-mono text-slate-200">IoT 零接触安全接入包</h4>
-                  </div>
-                  <input 
-                    type="checkbox" 
-                    checked={packIoTDps}
-                    onChange={(e) => handleTogglePack('ioTDps', e.target.checked)}
-                    className="accent-purple-400 cursor-pointer size-4"
-                  />
-                </div>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                  一键配置设备注册服务 (DPS)，支持海量智能设备通过 X.509 CA 证书进行动态安全免密注册。
-                </p>
-                <div className="mt-2.5 font-mono text-xs flex items-center justify-between text-purple-400 bg-purple-950/30 px-2 py-1.5 rounded">
-                  <span>性能指标: 每日 400,000 遥测吞吐</span>
-                  <span>成本影响: +$25/月</span>
-                </div>
-              </div>
-
-            </div>
-          </div>
+          <FeaturePacksSelector
+            packZeroTrust={packZeroTrust}
+            packGlobalWaf={packGlobalWaf}
+            packScaleToZero={packScaleToZero}
+            packIoTDps={packIoTDps}
+            onTogglePack={handleTogglePack}
+          />
 
           {/* Section 3: Global Variables Setup */}
-          <div className="bg-[#0b101d]/60 border border-slate-900 rounded-2xl p-6 shadow-2xl relative">
-            <h2 className="text-xs font-bold font-mono text-slate-400 mb-4 flex items-center gap-2 border-b border-slate-900 pb-2 uppercase tracking-wider">
-              <Network size={15} className="text-cyan-400" />
-              <span>全局基础变量与托管身份机制 (Variables & Credentials Mode)</span>
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-sm mb-6">
-              <div>
-                <label className="block text-slate-300 mb-2 uppercase font-semibold">项目资源前缀</label>
-                <input 
-                  type="text" 
-                  value={prefix}
-                  onChange={(e) => setPrefix(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-900 rounded-lg p-2.5 text-slate-300 focus:border-cyan-500 outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-slate-300 mb-2 uppercase font-semibold">主部署区域</label>
-                <select 
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-900 rounded-lg p-2.5 text-slate-300 focus:border-cyan-500 outline-none"
-                >
-                  <option value="southeastasia">southeastasia (新加坡)</option>
-                  <option value="japaneast">japaneast (日本东部)</option>
-                  <option value="eastasia">eastasia (中国香港)</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-slate-300 mb-2 uppercase font-semibold">Azure OpenAI 密钥</label>
-                <input 
-                  type="password" 
-                  value={openAiKey}
-                  onChange={(e) => setOpenAiKey(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-900 rounded-lg p-2.5 text-slate-300 focus:border-cyan-500 outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Auth mode selection parameter */}
-            <div className="p-4 rounded-xl border border-slate-900 bg-slate-950/40 flex flex-col md:flex-row md:items-center justify-between gap-4 font-sans text-xs">
-              <div className="flex-1">
-                <h4 className="font-bold text-slate-200 flex items-center gap-1">
-                  <span>身份验证机制: </span>
-                  <span className={deployManagedIdentities ? 'text-cyan-400' : 'text-emerald-400 font-mono'}>
-                    {deployManagedIdentities ? 'Managed Identity (托管身份)' : 'Classic Key Auth (降级密钥模式)'}
-                  </span>
-                </h4>
-                <p className="text-xs text-slate-300 mt-1 leading-relaxed font-sans">
-                  受限账号可切换为“经典密钥”以回避托管身份 RBAC 指派，Bicep 编译时将自动裁剪 `roleAssignments` 模块。
-                </p>
-              </div>
-              <div className="flex items-center gap-2 font-mono">
-                <button
-                  onClick={() => { setDeployManagedIdentities(false); setActiveScenario('custom'); }}
-                  className={`px-3 py-2 rounded-lg font-bold transition-all border ${!deployManagedIdentities ? 'bg-cyan-500 text-slate-950 border-cyan-400' : 'bg-transparent text-slate-500 border-slate-900'}`}
-                >
-                  经典密钥 (受限账号)
-                </button>
-                <button
-                  onClick={() => { setDeployManagedIdentities(true); setActiveScenario('custom'); }}
-                  className={`px-3 py-2 rounded-lg font-bold transition-all border ${deployManagedIdentities ? 'bg-cyan-500 text-slate-950 border-cyan-400' : 'bg-transparent text-slate-500 border-slate-900'}`}
-                >
-                  托管身份 (云原生安全)
-                </button>
-              </div>
-            </div>
-
-            {/* Frontend Hosting Mode selector */}
-            <div className="p-4 rounded-xl border border-slate-900 bg-slate-950/40 flex flex-col md:flex-row md:items-center justify-between gap-4 font-sans text-xs mt-4">
-              <div className="flex-1">
-                <h4 className="font-bold text-slate-200 flex items-center gap-1">
-                  <span>前端托管形式: </span>
-                  <span className={deployStaticWebApp ? 'text-amber-400' : 'text-cyan-400 font-mono'}>
-                    {deployStaticWebApp ? 'Azure Static Web App (SWA Edge)' : 'Azure Container Apps (ACA Frontend)'}
-                  </span>
-                </h4>
-                <p className="text-xs text-slate-300 mt-1 leading-relaxed font-sans">
-                  选择容器化部署前端 Dashboard（ACA，运行在 VNet 内网，可私网隔离，按量计费），或静态 edge 托管（SWA，全球边缘加速，免费级下开销为 $0，非常适合测试和节省预算）。
-                </p>
-              </div>
-              <div className="flex items-center gap-2 font-mono">
-                <button
-                  onClick={() => { setDeployStaticWebApp(false); setActiveScenario('custom'); }}
-                  className={`px-3 py-2 rounded-lg font-bold transition-all border ${!deployStaticWebApp ? 'bg-cyan-500 text-slate-950 border-cyan-400' : 'bg-transparent text-slate-500 border-slate-900'}`}
-                >
-                  容器环境 (ACA Frontend)
-                </button>
-                <button
-                  onClick={() => { setDeployStaticWebApp(true); setActiveScenario('custom'); }}
-                  className={`px-3 py-2 rounded-lg font-bold transition-all border ${deployStaticWebApp ? 'bg-cyan-500 text-slate-950 border-cyan-400' : 'bg-transparent text-slate-500 border-slate-900'}`}
-                >
-                  静态无服务 (SWA Edge)
-                </button>
-              </div>
-            </div>
-          </div>
+          <GlobalParamsPanel
+            prefix={prefix}
+            setPrefix={setPrefix}
+            location={location}
+            setLocation={setLocation}
+            openAiKey={openAiKey}
+            setOpenAiKey={setOpenAiKey}
+            customResourceGroupName={customResourceGroupName}
+            setCustomResourceGroupName={setCustomResourceGroupName}
+            deployManagedIdentities={deployManagedIdentities}
+            setDeployManagedIdentities={setDeployManagedIdentities}
+            deployStaticWebApp={deployStaticWebApp}
+            setDeployStaticWebApp={setDeployStaticWebApp}
+            vnetAddressPrefix={vnetAddressPrefix}
+            setVnetAddressPrefix={setVnetAddressPrefix}
+            backendSubnetPrefix={backendSubnetPrefix}
+            setBackendSubnetPrefix={setBackendSubnetPrefix}
+            storageSubnetPrefix={storageSubnetPrefix}
+            setStorageSubnetPrefix={setStorageSubnetPrefix}
+            validationErrors={validationErrors}
+            onManualTweak={() => setActiveScenario('custom')}
+          />
 
           {/* Section 4: Advanced Options Accordion */}
-          <div className="bg-[#0b101d]/60 border border-slate-900 rounded-2xl p-6 shadow-2xl relative">
-            <h2 className="text-xs font-bold font-mono text-slate-400 mb-6 flex items-center justify-between border-b border-slate-900 pb-2 uppercase tracking-wider">
-              <div className="flex items-center gap-2">
-                <Layers size={15} className="text-cyan-400" />
-                <span>架构师精细微调规格 (Architect SKU Spec Tuning)</span>
-              </div>
-              {activeScenario !== 'custom' && (
-                <span className="text-xs font-mono text-slate-400 tracking-wider bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                  当前预设: {activeScenario}
-                </span>
-              )}
-            </h2>
-
-            <div className="flex flex-col gap-6">
-              {Object.entries(RESOURCES_SKU_DATA).map(([resType, options]) => {
-                const currentSelection = selectedSkus[resType];
-                const labelMap: Record<string, string> = {
-                  cosmosDb: '持久化数据层 (Azure Cosmos DB)',
-                  apim: 'API 管理网关 (API Management)',
-                  frontDoor: '全球边缘边界 (Azure Front Door)',
-                  aca: '计算容器平台 (Container Apps)',
-                  redis: '会话缓存层 (Azure Cache for Redis)',
-                  search: '全文向量检索 (Azure AI Search)',
-                  iotHub: '神经丛入口 (IoT Hub)'
-                };
-
-                return (
-                  <div key={resType} className="border-b border-slate-900/60 pb-5 last:border-b-0 last:pb-0">
-                    <h3 className="text-xs font-bold font-mono text-cyan-400 mb-3">{labelMap[resType]}</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      {options.map((opt) => {
-                        const isSelected = currentSelection === opt.id;
-                        return (
-                          <button
-                            key={opt.id}
-                            onClick={() => handleSelectSku(resType, opt.id)}
-                            className={`p-3 rounded-xl border text-left flex flex-col justify-between transition-all duration-200 ${
-                              isSelected 
-                                ? 'bg-cyan-950/20 border-cyan-500/80 shadow-[0_0_15px_rgba(0,242,254,0.03)]' 
-                                : 'bg-slate-950/40 border-slate-900 hover:border-slate-800 text-slate-400'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between w-full">
-                              <span className={`text-[11px] font-bold font-mono ${isSelected ? 'text-slate-200' : 'text-slate-400'}`}>
-                                {opt.name}
-                              </span>
-                              <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 rounded">
-                                {opt.monthlyCost === 0 ? '免费' : `$${opt.monthlyCost}/月`}
-                              </span>
-                            </div>
-                            <p className="text-xs leading-relaxed mt-2 text-slate-400">
-                              {opt.desc}
-                            </p>
-                            <div className="mt-2.5 pt-2 border-t border-slate-900/60 text-xs font-mono text-slate-300 bg-[#060b13] p-1.5 rounded">
-                              🔒 <b>性能标的:</b> {opt.perfSpec}
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <SkuTuningSection
+            selectedSkus={selectedSkus}
+            onSelectSku={handleSelectSku}
+            skuData={RESOURCES_SKU_DATA}
+            activeScenario={activeScenario}
+          />
         </div>
 
         {/* Right Column: Cost and Deployment Trigger */}
         <div className="lg:col-span-4 flex flex-col gap-6">
-          
-          {/* Budget status box */}
-          <div className="bg-[#0b101d]/60 border border-slate-900 rounded-2xl p-6 shadow-2xl relative flex flex-col gap-5">
-            <h2 className="text-xs font-bold font-mono text-slate-400 border-b border-slate-900 pb-2 flex items-center gap-2 uppercase tracking-wider">
-              <Coins size={15} className="text-cyan-400" />
-              <span>03. 账单测算与架构评级</span>
-            </h2>
-
-            {/* Configurable subscription info */}
-            <div className="grid grid-cols-2 gap-4 font-mono text-xs border-b border-slate-900 pb-4">
-              <div>
-                <label className="block text-slate-450 mb-1 uppercase font-semibold">当前订阅余额 (USD)</label>
-                <div className="flex items-center bg-slate-950 border border-slate-800 rounded px-2 py-1">
-                  <span className="text-slate-400 mr-1">$</span>
-                  <input 
-                    type="number" 
-                    value={remainingBudget}
-                    onChange={(e) => setRemainingBudget(Number(e.target.value))}
-                    className="bg-transparent text-slate-200 outline-none w-full font-bold"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-slate-400 mb-1 uppercase font-semibold">距离到期天数 (Day)</label>
-                <div className="flex items-center bg-slate-950 border border-slate-800 rounded px-2 py-1">
-                  <input 
-                    type="number" 
-                    value={daysRemaining}
-                    onChange={(e) => setDaysRemaining(Number(e.target.value))}
-                    className="bg-transparent text-slate-200 outline-none w-full font-bold"
-                  />
-                  <span className="text-slate-400 ml-1">天</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Calculations display */}
-            <div className="flex flex-col gap-3 font-mono text-xs">
-              <div className="flex justify-between">
-                <span className="text-slate-400">拓扑估算月度总价:</span>
-                <span className="text-slate-200 font-bold">${monthlyTotal.toFixed(2)} / 月</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">折合每日消费:</span>
-                <span className="text-slate-200 font-bold">${dailyTotal.toFixed(2)} / 天</span>
-              </div>
-              <div className="flex justify-between border-t border-slate-900 pt-3 text-sm">
-                <span className="text-slate-400 font-sans font-bold">测试期 ({daysRemaining}天) 预计总消费:</span>
-                <span className={`font-bold ${isBudgetSafe ? 'text-emerald-400' : 'text-rose-500'}`}>
-                  ${projectedCost.toFixed(2)}
-                </span>
-              </div>
-            </div>
-
-            {/* Performance status card */}
-            <div className="p-4 rounded-xl border border-slate-900 bg-slate-950/80 flex flex-col gap-1.5 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400 font-mono">架构性能评级:</span>
-                <span className={`font-bold font-mono flex items-center gap-1 ${perfRating.color}`}>
-                  <Gauge size={13} /> {perfRating.grade}
-                </span>
-              </div>
-              <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                {perfRating.desc}
-              </p>
-            </div>
-
-            {/* Health alert badge */}
-            <div className={`p-4 rounded-xl border flex items-start space-x-3 text-xs leading-relaxed ${
-              isBudgetSafe 
-                ? 'bg-emerald-950/20 border-emerald-900/60 text-emerald-400' 
-                : 'bg-rose-950/20 border-rose-900/60 text-rose-400'
-            }`}>
-              {isBudgetSafe ? (
-                <>
-                  <ShieldCheck size={20} className="shrink-0 text-emerald-400" />
-                  <div>
-                    <h5 className="font-bold">预算水位正常 (Safe)</h5>
-                    <p className="mt-0.5 text-slate-400 font-sans leading-relaxed">
-                      预计到期后您的订阅账户仍将富余 <b>${(remainingBudget - projectedCost).toFixed(2)}</b>，可以放心部署。
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <ShieldAlert size={20} className="shrink-0 text-rose-400" />
-                  <div>
-                    <h5 className="font-bold">预算存在击穿风险 (Over Budget)</h5>
-                    <p className="mt-0.5 text-slate-400 font-sans leading-relaxed">
-                      预估总费用已超标 <b>${(projectedCost - remainingBudget).toFixed(2)}</b>。建议开启<b>“FinOps 绿能休眠包”</b>或切换为 Sandbox 规格。
-                    </p>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Save trigger button */}
-            <button
-              onClick={handleSaveConfig}
-              disabled={isSaving}
-              className="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-cyan-950/30 disabled:opacity-50"
-            >
-              <Save size={14} />
-              <span>{isSaving ? '正在动态编译拓扑...' : '一键生成拓扑并验证 .azure/'}</span>
-            </button>
-
-            {/* Save Status Message */}
-            {saveMessage && (
-              <div className={`p-3 rounded-lg border text-[11px] font-mono leading-relaxed ${
-                saveMessage.type === 'success' 
-                  ? 'bg-emerald-950/40 border-emerald-900/40 text-emerald-400' 
-                  : 'bg-rose-950/40 border-rose-900/40 text-rose-400'
-              }`}>
-                {saveMessage.text}
-              </div>
-            )}
-          </div>
+          <CostCalculatorPanel
+            remainingBudget={remainingBudget}
+            setRemainingBudget={setRemainingBudget}
+            daysRemaining={daysRemaining}
+            setDaysRemaining={setDaysRemaining}
+            monthlyTotal={monthlyTotal}
+            dailyTotal={dailyTotal}
+            projectedCost={projectedCost}
+            isBudgetSafe={isBudgetSafe}
+            perfRating={perfRating}
+            isSaving={isSaving}
+            saveMessage={saveMessage}
+            onSaveConfig={handleSaveConfig}
+          />
 
           {/* Deployment Quick commands */}
           <div className="bg-[#0b101d]/60 border border-slate-900 rounded-2xl p-6 shadow-2xl relative flex flex-col gap-4 font-mono text-[11px]">
@@ -1013,17 +804,7 @@ az deployment sub create \\
       </div>
 
       {/* Live Console Output Log */}
-      {assemblerConsole && (
-        <div className="max-w-7xl mx-auto mt-8 bg-slate-950 border border-slate-900 rounded-2xl p-6 shadow-2xl relative font-mono text-xs">
-          <h3 className="text-slate-400 mb-3 border-b border-slate-900/60 pb-2 flex items-center gap-2">
-            <Terminal size={13} className="text-cyan-400 animate-pulse" />
-            <span>COMPILER_CONSOLE_OUTPUT (编译与自愈防御日志)</span>
-          </h3>
-          <div className="bg-[#030712] p-4 rounded-xl border border-slate-900/60 text-slate-300 select-text max-h-80 overflow-y-auto font-mono leading-relaxed whitespace-pre font-bold">
-            {assemblerConsole}
-          </div>
-        </div>
-      )}
+      <ConsoleOutputPanel assemblerConsole={assemblerConsole} />
 
       {/* JSON Preview window at the bottom */}
       <div className="max-w-7xl mx-auto mt-8 bg-[#070b15] border border-slate-900 rounded-2xl p-6 shadow-2xl relative font-mono text-xs">

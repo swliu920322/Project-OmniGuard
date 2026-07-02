@@ -9,8 +9,9 @@ param openAiDeploymentName string = 'gpt-5.4-mini'
 
 // Configurator Parameter Set
 param deployStaticWebApp bool = false
+param customResourceGroupName string = ''
 
-var resourceGroupName = '${prefix}-guard-infra-sea-rg'
+var resourceGroupName = !empty(customResourceGroupName) ? customResourceGroupName : '${prefix}-guard-infra-sea-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
 var networkRules = json(loadTextContent('network-rules.json'))
