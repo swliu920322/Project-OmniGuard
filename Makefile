@@ -1,13 +1,14 @@
 # =========================================================================
 # 🛠️ Project-OmniGuard 统一控制总线
 # =========================================================================
-.PHONY: provision start-backend start-frontend destroy deploy-aca trigger-ci help add-device research
+.PHONY: provision whatif start-backend start-frontend destroy deploy-aca trigger-ci help add-device research
 
 help:
 	@echo "======================================================"
 	@echo "Project-OmniGuard 快速命令"
 	@echo "======================================================"
 	@echo "make provision       - 部署 Azure 基础设施"
+	@echo "make whatif          - 预检 (What-If/Dry-run) 基础设施变更"
 	@echo "make start-backend   - 启动后端 (Azure Functions, 端口 7071)"
 	@echo "make start-frontend  - 启动前端 (Next.js, 端口 3000)"
 	@echo "make destroy         - 销毁所有 Azure 资源"
@@ -19,6 +20,10 @@ help:
 provision:
 	@chmod +x ./sh/provision.sh
 	./sh/provision.sh
+
+whatif:
+	@chmod +x ./sh/provision-whatif.sh
+	./sh/provision-whatif.sh
 
 start-backend:
 	@chmod +x ./sh/start-backend.sh
