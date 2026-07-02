@@ -26,6 +26,7 @@
 | 004 | [Standard SKU Pivot](./ADR-004-%5Binfra%5D-Standard-SKU-Pivot.md) | ✅ |
 | 007 | [IoT Hub Long-Lived Connection and Event Hub Trigger](./ADR-007-%5Binfra%5D-IoT-Hub-Long-Lived-Connection.md) | ✅ |
 | 022 | [ACA IaC Topology Refactoring](./ADR-022-%5Binfra%5D-ACA-IaC-Topology-Refactoring.md) | ✅ |
+| 031 | [Shadow Environment E2E Test Suite — Isolated Deployment & Self-Healing Teardown](./ADR-031-%5Binfra%5D-Shadow-E2E-Test-Suite.md) | ✅ |
 
 ### ⚙️ Backend `[backend]`
 
