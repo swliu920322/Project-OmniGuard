@@ -194,7 +194,7 @@ resource iotHub 'Microsoft.Devices/IotHubs@2023-06-30' = {
   sku: { name: 'F1', capacity: 1 }
   properties: {
     routing: {
-      endpoints: { events: [] }
+      endpoints: { eventHubs: [] }
       routes: [
         {
           name: 'DeviceTelemetryRoute'
@@ -218,6 +218,7 @@ module computeBrain './compute-module.bicep' = {
     cosmosEndpoint: cosmosAccount.properties.documentEndpoint
     cosmosKey: cosmosAccount.listKeys().primaryMasterKey
     openAiKey: openAiKey
+    openAiDeploymentName: openAiDeploymentName
     iotHubServiceConnectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey}'
     iotHubEventHubConnectionString: 'Endpoint=${iotHub.properties.eventHubEndpoints.events.endpoint};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey};EntityPath=${iotHub.properties.eventHubEndpoints.events.path}'
     deployManagedIdentities: deployManagedIdentities

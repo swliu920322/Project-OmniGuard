@@ -3,6 +3,7 @@ param prefix string
 param storageAccountName string
 param backendSubnetId string
 param cosmosEndpoint string
+@secure()
 param cosmosKey string
 param deployManagedIdentities bool = false
 param backendIdentityId string = ''
@@ -11,8 +12,9 @@ param deployStaticWebApp bool = false
 
 @secure()
 param openAiKey string
-param openAiDeploymentName string = 'gpt-5.4-mini'
+@secure()
 param iotHubServiceConnectionString string
+@secure()
 param iotHubEventHubConnectionString string
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
@@ -110,7 +112,7 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = if (!deployStati
     managedEnvironmentId: acaEnvironment.id
     configuration: {
       activeRevisionsMode: 'Single'
-      ingress: { external: true, targetPort: 3000, transport: 'auto' }
+      ingress: { external: true, targetPort: 80, transport: 'auto' }
       registries: [{ server: acr.properties.loginServer, username: acr.listCredentials().username, passwordSecretRef: 'acr-password' }]
       secrets: [{ name: 'acr-password', value: acr.listCredentials().passwords[0].value }]
     }
@@ -139,4 +141,4 @@ resource staticWebApp 'Microsoft.Web/staticSites@2023-01-01' = if (deployStaticW
   properties: {}
 }
 
-output frontendUrl string = deployStaticWebApp ? 'https://${staticWebApp.properties.defaultHostname}' : 'https://${frontendApp.properties.configuration.ingress.fqdn}'
+output frontendUrl string = deployStaticWebApp ? 'https://${staticWebApp.?properties.defaultHostname ?? ''}' : 'https://${frontendApp.?properties.configuration.ingress.fqdn ?? ''}'

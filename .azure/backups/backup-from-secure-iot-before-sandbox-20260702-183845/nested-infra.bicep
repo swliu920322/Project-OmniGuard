@@ -152,7 +152,7 @@ resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' =
   name: guid(keyVault.id, backendIdentity.id, '46334581-17ef-401a-b113-35a0419c4b5e')
   scope: keyVault
   properties: {
-    principalId: backendIdentity.properties.principalId
+    principalId: backendIdentity.?properties.principalId ?? ''
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '46334581-17ef-401a-b113-35a0419c4b5e')
     principalType: 'ServicePrincipal'
   }
@@ -283,7 +283,7 @@ resource cosmosDbRoleAssignment 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAs
   name: guid(cosmosAccount.id, backendIdentity.id, 'CosmosDBBuiltInDataContributor')
   parent: cosmosAccount
   properties: {
-    principalId: deployManagedIdentities ? backendIdentity.properties.principalId : '00000000-0000-0000-0000-000000000000'
+    principalId: backendIdentity.?properties.principalId ?? '00000000-0000-0000-0000-000000000000'
     roleDefinitionId: '/${subscription().id}/providers/Microsoft.DocumentDB/databaseAccounts/${cosmosAccount.name}/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002'
     scope: cosmosAccount.id
   }
@@ -317,7 +317,7 @@ resource dps 'Microsoft.Devices/provisioningServices@2022-12-15' = {
   properties: {
     iotHubs: [
       {
-        connectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey}'
+        connectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey}'
         location: location
       }
     ]
@@ -335,8 +335,8 @@ module computeBrain './compute-module.bicep' = {
     cosmosKey: cosmosAccount.listKeys().primaryMasterKey
     openAiKey: openAiKey
     openAiDeploymentName: openAiDeploymentName
-    iotHubServiceConnectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey}'
-    iotHubEventHubConnectionString: 'Endpoint=${iotHub.properties.eventHubEndpoints.events.endpoint};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey};EntityPath=${iotHub.properties.eventHubEndpoints.events.path}'
+    iotHubServiceConnectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey}'
+    iotHubEventHubConnectionString: 'Endpoint=${iotHub.properties.eventHubEndpoints.events.endpoint};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey};EntityPath=${iotHub.properties.eventHubEndpoints.events.path}'
     deployManagedIdentities: deployManagedIdentities
     backendIdentityId: deployManagedIdentities ? backendIdentity.id : ''
     keyVaultUri: keyVault.properties.vaultUri
