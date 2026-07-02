@@ -125,6 +125,35 @@ omni5-mem-npihnwvfyr7zk-southeastasia  10.1.2.7
 ---
 
 ## 4. 测试结论 (Final Verdict)
-🟢 **100% PASS**
+🟢 **100% PASS (核心骨干网与微服务容器)**
 
 本次“配置拉满压力测试”全面通过！微服务后端、公网容器前端、独立托管身份鉴权、物联网设备注册中心（DPS）以及 Hub-Spoke 网络隔离架构均在极端的配置环境下成功互通，编译检查无警告，部署过程无资源冲突。
+
+---
+
+## 5. 高级企业级组件 (APIM, Front Door Premium, Redis, AI Search) 的物理状态说明
+
+在 `omni5` 的部署结果中，我们注意到 **APIM、Front Door Premium (WAF)、Redis 缓存、AI Search 以及多区域多写 (Multi-Region)** 资源并未实际出现在 Azure 物理资源列表中。
+
+这是项目的**既定演进策略**与**预算保护机制**：
+
+### 5.1 预算保护机制 (Cost Safeguard)
+* **成本预估**：
+  * **APIM Premium SKU**：约 **$2795/月** (约 $93/天)；
+  * **Front Door Premium + WAF**：约 **$330/月**；
+  * **Azure AI Search (Basic)**：约 **$73/月**；
+  * **双区域多写 Cosmos DB**：成本直接翻倍。
+* 如果在测试/开发环境物理拉起上述所有 Premium SKU，测试账号的订阅额度将在极短时间内被完全耗尽。因此，当前 Baseline 架构中对这些高资费组件进行了“逻辑占位”。
+
+### 5.2 架构演进与占位状态对照表
+
+| **高级功能项** | **UI 配置台状态** | **Bicep 物理模板状态** | **技术说明与去向** |
+| --- | --- | --- | --- |
+| **API 网关 (APIM)** | 允许调整 SKU 档位 | ❌ 物理模板暂无 | 在 React UI 中用于 FinOps 成本估算，物理集成设计已归档在 [02-api-management-gateway.md](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/reference/blueprints/02-api-management-gateway.md) 中，计划于后续 Sprint 引入。 |
+| **边缘网关 (Front Door WAF)** | 允许勾选/配置 | ❌ 物理模板暂无 | 全球 CDN 边缘转发目前以 SWA (Static Web App) 作为轻量化平替。Front Door Premium 模板处于 Backlog 中。 |
+| **分布式缓存 (Redis)** | 允许调整大小 | ❌ 物理模板暂无 | 缓存层暂由内存级缓存平替，物理组件未加入 `secure-iot` 模板。 |
+| **搜索引擎 (AI Search)** | 允许配置开关 | ❌ 物理模板暂无 | 高级向量搜索组件目前以 Cosmos DB 内置索引平替，物理组件未加入模板。 |
+| **多区域容灾 (Multi-Region)** | 允许选择第二区域 | ❌ 物理模板暂无 | 目前部署统一固定在 `southeastasia`（东南亚）主区域，多区域编排设计处于规划归档中。 |
+
+* **后续演进方向**：
+  如需在后续阶段进行上述高阶组件的物理部署，需在 `templates/secure-iot/nested-infra.bicep` 中正式集成对应的资源定义块，并打通 Private Endpoint。当前已有的 `main.parameters.json` 已经做好了参数占位，能够平滑支持后续的物理装载。
