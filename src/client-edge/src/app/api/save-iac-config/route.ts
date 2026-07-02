@@ -95,3 +95,22 @@ export async function POST(request: NextRequest) {
     }, { status: 500 });
   }
 }
+
+export async function GET() {
+  try {
+    const projectRoot = path.join(process.cwd(), '..');
+    const configPath = path.join(projectRoot, '.azure', 'configurator-ui-state.json');
+    
+    if (fs.existsSync(configPath)) {
+      const data = fs.readFileSync(configPath, 'utf-8');
+      return NextResponse.json(JSON.parse(data));
+    }
+    return NextResponse.json({ message: 'No configuration saved yet' }, { status: 404 });
+  } catch (error: any) {
+    return NextResponse.json({ 
+      error: 'Failed to read configuration', 
+      message: error.message 
+    }, { status: 500 });
+  }
+}
+
