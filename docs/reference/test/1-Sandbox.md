@@ -158,3 +158,9 @@ Could not find a replica for this app
 >   # 3. 调试结束后，恢复自动休眠（重置为 0）
 >   az containerapp update -g "$RG" -n "$BACKEND_APP" --min-replicas 0
 >   ```
+
+```
+# 方案 A 验收 
+# curl -i "https://$FE_FQDN" 时间很久
+
+```

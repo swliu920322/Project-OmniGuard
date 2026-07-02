@@ -110,7 +110,7 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = if (!deployStati
     managedEnvironmentId: acaEnvironment.id
     configuration: {
       activeRevisionsMode: 'Single'
-      ingress: { external: true, targetPort: 3000, transport: 'auto' }
+      ingress: { external: true, targetPort: 80, transport: 'auto' }
       registries: [{ server: acr.properties.loginServer, username: acr.listCredentials().username, passwordSecretRef: 'acr-password' }]
       secrets: [{ name: 'acr-password', value: acr.listCredentials().passwords[0].value }]
     }
