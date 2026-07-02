@@ -4,7 +4,7 @@ param storageAccountName string
 param backendSubnetId string
 param cosmosEndpoint string
 param cosmosKey string
-param deployManagedIdentities bool = false
+param deployManagedIdentities bool = true
 param backendIdentityId string = ''
 param deployStaticWebApp bool = false
 
@@ -51,6 +51,12 @@ resource acaEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' = {
 resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
   name: '${prefix}-backend'
   location: location
+  identity: deployManagedIdentities ? {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${backendIdentityId}': {}
+    }
+  } : null
   properties: {
     managedEnvironmentId: acaEnvironment.id
     configuration: {
@@ -76,7 +82,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
         {
           name: 'backend'
           image: 'mcr.microsoft.com/azuredocs/aci-helloworld:latest'
-          resources: { cpu: json('0.5'), memory: '1.0Gi' } // Sandbox scale down
+          resources: { cpu: json('1.0'), memory: '2.0Gi' } // Sandbox scale down
           env: [
             { name: 'USE_MANAGED_IDENTITY', value: string(deployManagedIdentities) }
             { name: 'COSMOS_ENDPOINT', value: cosmosEndpoint }
@@ -89,7 +95,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
           ]
         }
       ]
-      scale: { minReplicas: 0, maxReplicas: 2 } // Auto sleep
+      scale: { minReplicas: 1, maxReplicas: 3 }
     }
   }
 }
@@ -115,7 +121,7 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = if (!deployStati
           env: [{ name: 'BACKEND_API_URL', value: 'http://${backendApp.name}.internal.${acaEnvironment.properties.defaultDomain}' }]
         }
       ]
-      scale: { minReplicas: 0, maxReplicas: 2 } // Auto sleep
+      scale: { minReplicas: 1, maxReplicas: 2 }
     }
   }
 }

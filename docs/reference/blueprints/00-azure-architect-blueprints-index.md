@@ -21,6 +21,8 @@
 | 10 | **成本与 FinOps** | Cost Management, Budgets, Reservations, Advisor | ~5% | 无 | P1 |
 | 11 | **高可用与灾备 (HA/DR)** | Availability Zones, Geo-replication, Backup Vault | ~5% | 单区域 Singapore | P2 |
 | 12 | **合规与治理** | Policy, Landing Zones, Blueprints, Purview Compliance | ~3% | 无 | P2 |
+| 13 | **企业网络与私有 DNS** | VNet, Private Link, Private Endpoint, Private DNS Zone | ~15% | Hub-Spoke 无隔离, PE DNS 解析缺失 | P1 |
+| 14 | **IoT 零接触预配** | Device Provisioning Service (DPS), X.509 CA Certs | ~10% | 静态连接字符串, 无 DPS 动态预配 | P1 |
 
 ---
 
@@ -31,6 +33,8 @@
 ```
 docs/reference/blueprints/
 ├── 00-azure-architect-blueprints-index.md      ← 本文 (导航索引)
+├── cloud-architecture-review.md                ← 云架构审查与修复报告 (新)
+├── configurator-development-plan.md            ← 启动配置器与估算台开发计划 (新)
 ├── 01-identity-foundation.md                    ← 身份基座
 ├── 02-api-management-gateway.md                 ← API 网关
 ├── 03-security-posture.md                       ← 安全态势
@@ -42,7 +46,10 @@ docs/reference/blueprints/
 ├── 09-cost-finops.md                            ← 成本优化
 ├── 10-ha-dr-business-continuity.md              ← 高可用与灾备
 ├── 11-compliance-governance.md                  ← 合规与治理
-└── 12-ai-ml-platform.md                         ← AI/ML 平台 (预留)
+├── 12-ai-ml-platform.md                         ← AI/ML 平台 (预留)
+├── 13-enterprise-networking-private-dns.md      ← 企业网络与私有 DNS (新)
+├── 14-iot-dps-zero-touch-provisioning.md        ← IoT 零接触预配 (新)
+└── 15-cloud-architect-methodology.md             ← 云架构师方法论与集成场景 (核心)
 ```
 
 ---
@@ -75,6 +82,11 @@ docs/reference/blueprints/
 | 配置 Cosmos DB 自动备份 + 异地恢复 | 10 | 中 | 1天 |
 | Azure Policy 强制合规 (标签/区域/SKU 审计) | 11 | 中 | 2天 |
 | 部署 Landing Zone 架构 (管理组/订阅治理) | 11 | 高 | 5天 |
+| 部署 Hub-Spoke 拓扑并配置 Private DNS 自动注册 | 13 | 高 | 3天 |
+| 配置 IoT Hub Device Provisioning Service X.509 注册 | 14 | 高 | 4天 |
+| [集成场景 A] 零特权极简沙箱部署与网络防火墙补偿 | 15 | 中 | 2天 |
+| [集成场景 B] 零信任“身网双锁”内网拓扑与 DNS 自愈 | 15 | 高 | 4天 |
+| [集成场景 C] 异步背压自愈与双通道控制链路解耦 | 15 | 极高 | 5天 |
 
 ---
 

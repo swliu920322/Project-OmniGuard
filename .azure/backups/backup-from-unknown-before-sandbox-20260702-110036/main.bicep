@@ -7,9 +7,6 @@ param prefix string = 'omni'
 param openAiKey string = ''
 param openAiDeploymentName string = 'gpt-5.4-mini'
 
-// Configurator Parameter Set
-param deployStaticWebApp bool = false
-
 var resourceGroupName = '${prefix}-guard-infra-sea-rg'
 var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
@@ -19,14 +16,14 @@ resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
   name: resourceGroupName
   location: location
   tags: {
-    Environment: 'Sandbox'
-    Scenario: 'DevSandbox'
+    Environment: 'Production-Intake'
+    Scenario: 'SecureIoTPipeline'
     FinOpsOwner: 'Shengwei'
   }
 }
 
 module infraDeployment './nested-infra.bicep' = {
-  name: 'Nested-Sandbox-Deployment'
+  name: 'Nested-SecureIoT-Deployment'
   scope: resourceGroup(rg.name)
   params: {
     location: location
@@ -36,7 +33,6 @@ module infraDeployment './nested-infra.bicep' = {
     spokeVNetName: spokeVNetName
     openAiKey: openAiKey
     openAiDeploymentName: openAiDeploymentName
-    deployManagedIdentities: false
-    deployStaticWebApp: deployStaticWebApp
+    deployManagedIdentities: true
   }
 }
