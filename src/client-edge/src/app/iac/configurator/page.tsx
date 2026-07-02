@@ -272,6 +272,8 @@ export default function BicepConfiguratorPage() {
   const [prefix, setPrefix] = useState<string>('omni');
   const [location, setLocation] = useState<string>('southeastasia');
   const [customResourceGroupName, setCustomResourceGroupName] = useState<string>('');
+  const [costCenter, setCostCenter] = useState<string>('IT-Dept');
+  const [finOpsOwner, setFinOpsOwner] = useState<string>('Shengwei');
 
   // New Network Prefix States
   const [vnetAddressPrefix, setVnetAddressPrefix] = useState<string>('10.1.0.0/16');
@@ -427,6 +429,8 @@ export default function BicepConfiguratorPage() {
             if (state.prefix) setPrefix(state.prefix);
             if (state.location) setLocation(state.location);
             if (state.customResourceGroupName !== undefined) setCustomResourceGroupName(state.customResourceGroupName);
+            if (state.costCenter) setCostCenter(state.costCenter);
+            if (state.finOpsOwner) setFinOpsOwner(state.finOpsOwner);
             if (state.deployManagedIdentities !== undefined) setDeployManagedIdentities(state.deployManagedIdentities);
             if (state.deployStaticWebApp !== undefined) setDeployStaticWebApp(state.deployStaticWebApp);
             if (state.vnetAddressPrefix) setVnetAddressPrefix(state.vnetAddressPrefix);
@@ -552,12 +556,18 @@ export default function BicepConfiguratorPage() {
 
   }, [selectedSkus, daysRemaining, remainingBudget, deployStaticWebApp, deployManagedIdentities]);
 
+  const handleDownloadPackage = () => {
+    window.open('/api/download-iac', '_blank');
+  };
+
   const generateParametersObj = () => {
     const params: Record<string, any> = {
       location: location,
       prefix: prefix,
       openAiKey: openAiKey,
       customResourceGroupName: customResourceGroupName,
+      costCenter: costCenter,
+      finOpsOwner: finOpsOwner,
       deployManagedIdentities: deployManagedIdentities,
       deployStaticWebApp: deployStaticWebApp,
       vnetAddressPrefix: vnetAddressPrefix,
@@ -599,6 +609,8 @@ export default function BicepConfiguratorPage() {
         prefix,
         location,
         customResourceGroupName,
+        costCenter,
+        finOpsOwner,
         vnetAddressPrefix,
         backendSubnetPrefix,
         storageSubnetPrefix,
@@ -763,6 +775,10 @@ export default function BicepConfiguratorPage() {
             setOpenAiKey={setOpenAiKey}
             customResourceGroupName={customResourceGroupName}
             setCustomResourceGroupName={setCustomResourceGroupName}
+            costCenter={costCenter}
+            setCostCenter={setCostCenter}
+            finOpsOwner={finOpsOwner}
+            setFinOpsOwner={setFinOpsOwner}
             deployManagedIdentities={deployManagedIdentities}
             setDeployManagedIdentities={setDeployManagedIdentities}
             deployStaticWebApp={deployStaticWebApp}
@@ -803,6 +819,7 @@ export default function BicepConfiguratorPage() {
             saveMessage={saveMessage}
             onSaveConfig={handleSaveConfig}
             onPreflightValidate={handlePreflightValidate}
+            onDownloadPackage={handleDownloadPackage}
           />
 
           {/* Deployment Quick commands */}
