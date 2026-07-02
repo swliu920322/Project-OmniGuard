@@ -556,22 +556,15 @@ export default function BicepConfiguratorPage() {
       location: location,
       prefix: prefix,
       openAiKey: openAiKey,
-      customResourceGroupName: customResourceGroupName,
-      costCenter: costCenter,
-      finOpsOwner: finOpsOwner,
-      deployManagedIdentities: deployManagedIdentities,
+      openAiDeploymentName: 'gpt-5.4-mini',
       deployStaticWebApp: deployStaticWebApp,
+      customResourceGroupName: customResourceGroupName,
       vnetAddressPrefix: vnetAddressPrefix,
       backendSubnetPrefix: backendSubnetPrefix,
-      storageSubnetPrefix: storageSubnetPrefix
+      storageSubnetPrefix: storageSubnetPrefix,
+      costCenter: costCenter,
+      finOpsOwner: finOpsOwner
     };
-
-    Object.entries(selectedSkus).forEach(([resType, optionId]) => {
-      const option = RESOURCES_SKU_DATA[resType]?.find(opt => opt.id === optionId);
-      if (option && option.params) {
-        Object.assign(params, option.params);
-      }
-    });
 
     return params;
   };
