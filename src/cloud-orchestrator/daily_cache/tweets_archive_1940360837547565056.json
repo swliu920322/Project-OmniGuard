@@ -1,5 +1,55 @@
 [
     {
+        "date": "2026-07-01",
+        "original": "Just dropping these 3 slides from Agility Robotics ( $CCXI ) presentations.\n\nFor the US robotic program doomposters:\n\n1. “75% of parts” - sourced from the USA\n\n2. Just eyeballing the graph, looks like &lt;$30k BOM mass production.\n\nPeople were just looking at the ~$145K cost. \n\n3. https://t.co/zs2msucOk6",
+        "translation": "先贴一下 Agility Robotics（$CCXI）演示中的这 3 页幻灯片。\n\n给那些对美国机器人项目唱衰的人看：\n\n1. “75% 的零部件”——来自美国本土采购。\n\n2. 仅从图表粗略判断，量产后 BOM 成本看起来低于 3 万美元。\n\n大家之前只盯着约 14.5 万美元的整机成本。\n\n3. https://t.co/zs2msucOk6"
+    },
+    {
+        "date": "2026-07-01",
+        "original": "There’s a lot of disinformation going around about $META “cutting capex” because they “overbuilt”.\n\nThis is an “if” they have excess capacity.\n\nAnd it looks like the opposite right now:\n\nHyperscalers like $GOOGL are so compute constrained that they had to cut allocations to Meta",
+        "translation": "市场上有很多关于 $META 因为“过度建设”而“削减资本开支”的误导性说法。\n\n前提是他们真的存在产能过剩。\n\n而从目前来看，情况似乎恰恰相反：\n\n像 $GOOGL 这样的超大规模云厂商算力极度紧张，甚至不得不削减分配给 Meta 的资源。"
+    },
+    {
+        "date": "2026-07-01",
+        "original": "Basically pre-market right now with the Neoclouds like $NBIS in simpler terms.\n\nCostco: sells $5 chickens.\n\nWalmart: mass buys those rotisserie chickens and sells excess as “Walmart Chickens”.\n\nStock Market: sells off Costco.",
+        "translation": "用更简单的话说，现在盘前市场对 $NBIS 这类 Neocloud 的反应大致就是这样。\n\nCostco：卖 5 美元的鸡。\n\nWalmart：批量买这些烤鸡，然后把多出来的当作“Walmart 鸡”卖出去。\n\n股市：却在抛售 Costco。"
+    },
+    {
+        "date": "2026-07-01",
+        "original": "Finally, $META to build a Cloud Business to sell excess AI compute per Bloomberg.\n\nThought Meta should go up against GCP, Azure, and AWS eventually to increase revenue streams. \n\nMeta up 6.65% premarket. https://t.co/UUolnwtYJY",
+        "translation": "根据彭博报道，$META 终于要打造云业务来出售多余的 AI 算力。\n\n我一直认为 Meta 迟早会与 GCP、Azure 和 AWS 正面竞争，以拓展收入来源。\n\nMeta 盘前上涨 6.65%。https://t.co/UUolnwtYJY"
+    },
+    {
+        "date": "2026-07-01",
+        "original": "Just a random thought, leading US humanoid players strangely me of the current LLM dynamics:\n\nAgility ( $CCXI ) kinda feels like Anthropic for robotics.\n\nWith $AMZN and $NVDA heavily backing it, ingrained with $GOOGL Deepmind (like TPUs). And it starts off with enterprise",
+        "translation": "随便想一句，美国领先的人形机器人玩家与当前 LLM 行业格局有些出人意料地相似：\n\nAgility（$CCXI）某种程度上很像机器人领域的 Anthropic。\n\n背后有 $AMZN 和 $NVDA 的重磅支持，并深度结合了 $GOOGL DeepMind（类似 TPU 的角色）。而且它一开始就是从企业市场切入。"
+    },
+    {
+        "date": "2026-07-01",
+        "original": "This market feels like an ADHD goldfish with a 5 second attention span, trading popular themes. \n\nIt's like markets only care about physical AI and energy right now?\n\nAnd sold off memory and photonics that are bottlenecked past 2028?",
+        "translation": "这个市场感觉就像一条注意力只有 5 秒钟的 ADHD 金鱼，只会追逐热门主题。\n\n难道现在市场只关心物理 AI 和能源吗？\n\n而对那些在 2028 年之后仍存在瓶颈的存储和光子学板块却选择抛售？"
+    },
+    {
+        "date": "2026-07-01",
+        "original": "$SIVE: \"Intent to complete the [NASDAQ] listing process over the next few quarters\"\n\nThis statement was largely missed by many screeners.\n\nVery material improvement from evaluation, to formal confirmation of timelines. https://t.co/iOceCgJTG4",
+        "translation": "$SIVE：“计划在未来几个季度内完成 [NASDAQ] 上市流程”\n\n这一表述在很多筛选器中基本被忽略了。\n\n相比此前仅停留在评估阶段，这已经是对时间表的正式确认，属于非常实质性的进展。https://t.co/iOceCgJTG4"
+    },
+    {
+        "date": "2026-07-01",
+        "original": "Just some of the more interesting news I came across recently:\n\n1. MS: Revised China humanoid shipments to reach 50,000 in 2026 from 14,000u and 28,000u earlier this year.\n\n2. MS: Probe cards and test sockets likely to be priced hike (precious metal hikes + severe shortage of",
+        "translation": "最近我看到的一些较有意思的消息：\n\n1. MS：将中国人形机器人出货量预测上调至 2026 年达到 5 万台，而今年早些时候的预测分别为 1.4 万台和 2.8 万台。\n\n2. MS：探针卡和测试座可能会提价（贵金属涨价 + 供应严重短缺导致）"
+    },
+    {
+        "date": "2026-07-01",
+        "original": "I told you making the robots look hot might be a bottleneck:\n\nToday, UBTech has now announced its first full-size hyper realistic humanoid robot girlfriend.\n\nFor adults only to purchase for only ~$145,717.90.\n\n-\"The U1 series emphasizes attractive appearance and is only available https://t.co/Lyit8L8Fw1",
+        "translation": "我早就说过，把机器人做得“好看”可能会成为瓶颈：\n\n今天，UBTech 已宣布推出其首款全尺寸、超写实人形机器人女友。\n\n仅限成人购买，售价约 145,717.90 美元。\n\n- “U1 系列强调外观吸引力，仅限于……” https://t.co/Lyit8L8Fw1"
+    },
+    {
+        "date": "2026-07-01",
+        "original": "Congrats to $SIVE, they have now raised an upside round of 700m SEK from institutional investors.\n\nThe round was “Multiple Times Oversubscribed” and slightly upsided.\n\nValidating immense institutional demand around current market prices.\n\nThis raise was specifically for https://t.co/SOP7XNjgT0",
+        "translation": "祝贺 $SIVE，其已从机构投资者处完成一轮上行融资，募资 7 亿瑞典克朗。\n\n本轮融资“获多倍超额认购”，且估值略有上修。\n\n这验证了机构投资者对当前市场价格存在强劲需求。\n\n此次融资专门用于 https://t.co/SOP7XNjgT0"
+    },
+    {
         "date": "2026-06-30",
         "original": "$SIVE is raising ~$61M (600M SEK) to expand manufacturing capacity for InP lasers and optical amplifiers.\n\nSivers operates as a fab-lite model so this is likely hinting at foundry allocation/scaling for CW DFB laser ramp across Jabil, and their other partners.  \n\nIt could also https://t.co/8F1cMcCxfB",
         "translation": "$SIVE 正在融资约 6,100 万美元（6 亿瑞典克朗），用于扩充 InP 激光器和光放大器的产能。\n\nSivers 采用的是轻资产晶圆厂模式，因此这很可能意味着其将为 Jabil 及其他合作伙伴的 CW DFB 激光放量预留并扩大代工产能。\n\n这也可能 https://t.co/8F1cMcCxfB"

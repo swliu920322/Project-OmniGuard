@@ -4,7 +4,7 @@ param location string
 param prefix string
 param hubVNetName string
 param spokeVNetName string
-param deployManagedIdentities bool = true
+param deployManagedIdentities bool = false
 param deployStaticWebApp bool = false
 
 param vnetAddressPrefix string = '10.1.0.0/16'
@@ -60,7 +60,7 @@ var storageNsgRules = [
   }
 ]
 
-// Network Setup
+// Network Subnets
 resource backendNsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: '${prefix}-backend-nsg'
   location: location
@@ -101,32 +101,19 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2023-11-01' = {
         properties: {
           addressPrefix: storageSubnetPrefix
           networkSecurityGroup: { id: storageNsg.id }
-          privateEndpointNetworkPolicies: 'Disabled'
         }
       }
     ]
   }
 }
 
-resource hubToSpokePeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
-  parent: hubVnet
-  name: 'Hub-To-Spoke'
-  properties: { allowVirtualNetworkAccess: true, allowForwardedTraffic: true, remoteVirtualNetwork: { id: spokeVnet.id } }
-}
-
-resource spokeToHubPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
-  parent: spokeVnet
-  name: 'Spoke-To-Hub'
-  properties: { allowVirtualNetworkAccess: true, allowForwardedTraffic: true, remoteVirtualNetwork: { id: hubVnet.id } }
-}
-
-// Managed Identity
+// User-Assigned Identity (conditional)
 resource backendIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = if (deployManagedIdentities) {
   name: '${prefix}-backend-identity'
   location: location
 }
 
-// Key Vault with public access disabled (secure-iot)
+// Key Vault with public access (sandbox-allow)
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   name: take('${prefix}kv${uniqueString(resourceGroup().id)}', 24)
   location: location
@@ -134,7 +121,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
     sku: { family: 'A', name: 'standard' }
     tenantId: subscription().tenantId
     enableRbacAuthorization: true
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: 'Enabled'
   }
 }
 
@@ -158,105 +145,28 @@ resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' =
   }
 }
 
-// Key Vault Private Endpoint & DNS (secure-iot only)
-resource kvDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
-  name: 'privatelink.vaultcore.azure.net'
-  location: 'global'
-}
-
-resource kvDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  parent: kvDnsZone
-  name: 'kv-link'
-  location: 'global'
-  properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
-}
-
-resource kvPE 'Microsoft.Network/privateEndpoints@2023-11-01' = {
-  name: '${prefix}-kv-pe'
-  location: location
-  properties: {
-    subnet: { id: '${spokeVnet.id}/subnets/StorageSubnet' }
-    privateLinkServiceConnections: [{ name: 'kv-conn', properties: { privateLinkServiceId: keyVault.id, groupIds: ['vault'] } }]
-  }
-}
-
-resource kvDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
-  parent: kvPE
-  name: 'kv-dns-group'
-  properties: { privateDnsZoneConfigs: [{ name: 'kv-config', properties: { privateDnsZoneId: kvDnsZone.id } }] }
-}
-
-// Isolated Storage
+// Storage for Sandbox (Classic connection keys)
 resource funcStorage 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: '${prefix}st${uniqueString(resourceGroup().id)}'
   location: location
   sku: { name: 'Standard_LRS' }
   kind: 'StorageV2'
   properties: {
-    publicNetworkAccess: 'Disabled'
-    networkAcls: { defaultAction: 'Deny', bypass: 'AzureServices' }
+    publicNetworkAccess: 'Enabled'
   }
 }
 
-// Private DNS for Storage
-resource blobDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
-  name: 'privatelink.blob.${environment().suffixes.storage}'
-  location: 'global'
-}
-resource blobDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  parent: blobDnsZone
-  name: 'blob-link'
-  location: 'global'
-  properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
-}
-resource blobPE 'Microsoft.Network/privateEndpoints@2023-11-01' = {
-  name: '${prefix}-blob-pe'
-  location: location
-  properties: {
-    subnet: { id: '${spokeVnet.id}/subnets/StorageSubnet' }
-    privateLinkServiceConnections: [{ name: 'blob-conn', properties: { privateLinkServiceId: funcStorage.id, groupIds: ['blob'] } }]
-  }
-}
-resource blobDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
-  parent: blobPE
-  name: 'blob-dns-group'
-  properties: { privateDnsZoneConfigs: [{ name: 'blob-config', properties: { privateDnsZoneId: blobDnsZone.id } }] }
-}
-
-// Cosmos DB Autoscale
+// Cosmos DB Free Tier
 resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
   name: '${prefix}-mem-${uniqueString(resourceGroup().id)}'
   location: location
   kind: 'GlobalDocumentDB'
   properties: {
     databaseAccountOfferType: 'Standard'
-    publicNetworkAccess: 'Disabled'
+    enableFreeTier: true
     consistencyPolicy: { defaultConsistencyLevel: 'Session' }
     locations: [{ locationName: location, failoverPriority: 0 }]
   }
-}
-resource cosmosDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
-  name: 'privatelink.documents.azure.com'
-  location: 'global'
-}
-resource cosmosDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  parent: cosmosDnsZone
-  name: 'cosmos-link'
-  location: 'global'
-  properties: { registrationEnabled: false, virtualNetwork: { id: spokeVnet.id } }
-}
-resource cosmosPE 'Microsoft.Network/privateEndpoints@2023-11-01' = {
-  name: '${prefix}-cosmos-pe'
-  location: location
-  properties: {
-    subnet: { id: '${spokeVnet.id}/subnets/StorageSubnet' }
-    privateLinkServiceConnections: [{ name: 'cosmos-conn', properties: { privateLinkServiceId: cosmosAccount.id, groupIds: ['Sql'] } }]
-  }
-}
-resource cosmosDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-11-01' = {
-  parent: cosmosPE
-  name: 'cosmos-dns-group'
-  properties: { privateDnsZoneConfigs: [{ name: 'cosmos-config', properties: { privateDnsZoneId: cosmosDnsZone.id } }] }
 }
 
 resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023-11-15' = {
@@ -264,6 +174,7 @@ resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023-11-15
   name: 'OmniGuardDB'
   properties: { resource: { id: 'OmniGuardDB' } }
 }
+
 resource deviceTwinContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2023-11-15' = {
   parent: cosmosDb
   name: 'DeviceTwins'
@@ -272,28 +183,15 @@ resource deviceTwinContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases
       id: 'DeviceTwins'
       partitionKey: { paths: [ '/tenant_id' ], kind: 'Hash' }
     }
-    options: {
-      autoscaleSettings: { maxThroughput: 4000 }
-    }
+    options: { throughput: 400 }
   }
 }
 
-// RBAC Role Assignment for Managed Identity
-resource cosmosDbRoleAssignment 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2023-04-15' = if (deployManagedIdentities) {
-  name: guid(cosmosAccount.id, backendIdentity.id, 'CosmosDBBuiltInDataContributor')
-  parent: cosmosAccount
-  properties: {
-    principalId: backendIdentity.?properties.principalId ?? '00000000-0000-0000-0000-000000000000'
-    roleDefinitionId: '${cosmosAccount.id}/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002'
-    scope: cosmosAccount.id
-  }
-}
-
-// IoT Hub Standard + DPS
+// IoT Hub Free Tier
 resource iotHub 'Microsoft.Devices/IotHubs@2023-06-30' = {
   name: 'iot-${prefix}-${uniqueString(resourceGroup().id)}'
   location: location
-  sku: { name: 'S1', capacity: 1 }
+  sku: { name: 'F1', capacity: 1 }
   properties: {
     routing: {
       endpoints: { eventHubs: [] }
@@ -307,20 +205,6 @@ resource iotHub 'Microsoft.Devices/IotHubs@2023-06-30' = {
         }
       ]
     }
-  }
-}
-
-resource dps 'Microsoft.Devices/provisioningServices@2021-10-15' = {
-  name: '${prefix}-iot-dps'
-  location: location
-  sku: { name: 'S1', capacity: 1 }
-  properties: {
-    iotHubs: [
-      {
-        connectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey}'
-        location: location
-      }
-    ]
   }
 }
 
