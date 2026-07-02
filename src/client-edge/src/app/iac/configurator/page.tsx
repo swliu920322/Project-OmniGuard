@@ -501,6 +501,7 @@ export default function BicepConfiguratorPage() {
 
   // UI state
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isValidatingCloud, setIsValidatingCloud] = useState<boolean>(false);
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [assemblerConsole, setAssemblerConsole] = useState<string | null>(null);
 
@@ -638,6 +639,35 @@ export default function BicepConfiguratorPage() {
     }
   };
 
+  const handlePreflightValidate = async () => {
+    setIsValidatingCloud(true);
+    setSaveMessage(null);
+    setAssemblerConsole('[*] Connecting to Azure API... Submitting validation parameters to subscription...\n');
+
+    try {
+      const response = await fetch('/api/save-iac-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'preflight' })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setAssemblerConsole(result.output || result.message);
+        setSaveMessage({ type: 'success', text: '云端预飞行校验成功通过，网段与权限 100% 兼容！' });
+      } else {
+        setAssemblerConsole(result.output || result.message);
+        setSaveMessage({ type: 'error', text: '云端预飞行校验失败，请检查控制台日志。' });
+      }
+    } catch (err: any) {
+      setAssemblerConsole(`[!] 网络请求异常: ${err.message}`);
+      setSaveMessage({ type: 'error', text: '云端预检请求失败，请检查网络连接。' });
+    } finally {
+      setIsValidatingCloud(false);
+    }
+  };
+
   const parametersObj = generateParametersObj();
   const parametersJsonString = JSON.stringify({
     $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#',
@@ -769,8 +799,10 @@ export default function BicepConfiguratorPage() {
             isBudgetSafe={isBudgetSafe}
             perfRating={perfRating}
             isSaving={isSaving}
+            isValidatingCloud={isValidatingCloud}
             saveMessage={saveMessage}
             onSaveConfig={handleSaveConfig}
+            onPreflightValidate={handlePreflightValidate}
           />
 
           {/* Deployment Quick commands */}

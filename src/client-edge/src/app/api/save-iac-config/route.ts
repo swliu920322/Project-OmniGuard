@@ -18,7 +18,30 @@ function parseCidr(cidr: string) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { parameters, uiState, dryRun } = body;
+    const { parameters, uiState, dryRun, action } = body;
+
+    // Preflight action: directly invoke the preflight-validate.py script
+    if (action === 'preflight') {
+      const projectRoot = path.join(process.cwd(), '..');
+      const preflightScriptPath = path.join(projectRoot, 'sh', 'preflight-validate.py');
+      const command = `python3 "${preflightScriptPath}"`;
+      try {
+        const { stdout, stderr } = await execAsync(command);
+        return NextResponse.json({
+          success: true,
+          message: 'Azure Sub Cloud Preflight Check Passed!',
+          output: stdout
+        });
+      } catch (err: any) {
+        const output = (err.stdout || '') + '\n' + (err.stderr || '');
+        return NextResponse.json({
+          success: false,
+          error: 'PreflightCheckFailed',
+          message: 'Azure Sub Cloud Preflight Check failed.',
+          output
+        }, { status: 422 });
+      }
+    }
 
     if (!parameters || !uiState) {
       return NextResponse.json({ error: 'Missing parameters or uiState in request body' }, { status: 400 });
