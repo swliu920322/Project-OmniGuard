@@ -114,4 +114,35 @@ docs/reference/blueprints/
 > 核心思路: 先打好身份安全基座 → 建立可观测性 → 完善 CI/CD → 再拓展高阶领域
 
 ---
-*Generated: 2026-07-02 | Architect: AI Cloud Architect | Project: OmniGuard v1.0.0*
+
+## 当前工作交接与进度备忘 (Handover & Current Session Progress)
+
+### 🟢 当前已完成的核心里程碑 (Milestones Achieved)
+1. **Bicep 编译警告 100% 肃清**：
+   * 修复了 BCP318 空安全性警告（在所有条件资源属性上增加了 `.?` 与 `?? ''` 空安全守护）。
+   * 修复了 BCP081 警告，将 DPS 的 API 对应版本对齐为支持离线类型校验的 `2021-10-15` 稳定版。
+   * 修正了 IoT Hub 路由 `endpoints` 中的笔误，并将老式 `listKeys()` 调用全部重构为 Bicep 符号引用函数。
+2. **IaC 配置器逻辑对齐与防降级治理**：
+   * 解决了 React 页面修改基础表单参数转为 `custom` 场景导致后端 API 强制退避降级为 `sandbox` 模板的隐蔽漏洞。目前后端路由根据是否启用托管身份（`deployManagedIdentities`）自适应装载正确的 Bicep 模块。
+   * 优化了基础参数微调 UX：修改变量不会将当前高亮 Preset 标签切换为自定义，只有变动功能包或 SKU 等级才会触发。
+   * 解决了主编排 `main.bicep` 的 11 参数限制与页面多 SKU 输出的校验失衡问题，通过前端输出过滤器彻底治愈了部署预检时的 `InvalidTemplate` 报错。
+3. **“身网双锁”物理隔离 E2E 验证成功**：
+   * 在 `omni3`、`omni4` 和 `omni5` 下全量通过了极简沙箱、内网隔离、全球门户（SWA）以及拉满配置（All Packs Enabled）的多场景部署。
+   * **物理证明零信任边界**：未授权访问 Key Vault 提示 `ForbiddenByRbac` 身份锁拦截；临时授权后，公网访问依然被 `ForbiddenByConnection` (`PublicAccessDisabled`) 物理拦截。只有合规托管身份通过 Spoke 内网的 PE 节点才能成功连通。
+   * **DNS 解析自愈**：Cosmos DB 与 Key Vault 分别解析绑定到了 `10.1.2.6` 和 `10.1.2.4` 私网 IP，容器环境运行状态为 `Succeeded`，实测日志流一切就绪。
+4. **DevOps 效率与架构资产沉淀**：
+   * 增加了 `make whatif` 预检工具，调用 `sh/provision-whatif.sh` 支持自适应租户前缀提取的 Dry-run 干跑，节约 80%+ 的排队等待时间。
+   * 归档了 **ADR-032** 架构决策记录，并在 `2-secure-IoT.md`、`3-global-portal.md`、`4-all.md` 验收报告中补充了完整的真实 CLI 运行输出与 SKU 等级记录。
+
+---
+
+### 📅 下阶段建议启动的架构任务 (Next Sprints Recommendations)
+* **任务 1：高阶组件物理装载 (APIM / Front Door Premium)**
+  * *Context*：目前 APIM、Front Door WAF、Redis 在 React 配置台上为逻辑估算模型。既然 Hub-Spoke 骨干网和零信任身份已物理扎根，下一阶段可以根据 [02-api-management-gateway.md](file:///Users/liushengwei/project/Project-OmniGuard/docs/reference/blueprints/02-api-management-gateway.md) 的设计，在 `templates/secure-iot/nested-infra.bicep` 中实际填充物理资源模块。
+* **任务 2：CI/CD 自动化流水线构建**
+  * *Context*：当前主要依靠本地 shell 脚本（`make provision`）进行手工测试发布。下一阶段可引入 GitHub Actions，结合 [08-cicd-devops-pipeline.md](file:///Users/liushengwei/project/Project-OmniGuard/docs/reference/blueprints/08-cicd-devops-pipeline.md)，在流水线中加入 Bicep lint、静态分析和 `az deployment sub what-if` 的自动预检机制。
+* **任务 3：跨区域高可用 (Geo-replication) 多写配置**
+  * *Context*：进一步拓宽 Cosmos DB 的异地多区域多写和高可用灾备，并对多区域的网络拓扑连接进行物理建模。
+
+---
+*Last updated: 2026-07-03 | Handover Architect: AI Cloud Architect*
