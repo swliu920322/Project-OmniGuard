@@ -39,14 +39,27 @@ if [ -z "$OPENAI_KEY" ]; then
   OPENAI_KEY="dummy-openai-key-replace-me"
 fi
 
-# 部署 Bicep 模板
+# 部署 Bicep 基础设施
 echo -e "\n✅ [2/3] 部署 Bicep 基础设施..."
-az deployment sub create \
-  --name "$DEPLOYMENT_NAME" \
-  --location "$LOCATION" \
-  --template-file .azure/main.bicep \
-  --parameters location="$LOCATION" prefix="$PREFIX" openAiKey="$OPENAI_KEY" openAiDeploymentName="$OPENAI_DEPLOYMENT" \
-  --output table
+PARAM_FILE=".azure/main.parameters.json"
+
+if [ -f "$PARAM_FILE" ]; then
+  echo "📌 检测到配置台生成的本地参数文件 ($PARAM_FILE)，正在以自定义规格部署..."
+  az deployment sub create \
+    --name "$DEPLOYMENT_NAME" \
+    --location "$LOCATION" \
+    --template-file .azure/main.bicep \
+    --parameters "@$PARAM_FILE" \
+    --output table
+else
+  echo "📌 未检测到参数文件，回退到默认开发规格进行部署..."
+  az deployment sub create \
+    --name "$DEPLOYMENT_NAME" \
+    --location "$LOCATION" \
+    --template-file .azure/main.bicep \
+    --parameters location="$LOCATION" prefix="$PREFIX" openAiKey="$OPENAI_KEY" openAiDeploymentName="$OPENAI_DEPLOYMENT" \
+    --output table
+fi
 
 # 提取资源信息
 echo -e "\n✅ [3/3] 提取资源信息..."
