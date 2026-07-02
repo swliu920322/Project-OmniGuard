@@ -1,148 +1,137 @@
-# 蓝图 24: 多场景交叉验证与云端排障手册 (E2E Testing & Troubleshooting Playbook)
+# 蓝图 24: 场景预设与功能包交叉测试手册 (Feature Pack Cross-Testing Playbook)
 
-> **文档目的**: 指导架构师在全新云端订阅中，跑通“Sandbox 沙箱”与“Secure-IoT 零信任”两大场景的交叉验证，故意制造并捕捉各种边界报错，实现对系统网络与身份防线的全覆盖测试。
-
----
-
-## 1. 测试场景矩阵与设计对照
-
-在测试前，先明确两套标准场景和三个交叉报错场景的参数对照：
-
-| 测试场景编号 | 场景定位 | 托管身份开关 | 虚拟网段设置 | 预期结果与验证重点 |
-|:---|:---|:---|:---|:---|
-| **场景 01** | Sandbox 极速测试 | 禁用 (`false`) | VNet: `10.1.0.0/16`<br>ACA: `10.1.4.0/23`<br>Storage: `10.1.2.0/24` | **秒级部署成功**。回退到经典密钥通信，Key Vault 开启公网访问，不创建任何 RBAC 角色指派。 |
-| **场景 02** | Secure-IoT 零信任 | 启用 (`true`) | VNet: `10.2.0.0/16`<br>ACA: `10.2.4.0/23`<br>Storage: `10.2.2.0/24` | **零信任部署成功**。托管身份建立，Key Vault 禁用公网，通过 Private Endpoint 与私网 DNS 解析（`10.2.2.x`）实现内网安全读取。 |
-| **交叉 A (网段重合)**| 边界碰撞测试 | 任意 | VNet: `10.1.0.0/16`<br>ACA: `10.1.4.0/24`<br>Storage: `10.1.4.128/24` | **配置台保存拦截**。服务端校验抛出 `422` 错误，阻止写入 `.azure/`。 |
-| **交叉 B (越界划分)**| 边界越界测试 | 任意 | VNet: `10.1.0.0/16`<br>ACA: `10.1.4.0/23`<br>Storage: `192.168.1.0/24` | **配置台保存拦截**。服务端校验提示 Storage 子网未被包含在 VNet 范围内。 |
-| **交叉 C (越权测试)**| 权限不足回退 | 启用 (`true`) | 任意合法网段 | **云端预检或影子测试挂掉**。若部署账号不是订阅 Owner，抛出 `RoleAssignmentCreationFailed`，验证系统是否能优雅降级回退。 |
+> **文档目的**: 指导架构师针对“极简沙箱 (Sandbox)”、“内网隔离 (Secure-IoT)”、“全球门户 (Global Portal)”三大场景预设，与四个核心“功能包 (Feature Packs)”进行深度交叉组合测试，定义其在 IaC 模板与参数文件中的期望输出和校验点。
 
 ---
 
-## 2. 场景 01：Sandbox 极速开发轨（手动部署与验收）
+## 1. 功能包与拓扑底座设计映射
 
-### 2.1 网页端配置要点
-1. 选择场景预设为 `Sandbox`。
-2. 基础标识标签页中将 `prefix` 设为 `omnisand`。
-3. 网络拓扑标签页中保持默认网段。
-4. 安全与托管标签页中**关闭【托管身份】**。
-5. 点击 **【一键生成拓扑并验证 .azure/】** 保存。
+配置台中提供的 4 个功能包（Feature Packs）分别控制 Bicep 模板中不同层级的资源部署与参数开关：
 
-### 2.2 部署命令
-在本地终端执行部署命令：
-```bash
-az deployment sub create --location southeastasia --template-file .azure/main.bicep --parameters @.azure/main.parameters.json
+| 功能包标识 | UI 中文名称 | Bicep 参数映射 | 激活时触发的 IaC 变更 |
+|:---|:---|:---|:---|
+| **`packZeroTrust`** | 零信任托管身份包 | `deployManagedIdentities: true` | 创建 User-Assigned MI、Key Vault；容器挂载 MI 权限，环境变量采用 Key Vault Reference 密文引用。 |
+| **`packGlobalWaf`** | 全球流量清洗与安全防护包 | `deployStaticWebApp: true` / `deployFrontDoorWaf: true` | 在计算层前置部署 Azure Static Web App (SWA) 或 Front Door Premium，并激活防火墙 (WAF) 拦截规则。 |
+| **`packScaleToZero`** | 绿能自动休眠包 | `minReplicas: 0`<br>`maxReplicas: 2` | 修改 ACA 容器规格最小副本数为 0。关闭计算资源的“常驻模式”，触发闲时缩容自愈。 |
+| **`packIoTDps`** | 物联网自动注册分发包 | `deployIotDps: true` | 动态部署 Azure Device Provisioning Service (DPS)，将其与 IoT Hub 绑定，建立硬件零接触注册通道。 |
+
+---
+
+## 2. 三大基础场景（Presets）功能基线
+
+在执行交叉测试前，先确保三大基线预设行为正确：
+
+### 01. 极简沙箱 (Sandbox) ➔ 极简按量计费轨
+* **基线状态**：
+  * 计算：ACA 副本可休眠（`minReplicas: 0`）。
+  * 网络：VNet 开放公网路由，Storage/Cosmos DB 开启公网访问 (`publicNetworkAccess: 'Enabled'`)。
+  * 身份：禁用托管身份，回退到经典 Connection String 通信。
+
+### 02. 内网隔离 (Secure-IoT) ➔ 身网双锁轨
+* **基线状态**：
+  * 网络：VNet 禁用 Storage/Cosmos DB/Key Vault 公网访问，强制使用 Private Endpoint，在 StorageSubnet 分配内网 IP，绑定 Private DNS 区域自愈解析。
+  * 身份：默认启用托管身份与 RBAC 授权。
+
+### 03. 全球门户 (Global Portal) ➔ 全球边缘加速防护轨
+* **基线状态**：
+  * 计算：前端切换为全球分布式 Static Web App (SWA) 并挂载边缘防火墙。
+  * 身份：默认启用托管身份。
+  * 网络：开启 Front Door Premium 边缘专线，限制后端 ACA 仅接受来自 Front Door 的加密流量（通过注入 Header 校验）。
+
+---
+
+## 3. 交叉场景测试用例与 IaC 期望验证
+
+通过自由勾选/去勾选功能包，测试以下 4 个典型交叉场景，验证产物参数的自愈性：
+
+```text
+               【 交叉组合测试拓扑图 】
+               
+   ┌────────────────────────────────────────────────────────┐
+   │ 预设 Preset: Sandbox / Secure-IoT / Global Portal       │
+   └───────────────────────────┬────────────────────────────┘
+                               │
+            ┌──────────────────┴──────────────────┐
+            ▼                                     ▼
+     【 身份与安全面 】                    【 计算与网络面 】
+   ┌──────────────────────┐              ┌──────────────────────┐
+   │ ▢ packZeroTrust      │              │ ▢ packScaleToZero    │
+   │ ▢ packGlobalWaf      │              │ ▢ packIoTDps         │
+   └──────────────────────┘              └──────────────────────┘
 ```
 
-### 2.3 物理验收指标 (验明“降级回退”有效性)
-* **检查 1：容器环境变量**
-  打开 Azure Portal，查看容器应用 `omnisand-backend` 的环境变量：
-  * `USE_MANAGED_IDENTITY` 应为 `"false"`。
-  * `COSMOS_KEY` 与 `AzureWebJobsStorage` 应直接以明文连接串和密钥注入，无 Key Vault Reference 引用。
-* **检查 2：角色指派裁剪**
-  在资源组 `omnisand-guard-infra-sea-rg` 的 Access Control (IAM) ➔ Role Assignments 中，**不应存在任何**指向 `${prefix}-backend-identity` 的角色记录。
+### 🧪 交叉用例 1: Sandbox (极简沙箱) + 升级 ZeroTrust (零信任托管身份)
+> **测试目的**：验证极简开发环境下，如果不做复杂的内网隔离（无 PE），是否也能独立使用托管身份进行安全改造。
+
+* **配置操作**：
+  1. 选择 `Sandbox` 预设。
+  2. 勾选 **【零信任托管身份包】**（手动开启 `packZeroTrust`）。
+  3. 保存参数。
+* **IaC 产物校验点** (`.azure/main.parameters.json`)：
+  * `deployManagedIdentities` 必须被改写为 `true`。
+  * `openAiKey` 必须被存入 Key Vault，且生成了角色指派 `roleAssignments`。
+  * **网络边界验证**：`.azure/nested-infra.bicep` 中，Key Vault 与 Storage 的 `publicNetworkAccess` 必须保持为 `'Enabled'`。这证明托管身份可以与公网资源共存，未被内网 PE 强制锁死。
 
 ---
 
-## 3. 场景 02：Secure-IoT 零信任生产轨（影子 E2E 与物理验收）
+### 🧪 交叉用例 2: Secure-IoT (内网隔离) + 禁用 ZeroTrust (降级为经典密钥)
+> **测试目的**：验证在高度隔离的网络中，针对没有订阅 Owner 权限的受限账户，如何降级为对称密钥安全连接。
 
-### 3.1 网页端配置要点
-1. 选择场景预设为 `Secure-IoT`。
-2. 基础标识标签页中将 `prefix` 设为 `omnisec`。
-3. 填入有效的 `openAiKey` 密文。
-4. 安全与托管标签页中**勾选启用【托管身份】**。
-5. 点击 **【一键生成拓扑并验证 .azure/】** 保存。
-
-### 3.2 影子安全测试验证 (Shadow E2E)
-在终端运行我们的影子集成测试，不影响现有部署：
-```bash
-python3 sh/shadow-e2e-test.py
-```
-* **审计重点**：脚本会自动断言 Cosmos DB 与 Key Vault 私网 DNS 的 A 记录是否成功注册为 `10.1.2.x`（影子默认网段）。测试结束后，脚本应异步清退销毁资源组 `omnitest-guard-infra-sea-rg`。
-
-### 3.3 物理部署与验收 (验明“身网双锁”完备性)
-如果手动部署：
-```bash
-az deployment sub create --location southeastasia --template-file .azure/main.bicep --parameters @.azure/main.parameters.json
-```
-* **验收 1：Key Vault 网络隔离**
-  * 在 Portal 中打开 Key Vault `omnisec-kv-...` ➔ Networking，其 Public Access 必须为 **Disabled**。
-  * 在您本地浏览器中尝试访问该 Vault 的 Secret，应被弹回 **403 Forbidden**，证明公网拦截成功。
-* **验收 2：Key Vault Reference 零泄露**
-  * 检查容器应用 `omnisec-backend` 环境变量，`OPENAI_API_KEY` 的值必须是以 `@Microsoft.KeyVault(SecretUri=...)` 表示的引用格式，无法从容器定义中查看到密钥本体。
-* **验收 3：私有 DNS 解析自愈**
-  * 登录资源组中的 Spoke 虚拟网络，检查 Private DNS Zones：
-    * `privatelink.vaultcore.azure.net`
-    * `privatelink.documents.azure.net`
-  * 它们必须均包含一个指向 `10.2.2.x`（即您在页面上配置的 StorageSubnet）的 A 记录，且 VNet Link 已成功关联您的 Spoke VNet。
+* **配置操作**：
+  1. 选择 `Secure-IoT` 预设。
+  2. 去勾选 **【零信任托管身份包】**（强制将 `deployManagedIdentities` 设为 `false`）。
+  3. 保存参数。
+* **IaC 产物校验点**：
+  * `deployManagedIdentities` 必须为 `false`。
+  * **安全边界验证**：`.azure/main.bicep` 和 `nested-infra.bicep` 中没有创建任何 `Microsoft.Authorization/roleAssignments`。
+  * **连接边界验证**：容器 `backend` 的环境变量中，`COSMOS_KEY` 依然是明文提取 `listKeys(cosmosAccount.id).primaryMasterKey`。虽然使用密钥连接，但网络上依然被限制在 Private Endpoint 内，流量未出 VNet。
 
 ---
 
-## 4. 交叉测试：故意制造报错与安全拦截
+### 🧪 交叉用例 3: Global Portal (全球门户) + 绿能 ScaleToZero (自动休眠)
+> **测试目的**：针对面向公网的业务门户，在开发测试阶段开启闲时休眠，测试前端边缘加速与后端冷启动休眠的共存。
 
-通过故意配置错误的参数，验证配置台和服务端校验的稳健性：
-
-### 4.1 制造网段碰撞冲突 (交叉 A)
-1. 在网络拓扑页面，将 ACA 子网设为 `10.1.4.0/24`，将 Storage 子网设为 `10.1.4.128/24`（二者在 `/24` 网段内产生物理重叠）。
-2. 点击保存。
-3. **预期拦截结果**：页面会弹出红色报错，API 拒绝写入文件并返回 `422 Unprocessable Entity`。控制台终端显示：
-   `[!] 网络分配重叠：容器子网 (10.1.4.0/24) 与存储子网 (10.1.4.128/24) 的 IP 地址段存在重合冲突！`
-
-### 4.2 制造子网越界冲突 (交叉 B)
-1. 将 VNet CIDR 设为 `10.1.0.0/16`。
-2. 将 Storage 子网设为 `192.168.1.0/24`（超出了 VNet 网段）。
-3. 点击保存。
-4. **预期拦截结果**：保存被阻断，API 拦截并报错提示：
-   `[!] 存储子网 (192.168.1.0/24) 必须完全包含在 VNet (10.1.0.0/16) 的地址空间范围内。`
+* **配置操作**：
+  1. 选择 `Global Portal` 预设。
+  2. 勾选 **【绿能自动休眠包】**（开启 `packScaleToZero`）。
+  3. 保存参数。
+* **IaC 产物校验点**：
+  * `deployStaticWebApp` 必须为 `true`（前端部署 SWA）。
+  * 检查 `.azure/compute-module.bicep`，`backendApp` 容器的 `scale` 配置项：
+    * `minReplicas` 必须为 `0`。
+    * `maxReplicas` 必须为 `2`。
+  * **验证**：当前端通过 SWA 访问后端 API 时，如果无流量，后端 ACA 会缩容至 0 节省费用；当新请求从边缘到达时，自动冷启动拉起。
 
 ---
 
-## 5. 云端真实部署常见报错排障手册 (Troubleshooting Playbook)
+### 🧪 交叉用例 4: Secure-IoT (内网隔离) + 激活 IoTDps (物联网自动分发包)
+> **测试目的**：测试在内网闭环中加入大规模硬件零接触分发模块（DPS）。
 
-### 🚨 报错 1: `RoleAssignmentCreationFailed` (授权失败)
-* **典型错误日志**：
-  ```text
-  The client 'xxx' with object id 'xxx' does not have authorization to perform action 'Microsoft.Authorization/roleAssignments/write' over scope '/subscriptions/xxx/resourceGroups/xxx'.
-  ```
-* **触发根源**：您的部署账号（或 GitHub Actions 服务主体）在订阅级别仅有 `Contributor` 权限，不具备 `User Access Administrator` 或 `Owner` 权限，无法在 Bicep 中建立托管身份对 Key Vault/Cosmos DB 的 RBAC 角色指派。
-* **自愈方案**：
-  * *方案一 (安全降级)*：在配置台中**关闭【托管身份】**重新保存。Bicep 会完全裁剪掉 `roleAssignments` 资源，再次部署即可 100% 成功。
-  * *方案二 (企业授权)*：联系您的 Azure 管理员，为您的服务主体或账号指派 `User Access Administrator` 角色。
-
-### 🚨 报错 2: Key Vault Reference 状态为 `AccessToKeyVaultDenied`
-* **典型错误日志**：
-  在 Container App 的 Revision 中，容器无法拉起，查看 System Logs 提示：
-  ```text
-  Failed to resolve Key Vault Reference: Access to Key Vault denied. System identity does not have secrets/read permissions.
-  ```
-* **触发根源**：
-  1. 您在 Bicep 中**误用**了 System-Assigned Identity，但角色指派生效前容器已经拉起；
-  2. 或者 User-Assigned Identity 的 RBAC 授权还没有在 Entra ID 中全球同步完毕（通常需要 1-3 分钟延迟）。
-* **自愈方案**：
-  * 我们模板已经强制改用 **User-Assigned Identity**，可大幅缓解此问题。若遇到网络延时，请在 Portal 中手动 Restart 容器应用以重新拉取密钥引用。
-  * 检查 Key Vault ➔ Access Control (IAM)，确认 `Key Vault Secrets User` 确实指派给了您的 `omnisec-backend-identity`。
-
-### 🚨 报错 3: `InvalidSubnetMask` (子网掩码太长)
-* **典型错误日志**：
-  ```text
-  Subnet 'BackendSubnet' requires a minimum size of /23 for Container App Environment integration.
-  ```
-* **触发根源**：ACA 容器环境的内网网段规定掩码长度必须小于等于 `/23`（即至少需要 512 个 IP 地址供副本漂移和扩缩容），如果配成 `/24` 或 `/25` 会在 ARM 级别报错。
-* **自愈方案**：配置台已经对 ACA 子网掩码做了硬性前端 + 后端双重拦截（限制掩码 $\le 23$），请不要通过手动篡改 parameters.json 绕过此安全校验。
+* **配置操作**：
+  1. 选择 `Secure-IoT` 预设。
+  2. 勾选 **【物联网自动注册分发包】**（开启 `packIoTDps`）。
+  3. 保存参数。
+* **IaC 产物校验点**：
+  * 检查参数 JSON，`deployIotDps` 必须为 `true`。
+  * 检查 `.azure/nested-infra.bicep`，必须成功声明了 `Microsoft.Devices/provisioningServices` (DPS) 资源：
+    ```bicep
+    resource iotDps 'Microsoft.Devices/provisioningServices@2022-12-15' = if (deployIotDps) {
+      name: '${prefix}-dps'
+      location: location
+      ...
+    }
+    ```
+  * 验证 DPS 与 IoT Hub 的关联授权指派资源是否被条件编译拉起。
 
 ---
 
-## 6. 命令行调试排障技巧
+## 4. 交叉测试快速排障与断言验证清单
 
-当网络解析出现异常，可利用以下 Azure CLI 命令在内网进行跟踪：
+在您运行 `sh/shadow-e2e-test.py` 或 `make provision` 时，如果混合配置了不同的功能包，请使用以下清单进行一致性诊断：
 
-### 6.1 查询私有网卡分配的真实内网 IP
-```bash
-az network nic list -g <您的资源组> --query "[].ipConfigurations[].privateIpAddress"
-```
-*检查：是否所有的 Private Endpoint IP 都落在了您规划的 `StorageSubnet (10.x.2.x)` 内。*
-
-### 6.2 在 VNet Link 关联的私网 DNS 区域中查询解析
-```bash
-az network private-dns record-set a list -g <您的资源组> -z privatelink.vaultcore.azure.net --query "[].{Name:name, IPs:aRecords[].ipv4Address}"
-```
-*检查：对应的 Key Vault FQDN 是否已正确映射到了上述查出的私网 IP。*
+1. **托管身份包 (`packZeroTrust`) 与 部署账号权限**：
+   * *冲突表现*：勾选了 `packZeroTrust`，但部署账号没有 Owner 权限，云端预检报错：`RoleAssignmentCreationFailed`。
+   * *恢复策略*：去勾选 `packZeroTrust`，再次执行 `make provision` 即可自愈通过。
+2. **全球WAF包 (`packGlobalWaf`) 与 静态网页部署**：
+   * *冲突表现*：如果启用了 WAF 但后端 ACA 域名发生变动，导致 Front Door 的 Backend Pool 路由指向了旧域名。
+   * *恢复策略*：检查部署输出的 `REAL_FE_URL`，确认 Front Door 的自定义探测头（Host Header Override）已经刷新指向新的 ACA 内网 FQDN。
