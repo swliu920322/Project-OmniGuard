@@ -139,7 +139,7 @@ resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' =
   name: guid(keyVault.id, backendIdentity.id, '46334581-17ef-401a-b113-35a0419c4b5e')
   scope: keyVault
   properties: {
-    principalId: backendIdentity.properties.principalId
+    principalId: backendIdentity.?properties.principalId ?? ''
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '46334581-17ef-401a-b113-35a0419c4b5e')
     principalType: 'ServicePrincipal'
   }
@@ -194,7 +194,7 @@ resource iotHub 'Microsoft.Devices/IotHubs@2023-06-30' = {
   sku: { name: 'F1', capacity: 1 }
   properties: {
     routing: {
-      endpoints: { events: [] }
+      endpoints: { eventHubs: [] }
       routes: [
         {
           name: 'DeviceTelemetryRoute'
@@ -219,8 +219,8 @@ module computeBrain './compute-module.bicep' = {
     cosmosKey: cosmosAccount.listKeys().primaryMasterKey
     openAiKey: openAiKey
     openAiDeploymentName: openAiDeploymentName
-    iotHubServiceConnectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey}'
-    iotHubEventHubConnectionString: 'Endpoint=${iotHub.properties.eventHubEndpoints.events.endpoint};SharedAccessKeyName=iothubowner;SharedAccessKey=${listKeys(iotHub.id, '2023-06-30').value[0].primaryKey};EntityPath=${iotHub.properties.eventHubEndpoints.events.path}'
+    iotHubServiceConnectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey}'
+    iotHubEventHubConnectionString: 'Endpoint=${iotHub.properties.eventHubEndpoints.events.endpoint};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey};EntityPath=${iotHub.properties.eventHubEndpoints.events.path}'
     deployManagedIdentities: deployManagedIdentities
     backendIdentityId: deployManagedIdentities ? backendIdentity.id : ''
     keyVaultUri: keyVault.properties.vaultUri

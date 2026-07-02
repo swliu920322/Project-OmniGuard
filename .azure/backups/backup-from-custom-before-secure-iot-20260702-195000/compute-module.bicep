@@ -12,6 +12,7 @@ param deployStaticWebApp bool = false
 
 @secure()
 param openAiKey string
+param openAiDeploymentName string = 'gpt-5.4-mini'
 @secure()
 param iotHubServiceConnectionString string
 @secure()
@@ -96,6 +97,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
             { name: 'IotHubServiceConnectionString', secretRef: 'iothub-service-conn' }
             { name: 'IotHubEventHubConnectionString', secretRef: 'iothub-eventhub-conn' }
             { name: 'OPENAI_API_KEY', value: deployManagedIdentities ? '@Microsoft.KeyVault(SecretUri=${keyVaultUri}secrets/openAiKey)' : openAiKey }
+            { name: 'OPENAI_DEPLOYMENT_NAME', value: openAiDeploymentName }
           ]
         }
       ]

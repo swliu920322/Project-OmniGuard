@@ -772,7 +772,7 @@ export default function BicepConfiguratorPage() {
             storageSubnetPrefix={storageSubnetPrefix}
             setStorageSubnetPrefix={setStorageSubnetPrefix}
             validationErrors={validationErrors}
-            onManualTweak={() => setActiveScenario('custom')}
+            onManualTweak={() => {}}
           />
 
           {/* Section 4: Advanced Options Accordion */}

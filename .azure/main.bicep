@@ -23,8 +23,8 @@ var hubVNetName = '${prefix}-hub-vnet'
 var spokeVNetName = '${prefix}-spoke-vnet'
 
 var defaultTags = {
-  Environment: 'Sandbox'
-  Scenario: 'DevSandbox'
+  Environment: 'Production-Intake'
+  Scenario: 'SecureIoTPipeline'
   FinOpsOwner: finOpsOwner
   CostCenter: costCenter
 }
@@ -36,7 +36,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
 }
 
 module infraDeployment './nested-infra.bicep' = {
-  name: 'Nested-Sandbox-Deployment'
+  name: 'Nested-SecureIoT-Deployment'
   scope: resourceGroup(rg.name)
   params: {
     location: location
@@ -48,7 +48,7 @@ module infraDeployment './nested-infra.bicep' = {
     spokeVNetName: spokeVNetName
     openAiKey: openAiKey
     openAiDeploymentName: openAiDeploymentName
-    deployManagedIdentities: false
+    deployManagedIdentities: true
     deployStaticWebApp: deployStaticWebApp
   }
 }

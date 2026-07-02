@@ -310,7 +310,7 @@ resource iotHub 'Microsoft.Devices/IotHubs@2023-06-30' = {
   }
 }
 
-resource dps 'Microsoft.Devices/provisioningServices@2022-12-15' = {
+resource dps 'Microsoft.Devices/provisioningServices@2021-10-15' = {
   name: '${prefix}-iot-dps'
   location: location
   sku: { name: 'S1', capacity: 1 }
