@@ -51,14 +51,14 @@
    }
    ```
 4. **进行 Key Vault 权限分配 (RBAC)**:
-   * 仅在 `deployManagedIdentities` 为 `true` 时，向 `backendIdentity` 分配 `Key Vault Secrets User`（角色 ID: `46334581-17ef-401a-b113-35a0419c4b5e`）角色。
+   * 仅在 `deployManagedIdentities` 为 `true` 时，向 `backendIdentity` 分配 `Key Vault Secrets User`（角色 ID: `4633458b-17de-408a-b874-0445c86b69e6`）角色。
    ```bicep
    resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (deployManagedIdentities) {
-     name: guid(keyVault.id, backendIdentity.id, '46334581-17ef-401a-b113-35a0419c4b5e')
+     name: guid(keyVault.id, backendIdentity.id, '4633458b-17de-408a-b874-0445c86b69e6')
      scope: keyVault
      properties: {
        principalId: backendIdentity.properties.principalId
-       roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '46334581-17ef-401a-b113-35a0419c4b5e')
+       roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
        principalType: 'ServicePrincipal'
      }
    }

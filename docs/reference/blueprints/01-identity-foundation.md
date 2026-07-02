@@ -84,7 +84,7 @@ resource backendIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-
 
 ### Step 2: 为 Key Vault 分配只读角色 (RBAC)
 ```bicep
-var keyVaultSecretsUserRole = '46334581-17ef-401a-b113-35a0419c4b5e' // Built-in Secrets User Role ID
+var keyVaultSecretsUserRole = '4633458b-17de-408a-b874-0445c86b69e6' // Built-in Secrets User Role ID
 
 resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (deployManagedIdentities) {
   name: guid(keyVault.id, backendIdentity.id, keyVaultSecretsUserRole)

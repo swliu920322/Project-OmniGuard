@@ -149,11 +149,11 @@ resource openAiSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = if (!empt
 
 // Key Vault RBAC: grant backendIdentity Key Vault Secrets User
 resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (deployManagedIdentities) {
-  name: guid(keyVault.id, backendIdentity.id, '46334581-17ef-401a-b113-35a0419c4b5e')
+  name: guid(keyVault.id, backendIdentity.id, '4633458b-17de-408a-b874-0445c86b69e6')
   scope: keyVault
   properties: {
     principalId: backendIdentity.?properties.principalId ?? ''
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '46334581-17ef-401a-b113-35a0419c4b5e')
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
     principalType: 'ServicePrincipal'
   }
 }
@@ -284,7 +284,7 @@ resource cosmosDbRoleAssignment 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAs
   parent: cosmosAccount
   properties: {
     principalId: backendIdentity.?properties.principalId ?? '00000000-0000-0000-0000-000000000000'
-    roleDefinitionId: '/${subscription().id}/providers/Microsoft.DocumentDB/databaseAccounts/${cosmosAccount.name}/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002'
+    roleDefinitionId: '${cosmosAccount.id}/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002'
     scope: cosmosAccount.id
   }
 }
