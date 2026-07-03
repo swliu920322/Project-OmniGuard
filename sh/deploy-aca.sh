@@ -58,7 +58,7 @@ az containerapp update \
   --name "omni-frontend" \
   --resource-group "$RG" \
   --image "${ACR_NAME}.azurecr.io/omniguard-frontend:latest" \
-  --set-env-vars TRIGGER_VERSION="$(date +%s)" \
+  --set-env-vars TRIGGER_VERSION="$(date +%s)" PORT="80" \
   --output none
 
 # 提取发布地址
