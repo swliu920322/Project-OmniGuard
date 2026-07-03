@@ -193,7 +193,7 @@ resource frontendApp 'Microsoft.App/containerApps@2024-03-01' = {
       activeRevisionsMode: 'Single'
       ingress: {
         external: true
-        targetPort: 3000
+        targetPort: 80
         transport: 'auto'
       }
       registries: [

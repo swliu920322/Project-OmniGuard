@@ -1,7 +1,7 @@
 # =========================================================================
 # 🛠️ Project-OmniGuard 统一控制总线
 # =========================================================================
-.PHONY: provision whatif start-backend start-frontend destroy deploy-aca trigger-ci help add-device research
+.PHONY: provision whatif start-backend start-frontend destroy deploy-aca trigger-ci help add-device research clean
 
 help:
 	@echo "======================================================"
@@ -51,3 +51,6 @@ add-device:
 research:
 	@echo "🚀 [CLI] 正在启动增量推文数据采集、双语翻译与投研分析..."
 	@cd src/cloud-orchestrator && ./.venv/bin/python run_analysis.py
+
+clean:
+	docker builder prune -a -f
