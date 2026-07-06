@@ -8,7 +8,7 @@ import hashlib
 import logging
 import requests
 from urllib.parse import quote
-from openai import AzureOpenAI
+from openai_config import get_azure_openai_client, get_openai_credentials
 from azure.cosmos import CosmosClient
 
 SCENARIO_REGISTRY_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scenario_registry.json")
@@ -84,19 +84,11 @@ _openai_client = None
 def get_openai_client():
     global _openai_client
     if _openai_client is None:
-        api_key = os.getenv("AZURE_OPENAI_API_KEY")
-        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
-        if not api_key or not endpoint:
-            raise ValueError("Azure OpenAI credentials missing.")
-        _openai_client = AzureOpenAI(
-            api_key=api_key,
-            api_version="2024-02-15-preview",
-            azure_endpoint=endpoint
-        )
+        _openai_client = get_azure_openai_client()
     return _openai_client
 
 def ask_agent(system_prompt: str, user_input: str, max_completion_tokens: int = 100) -> str:
-    deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-5.4-mini")
+    _, _, deployment = get_openai_credentials()
     client = get_openai_client()
     
     response = client.chat.completions.create(
