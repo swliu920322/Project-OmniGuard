@@ -17,7 +17,7 @@
 | 6 | **计算与容器化** | ACA, AKS, ACR, Functions | ~8% | ACA + Functions 已运行 | P0 |
 | 7 | **数据平台** | Cosmos DB, SQL DB, Redis, AI Search, Data Lake | ~8% | Cosmos DB 已用, 需优化 | P1 |
 | 8 | **事件驱动与集成** | Event Grid, Service Bus, Logic Apps, Durable Functions | ~7% | IoT Hub -> Event Hub 路由已设 | P2 |
-| 9 | **CI/CD & DevOps** | DevOps, GitHub Actions, Deployment Slots, Bicep | ~7% | sh/ 脚本部署, 无 CI/CD pipeline | P1 |
+| 9 | **CI/CD & DevOps** | DevOps, GitHub Actions, Deployment Slots, Bicep | ~7% | scripts/ 脚本部署, 无 CI/CD pipeline | P1 |
 | 10 | **成本与 FinOps** | Cost Management, Budgets, Reservations, Advisor | ~5% | 无 | P1 |
 | 11 | **高可用与灾备 (HA/DR)** | Availability Zones, Geo-replication, Backup Vault | ~5% | 单区域 Singapore | P2 |
 | 12 | **合规与治理** | Policy, Landing Zones, Blueprints, Purview Compliance | ~3% | 无 | P2 |
@@ -133,12 +133,12 @@ docs/reference/blueprints/
    * **物理证明零信任边界**：未授权访问 Key Vault 提示 `ForbiddenByRbac` 身份锁拦截；临时授权后，公网访问依然被 `ForbiddenByConnection` (`PublicAccessDisabled`) 物理拦截。只有合规托管身份通过 Spoke 内网的 PE 节点才能成功连通。
    * **DNS 解析自愈**：Cosmos DB 与 Key Vault 分别解析绑定到了 `10.1.2.6` 和 `10.1.2.4` 私网 IP，容器环境运行状态为 `Succeeded`，实测日志流一切就绪。
 4. **DevOps 效率与架构资产沉淀**：
-   * 增加了 `make whatif` 预检工具，调用 `sh/provision-whatif.sh` 支持自适应租户前缀提取的 Dry-run 干跑，节约 80%+ 的排队等待时间。
-   * 归档了 **ADR-032** 架构决策记录，并在 `2-secure-IoT.md`、`3-global-portal.md`、`4-all.md` 验收报告中补充了完整的真实 CLI 运行输出与 SKU 等级记录。
-5. **ACA Ingress 与 OpenAI 凭证统一治理 (ADR-033)**：
-   * **Ingress 降级修复**：解决了 ACA 内部 Ingress HTTP→HTTPS 重定向导致 Node.js `fetch` 将 `POST` 改变为 `GET`（引发 FastAPI 405 Method Not Allowed 报错）的网络级拦截问题。通过在 Bicep 中声明 `allowInsecure: true` 彻底疏通。
-   * **凭证统一注入**：对齐了三种不同的 Python OpenAI 环境变量命名，并在 `sh/deploy-aca.sh` 中实现了自适应读取本地 `local.settings.json` 并动态注入至 Container Apps 的流程，避开了测试订阅无 quota 的痛点。
-   * **多租户前缀自动化滚动发布**：重构了 `sh/deploy-aca.sh`，使其在检测到参数文件时能够动态解析出真实的 `PREFIX` 与 `RG` 进行升级部署（支持 `omni3`、`omni4`、`omni5` 的无缝滚动更新）。
+    * 增加了 `make whatif` 预检工具，调用 `scripts/provision-whatif.sh` 支持自适应租户前缀提取的 Dry-run 干跑，节约 80%+ 的排队等待时间。
+    * 归档了 **ADR-032** 架构决策记录，并在 `2-secure-IoT.md`、`3-global-portal.md`、`4-all.md` 验收报告中补充了完整的真实 CLI 运行输出与 SKU 等级记录。
+ 5. **ACA Ingress 与 OpenAI 凭证统一治理 (ADR-033)**：
+    * **Ingress 降级修复**：解决了 ACA 内部 Ingress HTTP→HTTPS 重定向导致 Node.js `fetch` 将 `POST` 改变为 `GET`（引发 FastAPI 405 Method Not Allowed 报错）的网络级拦截问题。通过在 Bicep 中声明 `allowInsecure: true` 彻底疏通。
+    * **凭证统一注入**：对齐了三种不同的 Python OpenAI 环境变量命名，并在 `scripts/deploy-aca.sh` 中实现了自适应读取本地 `local.settings.json` 并动态注入至 Container Apps 的流程，避开了测试订阅无 quota 的痛点。
+    * **多租户前缀自动化滚动发布**：重构了 `scripts/deploy-aca.sh`，使其在检测到参数文件时能够动态解析出真实的 `PREFIX` 与 `RG` 进行升级部署（支持 `omni3`、`omni4`、`omni5` 的无缝滚动更新）。
 6. **Azure OpenAI 凭证加载与客户端实例化规范化统一 (ADR-034)**：
    * **统一配置与加载**：创建了中央凭证加载工具 `openai_config.py`，集中式处理本地 `local.settings.json` 参数自动注入与标准 `AZURE_OPENAI_*` 变量和 OpenAI 兼容变量的优先级解析。
    * **消除冗余与不一致**：全面重构了 `digitalhuman/router.py`、`embodied_brain/utils.py` 和 `kol_analysis/inference_engine.py`，移除所有重复解析与实例化代码，消除了 `digitalhuman` 由于缺乏 fallback 潜在的静默崩溃隐患。
