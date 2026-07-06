@@ -8,13 +8,13 @@ from fastapi.responses import StreamingResponse
 digital_human_router = APIRouter()
 
 def build_llm_client():
-  endpoint = os.environ.get("OPENAI_BASE_URL", "").strip()
-  api_key = os.environ.get("OPENAI_API_KEY", "").strip()
-  model = os.environ.get("OPENAI_API_DEPLOYMENT_NAME", "gpt-4o-mini").strip()
+  endpoint = (os.environ.get("OPENAI_BASE_URL") or os.environ.get("AZURE_OPENAI_ENDPOINT") or "").strip()
+  api_key = (os.environ.get("OPENAI_API_KEY") or os.environ.get("AZURE_OPENAI_API_KEY") or "").strip()
+  model = (os.environ.get("OPENAI_API_DEPLOYMENT_NAME") or os.environ.get("OPENAI_DEPLOYMENT_NAME") or os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME") or "gpt-4o-mini").strip()
 
   print(f"[⚡ AZURE SIGN] 激活 Azure OpenAI 客户端 // DEPLOYMENT_NAME: {model} // ENDPOINT: {endpoint}")
   if not endpoint or not api_key:
-    raise ValueError("Missing OPENAI_BASE_URL or OPENAI_API_KEY in local.settings.json")
+    raise ValueError("Missing OpenAI base URL or API key in environment variables")
 
   from openai import AsyncAzureOpenAI
   return AsyncAzureOpenAI(
