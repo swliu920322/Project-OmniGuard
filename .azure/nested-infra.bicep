@@ -13,6 +13,7 @@ param storageSubnetPrefix string = '10.1.2.0/24'
 
 @secure()
 param openAiKey string = ''
+param openAiEndpoint string = 'https://southeastaisa-0322-resource.openai.azure.com'
 param openAiDeploymentName string = 'gpt-5.4-mini'
 
 var backendNsgRules = [
@@ -334,6 +335,7 @@ module computeBrain './compute-module.bicep' = {
     cosmosEndpoint: cosmosAccount.properties.documentEndpoint
     cosmosKey: cosmosAccount.listKeys().primaryMasterKey
     openAiKey: openAiKey
+    openAiEndpoint: openAiEndpoint
     openAiDeploymentName: openAiDeploymentName
     iotHubServiceConnectionString: 'HostName=${iotHub.properties.hostName};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey}'
     iotHubEventHubConnectionString: 'Endpoint=${iotHub.properties.eventHubEndpoints.events.endpoint};SharedAccessKeyName=iothubowner;SharedAccessKey=${iotHub.listKeys().value[0].primaryKey};EntityPath=${iotHub.properties.eventHubEndpoints.events.path}'

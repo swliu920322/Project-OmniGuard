@@ -12,6 +12,7 @@ param deployStaticWebApp bool = false
 
 @secure()
 param openAiKey string
+param openAiEndpoint string = 'https://southeastaisa-0322-resource.openai.azure.com'
 param openAiDeploymentName string = 'gpt-5.4-mini'
 @secure()
 param iotHubServiceConnectionString string
@@ -69,6 +70,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
         external: false
         targetPort: 80
         transport: 'auto'
+        allowInsecure: true
       }
       registries: [{ server: acr.properties.loginServer, username: acr.listCredentials().username, passwordSecretRef: 'acr-password' }]
       secrets: [
@@ -98,6 +100,10 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
             { name: 'IotHubEventHubConnectionString', secretRef: 'iothub-eventhub-conn' }
             { name: 'OPENAI_API_KEY', value: deployManagedIdentities ? '@Microsoft.KeyVault(SecretUri=${keyVaultUri}secrets/openAiKey)' : openAiKey }
             { name: 'OPENAI_DEPLOYMENT_NAME', value: openAiDeploymentName }
+            { name: 'OPENAI_API_DEPLOYMENT_NAME', value: openAiDeploymentName }
+            { name: 'AZURE_OPENAI_API_KEY', value: deployManagedIdentities ? '@Microsoft.KeyVault(SecretUri=${keyVaultUri}secrets/openAiKey)' : openAiKey }
+            { name: 'AZURE_OPENAI_ENDPOINT', value: openAiEndpoint }
+            { name: 'AZURE_OPENAI_DEPLOYMENT_NAME', value: openAiDeploymentName }
           ]
         }
       ]

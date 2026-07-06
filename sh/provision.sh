@@ -35,16 +35,18 @@ echo "📌 当前订阅: $CURRENT_SUB"
 
 # 提取 local.settings.json 中的 OpenAI 凭证，防止 ACA 密钥为空报错
 OPENAI_KEY=""
+OPENAI_ENDPOINT=""
 OPENAI_DEPLOYMENT="gpt-5.4-mini"
 SETTINGS_FILE="src/cloud-orchestrator/local.settings.json"
 
 if [ -f "$SETTINGS_FILE" ]; then
-  OPENAI_KEY=$(python3 -c "import json; print(json.load(open('$SETTINGS_FILE'))['Values'].get('AZURE_OPENAI_API_KEY', ''))" 2>/dev/null || echo "")
-  OPENAI_DEPLOYMENT=$(python3 -c "import json; print(json.load(open('$SETTINGS_FILE'))['Values'].get('AZURE_OPENAI_DEPLOYMENT_NAME', 'gpt-5.4-mini'))" 2>/dev/null || echo "")
+  OPENAI_KEY=$(python3 -c "import json; print(json.load(open('$SETTINGS_FILE'))['Values'].get('AZURE_OPENAI_API_KEY','') or json.load(open('$SETTINGS_FILE'))['Values'].get('OPENAI_API_KEY',''))" 2>/dev/null || echo "")
+  OPENAI_ENDPOINT=$(python3 -c "import json; print(json.load(open('$SETTINGS_FILE'))['Values'].get('AZURE_OPENAI_ENDPOINT','') or json.load(open('$SETTINGS_FILE'))['Values'].get('OPENAI_BASE_URL',''))" 2>/dev/null || echo "")
+  OPENAI_DEPLOYMENT=$(python3 -c "import json; print(json.load(open('$SETTINGS_FILE'))['Values'].get('AZURE_OPENAI_DEPLOYMENT_NAME','') or json.load(open('$SETTINGS_FILE'))['Values'].get('OPENAI_API_DEPLOYMENT_NAME','') or json.load(open('$SETTINGS_FILE'))['Values'].get('OPENAI_DEPLOYMENT_NAME','gpt-5.4-mini'))" 2>/dev/null || echo "")
 fi
 
 if [ -z "$OPENAI_KEY" ]; then
-  echo "⚠️  警告: 未能在 $SETTINGS_FILE 中找到 AZURE_OPENAI_API_KEY，将使用临时占位密钥进行基础设施部署..."
+  echo "⚠️  警告: 未能在 $SETTINGS_FILE 中找到 OpenAI API Key，将使用临时占位密钥进行基础设施部署..."
   OPENAI_KEY="dummy-openai-key-replace-me"
 fi
 
@@ -65,7 +67,7 @@ else
     --name "$DEPLOYMENT_NAME" \
     --location "$LOCATION" \
     --template-file .azure/main.bicep \
-    --parameters location="$LOCATION" prefix="$PREFIX" openAiKey="$OPENAI_KEY" openAiDeploymentName="$OPENAI_DEPLOYMENT" \
+    --parameters location="$LOCATION" prefix="$PREFIX" openAiKey="$OPENAI_KEY" openAiEndpoint="$OPENAI_ENDPOINT" openAiDeploymentName="$OPENAI_DEPLOYMENT" \
     --output table
 fi
 

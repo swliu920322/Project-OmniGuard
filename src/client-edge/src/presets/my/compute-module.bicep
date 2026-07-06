@@ -67,6 +67,7 @@ resource backendApp 'Microsoft.App/containerApps@2024-03-01' = {
         external: false
         targetPort: 80 // 🟩 对齐 Functions 容器的物理端口
         transport: 'auto'
+        allowInsecure: true // 🟩 防止 HTTP→HTTPS 302 重定向导致 POST 降级 GET
       }
       registries: [
         {
