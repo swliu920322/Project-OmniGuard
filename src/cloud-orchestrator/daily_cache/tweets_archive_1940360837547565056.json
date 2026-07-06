@@ -1,5 +1,90 @@
 [
     {
+        "date": "2026-07-05",
+        "original": "Came across an interesting report from SVRC Research called \"State of Robotics 2026\", published in April. \n\nWhich listed:\n\n1. Figure AI \n2. Agility Robotics $CCXI\n3. Apptronik \n4. $TSLA \n5. Boston Dynamics\n6. Physical Intelligence \n7. 1X Technologies\n8. $AMZN Robotics\n9. https://t.co/AmCFokQYxl",
+        "translation": "偶然看到一份来自 SVRC Research 的有趣报告，题为《State of Robotics 2026》，于4月发布。\n\n其中列出了：\n\n1. Figure AI\n2. Agility Robotics $CCXI\n3. Apptronik\n4. $TSLA\n5. Boston Dynamics\n6. Physical Intelligence\n7. 1X Technologies\n8. $AMZN Robotics\n9. https://t.co/AmCFokQYxl"
+    },
+    {
+        "date": "2026-07-05",
+        "original": "Just some consolidated updates on memory: \n\n-  $MU leads new 1.5T Yen investment in Hiroshima ~$9.3B. (bullish read through for Disco, Advantest, Resonac, Towa) since capex is localized.\n\n- Morgan Stanley pointed out NAND will continue to be in short supply into 2027 so $SNDK /",
+        "translation": "这里整理一些关于存储的最新进展：\n\n- $MU 牵头在广岛的新一轮 1.5 万亿日元投资，约合 93 亿美元。（由于资本开支本地化，这对 Disco、Advantest、Resonac、Towa 构成偏利好传导。）\n\n- 摩根士丹利指出，NAND 供给短缺将持续到 2027 年，因此 $SNDK /"
+    },
+    {
+        "date": "2026-07-05",
+        "original": "Looks like there's a high power cylindrical cell / BBU cell shortage (aka: bottleneck):\n\n- Samsung SDI supplies the cells to Simplo, which assembles them into BBUs for $META to $AMZN. \n- As demand from data centers has increased, production of Samsung SDI's cylindrical cells has https://t.co/MNmNAJ0POv",
+        "translation": "看起来高功率圆柱电芯 / BBU 电芯出现了短缺（也就是瓶颈）：\n\n- Samsung SDI 向 Simplo 供货，由后者将电芯组装成 BBU，供应给 $META 到 $AMZN。\n- 随着数据中心需求上升，Samsung SDI 的圆柱电芯产量已 https://t.co/MNmNAJ0POv"
+    },
+    {
+        "date": "2026-07-05",
+        "original": "Leaked Anthropic docs show plans to secure 1.4GW capacity from Australia, amounting to ~$21.6B.\n\nRecently $IREN, $SHAZ, and other Neoclouds have been building sovereign DCs in Australia.\n\nGuess like a lot of things are stating to make more sense connection wise?\n\n(disclosure: no https://t.co/V5LzknfjPP",
+        "translation": "泄露的 Anthropic 文件显示，其计划从澳大利亚锁定 1.4GW 的算力/电力容量，金额约为 216 亿美元。\n\n近期，$IREN、$SHAZ 以及其他 Neocloud 公司一直在澳大利亚建设主权数据中心。\n\n看起来很多事情在关联逻辑上开始变得更合理了？\n\n（披露：无 https://t.co/V5LzknfjPP"
+    },
+    {
+        "date": "2026-07-04",
+        "original": "Nikkei - $JD E-Commerce Giant CEO warns \"Robots Will Replace 700,000 Delivery Workers\". \n\nPer FT's earlier piece last month: The 700,000 delivery personnel working for the firm will be replaced by robots, highlighting how rapid automation has become a new threat to China's https://t.co/Q8mUYLZXum",
+        "translation": "日经报道——$JD 电商巨头 CEO 警告称：“机器人将取代70万名配送员工”。\n\n根据《金融时报》上月较早前的报道：该公司旗下70万名配送人员将被机器人替代，这凸显出快速自动化已成为中国的新威胁。https://t.co/Q8mUYLZXum"
+    },
+    {
+        "date": "2026-07-04",
+        "original": "an apple a day keeps the bottleneck away",
+        "translation": "一天一苹果，瓶颈远离我。"
+    },
+    {
+        "date": "2026-07-04",
+        "original": "UDN Money report \"殺翻光通訊後 SemiAnalysis 惹議 業界揭其劣跡 許多公司慘遭魔手\":\n\n- SemiAnalysis, released a report in June, questioning the timing of the launch of the CPO on the grounds of low yield and delay, which caused the photonics sector to collapse. \n\n- The agency then https://t.co/C2apXczHyU",
+        "translation": "联合新闻网财经报道《重挫光通讯后 SemiAnalysis 引发争议，业内揭其劣迹，许多公司惨遭魔手》：\n\n- SemiAnalysis 6月发布报告，以良率偏低和推出延迟为由，质疑 CPO 的发布时间，导致光子产业板块大幅回调。\n\n- 随后该机构又……https://t.co/C2apXczHyU"
+    },
+    {
+        "date": "2026-07-04",
+        "original": "Bruh, when I first tried out ChatGPT around 2023, I thought it LLMs were garbage at coding. \n\n3Y later, Mythos is considered a modern day “nuke” for cybersecurity. \n\nPeople keep saying humanoids can’t do X or Y task today like plumbing or DC wiring. No sht, but it’s about where https://t.co/FO8eUlyOeI",
+        "translation": "(翻译暂无)"
+    },
+    {
+        "date": "2026-07-04",
+        "original": "TIL floating DC and ocean compute exists?\n\nApparently it’s free cooling + optimal for places in tight geography…\n\nIt’s going to be wild taking a cruise ship, and passing by a bunch of $NBIS or Samsung floating AI DCs one day.\n\nIf this ever becomes a thing like orbital compute? https://t.co/Ki2RqNc2xT",
+        "translation": "今天才知道，原来还有浮式数据中心和海上算力？\n\n据说这类方案可以利用自然冷却，而且非常适合地理空间受限的地区……\n\n想象一下，未来某天坐游轮经过一排排 $NBIS 或三星的浮式 AI 数据中心，场面会非常震撼。\n\n如果这最终像轨道算力一样成为现实呢？https://t.co/Ki2RqNc2xT"
+    },
+    {
+        "date": "2026-07-04",
+        "original": "I'm bearish on humans.\n\nHard to see people still having a job if humanoids come out at &lt;$15K mass production.\n\nNo insurance, no JP Morgan HR cannon scandals. \n\nAnd can do everything a person can, but better + 24/7.",
+        "translation": "我对人类就业前景偏空。\n\n如果类人机器人未来能以低于1.5万美元的价格实现规模化量产，很难想象人类还能保住工作。\n\n不用买保险，也不会有摩根大通那种人力资源“炮弹”丑闻。\n\n而且它们能做人的一切工作，还能做得更好，并且7x24小时不停歇。"
+    },
+    {
+        "date": "2026-07-03",
+        "original": "Just some public market read through from Chinese private VC markets:\n\nInstitutions are pouring funds into physical AI and world models. \n\n1. Large models / LLMs: ~$23.56B\n2. AI infrastructure + technical layer: ~$15.74B\n3. Embodied intelligence / physical AI: ~$13.36B\n4. AIGC https://t.co/Dx5yzFoh2o",
+        "translation": "来自中国私募VC市场的一些公开市场映射：\n\n机构资金正大举流入具身智能和世界模型。\n\n1. 大模型/LLM：约235.6亿美元\n2. AI基础设施 + 技术层：约157.4亿美元\n3. 具身智能/物理AI：约133.6亿美元\n4. AIGC https://t.co/Dx5yzFoh2o"
+    },
+    {
+        "date": "2026-07-03",
+        "original": "So positive readthrough on the upstream glass substrate supply chain:\n\n- Sumitomo Chemical and Samsung Electro-Mechanics formally establish JV in Korea within the year to handle the glass core substrate business (GlaSSEM).\n\nMain thing was timeline/funding was finalized:  \"full https://t.co/V1kzsHxM40",
+        "translation": "因此，对上游玻璃基板供应链形成积极解读：\n\n- 住友化学与三星电机计划在年内于韩国正式设立合资公司，负责玻璃核心基板业务（GlaSSEM）。\n\n重点在于时间表和资金安排已最终敲定：“全面……”https://t.co/V1kzsHxM40"
+    },
+    {
+        "date": "2026-07-03",
+        "original": "Be SemiAnalysis:\n\n- Post a scathing piece on CPO delays + optical company valuations, causing a crash.\n\nWhich $NVDA, analyst desks, and major optical companies refuted\n\n- Launch an institutional photonics ETF after optical names dropped 40-60%.",
+        "translation": "若按 SemiAnalysis 的做法：\n\n- 发表一篇针对 CPO 延迟及光通信公司估值的犀利报告，引发股价暴跌。\n\n随后遭到 $NVDA、分析师团队以及多家大型光通信公司的反驳。\n\n- 在光学类标的大跌40%-60%后，再推出一只机构级光子学 ETF。"
+    },
+    {
+        "date": "2026-07-03",
+        "original": "SemiAnalysis on $META “overcapacity” and market reactions with $NBIS and others:\n\n“We believe Meta’s datacenter and compute will accelerate”.\n\n“Capex in 2027 will be shockingly high”.\n\nRecent global crash, especially in the photonics sector was stupid… Off misleading narratives https://t.co/DhbypH2vaQ",
+        "translation": "SemiAnalysis 关于 $META “产能过剩”以及 $NBIS 等相关标的的市场反应：\n\n“我们认为 Meta 的数据中心与算力扩张将加速。”\n\n“2027年的资本开支将高得惊人。”\n\n近期全球市场下跌，尤其是光子产业的回调，实在是愚蠢……完全是被误导性叙事所驱动。https://t.co/DhbypH2vaQ"
+    },
+    {
+        "date": "2026-07-03",
+        "original": "LeaderDrive (688017) is now at all time highs after hitting a 20% limit up today. \n\nLooks like robotics sector excitement is palpable…\n\nLargely driven by US and China’s frontier humanoid companies with $CCXI / Agility Robotics\n\nAs well as Unitree (STAR listing approved today) https://t.co/GCqizzzuTQ",
+        "translation": "LeaderDrive（688017）今日涨停20%后，现已创出历史新高。\n\n看起来机器人板块的热情相当强烈……\n\n主要由中美前沿类人机器人公司推动，例如 $CCXI / Agility Robotics\n\n以及优必选/Unitree（今日已获科创板上市批准）。https://t.co/GCqizzzuTQ"
+    },
+    {
+        "date": "2026-07-03",
+        "original": "Lot of misinformation recently about $META.\n\nRecently major journals have been stating \n\n“AI AGENT DEVELOPMENT OVER THE LAST FOUR MONTHS HASN'T 'ACCELERATED IN THE WAY WE EXPECTED”\n\nTo push some narrative about Meta dropping out of the race or lowered capex:\n\nAs Wang clarified: https://t.co/HQQlnWHXoo",
+        "translation": "最近关于 $META 的误导性信息很多。\n\n近期一些主流媒体声称：\n\n“过去四个月里，AI Agent 的发展并未按我们预期的方式加速。”\n\n以此渲染 Meta 退出竞争或下调资本开支的叙事：\n\n正如王先生所澄清的： https://t.co/HQQlnWHXoo"
+    },
+    {
+        "date": "2026-07-03",
+        "original": "$META: upcoming AI model “Watermelon”  has caught up to OpenAI’s GPT 5.5.\n\nWang noted it uses an \"order of magnitude\" more compute than its predecessor “Avocado”.\n\nWho said they were out of the AI race again? https://t.co/X2sOgMRTuw",
+        "translation": "$META：即将推出的 AI 模型“Watermelon”已追平 OpenAI 的 GPT 5.5。\n\n王先生指出，其所需算力较上一代“Avocado”提升了“一个数量级”。\n\n还有谁说他们已经退出 AI 竞赛了？https://t.co/X2sOgMRTuw"
+    },
+    {
         "date": "2026-07-02",
         "original": "$AXTI signs 3-year wafer deal with $COHR.\n\n\"Coherent will make a prepayment of $22,288,500 to AXT-Tongmei in exchange for a committed supply capacity.\" https://t.co/nTkyJSMo96",
         "translation": "$AXTI 与 $COHR 签署为期3年的晶圆供应协议。\n\n“Coherent 将向 AXT-Tongmei 预付 22,288,500 美元，以换取约定的供货产能。” https://t.co/nTkyJSMo96"

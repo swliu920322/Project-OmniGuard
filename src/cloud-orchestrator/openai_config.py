@@ -18,17 +18,24 @@ if os.path.exists(_settings_path):
 
 from openai import AzureOpenAI, AsyncAzureOpenAI
 
-def get_openai_credentials():
+def get_openai_credentials(model_env_var: str = None):
     """
     统一解析 Azure OpenAI 凭证，解决命名空间冗余与历史遗留变量命名不一致问题。
     优先解析标准 Azure OpenAI 环境变量，回退解析 OpenAI 兼容变量。
+    若指定了 model_env_var，则优先从特定的服务变量中读取模型名称。
     """
     endpoint = (os.environ.get("AZURE_OPENAI_ENDPOINT") or os.environ.get("OPENAI_BASE_URL") or "").strip()
     api_key = (os.environ.get("AZURE_OPENAI_API_KEY") or os.environ.get("OPENAI_API_KEY") or "").strip()
-    deployment_name = (os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME") or 
-                       os.environ.get("OPENAI_DEPLOYMENT_NAME") or 
-                       os.environ.get("OPENAI_API_DEPLOYMENT_NAME") or 
-                       "gpt-5.4-mini").strip()
+    
+    deployment_name = ""
+    if model_env_var:
+        deployment_name = os.environ.get(model_env_var, "").strip()
+        
+    if not deployment_name:
+        deployment_name = (os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME") or 
+                           os.environ.get("OPENAI_DEPLOYMENT_NAME") or 
+                           os.environ.get("OPENAI_API_DEPLOYMENT_NAME") or 
+                           "gpt-5.4-mini").strip()
     return endpoint, api_key, deployment_name
 
 def get_azure_openai_client() -> AzureOpenAI:
