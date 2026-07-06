@@ -137,6 +137,9 @@ docs/reference/blueprints/
    * **Ingress 降级修复**：解决了 ACA 内部 Ingress HTTP→HTTPS 重定向导致 Node.js `fetch` 将 `POST` 改变为 `GET`（引发 FastAPI 405 Method Not Allowed 报错）的网络级拦截问题。通过在 Bicep 中声明 `allowInsecure: true` 彻底疏通。
    * **凭证统一注入**：对齐了三种不同的 Python OpenAI 环境变量命名，并在 `sh/deploy-aca.sh` 中实现了自适应读取本地 `local.settings.json` 并动态注入至 Container Apps 的流程，避开了测试订阅无 quota 的痛点。
    * **多租户前缀自动化滚动发布**：重构了 `sh/deploy-aca.sh`，使其在检测到参数文件时能够动态解析出真实的 `PREFIX` 与 `RG` 进行升级部署（支持 `omni3`、`omni4`、`omni5` 的无缝滚动更新）。
+6. **Azure OpenAI 凭证加载与客户端实例化规范化统一 (ADR-034)**：
+   * **统一配置与加载**：创建了中央凭证加载工具 `openai_config.py`，集中式处理本地 `local.settings.json` 参数自动注入与标准 `AZURE_OPENAI_*` 变量和 OpenAI 兼容变量的优先级解析。
+   * **消除冗余与不一致**：全面重构了 `digitalhuman/router.py`、`embodied_brain/utils.py` 和 `kol_analysis/inference_engine.py`，移除所有重复解析与实例化代码，消除了 `digitalhuman` 由于缺乏 fallback 潜在的静默崩溃隐患。
 
 ---
 
