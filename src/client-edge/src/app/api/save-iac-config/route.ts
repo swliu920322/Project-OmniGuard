@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     // Preflight action: directly invoke the preflight-validate.py script
     if (action === 'preflight') {
       const projectRoot = findProjectRoot();
-      const preflightScriptPath = path.join(projectRoot, 'sh', 'preflight-validate.py');
+      const preflightScriptPath = path.join(projectRoot, 'scripts', 'preflight-validate.py');
       const command = `python3 "${preflightScriptPath}"`;
       try {
         const { stdout, stderr } = await execAsync(command);
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
 
     const projectRoot = findProjectRoot();
     const paramFilePath = path.join(projectRoot, '.azure', 'main.parameters.json');
-    const assemblerScriptPath = path.join(projectRoot, 'sh', 'iac-assembler.py');
+    const assemblerScriptPath = path.join(projectRoot, 'scripts', 'iac-assembler.py');
 
     let cliScenario = 'sandbox';
     if (uiState.activeScenario === 'secure-iot' || uiState.activeScenario === 'global-portal') {

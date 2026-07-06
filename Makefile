@@ -18,35 +18,35 @@ help:
 	@echo "💡 提示: 分别在两个终端中运行 make start-backend 和 make start-frontend"
 
 provision:
-	@chmod +x ./sh/provision.sh
-	./sh/provision.sh
+	@chmod +x ./scripts/provision.sh
+	./scripts/provision.sh
 
 whatif:
-	@chmod +x ./sh/provision-whatif.sh
-	./sh/provision-whatif.sh
+	@chmod +x ./scripts/provision-whatif.sh
+	./scripts/provision-whatif.sh
 
 start-backend:
-	@chmod +x ./sh/start-backend.sh
-	./sh/start-backend.sh
+	@chmod +x ./scripts/start-backend.sh
+	./scripts/start-backend.sh
 
 start-frontend:
-	@chmod +x ./sh/start-frontend.sh
-	./sh/start-frontend.sh
+	@chmod +x ./scripts/start-frontend.sh
+	./scripts/start-frontend.sh
 
 destroy:
-	@chmod +x ./sh/destroy.sh
-	./sh/destroy.sh
+	@chmod +x ./scripts/destroy.sh
+	./scripts/destroy.sh
 
 deploy-aca:
-	@chmod +x ./sh/deploy-aca.sh
-	./sh/deploy-aca.sh
+	@chmod +x ./scripts/deploy-aca.sh
+	./scripts/deploy-aca.sh
 
 trigger-ci:
-	@chmod +x ./sh/trigger-ci.sh
-	./sh/trigger-ci.sh
+	@chmod +x ./scripts/trigger-ci.sh
+	./scripts/trigger-ci.sh
 
 add-device:
-	@bash sh/add-device.sh $(DEV)
+	@bash scripts/add-device.sh $(DEV)
 
 research:
 	@echo "🚀 [CLI] 正在启动增量推文数据采集、双语翻译与投研分析..."
