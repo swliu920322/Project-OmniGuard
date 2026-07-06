@@ -39,6 +39,7 @@
 | 024 | [Dynamic Orchestration Sandbox API](./ADR-024-%5Bbackend%5D-Dynamic-Orchestration-Sandbox-API.md) | ✅ |
 | 032 | [Dual-Track Identity Decoupling, Bicep Parameter Filtering, and Preset Fallback Governance](./ADR-032-%5Barchitecture%5D-Dual-Track-Identity-Decoupling-and-Fallback-Governance.md) — also `[infra]`, `[frontend]`, `[architecture]` | ✅ |
 | 033 | [ACA Internal Ingress HTTP-to-HTTPS Redirect Causing POST-to-GET Demotion](./ADR-033-%5Binfra%5D-ACA-Ingress-HTTP-POST-Demotion.md) — also `[infra]` | ✅ |
+| 034 | [Azure OpenAI Client Instantiation and Credential Loading Unification](./ADR-034-%5Barchitecture%5D-OpenAI-Credentials-Unification.md) — also `[architecture]` | ✅ |
 
 ### 🎨 Frontend `[frontend]`
 
@@ -72,6 +73,7 @@
 | 028 | [Multi-Agent Orchestration Engine](./ADR-028-%5Barchitecture%5D-Multi-Agent-Orchestration-Engine.md) | ✅ |
 | 030 | [IaC Configurator — Enterprise Compliance, Key Vault Integration & GitOps Pipeline](./ADR-030-%5Barchitecture%5D-IaC-Configurator-Enterprise-Compliance.md) — also `[infra]`, `[frontend]` | ✅ |
 | 032 | [Dual-Track Identity Decoupling, Bicep Parameter Filtering, and Preset Fallback Governance](./ADR-032-%5Barchitecture%5D-Dual-Track-Identity-Decoupling-and-Fallback-Governance.md) — also `[infra]`, `[backend]`, `[frontend]` | ✅ |
+| 034 | [Azure OpenAI Client Instantiation and Credential Loading Unification](./ADR-034-%5Barchitecture%5D-OpenAI-Credentials-Unification.md) — also `[backend]` | ✅ |
 
 ---
 
