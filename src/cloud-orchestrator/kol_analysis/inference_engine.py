@@ -13,7 +13,7 @@ class AzureChatEngine:
         parent_dir = os.path.dirname(current_dir)
         load_dotenv(dotenv_path=os.path.join(parent_dir, ".env"))
 
-        endpoint, api_key, self.model_deployment = get_openai_credentials()
+        endpoint, api_key, self.model_deployment = get_openai_credentials("KOL_DEPLOYMENT_NAME")
         print(f"[🤖 AI ENGINE] 直连 Azure OpenAI Endpoint: {endpoint} | Deployment: {self.model_deployment}")
         self.client = get_azure_openai_client()
 

@@ -88,7 +88,7 @@ def get_openai_client():
     return _openai_client
 
 def ask_agent(system_prompt: str, user_input: str, max_completion_tokens: int = 100) -> str:
-    _, _, deployment = get_openai_credentials()
+    _, _, deployment = get_openai_credentials("BRAIN_DEPLOYMENT_NAME")
     client = get_openai_client()
     
     response = client.chat.completions.create(

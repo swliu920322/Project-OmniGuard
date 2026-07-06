@@ -1,251 +1,288 @@
 {
     "user_id": "1940360837547565056",
     "range_days": 30,
-    "last_updated": "2026-07-03 10:45:22",
+    "last_updated": "2026-07-06 09:53:40",
     "hot_topics": [
         {
-            "topic": "光子学/CPO/800G-1.6T光模块",
-            "count": 37,
-            "percentage": 0.252
+            "topic": "光子学/CPO/800V DC 供应链与硅光瓶颈",
+            "count": 41,
+            "percentage": 33
         },
         {
-            "topic": "存储芯片与记忆体短缺（DRAM/HBM/NAND）",
+            "topic": "Memory 缺货与价格上行（HBM/NAND/DRAM）",
             "count": 20,
-            "percentage": 0.137
+            "percentage": 16
         },
         {
-            "topic": "机器人/人形机器人商业化",
+            "topic": "机器人/具身智能/人形机器人商业化",
             "count": 18,
-            "percentage": 0.123
+            "percentage": 15
         },
         {
-            "topic": "AI算力与超大规模云厂商Capex扩张",
+            "topic": "Neocloud/AI DC 容量与超大规模资本开支",
             "count": 16,
-            "percentage": 0.109
+            "percentage": 13
         },
         {
-            "topic": "供应链瓶颈与涨价（CW laser/InP/epiwafer/测试卡）",
-            "count": 15,
-            "percentage": 0.102
+            "topic": "玻璃基板/InP/激光器等上游关键材料与器件卡脖子",
+            "count": 14,
+            "percentage": 11
         }
     ],
     "industries": [
         {
             "name": "光学/光模块",
-            "value": 29
+            "value": 33
         },
         {
             "name": "半导体/芯片",
-            "value": 27
+            "value": 20
         },
         {
             "name": "汽车/机器人",
-            "value": 18
+            "value": 15
         },
         {
             "name": "硬件/DC服务器",
-            "value": 14
+            "value": 17
         },
         {
             "name": "软件/AI模型",
-            "value": 12
+            "value": 8
+        },
+        {
+            "name": "能源/数据中心基础设施",
+            "value": 7
         }
     ],
     "conviction_watchlist": [
         {
             "ticker": "$SIVE",
             "conviction_level": "核心重仓 (Core Long)",
-            "mention_count": 28,
-            "investment_thesis": "核心CPO/光子学卡脖子标的，覆盖1.6T pluggable、scale-up/scale-out CPO、NPO等多架构，且与Jabil、Ayar、NVLink生态和多家超大客户链路深度绑定；近期NASDAQ上市推进、增发募资扩产、以及JP Morgan等机构加仓，强化了订单与估值重估逻辑。"
+            "mention_count": 22,
+            "investment_thesis": "作者最核心的欧洲光子学/激光器标的之一，位于CPO、1.6T pluggable、NVLink/AI光互连等多条架构升级的关键卡位；同时具备向JBL、Ayar、GFS、Apple等生态扩张的想象空间，且已出现JPM、Fidelity、BlackRock等机构介入，强化“稀缺供给+机构接盘”逻辑。"
         },
         {
             "ticker": "$AAOI",
             "conviction_level": "核心重仓 (Core Long)",
-            "mention_count": 14,
-            "investment_thesis": "国内外AI光模块/激光相关供给紧张下的高弹性受益标的，受益于800G/1.6T需求爆发和稀缺laser capacity；作者多次强调其订单与营收高增长潜力，认为若执行到位有望显著上修。"
+            "mention_count": 12,
+            "investment_thesis": "作者长期看好的美国激光/光器件公司，受益于AI光互连扩张与CW/EML供给紧张；强调其稀缺激光产能、与AMD/超大规模客户的潜在需求匹配，以及从器件到完整光模块/光引擎的收入扩张空间。"
         },
         {
             "ticker": "$MU",
             "conviction_level": "核心重仓 (Core Long)",
-            "mention_count": 13,
-            "investment_thesis": "记忆体超级周期核心受益者，AI与人形机器人推动长期DRAM/HBM需求扩张；财报与前瞻指引强劲，且多次被提及为“下一个NVDA”式结构性赢家。"
+            "mention_count": 11,
+            "investment_thesis": "作为内存周期核心受益者，作者认为HBM/DRAM/NAND缺货与价格上涨具备多年级别延续性；Micron被视为AI内存超级周期的代表，且其业绩、长协和资本开支信号都支持更高估值。"
+        },
+        {
+            "ticker": "$NBIS",
+            "conviction_level": "核心重仓 (Core Long)",
+            "mention_count": 10,
+            "investment_thesis": "作者将其视为Neocloud/AI算力稀缺供给的代表，受益于Meta、Anthropic等大模型客户对算力租赁和数据中心容量的强需求；也被当作“卖出 excess compute”的商业化路径样本。"
         },
         {
             "ticker": "$LITE",
             "conviction_level": "核心重仓 (Core Long)",
             "mention_count": 9,
-            "investment_thesis": "光子学链条里的重要龙头，CW laser与CPO需求强劲、产能长期售罄，属于光学架构切换的直接受益者；作者认为其景气度与供给约束极强。"
-        },
-        {
-            "ticker": "$NBIS",
-            "conviction_level": "首仓买入 (Starter Long)",
-            "mention_count": 7,
-            "investment_thesis": "Neocloud代表之一，受益于Meta/Anthropic/OpenAI等AI算力外溢与云租赁需求；作者将其视为能源/算力主题的高弹性工具，但更偏主题交易与成长观察。"
-        },
-        {
-            "ticker": "$AXTI",
-            "conviction_level": "核心重仓 (Core Long)",
-            "mention_count": 10,
-            "investment_thesis": "InP衬底与上游材料关键卡点，直接受益于中国出口管制、供给收紧与产业链本土化；作者长期跟踪其在光子学供应链中的战略地位。"
-        },
-        {
-            "ticker": "$AAOI",
-            "conviction_level": "核心重仓 (Core Long)",
-            "mention_count": 14,
-            "investment_thesis": "国内外AI光模块/激光相关供给紧张下的高弹性受益标的，受益于800G/1.6T需求爆发和稀缺laser capacity；作者多次强调其订单与营收高增长潜力，认为若执行到位有望显著上修。"
-        },
-        {
-            "ticker": "$XFAB",
-            "conviction_level": "首仓买入 (Starter Long)",
-            "mention_count": 7,
-            "investment_thesis": "欧洲硅光/功率半导体制造平台的潜在受益者，叙事围绕硅光foundry替代、汽车/工业复苏与CPO中长期放量；更偏早期产业节点布局。"
-        },
-        {
-            "ticker": "$IQE",
-            "conviction_level": "首仓买入 (Starter Long)",
-            "mention_count": 8,
-            "investment_thesis": "InP epiwafer关键供应商，受益于西方光学供应链重构与价格上行；多次被提到与MTSI、TSEM等建立关键供货关系。"
-        },
-        {
-            "ticker": "$TSEM",
-            "conviction_level": "首仓买入 (Starter Long)",
-            "mention_count": 7,
-            "investment_thesis": "晶圆代工/特殊工艺节点受益者，和光子学、汽车及CPO相关制造链条关系密切；作者认为其估值仍低估了先进封装/特种工艺扩张潜力。"
-        },
-        {
-            "ticker": "$JBL",
-            "conviction_level": "首仓买入 (Starter Long)",
-            "mention_count": 8,
-            "investment_thesis": "在1.6T光学模块与CPO生态中处于关键制造/集成位置，可能是SIVE的下游大客户或放量受益方；属于平台型光互连链条中的重要中游。"
-        },
-        {
-            "ticker": "$MRVL",
-            "conviction_level": "中性观察 (Neutral)",
-            "mention_count": 6,
-            "investment_thesis": "AI网络与CXL/光互连相关，但在市场回撤中波动较大；作者认可其长期受益于架构升级，但短期更偏主题观察。"
-        },
-        {
-            "ticker": "$NVDA",
-            "conviction_level": "中性观察 (Neutral)",
-            "mention_count": 18,
-            "investment_thesis": "AI算力架构的总入口，推动800V DC、CPO、硅光与整体供应链升级；作者对其行业引领地位高度认可，但更偏作为产业链上游驱动，而非单独交易主线。"
+            "investment_thesis": "光子学龙头之一，作者认为其在CPO scale-up/scale-out、激光器和光引擎链条中是关键受益者；多次强调其产能紧张、产品排期延后并非坏事，而是需求极强的体现。"
         }
     ],
     "supply_chain_bottlenecks": [
         {
-            "category": "CW lasers（连续波激光器）",
-            "status": "持续紧缺，产能已被锁定并支撑价格上行，预计瓶颈延续至2028-2029",
+            "category": "HBM/DRAM/NAND 内存短缺",
+            "status": "持续短缺，供需紧张延续至2027+，价格与利润上行",
+            "affected_tickers": [
+                "$MU",
+                "$SNDK",
+                "$EWY"
+            ]
+        },
+        {
+            "category": "CPO / 硅光 / 800V DC 相关光器件",
+            "status": "市场反复担忧延迟，但多家机构/公司强调无实质延误；供给仍偏紧",
+            "affected_tickers": [
+                "$NVDA",
+                "$LITE",
+                "$AAOI",
+                "$SIVE",
+                "$MRVL",
+                "$AEHR",
+                "$COHR"
+            ]
+        },
+        {
+            "category": "CW DFB / EML 激光器产能",
+            "status": "明显短缺，供应链集中度高，扩产需要数年",
             "affected_tickers": [
                 "$SIVE",
                 "$AAOI",
                 "$LITE",
-                "$AMD",
-                "$NVDA"
+                "$COHR",
+                "$MTSI"
             ]
         },
         {
-            "category": "InP substrate / InP epiwafer",
-            "status": "供给受出口管制与产能约束，部分链条开始缓解但仍是关键卡点",
+            "category": "InP 基板/外延片",
+            "status": "出口管制与供给受限导致AI DC与光子学扩产受阻，部分环节出现缓解预期",
             "affected_tickers": [
                 "$AXTI",
                 "$IQE",
-                "$MTSI",
-                "$SIVE"
-            ]
-        },
-        {
-            "category": "CPO optical engine / transceiver",
-            "status": "需求加速、供给偏紧，scale-up与scale-out均在提前导入",
-            "affected_tickers": [
                 "$SIVE",
-                "$AAOI",
-                "$LITE",
-                "$JBL",
-                "$NVDA"
+                "$AAOI"
             ]
         },
         {
-            "category": "HBM / DRAM / NAND memory",
-            "status": "多家厂商提价，短缺预计延续多年，受AI与机器人需求驱动",
+            "category": "玻璃基板/ABF替代封装材料",
+            "status": "处于导入与扩产阶段，2026-2028逐步放量，早期供给偏紧",
             "affected_tickers": [
-                "$MU",
-                "SK Hynix",
-                "Samsung",
-                "$SNDK"
+                "$LPK",
+                "$XFAB",
+                "$TSEM",
+                "$GFS",
+                "$AMD"
             ]
         },
         {
-            "category": "Probe cards / test sockets",
-            "status": "严重短缺并伴随提价，受贵金属成本与产能限制影响",
-            "affected_tickers": [
-                "$TER",
-                "$VSH",
-                "$TSEM"
-            ]
-        },
-        {
-            "category": "WF6 / tungsten related upstream chemicals",
-            "status": "受地缘与出口管制扰动，可能冲击半导体前驱体供应",
+            "category": "Wf6/前驱体/高纯化学品",
+            "status": "受中国对日本出口控制影响，全球供应链承压",
             "affected_tickers": [
                 "$TSM",
-                "SK Hynix",
-                "Samsung",
+                "$MU",
+                "$SNDK",
+                "$IQE",
                 "$AXTI"
             ]
         },
         {
-            "category": "Glass substrates / advanced packaging materials",
-            "status": "仍处早期扩产与导入阶段，主要受良率与设备供给制约",
+            "category": "机器人零部件（减速器/执行器/传感器）",
+            "status": "随着人形机器人商业化推进，关键零部件可能成为新瓶颈",
             "affected_tickers": [
-                "$LPK",
-                "$TSEM",
-                "$ASX"
+                "$CCXI",
+                "$TSLA",
+                "$LEDRIVE",
+                "$SHA0"
             ]
         },
         {
-            "category": "Silicon photonics foundry capacity",
-            "status": "多方积极扩产，但客户认证与量产爬坡仍受限",
+            "category": "高功率圆柱电池/BBU 电芯",
+            "status": "数据中心需求拉动，Samsung SDI供给偏紧",
             "affected_tickers": [
-                "$XFAB",
-                "$TSEM",
-                "$GFS",
-                "$NVDA"
+                "$META",
+                "$AMZN"
             ]
         }
     ],
     "value_chain_mapping": [
         {
-            "upstream": "$AXTI / China InP substrate",
-            "midstream": "$IQE / epiwafer -> $SIVE / CW DFB lasers -> $AAOI / optical modules",
-            "downstream": "$NVDA / hyperscalers / CPO and 1.6T pluggable ecosystem"
+            "upstream": "InP substrate / epiwafer / wafers",
+            "midstream": "laser / optical engine / transceiver / CPO component makers ($SIVE, $AAOI, $LITE, $COHR, $JBL, $TSEM, $GFS)",
+            "downstream": "hyperscalers / AI data centers / NVLink and optical networking ecosystems ($NVDA, $META, $AMZN, $GOOGL, $MSFT)"
         },
         {
-            "upstream": "$IQE / InP epiwafers",
-            "midstream": "$MTSI / $LITE / $SIVE / $AAOI optical components",
-            "downstream": "$JBL / OEM transceiver integrators / hyperscalers"
+            "upstream": "Memory wafers / NAND / HBM supply ($MU, Samsung, SK Hynix)",
+            "midstream": "AI servers / GPU memory subsystems / DC compute platforms",
+            "downstream": "hyperscalers and neoclouds ($META, $AMZN, $NBIS, $IREN)"
         },
         {
-            "upstream": "$SIVE / reference lasers",
-            "midstream": "Ayar / $JBL / OpenLight / $GFS / $NVDA NVLink-CPO ecosystem",
-            "downstream": "Hyperscalers (Amazon, Microsoft, Google) and AI data centers"
+            "upstream": "Glass core substrate / packaging materials ($LPK, $XFAB, Absolics, Samsung Electro-Mechanics)",
+            "midstream": "advanced substrate packaging / SiP / module integration",
+            "downstream": "AI accelerator and optical interconnect platforms ($AMD, $NVDA, Apple, hyperscalers)"
         },
         {
-            "upstream": "Memory suppliers ($MU, SK Hynix, Samsung)",
-            "midstream": "AI servers / accelerators / robotics inference systems",
-            "downstream": "$NVDA / $META / $GOOGL / $AMZN and humanoid robotics platforms"
+            "upstream": "Robot actuators / bearings / gearboxes / sensors ($SHA0, Harmonic Drive, LeaderDrive)",
+            "midstream": "humanoid robot OEMs and integrators ($CCXI/Agility Robotics, $TSLA, Unitree, Boston Dynamics)",
+            "downstream": "enterprise deployment in logistics, manufacturing, delivery, and DC automation"
         },
         {
-            "upstream": "$XFAB / $TSEM / $GFS foundry and special process",
-            "midstream": "Silicon photonics / advanced packaging / CPO manufacturing",
-            "downstream": "$NVDA, $AAPL, hyperscaler networking stacks"
-        },
-        {
-            "upstream": "$LPK / advanced packaging equipment",
-            "midstream": "Glass substrate ecosystem / substrate ramp",
-            "downstream": "Absolics, Samsung Electro-Mechanics, and AI packaging customers"
+            "upstream": "BBU cylindrical cells (Samsung SDI)",
+            "midstream": "battery backup units assembled by Simplo",
+            "downstream": "data center operators / cloud platforms ($META, $AMZN)"
         }
     ],
     "data": [
+        {
+            "date": "2026-07-05",
+            "tweets": [
+                {
+                    "original": "Came across an interesting report from SVRC Research called \"State of Robotics 2026\", published in April. \n\nWhich listed:\n\n1. Figure AI \n2. Agility Robotics $CCXI\n3. Apptronik \n4. $TSLA \n5. Boston Dynamics\n6. Physical Intelligence \n7. 1X Technologies\n8. $AMZN Robotics\n9. https://t.co/AmCFokQYxl",
+                    "translation": "偶然看到一份来自 SVRC Research 的有趣报告，题为《State of Robotics 2026》，于4月发布。\n\n其中列出了：\n\n1. Figure AI\n2. Agility Robotics $CCXI\n3. Apptronik\n4. $TSLA\n5. Boston Dynamics\n6. Physical Intelligence\n7. 1X Technologies\n8. $AMZN Robotics\n9. https://t.co/AmCFokQYxl"
+                },
+                {
+                    "original": "Just some consolidated updates on memory: \n\n-  $MU leads new 1.5T Yen investment in Hiroshima ~$9.3B. (bullish read through for Disco, Advantest, Resonac, Towa) since capex is localized.\n\n- Morgan Stanley pointed out NAND will continue to be in short supply into 2027 so $SNDK /",
+                    "translation": "这里整理一些关于存储的最新进展：\n\n- $MU 牵头在广岛的新一轮 1.5 万亿日元投资，约合 93 亿美元。（由于资本开支本地化，这对 Disco、Advantest、Resonac、Towa 构成偏利好传导。）\n\n- 摩根士丹利指出，NAND 供给短缺将持续到 2027 年，因此 $SNDK /"
+                },
+                {
+                    "original": "Looks like there's a high power cylindrical cell / BBU cell shortage (aka: bottleneck):\n\n- Samsung SDI supplies the cells to Simplo, which assembles them into BBUs for $META to $AMZN. \n- As demand from data centers has increased, production of Samsung SDI's cylindrical cells has https://t.co/MNmNAJ0POv",
+                    "translation": "看起来高功率圆柱电芯 / BBU 电芯出现了短缺（也就是瓶颈）：\n\n- Samsung SDI 向 Simplo 供货，由后者将电芯组装成 BBU，供应给 $META 到 $AMZN。\n- 随着数据中心需求上升，Samsung SDI 的圆柱电芯产量已 https://t.co/MNmNAJ0POv"
+                },
+                {
+                    "original": "Leaked Anthropic docs show plans to secure 1.4GW capacity from Australia, amounting to ~$21.6B.\n\nRecently $IREN, $SHAZ, and other Neoclouds have been building sovereign DCs in Australia.\n\nGuess like a lot of things are stating to make more sense connection wise?\n\n(disclosure: no https://t.co/V5LzknfjPP",
+                    "translation": "泄露的 Anthropic 文件显示，其计划从澳大利亚锁定 1.4GW 的算力/电力容量，金额约为 216 亿美元。\n\n近期，$IREN、$SHAZ 以及其他 Neocloud 公司一直在澳大利亚建设主权数据中心。\n\n看起来很多事情在关联逻辑上开始变得更合理了？\n\n（披露：无 https://t.co/V5LzknfjPP"
+                }
+            ]
+        },
+        {
+            "date": "2026-07-04",
+            "tweets": [
+                {
+                    "original": "Nikkei - $JD E-Commerce Giant CEO warns \"Robots Will Replace 700,000 Delivery Workers\". \n\nPer FT's earlier piece last month: The 700,000 delivery personnel working for the firm will be replaced by robots, highlighting how rapid automation has become a new threat to China's https://t.co/Q8mUYLZXum",
+                    "translation": "日经报道——$JD 电商巨头 CEO 警告称：“机器人将取代70万名配送员工”。\n\n根据《金融时报》上月较早前的报道：该公司旗下70万名配送人员将被机器人替代，这凸显出快速自动化已成为中国的新威胁。https://t.co/Q8mUYLZXum"
+                },
+                {
+                    "original": "an apple a day keeps the bottleneck away",
+                    "translation": "一天一苹果，瓶颈远离我。"
+                },
+                {
+                    "original": "UDN Money report \"殺翻光通訊後 SemiAnalysis 惹議 業界揭其劣跡 許多公司慘遭魔手\":\n\n- SemiAnalysis, released a report in June, questioning the timing of the launch of the CPO on the grounds of low yield and delay, which caused the photonics sector to collapse. \n\n- The agency then https://t.co/C2apXczHyU",
+                    "translation": "联合新闻网财经报道《重挫光通讯后 SemiAnalysis 引发争议，业内揭其劣迹，许多公司惨遭魔手》：\n\n- SemiAnalysis 6月发布报告，以良率偏低和推出延迟为由，质疑 CPO 的发布时间，导致光子产业板块大幅回调。\n\n- 随后该机构又……https://t.co/C2apXczHyU"
+                },
+                {
+                    "original": "Bruh, when I first tried out ChatGPT around 2023, I thought it LLMs were garbage at coding. \n\n3Y later, Mythos is considered a modern day “nuke” for cybersecurity. \n\nPeople keep saying humanoids can’t do X or Y task today like plumbing or DC wiring. No sht, but it’s about where https://t.co/FO8eUlyOeI",
+                    "translation": "(翻译暂无)"
+                },
+                {
+                    "original": "TIL floating DC and ocean compute exists?\n\nApparently it’s free cooling + optimal for places in tight geography…\n\nIt’s going to be wild taking a cruise ship, and passing by a bunch of $NBIS or Samsung floating AI DCs one day.\n\nIf this ever becomes a thing like orbital compute? https://t.co/Ki2RqNc2xT",
+                    "translation": "今天才知道，原来还有浮式数据中心和海上算力？\n\n据说这类方案可以利用自然冷却，而且非常适合地理空间受限的地区……\n\n想象一下，未来某天坐游轮经过一排排 $NBIS 或三星的浮式 AI 数据中心，场面会非常震撼。\n\n如果这最终像轨道算力一样成为现实呢？https://t.co/Ki2RqNc2xT"
+                },
+                {
+                    "original": "I'm bearish on humans.\n\nHard to see people still having a job if humanoids come out at &lt;$15K mass production.\n\nNo insurance, no JP Morgan HR cannon scandals. \n\nAnd can do everything a person can, but better + 24/7.",
+                    "translation": "我对人类就业前景偏空。\n\n如果类人机器人未来能以低于1.5万美元的价格实现规模化量产，很难想象人类还能保住工作。\n\n不用买保险，也不会有摩根大通那种人力资源“炮弹”丑闻。\n\n而且它们能做人的一切工作，还能做得更好，并且7x24小时不停歇。"
+                }
+            ]
+        },
+        {
+            "date": "2026-07-03",
+            "tweets": [
+                {
+                    "original": "Just some public market read through from Chinese private VC markets:\n\nInstitutions are pouring funds into physical AI and world models. \n\n1. Large models / LLMs: ~$23.56B\n2. AI infrastructure + technical layer: ~$15.74B\n3. Embodied intelligence / physical AI: ~$13.36B\n4. AIGC https://t.co/Dx5yzFoh2o",
+                    "translation": "来自中国私募VC市场的一些公开市场映射：\n\n机构资金正大举流入具身智能和世界模型。\n\n1. 大模型/LLM：约235.6亿美元\n2. AI基础设施 + 技术层：约157.4亿美元\n3. 具身智能/物理AI：约133.6亿美元\n4. AIGC https://t.co/Dx5yzFoh2o"
+                },
+                {
+                    "original": "So positive readthrough on the upstream glass substrate supply chain:\n\n- Sumitomo Chemical and Samsung Electro-Mechanics formally establish JV in Korea within the year to handle the glass core substrate business (GlaSSEM).\n\nMain thing was timeline/funding was finalized:  \"full https://t.co/V1kzsHxM40",
+                    "translation": "因此，对上游玻璃基板供应链形成积极解读：\n\n- 住友化学与三星电机计划在年内于韩国正式设立合资公司，负责玻璃核心基板业务（GlaSSEM）。\n\n重点在于时间表和资金安排已最终敲定：“全面……”https://t.co/V1kzsHxM40"
+                },
+                {
+                    "original": "Be SemiAnalysis:\n\n- Post a scathing piece on CPO delays + optical company valuations, causing a crash.\n\nWhich $NVDA, analyst desks, and major optical companies refuted\n\n- Launch an institutional photonics ETF after optical names dropped 40-60%.",
+                    "translation": "若按 SemiAnalysis 的做法：\n\n- 发表一篇针对 CPO 延迟及光通信公司估值的犀利报告，引发股价暴跌。\n\n随后遭到 $NVDA、分析师团队以及多家大型光通信公司的反驳。\n\n- 在光学类标的大跌40%-60%后，再推出一只机构级光子学 ETF。"
+                },
+                {
+                    "original": "SemiAnalysis on $META “overcapacity” and market reactions with $NBIS and others:\n\n“We believe Meta’s datacenter and compute will accelerate”.\n\n“Capex in 2027 will be shockingly high”.\n\nRecent global crash, especially in the photonics sector was stupid… Off misleading narratives https://t.co/DhbypH2vaQ",
+                    "translation": "SemiAnalysis 关于 $META “产能过剩”以及 $NBIS 等相关标的的市场反应：\n\n“我们认为 Meta 的数据中心与算力扩张将加速。”\n\n“2027年的资本开支将高得惊人。”\n\n近期全球市场下跌，尤其是光子产业的回调，实在是愚蠢……完全是被误导性叙事所驱动。https://t.co/DhbypH2vaQ"
+                },
+                {
+                    "original": "LeaderDrive (688017) is now at all time highs after hitting a 20% limit up today. \n\nLooks like robotics sector excitement is palpable…\n\nLargely driven by US and China’s frontier humanoid companies with $CCXI / Agility Robotics\n\nAs well as Unitree (STAR listing approved today) https://t.co/GCqizzzuTQ",
+                    "translation": "LeaderDrive（688017）今日涨停20%后，现已创出历史新高。\n\n看起来机器人板块的热情相当强烈……\n\n主要由中美前沿类人机器人公司推动，例如 $CCXI / Agility Robotics\n\n以及优必选/Unitree（今日已获科创板上市批准）。https://t.co/GCqizzzuTQ"
+                },
+                {
+                    "original": "Lot of misinformation recently about $META.\n\nRecently major journals have been stating \n\n“AI AGENT DEVELOPMENT OVER THE LAST FOUR MONTHS HASN'T 'ACCELERATED IN THE WAY WE EXPECTED”\n\nTo push some narrative about Meta dropping out of the race or lowered capex:\n\nAs Wang clarified: https://t.co/HQQlnWHXoo",
+                    "translation": "最近关于 $META 的误导性信息很多。\n\n近期一些主流媒体声称：\n\n“过去四个月里，AI Agent 的发展并未按我们预期的方式加速。”\n\n以此渲染 Meta 退出竞争或下调资本开支的叙事：\n\n正如王先生所澄清的： https://t.co/HQQlnWHXoo"
+                },
+                {
+                    "original": "$META: upcoming AI model “Watermelon”  has caught up to OpenAI’s GPT 5.5.\n\nWang noted it uses an \"order of magnitude\" more compute than its predecessor “Avocado”.\n\nWho said they were out of the AI race again? https://t.co/X2sOgMRTuw",
+                    "translation": "$META：即将推出的 AI 模型“Watermelon”已追平 OpenAI 的 GPT 5.5。\n\n王先生指出，其所需算力较上一代“Avocado”提升了“一个数量级”。\n\n还有谁说他们已经退出 AI 竞赛了？https://t.co/X2sOgMRTuw"
+                }
+            ]
+        },
         {
             "date": "2026-07-02",
             "tweets": [
@@ -1101,109 +1138,6 @@
                 {
                     "original": "Just very helpful timelines reiterated around glass substrate (source: Trendforce):\n\n- SKC Absolics (011790) H2 2026 (first mover x $AMAT) - $AMD customers\n\n- Samsung electromechanics h2 2027 (009150) x Sumitomo Chem (4005) - Apple / $AVGO / hyperscalers \n\nIdk about $INTC 2030 https://t.co/zI7nD2YQpa",
                     "translation": "关于玻璃基板，以下时间表非常有参考价值（来源：TrendForce）：\n\n- SKC Absolics（011790）预计于 2026 年下半年量产（先发优势 x $AMAT）- 面向 $AMD 客户\n\n- 三星电机（009150）预计于 2027 年下半年 x 住友化学（4005）- 面向苹果 / $AVGO / 超大规模云厂商\n\n至于 $INTC 2030，我就不确定了 https://t.co/zI7nD2YQpa"
-                }
-            ]
-        },
-        {
-            "date": "2026-06-06",
-            "tweets": [
-                {
-                    "original": "If you’re curious:\n\n$4649 for 107,894,491 (100M+) impressions!\n\nAll of this is going to dog rescues, will be doing large donations later!\n\nIt’s ~$600 / dog rescued, so it scales proportionally with Serenity fan count!\n\nI also believe in making all my profits off $SIVE to $AAOI https://t.co/MqFWfvTCgH",
-                    "translation": "如果你好奇的话：\n\n$4649 换来 107,894,491 次（1 亿+）曝光！\n\n这些收入都会捐给狗狗救助机构，后面还会进行更大额的捐赠！\n\n平均每救助一只狗狗约合 ~$600，因此会随着 Serenity 粉丝数量同比例扩展！\n\n另外，我也相信自己会把来自 $SIVE 到 $AAOI 的所有利润都赚到手 https://t.co/MqFWfvTCgH"
-                },
-                {
-                    "original": "Apparently I’m all over Chinese news now?\n\nI just published some research on LeaderDrive (688017) and their role in humanoid supply chains.\n\nLooks like China’s robotics stock sector went up and 688017 hit 20% limit up?\n\nI appreciate they called me “Overseas God”. https://t.co/mdASEvmsj0",
-                    "translation": "看来我现在已经登上中国新闻了？\n\n我刚刚发布了关于绿的谐波（688017）及其在人形机器人供应链中作用的一些研究。\n\n似乎中国机器人板块上涨，而 688017 也触及 20% 涨停？\n\n很感谢他们称我为“海外大神”。https://t.co/mdASEvmsj0"
-                },
-                {
-                    "original": "Okay... just some more weekend shower thoughts about $XFAB.\n\nI still feel like it could be the next $TSEM, just early stage at a $1.4B MC?\n\nThey kinda leapfrogged current gens (which $TSEM are getting volume from) to compete for H2 2027 CPO scale up inflection point ($ASX docs https://t.co/NbAgXOwkyh",
-                    "translation": "好吧……周末洗澡时又想到一些关于 $XFAB 的想法。\n\n我还是觉得它有可能成为下一个 $TSEM，只是目前还处在早期阶段，市值约为 14 亿美元？\n\n它们某种程度上跳过了当前几代技术（而 $TSEM 正在从这些代际中获得放量），去竞争 2027 年下半年 CPO 扩产拐点（$ASX 文件 https://t.co/NbAgXOwkyh"
-                },
-                {
-                    "original": "How are all you regards on $RDDT down -99% after 2 red days? \n\nIs it that hard just to hold indiviudal stocks like $AAOI or $MRVL that are already high-beta?\n\nYou can be right directionally, but wrong on short-term timing. \n\nOne extra week or month makes a huge difference. https://t.co/UrbqiRIIta",
-                    "translation": "各位在 $RDDT 上连续两个交易日下跌后，怎么就已经 -99% 了？\n\n持有像 $AAOI 或 $MRVL 这种本来就高贝塔的个股，真的有那么难吗？\n\n方向判断可以是对的，但短期时点可能会错。\n\n多等一周或一个月，结果就会大不相同。https://t.co/UrbqiRIIta"
-                },
-                {
-                    "original": "真是让我受宠若惊，围绕着我的 X（推特）帖子居然建立起了一个完整的微型经济圈？\n\n-&gt; 追踪我做多股票的网站\n-&gt; Github 项目\n-&gt; 新闻媒体\n-&gt; 用 AI 直接搬运我内容的 X 大 V (网红)\n-&gt; 迷因币/土狗币（我不支持，但你们开心就好）\n-&gt; 帖子倒卖者",
-                    "translation": "I’m truly flattered that a whole micro-economy has formed around my X (Twitter) posts?\n\n-&gt; Websites tracking the stocks I’m long\n-&gt; GitHub projects\n-&gt; News media\n-&gt; X influencers copying my content directly with AI\n-&gt; Meme coins / low-quality speculative coins (I don’t endorse them, but enjoy if you like)\n-&gt; Post resellers"
-                }
-            ]
-        },
-        {
-            "date": "2026-06-05",
-            "tweets": [
-                {
-                    "original": "Sigh. \n\nI keep telling retail + Swedish Hedge Funds how important $SIVE is to CPO, but people don’t listen.\n\nEnough retail holders got shaken off, and \nnow JP Morgan managed to buy up a massive stake in Sivers (purely institutional).\n\nJP Morgan went from .4% ownership last month https://t.co/7f3sYuoSmk",
-                    "translation": "唉。\n\n我一直在告诉散户以及瑞典对冲基金，$SIVE 对 CPO 有多么重要，但大家就是不听。\n\n足够多的散户持有人已经被震出局，现在摩根大通成功买入了 Sivers 的大额股份（纯粹是机构层面的）。\n\n摩根大通上个月的持股比例还是 0.4% https://t.co/7f3sYuoSmk"
-                },
-                {
-                    "original": "Fun times with market corrections.  \n\nLeaders from $NVDA down -4.87% to $MU down -7.03%. High beta names like $PL down -22.02%. \n\nFunny to see media always trying to explain like: \n\n\"Micron suffers record wipeout as Broadcom casts a shadow over chip stocks \"\n\nBroadcom projected https://t.co/D1cE7sjKBs",
-                    "translation": "市场回调时期总是“很有意思”。\n\n龙头股从 $NVDA 下跌 -4.87%，到 $MU 下跌 -7.03%。像 $PL 这样的高贝塔标的跌幅则达到 -22.02%。\n\n有趣的是，媒体总是试图这样解释：\n\n“博通给芯片股蒙上阴影，导致美光遭遇创纪录抛售”\n\n博通预计…… https://t.co/D1cE7sjKBs"
-                },
-                {
-                    "original": "Xintec (3374) also looks like an interesting idea (TSMC packaging/test subsidary). \n\nMC is at ~ $2.18B. \n\n$TSM COUPE mass production starts this half, H2 2026. and... they have plans for \"Aggressively pursuing CPO opportunities with subsidiaries Xintec\". \n\nThis is just very https://t.co/e3NXsmQd6v",
-                    "translation": "Xintec（3374）看起来也是一个有意思的标的（台积电封装/测试子公司）。\n\n市值约为 21.8 亿美元。\n\n$TSM 的 COUPE 将于本半年开始量产，H2 2026。并且……他们有“通过子公司 Xintec 积极争取 CPO 机会”的计划。\n\n这真的非常…… https://t.co/e3NXsmQd6v"
-                },
-                {
-                    "original": "$SIVE is my favorite CPO / photonics stock after AAOI. \n\nPartly because it's Swedish and you have entertainment from comedians over there. \n\nToday a new non-technical hedge fund called Protean Funds (likely shorting), went on air. \n\nTo said $SIVE CPO applications are imaginary. https://t.co/5RvMnaiDI6",
-                    "translation": "$SIVE 是我继 $AAOI 之后最喜欢的 CPO / 光子学股票。\n\n部分原因是它是瑞典公司，而且那边还有喜剧演员提供的“娱乐效果”。\n\n今天，一家名为 Protean Funds 的新晋非技术型对冲基金（大概率在做空）公开发声。\n\n他们称 $SIVE 的 CPO 应用是虚构的。https://t.co/5RvMnaiDI6"
-                },
-                {
-                    "original": "Apparently my Chinese name is “白毛股神”\n\nWhich translates to “White Hair Stock God” in English.\n\nI’ll gladly accept it. https://t.co/w2a5zAD5f4",
-                    "translation": "原来我的中文名叫“白毛股神”\n\n翻成英文就是“White Hair Stock God”。\n\n我很乐意接受这个称号。https://t.co/w2a5zAD5f4"
-                },
-                {
-                    "original": "$RPI: $283 -&gt; $983, up 247% from my thesis post.\n\nQuote: Strong AI-related demand was expected to result in core profit \"significantly ahead\" of market expectations.\n\nTurns out European Media’s favorite “memestock” with “no fundamentals” back in Feb. \n\nWas actually was backed by https://t.co/5dCCgWTDDp",
-                    "translation": "(翻译暂无)"
-                },
-                {
-                    "original": "专门写给我的中文读者：\n\n绿的谐波（LeaderDrive，688017，577.3亿人民币）是我在布局人形机器人赛道时最青睐的中国上市标的。\n\n他们的业务涵盖：\n\n谐波减速器（据称占有超过60%的国内市场份额，以及1800多家全球客户）\n\n人形机器人旋转关节减速器\n\n直线执行器\n\n电机/关节，以及许多其他核心零部件。 https://t.co/pXFr21BZOd",
-                    "translation": "专门写给我的中文读者：\n\n绿的谐波（LeaderDrive，688017，市值 577.3 亿元人民币）是我在布局人形机器人赛道时最看好的中国上市标的之一。\n\n其业务涵盖：\n\n谐波减速器（据称国内市占率超过 60%，并拥有 1800 多家全球客户）\n\n人形机器人旋转关节减速器\n\n直线执行器\n\n电机/关节，以及许多其他核心零部件。 https://t.co/pXFr21BZOd"
-                },
-                {
-                    "original": "$AAOI is one of the names I keep averaging up on since $28.\n\nJust from random shower thoughts… I feel like it’s just imminent to double or triple if they execute? \n\nThere’s just too much demand for 800g/1.6T optical transceivers… \n\nThen this company is targeting the largest https://t.co/E3E6HtlHSp",
-                    "translation": "$AAOI 是我自 $28 以来一直在不断加仓的标的之一。\n\n只是出于一些随性的洗澡时灵感……我感觉如果他们执行到位，股价翻倍甚至三倍几乎只是时间问题？\n\n市场对 800G/1.6T 光模块的需求实在太强了……\n\n而且这家公司瞄准的是最大的 https://t.co/E3E6HtlHSp"
-                },
-                {
-                    "original": "Anthropic: “Urges Global Pause in AI Development”\n\nTranslation: “please let us take the lead, stop building!”\n\nRegardless, statements like this encourage every Country to start investing in AI.\n\nImplications are profound from fields of medicine, math, and basically everything. https://t.co/9tfXq99Pc8",
-                    "translation": "Anthropic：“呼吁全球暂停AI开发”\n\n翻译：“请让我们领跑，别再继续建了！”\n\n无论如何，这类表态反而会促使各国加大对AI的投资。\n\n其影响深远，覆盖医学、数学以及几乎所有领域。 https://t.co/9tfXq99Pc8"
-                }
-            ]
-        },
-        {
-            "date": "2026-06-04",
-            "tweets": [
-                {
-                    "original": "$RDDT was driving me insane.\n\n&gt; massive earnings beat\n&gt; just printing FCF since they’re too profitable\n&gt; 69% Y/Y revenue growth.\n&gt; biggest moat against AI vibe coding from network effect\n&gt; 91.5% gross margin. \n\nWas just flat for months. Glad to see it getting more attention. https://t.co/umUxYdXkz7",
-                    "translation": "$RDDT 之前真把我折磨疯了。\n\n&gt; 业绩大幅超预期\n&gt; 由于盈利能力太强，现金流自由持续“印钞”\n&gt; 营收同比增长 69%\n&gt; 依托网络效应，构筑了对抗AI vibe coding的最大护城河\n&gt; 毛利率达 91.5%\n\n结果却连续几个月横盘不动。很高兴它终于开始获得更多关注。 https://t.co/umUxYdXkz7"
-                },
-                {
-                    "original": "Found this news funny about a new Swedish Hedge fund:\n\nOrigo’s fund has lost substantial money shorting $SIVE.\n\n“The loss is one of the biggest this year\"\n\nMany of these Swedish hedge funds are now heavily underwater.\n\nJust as an accidental byproduct of $SIVE being a core part of https://t.co/gD1vMQvQV5",
-                    "translation": "看到这条关于一家新瑞典对冲基金的新闻，觉得挺有意思的：\n\nOrigo 旗下基金做空 $SIVE 蒙受了巨额损失。\n\n“这是今年最大的损失之一。”\n\n许多瑞典对冲基金如今都深度套牢。\n\n这不过是 $SIVE 成为……核心组成部分的一个意外副产品。 https://t.co/gD1vMQvQV5"
-                },
-                {
-                    "original": "This timeline keeps getting more and more unreal…\n\n$NVDA Jensen Huang to meet Faker (League of Legends)\n\nI did talk with Jensen few years back about PUBG and GPU shortages for mining. \n\nAnd he was enthusiastic about ideas for cross-platform gaming + getting enough allocation to https://t.co/GoYNi0hPDY",
-                    "translation": "这个时间线真是越来越不真实了……\n\n$NVDA 的黄仁勋将会见 Faker（《英雄联盟》）\n\n几年前我确实和 Jensen 聊过 PUBG 以及矿业导致的 GPU 紧缺问题。\n\n他对跨平台游戏以及确保足够资源配置的想法也很感兴趣。 https://t.co/GoYNi0hPDY"
-                },
-                {
-                    "original": "LOL. I’m honestly laughing there’s new media articles for each one of my X posts.\n\nI appreciate any objective coverage though since it helps combat a lot of the disinformation online. \n\nAm I that popular now? https://t.co/1fOsuqI9px",
-                    "translation": "哈哈，说实话我都笑了，现在我每发一条 X 帖子，都会有新的媒体报道。\n\n不过我也欢迎任何客观报道，因为这有助于遏制网上的大量错误信息。\n\n我现在已经这么火了吗？ https://t.co/1fOsuqI9px"
-                },
-                {
-                    "original": "$SIVE looks like both a chokepoint and a bottleneck for CPO next year. \n\nKeep seeing information published from nontechnical people who miss any nuances.\n \nHere’s the reason why:\n\n1. CW lasers are bottlenecked signaled by $LITE earnings.\n\nLaser fabs are heavily allocated to EML",
-                    "translation": "$SIVE 看起来既是明年 CPO 的关键卡点，也是瓶颈所在。\n\n我总看到一些非技术人士发布的信息，完全忽略了其中的细节与 нюance。\n\n原因如下：\n\n1. CW 激光器供给受限，这一点从 $LITE 的业绩中已经有所体现。\n\n激光晶圆厂产能大量分配给 EML"
-                },
-                {
-                    "original": "I now am the #1 most subscribed to account on the entire X platform!\n\nAfter overtaking Elon Musk today.\n\nThank you everyone for helping me achieve my goal. https://t.co/XLjy4ZsZyD",
-                    "translation": "我现在已经成为整个 X 平台订阅数排名第 1 的账号了！\n\n今天刚刚超越了 Elon Musk。\n\n感谢大家帮助我实现这个目标。 https://t.co/XLjy4ZsZyD"
-                },
-                {
-                    "original": "Yeah… I think all your upstream semi supply chain companies are going much higher.\n\nGoldman now expects a combined $5.3 trillion of capex spending for the four largest hyperscalers $GOOGL / $META / MSFT / $AMZN from 2025 to 2030.\n\nRevised up from $4.5T from Q1 earnings. https://t.co/UtkU1IU2V5",
-                    "translation": "是的……我认为你们上游半导体供应链的公司都还会大幅上行。\n\n高盛目前预计，2025年至2030年，四大云超大规模厂商 $GOOGL / $META / MSFT / $AMZN 的资本开支合计将达到 5.3 万亿美元。\n\n较一季度财报后预计的 4.5 万亿美元进一步上调。 https://t.co/UtkU1IU2V5"
-                },
-                {
-                    "original": "Well, looks like it’s that time of the year again for $COIN, $HOOD, $CRCL and co.\n\nSo much for a “friendly administration” and “strategic reserve” if they’re trying to ram through Bank Lobbied Clarity Act bills…\n\nTo ban any form of innovation or competition against banks, with https://t.co/zypbwwqt3x",
-                    "translation": "看起来 $COIN、$HOOD、$CRCL 等又到了每年的那个时点。\n\n如果他们正试图强行推动由银行游说主导的《Clarity Act》法案，那所谓的“友好政府”和“战略储备”也就不过如此……\n\n其目的在于禁止任何形式的创新，或任何对银行构成竞争的行为，并且…… https://t.co/zypbwwqt3x"
                 }
             ]
         }
