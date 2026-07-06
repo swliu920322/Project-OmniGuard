@@ -5,6 +5,7 @@ param prefix string = 'omni'
 
 @secure()
 param openAiKey string = ''
+param openAiEndpoint string = 'https://southeastaisa-0322-resource.openai.azure.com'
 param openAiDeploymentName string = 'gpt-5.4-mini'
 
 // Configurator Parameter Set
@@ -47,6 +48,7 @@ module infraDeployment './nested-infra.bicep' = {
     hubVNetName: hubVNetName
     spokeVNetName: spokeVNetName
     openAiKey: openAiKey
+    openAiEndpoint: openAiEndpoint
     openAiDeploymentName: openAiDeploymentName
     deployManagedIdentities: true
     deployStaticWebApp: deployStaticWebApp
