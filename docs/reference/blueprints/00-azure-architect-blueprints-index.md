@@ -133,6 +133,10 @@ docs/reference/blueprints/
 4. **DevOps 效率与架构资产沉淀**：
    * 增加了 `make whatif` 预检工具，调用 `sh/provision-whatif.sh` 支持自适应租户前缀提取的 Dry-run 干跑，节约 80%+ 的排队等待时间。
    * 归档了 **ADR-032** 架构决策记录，并在 `2-secure-IoT.md`、`3-global-portal.md`、`4-all.md` 验收报告中补充了完整的真实 CLI 运行输出与 SKU 等级记录。
+5. **ACA Ingress 与 OpenAI 凭证统一治理 (ADR-033)**：
+   * **Ingress 降级修复**：解决了 ACA 内部 Ingress HTTP→HTTPS 重定向导致 Node.js `fetch` 将 `POST` 改变为 `GET`（引发 FastAPI 405 Method Not Allowed 报错）的网络级拦截问题。通过在 Bicep 中声明 `allowInsecure: true` 彻底疏通。
+   * **凭证统一注入**：对齐了三种不同的 Python OpenAI 环境变量命名，并在 `sh/deploy-aca.sh` 中实现了自适应读取本地 `local.settings.json` 并动态注入至 Container Apps 的流程，避开了测试订阅无 quota 的痛点。
+   * **多租户前缀自动化滚动发布**：重构了 `sh/deploy-aca.sh`，使其在检测到参数文件时能够动态解析出真实的 `PREFIX` 与 `RG` 进行升级部署（支持 `omni3`、`omni4`、`omni5` 的无缝滚动更新）。
 
 ---
 
@@ -145,4 +149,4 @@ docs/reference/blueprints/
   * *Context*：进一步拓宽 Cosmos DB 的异地多区域多写和高可用灾备，并对多区域的网络拓扑连接进行物理建模。
 
 ---
-*Last updated: 2026-07-03 | Handover Architect: AI Cloud Architect*
+*Last updated: 2026-07-06 | Handover Architect: AI Cloud Architect*
