@@ -28,6 +28,7 @@
 | 022 | [ACA IaC Topology Refactoring](./ADR-022-%5Binfra%5D-ACA-IaC-Topology-Refactoring.md) | ✅ |
 | 031 | [Shadow Environment E2E Test Suite — Isolated Deployment & Self-Healing Teardown](./ADR-031-%5Binfra%5D-Shadow-E2E-Test-Suite.md) | ✅ |
 | 032 | [Dual-Track Identity Decoupling, Bicep Parameter Filtering, and Preset Fallback Governance](./ADR-032-%5Barchitecture%5D-Dual-Track-Identity-Decoupling-and-Fallback-Governance.md) — also `[backend]`, `[frontend]`, `[architecture]` | ✅ |
+| **033** | **[ACA Internal Ingress HTTP-to-HTTPS Redirect Causing POST-to-GET Demotion](./ADR-033-%5Binfra%5D-ACA-Ingress-HTTP-POST-Demotion.md) — also `[backend]`** | ✅ |
 
 ### ⚙️ Backend `[backend]`
 
@@ -37,6 +38,7 @@
 | 006 | [Tenant Policy Fallback via Connection String](./ADR-006-%5Bbackend%5D-Tenant-Fallback-Strategy.md) | ✅ |
 | 024 | [Dynamic Orchestration Sandbox API](./ADR-024-%5Bbackend%5D-Dynamic-Orchestration-Sandbox-API.md) | ✅ |
 | 032 | [Dual-Track Identity Decoupling, Bicep Parameter Filtering, and Preset Fallback Governance](./ADR-032-%5Barchitecture%5D-Dual-Track-Identity-Decoupling-and-Fallback-Governance.md) — also `[infra]`, `[frontend]`, `[architecture]` | ✅ |
+| 033 | [ACA Internal Ingress HTTP-to-HTTPS Redirect Causing POST-to-GET Demotion](./ADR-033-%5Binfra%5D-ACA-Ingress-HTTP-POST-Demotion.md) — also `[infra]` | ✅ |
 
 ### 🎨 Frontend `[frontend]`
 
