@@ -28,8 +28,8 @@ The scenario-configurator produces Azure infrastructure templates (Bicep + param
 - 为开发者迭代 Bicep 模板提供快速反馈
 
 ## Decision / 决策
-Implement `sh/shadow-e2e-test.py` as a self-contained Python script that:
-在 `sh/shadow-e2e-test.py` 中实现自包含的 Python 脚本：
+Implement `tests/shadow-e2e-test.py` as a self-contained Python script that:
+In `tests/shadow-e2e-test.py` 中实现自包含的 Python 脚本：
 
 1. **Prefix Overwrite Isolation**: Reads `.azure/main.parameters.json`, overwrites `prefix` to `"omnitest"` and `customResourceGroupName` to `"omnitest-guard-infra-sea-rg"` — ensuring zero collision with real deployments
 2. **隔离前缀重写**: 读取参数文件，将 `prefix` 强制改写为 `omnitest`，`customResourceGroupName` 改写为隔离资源组名
