@@ -35,6 +35,7 @@ docs/reference/blueprints/
 ├── 00-azure-architect-blueprints-index.md      ← 本文 (导航索引)
 ├── cloud-architecture-review.md                ← 云架构审查与修复报告 (新)
 ├── configurator-development-plan.md            ← 启动配置器与估算台开发计划 (新)
+├── enterprise-directory-review.md            ← 企业级目录结构架构评审与演进报告 (新)
 ├── 01-identity-foundation.md                    ← 身份基座
 ├── 02-api-management-gateway.md                 ← API 网关
 ├── 03-security-posture.md                       ← 安全态势
