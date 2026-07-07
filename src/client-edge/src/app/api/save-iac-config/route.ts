@@ -221,11 +221,30 @@ export async function GET() {
     const projectRoot = findProjectRoot();
     const configPath = path.join(projectRoot, '.azure', 'configurator-ui-state.json');
 
-    if (fs.existsSync(configPath)) {
-      const data = fs.readFileSync(configPath, 'utf-8');
-      return NextResponse.json(JSON.parse(data));
+    if (!fs.existsSync(configPath)) {
+      return NextResponse.json({ message: 'No configuration saved yet' }, { status: 404 });
     }
-    return NextResponse.json({ message: 'No configuration saved yet' }, { status: 404 });
+
+    const data = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+    
+    // Read live Bicep VFS from .azure/ folder
+    const vfs: Record<string, string> = {};
+    const azureDir = path.join(projectRoot, '.azure');
+    if (fs.existsSync(azureDir)) {
+      const files = fs.readdirSync(azureDir);
+      for (const file of files) {
+        if (file.endsWith('.bicep')) {
+          const content = fs.readFileSync(path.join(azureDir, file), 'utf-8');
+          vfs[file] = content;
+          vfs[`./${file}`] = content;
+        }
+      }
+    }
+    
+    return NextResponse.json({
+      ...data,
+      vfs
+    });
   } catch (error: any) {
     return NextResponse.json({
       error: 'Failed to read configuration',

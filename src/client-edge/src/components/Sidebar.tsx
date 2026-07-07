@@ -61,7 +61,6 @@ export default function Sidebar() {
       items: [
         { label: 'IaC 架构看板', href: '/iac', icon: Layers },
         { label: '可视化配置台', href: '/iac/configurator', icon: Settings },
-        { label: '拓扑仿真画布', href: '/iac/canvas', icon: Activity },
       ]
     },
     {
