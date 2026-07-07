@@ -194,12 +194,12 @@ export default function IaCConfigDashboard() {
         ) : (
           /* Main Dashboard Content */
           <>
-            {/* Top Row: Summarized Settings Grid (4 columns) - Brightened card backgrounds for depth */}
+            {/* Top Row: Summarized Settings Grid (4 columns) - Glassmorphism & Hover glow */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               
               {/* Card 1: Scenario */}
-              <div className="rounded-xl border border-slate-800/80 bg-[#111625] p-4 space-y-2.5 shadow-md">
-                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold">
+              <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md p-4 space-y-2.5 shadow-lg hover:border-cyan-500/30 hover:bg-slate-900/60 transition-all duration-300 group hover:shadow-[0_0_25px_rgba(0,242,254,0.06)]">
+                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold group-hover:text-cyan-400 transition-colors">
                   <Shield size={12} className="text-cyan-400" /> Scenario
                 </div>
                 <div>
@@ -211,8 +211,8 @@ export default function IaCConfigDashboard() {
               </div>
 
               {/* Card 2: Network VNet */}
-              <div className="rounded-xl border border-slate-800/80 bg-[#111625] p-4 space-y-2.5 shadow-md">
-                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold">
+              <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md p-4 space-y-2.5 shadow-lg hover:border-cyan-500/30 hover:bg-slate-900/60 transition-all duration-300 group hover:shadow-[0_0_25px_rgba(0,242,254,0.06)]">
+                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold group-hover:text-amber-400 transition-colors">
                   <Network size={12} className="text-amber-400" /> Virtual Network
                 </div>
                 <div>
@@ -224,8 +224,8 @@ export default function IaCConfigDashboard() {
               </div>
 
               {/* Card 3: Prefix & Location */}
-              <div className="rounded-xl border border-slate-800/80 bg-[#111625] p-4 space-y-2.5 shadow-md">
-                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold">
+              <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md p-4 space-y-2.5 shadow-lg hover:border-cyan-500/30 hover:bg-slate-900/60 transition-all duration-300 group hover:shadow-[0_0_25px_rgba(0,242,254,0.06)]">
+                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold group-hover:text-emerald-400 transition-colors">
                   <Cpu size={12} className="text-emerald-400" /> Global Scope
                 </div>
                 <div>
@@ -237,8 +237,8 @@ export default function IaCConfigDashboard() {
               </div>
 
               {/* Card 4: Active SKUs */}
-              <div className="rounded-xl border border-slate-800/80 bg-[#111625] p-4 space-y-2.5 shadow-md">
-                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold">
+              <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md p-4 space-y-2.5 shadow-lg hover:border-cyan-500/30 hover:bg-slate-900/60 transition-all duration-300 group hover:shadow-[0_0_25px_rgba(0,242,254,0.06)]">
+                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold group-hover:text-indigo-400 transition-colors">
                   <Database size={12} className="text-indigo-400" /> SKU Pricing
                 </div>
                 <div>
