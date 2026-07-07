@@ -80,8 +80,8 @@ export default function Sidebar() {
 
   return (
     <aside 
-      className={`min-h-screen bg-slate-900/40 border-r border-slate-900 flex flex-col justify-between transition-all duration-300 ease-in-out relative z-30 select-none ${
-        isCollapsed ? 'w-16' : 'w-64'
+      className={`min-h-screen bg-[#0b0f19] border-r border-slate-900/80 flex flex-col justify-between transition-all duration-300 ease-in-out relative z-30 select-none ${
+        isCollapsed ? 'w-20' : 'w-64'
       }`}
     >
       {/* Upper Section */}
@@ -111,15 +111,15 @@ export default function Sidebar() {
             <div key={gIdx} className="space-y-1.5">
               {/* Group Title */}
               {!isCollapsed ? (
-                <div className="text-[10px] font-mono text-slate-500 tracking-wider uppercase mb-2 block px-2">
+                <div className="text-[10px] font-mono text-slate-500 tracking-wider uppercase mb-2 block px-2 font-semibold">
                   {group.title}
                 </div>
               ) : (
-                <div className="border-t border-slate-900/80 my-3 block mx-1" />
+                <div className="border-t border-slate-900/50 my-4 block mx-1" />
               )}
 
               {/* Group Items */}
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 {group.items.map((item, iIdx) => {
                   const Icon = item.icon;
                   // Handle active path matching
@@ -130,20 +130,20 @@ export default function Sidebar() {
                       key={iIdx}
                       href={item.href}
                       title={isCollapsed ? item.label : undefined}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-mono transition-all group relative ${
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-mono font-medium transition-all group relative ${
                         isActive 
-                          ? 'bg-[#00f2fe]/10 text-cyan-400 border-l-2 border-[#00f2fe] pl-2.5' 
-                          : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/30'
+                          ? 'bg-[#00f2fe]/10 text-cyan-300 border-l-2 border-[#00f2fe] pl-2.5 shadow-[inset_0_0_15px_rgba(0,242,254,0.05)]' 
+                          : 'text-slate-300 hover:text-white hover:bg-slate-900/40'
                       }`}
                     >
-                      <Icon className={`shrink-0 ${isActive ? 'text-[#00f2fe]' : 'text-slate-500 group-hover:text-slate-300'}`} size={16} />
+                      <Icon className={`shrink-0 ${isActive ? 'text-[#00f2fe]' : 'text-slate-400 group-hover:text-slate-200'}`} size={16} />
                       {!isCollapsed && (
                         <span className="truncate">{item.label}</span>
                       )}
                       
                       {/* Tooltip for Collapsed Sidebar */}
                       {isCollapsed && (
-                        <div className="absolute left-16 bg-slate-900 border border-slate-800 text-slate-200 px-3 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity whitespace-nowrap z-50 text-[11px] font-mono shadow-2xl">
+                        <div className="absolute left-20 bg-slate-950 border border-slate-800 text-slate-100 px-3 py-2 rounded-xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 whitespace-nowrap z-50 text-xs font-mono shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
                           {item.label}
                         </div>
                       )}
@@ -157,19 +157,20 @@ export default function Sidebar() {
       </div>
 
       {/* Footer / Collapse Trigger */}
-      <div className="p-3 border-t border-slate-900/60 flex items-center justify-between">
-        {!isCollapsed && (
-          <div className="text-[10px] font-mono text-slate-600 uppercase flex items-center gap-1 pl-2">
-            <Terminal size={10} /> SYS_V2.6_OK
+      <div className="p-4 border-t border-slate-900/60 flex items-center justify-between h-16 min-h-16 bg-slate-950/20">
+        {!isCollapsed ? (
+          <div className="text-xs font-mono text-slate-400 uppercase flex items-center gap-1.5 pl-1 font-semibold tracking-wider">
+            <Terminal size={12} className="text-cyan-500" /> SYS_V2.6_OK
           </div>
-        )}
+        ) : null}
         <button 
           onClick={toggleCollapse}
-          className={`p-1.5 rounded-lg border border-slate-800 bg-slate-950/80 text-slate-500 hover:text-slate-200 hover:border-slate-700 transition-colors ${
+          className={`p-2 rounded-xl border border-slate-800 bg-slate-950/80 text-slate-400 hover:text-[#00f2fe] hover:border-cyan-500/30 transition-all shadow ${
             isCollapsed ? 'mx-auto' : ''
           }`}
+          title={isCollapsed ? "展开导航" : "折叠导航"}
         >
-          {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
       </div>
     </aside>
