@@ -27,7 +27,7 @@ export default function RootResumePage() {
               Solutions Architect (AI & Cloud Transformation)
             </div>
           </div>
-          <div className="flex flex-wrap md:flex-col items-start md:items-end gap-3 text-xs text-gray-400 font-mono">
+          <div className="flex flex-wrap md:flex-col items-start md:items-end gap-3 text-xs text-gray-300 font-mono">
             <span className="flex items-center gap-1.5"><MapPin size={13} /> Singapore</span>
             <span className="flex items-center gap-1.5"><Mail size={13} /> lsw19920322@gmail.com</span>
             <span className="flex items-center gap-1.5"><Phone size={13} /> +6011-1121-6759</span>
@@ -45,7 +45,7 @@ export default function RootResumePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <Section title="PROFESSIONAL SUMMARY">
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-gray-300 text-sm leading-relaxed">
                 10+ years of engineering excellence, bridging robust software systems with AI-native solutions.
                 Expert in transitioning complex front-end modularity into high-level Azure Cloud Architectures and
                 Agentic Workflows. Proven track record in Fortune 500 environments delivering standardized SOPs and
@@ -60,7 +60,7 @@ export default function RootResumePage() {
                   <span className="text-[#00f2fe] text-xs font-mono">2025 - Present</span>
                 </div>
                 <div className="text-[#00f2fe] text-xs font-mono mt-1">Lead Architect</div>
-                <ul className="mt-3 space-y-2 text-gray-400 text-sm leading-relaxed">
+                <ul className="mt-3 space-y-2 text-gray-300 text-sm leading-relaxed">
                   <li className="relative pl-5 before:content-['↪'] before:absolute before:left-0 before:text-[#00f2fe]">
                     <strong className="text-gray-200">Visual configuration & package assembler:</strong> Designed and implemented the compiler frontend and API to dynamically assemble Sandbox and Secure IoT Hub Bicep templates. Enables custom VNet CIDRs, managed identity, and physical SKU configuration with zip download.
                   </li>
@@ -125,7 +125,7 @@ export default function RootResumePage() {
               </div>
               <div>
                 <div className="font-bold text-sm text-white">Taiyuan University of Technology</div>
-                <div className="text-xs text-gray-400 mt-0.5">B.Eng in Mechanical Engineering</div>
+                <div className="text-xs text-gray-300 mt-0.5">B.Eng in Mechanical Engineering</div>
                 <div className="text-xs text-gray-500 mt-0.5">2010.9 – 2014.9</div>
               </div>
             </Section>
@@ -155,8 +155,8 @@ function Experience({ company, period, title, bullets }: { company: string; peri
         <span>{company}</span>
         <span className="text-[#00f2fe] text-xs font-mono">{period}</span>
       </div>
-      <div className="text-gray-400 text-xs mt-1 font-mono">{title}</div>
-      <ul className="mt-3 space-y-2 text-gray-400 text-sm">
+      <div className="text-gray-300 text-xs mt-1 font-mono">{title}</div>
+      <ul className="mt-3 space-y-2 text-gray-300 text-sm">
         {bullets.map((bullet) => (
           <li key={bullet} className="relative pl-5 before:content-['↪'] before:absolute before:left-0 before:text-[#00f2fe]">
             {bullet}

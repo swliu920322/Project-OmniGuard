@@ -177,7 +177,7 @@ export default function IaCConfigDashboard() {
                   <Shield size={12} className="text-cyan-400" /> Scenario
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-slate-400">当前激活场景</div>
+                  <div className="text-xs font-mono text-slate-300">当前激活场景</div>
                   <div className="text-sm font-bold text-slate-200 mt-1 truncate">
                     {getScenarioLabel(config.uiState.activeScenario)}
                   </div>
@@ -190,7 +190,7 @@ export default function IaCConfigDashboard() {
                   <Network size={12} className="text-amber-400" /> Virtual Network
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-slate-400">骨干 CIDR 网段</div>
+                  <div className="text-xs font-mono text-slate-300">骨干 CIDR 网段</div>
                   <div className="text-sm font-bold text-slate-200 mt-1 font-mono">
                     {config.uiState.vnetAddressPrefix || '10.1.0.0/16'}
                   </div>
@@ -203,7 +203,7 @@ export default function IaCConfigDashboard() {
                   <Cpu size={12} className="text-emerald-400" /> Global Scope
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-slate-400">前缀 / 物理区域</div>
+                  <div className="text-xs font-mono text-slate-300">前缀 / 物理区域</div>
                   <div className="text-sm font-bold text-slate-200 mt-1 font-mono">
                     {config.uiState.prefix} / {config.uiState.location}
                   </div>
@@ -216,7 +216,7 @@ export default function IaCConfigDashboard() {
                   <Database size={12} className="text-indigo-400" /> SKU Pricing
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-slate-400">已激活服务计费项</div>
+                  <div className="text-xs font-mono text-slate-300">已激活服务计费项</div>
                   <div className="text-sm font-bold text-[#00f2fe] mt-1 font-mono">
                     {Object.values(config.uiState.selectedSkus).filter(x => x !== 'none').length} 个服务已激活
                   </div>
@@ -257,7 +257,7 @@ export default function IaCConfigDashboard() {
                 /* Tab 1: Interactive Canvas Diagram */
                 <div className="space-y-4 animate-in fade-in duration-150">
                   {/* Canvas Breadcrumbs */}
-                  <div className="flex items-center gap-1.5 text-xs text-slate-400 font-mono px-1">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-300 font-mono px-1">
                     <span className="text-slate-500">拓扑视角:</span>
                     {pathStack.map((file, idx) => (
                       <React.Fragment key={idx}>
