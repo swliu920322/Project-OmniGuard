@@ -78,12 +78,12 @@ export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
           <span>{isSaving ? '正在动态编译拓扑...' : '一键生成拓扑并验证 .azure/'}</span>
         </button>
 
-        {/* 🛠️ Secondary Actions: What-If Preflight & Export ZIP */}
+        {/* 🛠️ Secondary Actions: What-If Preflight & Export ZIP - Enhanced Hover feedback */}
         <div className="flex gap-2">
           <button
             onClick={onPreflightValidate}
             disabled={isValidatingCloud}
-            className="flex-1 py-2.5 border border-cyan-800/40 bg-transparent hover:bg-cyan-950/20 text-cyan-400 font-mono font-bold text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+            className="flex-1 py-2.5 border border-cyan-500/30 bg-cyan-950/20 text-cyan-400 font-mono font-bold text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all hover:border-cyan-400 hover:bg-cyan-500 hover:text-slate-950 hover:shadow-[0_0_15px_rgba(0,242,254,0.15)] disabled:opacity-50 cursor-pointer"
           >
             <Cloud size={13} />
             <span>{isValidatingCloud ? '预检中...' : '☁️ 云端预检'}</span>
@@ -91,7 +91,7 @@ export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
           
           <button
             onClick={onDownloadPackage}
-            className="flex-1 py-2.5 border border-amber-800/30 bg-transparent hover:bg-amber-950/10 text-amber-400 font-mono font-bold text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all"
+            className="flex-1 py-2.5 border border-amber-500/20 bg-amber-950/10 text-amber-400 font-mono font-bold text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all hover:border-amber-400 hover:bg-amber-500 hover:text-slate-950 hover:shadow-[0_0_15px_rgba(245,158,11,0.15)] cursor-pointer"
           >
             <Download size={13} />
             <span>📦 导出 IaC 包</span>
