@@ -1,6 +1,10 @@
+import React from 'react';
 import { Node, Edge } from '@xyflow/react';
 
-export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges: Edge[] } {
+export function parseBicepToElements(
+  bicepText: string,
+  onModuleNavigate?: (modulePath: string) => void
+): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
@@ -75,12 +79,30 @@ export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges:
     const borderStroke = block.isModule ? '#a855f7' : isNet ? '#00f2fe' : '#10b981';
     const labelColor = block.isModule ? 'text-purple-400' : isNet ? 'text-cyan-400' : 'text-emerald-400';
 
+    // 🎯【直达下钻】：在 DOM 层直接绑定双击，绕开 React Flow 选中聚焦拦截
+    const handleLabelDoubleClick = (e: React.MouseEvent) => {
+      if (!block.isModule || !onModuleNavigate) return;
+      e.stopPropagation(); // 阻止事件冒泡到 React Flow 节点选择器
+      
+      const regex = new RegExp(`module\\s+${block.name}\\s+['"]([^'"]+)['"]`, 'i');
+      const match = regex.exec(bicepText);
+      if (match) {
+        console.log('[Direct VFS DBG] Native Double Click Navigating to:', match[1]);
+        onModuleNavigate(match[1]);
+      }
+    };
+
     nodes.push({
       id: block.name,
       type: 'default',
       data: {
         label: (
-          <div className="text-left font-mono text-[10px] p-1 select-none">
+          <div 
+            onDoubleClick={handleLabelDoubleClick}
+            className={`text-left font-mono text-[10px] p-1 select-none w-full h-full ${
+              block.isModule ? 'cursor-pointer' : ''
+            }`}
+          >
             <div className={`${labelColor} font-bold border-b border-gray-800 pb-0.5 mb-1 flex justify-between items-center`}>
               <span>{block.isModule ? `📦 ${block.name}` : block.name}</span>
               {block.isModule && <span className="text-[7px] bg-purple-900/40 px-1 rounded border border-purple-500 text-purple-300">双击下钻</span>}
