@@ -26,7 +26,7 @@ export default function BicepTopologyCanvas({ bicepCode, currentFile, onModuleNa
   }, [bicepCode]);
 
   const handleNodeDoubleClick = (event: React.MouseEvent, node: Node) => {
-    const regex = new RegExp(`module\\s+${node.id}\\s+'([^']+)'`);
+    const regex = new RegExp(`module\\s+${node.id}\\s+['"]([^'"]+)['"]`, 'i');
     const match = regex.exec(bicepCode);
     if (match) onModuleNavigate(match[1]);
   };

@@ -58,7 +58,7 @@ export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges:
           animated: true,
           label: 'VNet Peering 高速互联',
           labelStyle: { fill: '#f43f5e', fontSize: 8, fontWeight: 'bold', fontFamily: 'monospace' },
-          style: { stroke: '#f43f5e', strokeWidth: 2, strokeDasharray: '4,4' }, // 霓虹粉高亮虚线管道
+          style: { stroke: '#f43f5e', strokeWidth: 2, strokeDasharray: '4,4', pointerEvents: 'none' }, // 霓虹粉高亮虚线管道
         });
       }
       return; // 截断，不将其推入节点网格
@@ -115,7 +115,7 @@ export function parseBicepToElements(bicepText: string): { nodes: Node[]; edges:
           source: source,
           target: target.name,
           animated: true,
-          style: { stroke: target.isModule ? '#a855f7' : '#00f2fe', strokeWidth: 1.5 },
+          style: { stroke: target.isModule ? '#a855f7' : '#00f2fe', strokeWidth: 1.5, pointerEvents: 'none' },
         });
       }
     });
