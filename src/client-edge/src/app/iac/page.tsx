@@ -134,7 +134,7 @@ export default function IaCConfigDashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-[#070b13] text-slate-100 font-sans p-6 md:p-10 select-none animate-in fade-in duration-200">
+    <main className="min-h-screen bg-[#0a0e17] text-slate-100 font-sans p-6 md:p-10 select-none animate-in fade-in duration-200">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8 border-b border-slate-900 pb-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -144,7 +144,7 @@ export default function IaCConfigDashboard() {
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
             IaC 拓扑与编排看板
           </h1>
-          <p className="text-xs text-slate-500 font-mono mt-1">
+          <p className="text-xs text-slate-300 font-mono mt-1">
             读取本地编译状态，将全局云参数与 Bicep 模块依赖链（ VFS ）整合进行双维度直观呈现。
           </p>
         </div>
@@ -170,17 +170,17 @@ export default function IaCConfigDashboard() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-3">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>
-            <div className="text-slate-500 text-xs font-mono">正在检索本地 IaC 物理配置...</div>
+            <div className="text-slate-300 text-xs font-mono">正在检索本地 IaC 物理配置...</div>
           </div>
         ) : !config ? (
           /* Empty State */
-          <div className="rounded-2xl border border-dashed border-slate-900 bg-[#0d1321]/10 p-12 text-center max-w-2xl mx-auto space-y-6">
+          <div className="rounded-2xl border border-dashed border-slate-900 bg-[#111625] p-12 text-center max-w-2xl mx-auto space-y-6 shadow-2xl">
             <div className="flex justify-center text-slate-600">
               <AlertCircle size={48} />
             </div>
             <div className="space-y-2">
               <h3 className="text-base font-bold text-slate-300">尚未保存任何本地架构配置</h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+              <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
                 您的本地工作区中目前没有有效的配置文件。请点击下方按钮进入可视化配置中心，微调您的云端算力网络与托管凭证。
               </p>
             </div>
@@ -194,12 +194,12 @@ export default function IaCConfigDashboard() {
         ) : (
           /* Main Dashboard Content */
           <>
-            {/* Top Row: Summarized Settings Grid (4 columns) */}
+            {/* Top Row: Summarized Settings Grid (4 columns) - Brightened card backgrounds for depth */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               
               {/* Card 1: Scenario */}
-              <div className="rounded-xl border border-slate-900 bg-slate-900/10 p-4 space-y-2.5">
-                <div className="text-[10px] font-mono tracking-wider text-slate-500 flex items-center gap-1.5 uppercase">
+              <div className="rounded-xl border border-slate-800/80 bg-[#111625] p-4 space-y-2.5 shadow-md">
+                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold">
                   <Shield size={12} className="text-cyan-400" /> Scenario
                 </div>
                 <div>
@@ -211,8 +211,8 @@ export default function IaCConfigDashboard() {
               </div>
 
               {/* Card 2: Network VNet */}
-              <div className="rounded-xl border border-slate-900 bg-slate-900/10 p-4 space-y-2.5">
-                <div className="text-[10px] font-mono tracking-wider text-slate-500 flex items-center gap-1.5 uppercase">
+              <div className="rounded-xl border border-slate-800/80 bg-[#111625] p-4 space-y-2.5 shadow-md">
+                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold">
                   <Network size={12} className="text-amber-400" /> Virtual Network
                 </div>
                 <div>
@@ -224,8 +224,8 @@ export default function IaCConfigDashboard() {
               </div>
 
               {/* Card 3: Prefix & Location */}
-              <div className="rounded-xl border border-slate-900 bg-slate-900/10 p-4 space-y-2.5">
-                <div className="text-[10px] font-mono tracking-wider text-slate-500 flex items-center gap-1.5 uppercase">
+              <div className="rounded-xl border border-slate-800/80 bg-[#111625] p-4 space-y-2.5 shadow-md">
+                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold">
                   <Cpu size={12} className="text-emerald-400" /> Global Scope
                 </div>
                 <div>
@@ -237,8 +237,8 @@ export default function IaCConfigDashboard() {
               </div>
 
               {/* Card 4: Active SKUs */}
-              <div className="rounded-xl border border-slate-900 bg-slate-900/10 p-4 space-y-2.5">
-                <div className="text-[10px] font-mono tracking-wider text-slate-500 flex items-center gap-1.5 uppercase">
+              <div className="rounded-xl border border-slate-800/80 bg-[#111625] p-4 space-y-2.5 shadow-md">
+                <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold">
                   <Database size={12} className="text-indigo-400" /> SKU Pricing
                 </div>
                 <div>
@@ -254,14 +254,14 @@ export default function IaCConfigDashboard() {
             {/* Bottom Row: Tabbed Detail Area */}
             <div className="space-y-4">
               
-              {/* Tab Toggles */}
-              <div className="flex border-b border-slate-900 gap-6">
+              {/* Tab Toggles - Brightened inactive tabs */}
+              <div className="flex border-b border-slate-800 gap-6">
                 <button
                   onClick={() => setActiveTab('topology')}
                   className={`pb-3 text-xs font-mono font-bold tracking-wider transition-all flex items-center gap-1.5 ${
                     activeTab === 'topology' 
                       ? 'border-b-2 border-[#00f2fe] text-cyan-400' 
-                      : 'text-slate-500 hover:text-slate-300'
+                      : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   <Activity size={14} /> 🖼️ 物理拓扑依赖关系图 (Topology Diagram)
@@ -271,7 +271,7 @@ export default function IaCConfigDashboard() {
                   className={`pb-3 text-xs font-mono font-bold tracking-wider transition-all flex items-center gap-1.5 ${
                     activeTab === 'parameters' 
                       ? 'border-b-2 border-[#00f2fe] text-cyan-400' 
-                      : 'text-slate-500 hover:text-slate-300'
+                      : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   <Server size={14} /> 💻 parameters.json 变量预览 (Variables Preview)
@@ -284,10 +284,10 @@ export default function IaCConfigDashboard() {
                 <div className="space-y-4 animate-in fade-in duration-150">
                   {/* Canvas Breadcrumbs */}
                   <div className="flex items-center gap-1.5 text-xs text-slate-300 font-mono px-1">
-                    <span className="text-slate-500">拓扑视角:</span>
+                    <span className="text-slate-400">拓扑视角:</span>
                     {pathStack.map((file, idx) => (
                       <React.Fragment key={idx}>
-                        {idx > 0 && <ChevronRight size={12} className="text-slate-700" />}
+                        {idx > 0 && <ChevronRight size={12} className="text-slate-800" />}
                         <button 
                           onClick={() => handleBreadcrumbClick(idx)}
                           className={`hover:text-cyan-400 transition-colors ${
@@ -304,7 +304,7 @@ export default function IaCConfigDashboard() {
                           setPathStack(['main.bicep']);
                           setActiveFile('main.bicep');
                         }}
-                        className="ml-auto text-[10px] text-slate-500 hover:text-slate-300 font-mono bg-slate-900 border border-slate-800 px-2 py-0.5 rounded"
+                        className="ml-auto text-[10px] text-slate-300 hover:text-slate-100 font-mono bg-slate-900 border border-slate-800 px-2 py-0.5 rounded"
                       >
                         重置主视角 [main.bicep]
                       </button>
@@ -312,7 +312,7 @@ export default function IaCConfigDashboard() {
                   </div>
 
                   {/* Diagram Component */}
-                  <div className="h-[520px] w-full border border-slate-900 bg-slate-950/80 rounded-2xl overflow-hidden shadow-inner relative">
+                  <div className="h-[520px] w-full border border-slate-800/80 bg-slate-950/80 rounded-2xl overflow-hidden shadow-2xl relative">
                     <BicepTopologyCanvas 
                       bicepCode={config.vfs[activeFile] || config.vfs['./' + activeFile] || config.vfs['main.bicep'] || ''}
                       currentFile={activeFile}
@@ -321,10 +321,10 @@ export default function IaCConfigDashboard() {
                   </div>
                 </div>
               ) : (
-                /* Tab 2: Parameters JSON Code Block */
+                /* Tab 2: Parameters JSON Code Block - Brightened metadata title to slate-300 */
                 <div className="space-y-4 animate-in fade-in duration-150">
                   <div className="flex justify-between items-center px-1">
-                    <div className="text-[10px] font-mono tracking-widest text-slate-500 flex items-center gap-1.5 uppercase">
+                    <div className="text-[10px] font-mono tracking-widest text-slate-300 flex items-center gap-1.5 uppercase font-semibold">
                       <Terminal size={12} className="text-purple-400" /> parameters.json
                     </div>
                     <button 
@@ -335,7 +335,7 @@ export default function IaCConfigDashboard() {
                       {copied ? '已复制' : '复制 JSON'}
                     </button>
                   </div>
-                  <div className="rounded-2xl border border-slate-900 bg-slate-950/80 p-5 font-mono text-xs overflow-auto h-[500px] shadow-inner select-text">
+                  <div className="rounded-2xl border border-slate-800/80 bg-slate-950/85 p-5 font-mono text-xs overflow-auto h-[500px] shadow-2xl select-text">
                     <pre 
                       className="text-slate-300 whitespace-pre leading-relaxed font-mono"
                       dangerouslySetInnerHTML={{ __html: highlightJson(JSON.stringify(config.parameters, null, 2)) }}
