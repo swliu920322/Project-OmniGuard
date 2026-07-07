@@ -59,7 +59,10 @@ export default function BicepTopologyCanvas({ bicepCode, currentFile, onModuleNa
         fitView
         fitViewOptions={{ padding: 0.4 }} // 预留 40% 呼吸防线，强行逼迫图元收拢
         colorMode="dark"
-        className="w-full h-full"
+        className="w-full h-full cursor-grab active:cursor-grabbing focus:outline-none"
+        panOnDrag={true}
+        zoomOnDoubleClick={false} // 🚫 彻底禁用双击缩放，防止与双击下钻深度路由冲突
+        selectNodesOnDrag={false}
       >
         <Background color="#1e293b" gap={16} size={1} />
         <Controls className="m-4 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg shadow-2xl" />
