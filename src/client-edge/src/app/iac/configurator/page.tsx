@@ -673,10 +673,10 @@ export default function BicepConfiguratorPage() {
   }, null, 2);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 font-sans p-6 md:p-12 selection:bg-cyan-500 selection:text-slate-900">
+    <main className="min-h-screen bg-slate-950 text-slate-100 font-sans p-4 md:py-8 md:px-8 selection:bg-cyan-500 selection:text-slate-900">
       
       {/* Page Header */}
-      <div className="max-w-7xl mx-auto mb-8 border-b border-slate-900 pb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="max-w-8xl mx-auto mb-8 border-b border-slate-900 pb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="text-cyan-400 font-mono text-xs tracking-widest uppercase mb-1 flex items-center gap-1.5">
             <Zap size={13} className="animate-pulse" /> SCENARIO_INTEGRATION_DASHBOARD
@@ -695,7 +695,7 @@ export default function BicepConfiguratorPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Column: Configurator Options */}
         <div className="lg:col-span-8 flex flex-col gap-6">
@@ -832,7 +832,7 @@ az deployment sub create \\
       <ConsoleOutputPanel assemblerConsole={assemblerConsole} />
 
       {/* JSON Preview window at the bottom */}
-      <div className="max-w-7xl mx-auto mt-8 bg-[#070b15] border border-slate-900 rounded-2xl p-6 shadow-2xl relative font-mono text-xs">
+      <div className="max-w-8xl mx-auto mt-8 bg-[#070b15] border border-slate-900 rounded-2xl p-6 shadow-2xl relative font-mono text-xs">
         <h3 className="text-slate-400 mb-3 border-b border-slate-900 pb-2 flex items-center gap-1.5">
           <Terminal size={12} className="text-cyan-400" />
           <span>PREVIEW: .azure/main.parameters.json (自愈生成参数)</span>

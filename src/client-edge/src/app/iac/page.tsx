@@ -134,9 +134,9 @@ export default function IaCConfigDashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0a0e17] text-slate-100 font-sans p-6 md:p-10 select-none animate-in fade-in duration-200">
+    <main className="min-h-screen bg-[#0a0e17] text-slate-100 font-sans p-4 md:py-8 md:px-8 select-none animate-in fade-in duration-200">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-8 border-b border-slate-900 pb-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="max-w-8xl mx-auto mb-8 border-b border-slate-900 pb-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="text-cyan-400 font-mono text-xs tracking-widest uppercase mb-1 flex items-center gap-1.5">
             <Terminal size={12} /> IAC_PROVISION_DASHBOARD
@@ -166,7 +166,7 @@ export default function IaCConfigDashboard() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="max-w-8xl mx-auto space-y-8">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-3">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>

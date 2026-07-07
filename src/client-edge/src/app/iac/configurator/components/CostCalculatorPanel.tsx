@@ -66,34 +66,38 @@ export const CostCalculatorPanel: React.FC<CostCalculatorPanelProps> = ({
         </p>
       </div>
 
-      {/* Cloud Preflight & Save trigger buttons */}
-      <div className="flex gap-2">
-        <button
-          onClick={onPreflightValidate}
-          disabled={isValidatingCloud}
-          className="flex-1 py-3 border border-cyan-800/50 bg-transparent hover:bg-cyan-950/30 text-cyan-400 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-        >
-          <Cloud size={14} />
-          <span>{isValidatingCloud ? '正在云端预检...' : '☁️ 云端预检'}</span>
-        </button>
+      {/* Cloud Preflight & Save action buttons - Redesigned hierarchy */}
+      <div className="flex flex-col gap-2.5">
+        {/* 🚀 Primary Action: Generate Bicep & verify local .azure/ */}
         <button
           onClick={onSaveConfig}
           disabled={isSaving}
-          className="flex-1 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-cyan-950/30 disabled:opacity-50"
+          className="w-full py-3.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-cyan-950/20 disabled:opacity-50"
         >
           <Save size={14} />
           <span>{isSaving ? '正在动态编译拓扑...' : '一键生成拓扑并验证 .azure/'}</span>
         </button>
-      </div>
 
-      {/* Download IaC Package */}
-      <button
-        onClick={onDownloadPackage}
-        className="w-full py-3 border border-amber-800/40 bg-transparent hover:bg-amber-950/20 text-amber-400 font-mono font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all"
-      >
-        <Download size={14} />
-        <span>📦 导出 IaC 压缩包</span>
-      </button>
+        {/* 🛠️ Secondary Actions: What-If Preflight & Export ZIP */}
+        <div className="flex gap-2">
+          <button
+            onClick={onPreflightValidate}
+            disabled={isValidatingCloud}
+            className="flex-1 py-2.5 border border-cyan-800/40 bg-transparent hover:bg-cyan-950/20 text-cyan-400 font-mono font-bold text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+          >
+            <Cloud size={13} />
+            <span>{isValidatingCloud ? '预检中...' : '☁️ 云端预检'}</span>
+          </button>
+          
+          <button
+            onClick={onDownloadPackage}
+            className="flex-1 py-2.5 border border-amber-800/30 bg-transparent hover:bg-amber-950/10 text-amber-400 font-mono font-bold text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all"
+          >
+            <Download size={13} />
+            <span>📦 导出 IaC 包</span>
+          </button>
+        </div>
+      </div>
 
       {/* Save Status Message */}
       {saveMessage && (
