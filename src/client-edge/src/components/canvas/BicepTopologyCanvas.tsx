@@ -14,34 +14,28 @@ interface BicepTopologyCanvasProps {
 
 export default function BicepTopologyCanvas({ bicepCode, currentFile, onModuleNavigate }: BicepTopologyCanvasProps) {
 
+  // Pass onModuleNavigate to parser to bind native DOM double clicks directly on elements
   const topologyResult = useMemo(() => {
     if (!bicepCode.trim()) return { nodes: [] as Node[], edges: [] as Edge[], error: '文件内容为空，请注入 Bicep 源码。' };
     try {
-      const { nodes, edges } = parseBicepToElements(bicepCode);
+      const { nodes, edges } = parseBicepToElements(bicepCode, onModuleNavigate);
       if (nodes.length === 0) return { nodes: [] as Node[], edges: [] as Edge[], error: '未探测到标准的 resource 或 module 声明。配置解析失败。' };
       return { nodes, edges, error: null };
     } catch (err) {
       return { nodes: [] as Node[], edges: [] as Edge[], error: 'Bicep 语法结构发生严重断层，无法完成隐式符号对账。' };
     }
-  }, [bicepCode]);
+  }, [bicepCode, onModuleNavigate]);
 
   const handleNodeDoubleClick = (event: React.MouseEvent, node: Node) => {
-    console.log('[Topology DBG] === Double Click Event Triggered ===');
+    console.log('[Topology DBG] === React Flow Double Click Triggered (Fallback) ===');
     console.log('[Topology DBG] Clicked Node ID:', node.id);
-    console.log('[Topology DBG] Current File View:', currentFile);
-    console.log('[Topology DBG] Bicep Code Length:', bicepCode?.length || 0);
-
-    // Dynamic quote and spacing robust match
+    
+    // Dynamic quote and spacing robust match fallback
     const regex = new RegExp(`module\\s+${node.id}\\s+['"]([^'"]+)['"]`, 'i');
     const match = regex.exec(bicepCode);
-    console.log('[Topology DBG] Regex Pattern:', regex.toString());
-    console.log('[Topology DBG] Match Found:', match);
-
     if (match) {
-      console.log('[Topology DBG] Match[1] Path:', match[1]);
+      console.log('[Topology DBG] Fallback Navigating to:', match[1]);
       onModuleNavigate(match[1]);
-    } else {
-      console.warn('[Topology DBG] Failed to find module target path in Bicep code for node:', node.id);
     }
   };
 
@@ -60,6 +54,21 @@ export default function BicepTopologyCanvas({ bicepCode, currentFile, onModuleNa
 
   return (
     <div className="w-full h-full relative">
+      {/* 🎯【核心绝杀】：在 DOM / CSS 级强行斩断连线及其交互路径的鼠标捕获事件，彻底消除连线阻碍拖拽的问题 */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .react-flow__edge,
+        .react-flow__edge-path,
+        .react-flow__edge-interaction,
+        .react-flow__edges,
+        .react-flow__edges g,
+        .react-flow__edge g {
+          pointer-events: none !important;
+        }
+        .react-flow__node {
+          pointer-events: auto !important;
+        }
+      `}} />
+
       <div className="absolute top-4 left-4 z-10 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-lg font-mono text-[10px] text-cyan-400 flex items-center space-x-1.5 backdrop-blur shadow-xl pointer-events-none">
         <Cpu size={12} className="animate-pulse" />
         <span>TOPOLOGY VIEW // FACT_DRIVEN_MODE</span>
@@ -77,7 +86,7 @@ export default function BicepTopologyCanvas({ bicepCode, currentFile, onModuleNa
         panOnDrag={true}
         zoomOnDoubleClick={false}
         selectNodesOnDrag={false}
-        nodesDraggable={false} // 🚫 禁用节点单独拖动，允许用户在节点上直接下按并拖拽移动整个画布
+        nodesDraggable={false}
       >
         <Background color="#1e293b" gap={16} size={1} />
         <Controls className="m-4 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg shadow-2xl" />
