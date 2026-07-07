@@ -38,6 +38,32 @@ interface ConfigState {
   vfs: Record<string, string>;
 }
 
+function highlightJson(jsonStr: string): string {
+  if (!jsonStr) return '';
+  return jsonStr
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(
+      /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
+      (match) => {
+        let cls = 'text-emerald-400'; // String value (green)
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'text-cyan-400 font-semibold'; // Key (cyan)
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'text-orange-400 font-bold'; // Boolean (orange)
+        } else if (/null/.test(match)) {
+          cls = 'text-slate-500 font-mono'; // Null (grey)
+        } else {
+          cls = 'text-indigo-300'; // Number (purple/indigo)
+        }
+        return `<span class="${cls}">${match}</span>`;
+      }
+    );
+}
+
 export default function IaCConfigDashboard() {
   const [config, setConfig] = useState<ConfigState | null>(null);
   const [loading, setLoading] = useState(true);
@@ -310,9 +336,10 @@ export default function IaCConfigDashboard() {
                     </button>
                   </div>
                   <div className="rounded-2xl border border-slate-900 bg-slate-950/80 p-5 font-mono text-xs overflow-auto h-[500px] shadow-inner select-text">
-                    <pre className="text-slate-300 whitespace-pre leading-relaxed">
-                      {JSON.stringify(config.parameters, null, 2)}
-                    </pre>
+                    <pre 
+                      className="text-slate-300 whitespace-pre leading-relaxed font-mono"
+                      dangerouslySetInnerHTML={{ __html: highlightJson(JSON.stringify(config.parameters, null, 2)) }}
+                    />
                   </div>
                 </div>
               )}
