@@ -26,9 +26,23 @@ export default function BicepTopologyCanvas({ bicepCode, currentFile, onModuleNa
   }, [bicepCode]);
 
   const handleNodeDoubleClick = (event: React.MouseEvent, node: Node) => {
+    console.log('[Topology DBG] === Double Click Event Triggered ===');
+    console.log('[Topology DBG] Clicked Node ID:', node.id);
+    console.log('[Topology DBG] Current File View:', currentFile);
+    console.log('[Topology DBG] Bicep Code Length:', bicepCode?.length || 0);
+
+    // Dynamic quote and spacing robust match
     const regex = new RegExp(`module\\s+${node.id}\\s+['"]([^'"]+)['"]`, 'i');
     const match = regex.exec(bicepCode);
-    if (match) onModuleNavigate(match[1]);
+    console.log('[Topology DBG] Regex Pattern:', regex.toString());
+    console.log('[Topology DBG] Match Found:', match);
+
+    if (match) {
+      console.log('[Topology DBG] Match[1] Path:', match[1]);
+      onModuleNavigate(match[1]);
+    } else {
+      console.warn('[Topology DBG] Failed to find module target path in Bicep code for node:', node.id);
+    }
   };
 
   if (topologyResult.error) {
@@ -57,12 +71,13 @@ export default function BicepTopologyCanvas({ bicepCode, currentFile, onModuleNa
         edges={topologyResult.edges}
         onNodeDoubleClick={handleNodeDoubleClick}
         fitView
-        fitViewOptions={{ padding: 0.4 }} // 预留 40% 呼吸防线，强行逼迫图元收拢
+        fitViewOptions={{ padding: 0.4 }}
         colorMode="dark"
         className="w-full h-full cursor-grab active:cursor-grabbing focus:outline-none"
         panOnDrag={true}
-        zoomOnDoubleClick={false} // 🚫 彻底禁用双击缩放，防止与双击下钻深度路由冲突
+        zoomOnDoubleClick={false}
         selectNodesOnDrag={false}
+        nodesDraggable={false} // 🚫 禁用节点单独拖动，允许用户在节点上直接下按并拖拽移动整个画布
       >
         <Background color="#1e293b" gap={16} size={1} />
         <Controls className="m-4 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg shadow-2xl" />
