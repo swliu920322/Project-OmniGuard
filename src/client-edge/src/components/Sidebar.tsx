@@ -135,7 +135,7 @@ export default function Sidebar() {
                           : 'text-slate-300 hover:text-white hover:bg-slate-900/40'
                       }`}
                     >
-                      <Icon className={`shrink-0 ${isActive ? 'text-[#00f2fe]' : 'text-slate-400 group-hover:text-slate-200'}`} size={16} />
+                      <Icon className={`shrink-0 ${isActive ? 'text-[#00f2fe]' : 'text-slate-300 group-hover:text-slate-200'}`} size={16} />
                       {!isCollapsed && (
                         <span className="truncate">{item.label}</span>
                       )}
@@ -158,13 +158,13 @@ export default function Sidebar() {
       {/* Footer / Collapse Trigger */}
       <div className="p-4 border-t border-slate-900/60 flex items-center justify-between h-16 min-h-16 bg-slate-950/20">
         {!isCollapsed ? (
-          <div className="text-xs font-mono text-slate-400 uppercase flex items-center gap-1.5 pl-1 font-semibold tracking-wider">
+          <div className="text-xs font-mono text-slate-300 uppercase flex items-center gap-1.5 pl-1 font-semibold tracking-wider">
             <Terminal size={12} className="text-cyan-500" /> SYS_V2.6_OK
           </div>
         ) : null}
         <button 
           onClick={toggleCollapse}
-          className={`p-2 rounded-xl border border-slate-800 bg-slate-950/80 text-slate-400 hover:text-[#00f2fe] hover:border-cyan-500/30 transition-all shadow ${
+          className={`p-2 rounded-xl border border-slate-800 bg-slate-950/80 text-slate-300 hover:text-[#00f2fe] hover:border-cyan-500/30 transition-all shadow ${
             isCollapsed ? 'mx-auto' : ''
           }`}
           title={isCollapsed ? "展开导航" : "折叠导航"}
