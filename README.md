@@ -1,119 +1,299 @@
-# Project-OmniGuard: Cloud-Edge Collaborative Security Orchestrator & Zero-Trust Sandbox
+# Project-OmniGuard
 
-[![Azure Container Apps](https://img.shields.io/badge/Azure-Container%20Apps-blue.svg?style=flat-square)](https://azure.microsoft.com/en-us/products/container-apps/)
-[![Next.js](https://img.shields.io/badge/Next.js-14.2-black.svg?style=flat-square)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100-green.svg?style=flat-square)](https://fastapi.tiangolo.com/)
+**Cloud-Edge Collaborative Security Orchestrator · Zero-Trust Sandbox · Kinematic-Token Theorem Prover**
+
+[![Azure Container Apps](https://img.shields.io/badge/Azure-Container%20Apps-0078D4.svg?style=flat-square&logo=microsoftazure)](https://azure.microsoft.com/en-us/products/container-apps/)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2-black.svg?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100-009688.svg?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Azure IoT Hub](https://img.shields.io/badge/Azure-IoT%20Hub-0078D4.svg?style=flat-square&logo=microsoftazure)](https://azure.microsoft.com/en-us/products/iot-hub/)
+[![WebGPU](https://img.shields.io/badge/WebGPU-Edge%20AI-764ABC.svg?style=flat-square)](https://www.w3.org/TR/webgpu/)
+[![ADRs](https://img.shields.io/badge/ADRs-33%20Decisions-green.svg?style=flat-square)]()
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-**Project-OmniGuard** is an enterprise-grade cloud-edge collaborative security decision-making sandbox. It acts as both a network routing and status-monitoring shield for embodied IoT device fleets operating at hostile perimeters, and a reference architecture built on **Azure Container Apps (ACA)**, **Private Virtual Networks (VNet)**, and **Azure Private Link** enforcing zero-trust data compliance.
+---
+
+**Project-OmniGuard** is an enterprise-grade cloud-edge collaborative security decision-making platform. It proves a core research thesis — the **Kinematic-Token Theorem** — that cloud-only LLM inference latency creates a physical safety deadlock for embodied AI fleets, and demonstrates a multi-layered defense architecture combining **Zero-Trust network isolation**, **Multi-Agent AI orchestration with early circuit-breaking**, and **WebGPU edge inference** to solve it.
+
+> **Research Contribution:** Formal proof that cloud LLM response time ($T_{cloud} = T_{network} + T_{prompt} + T_{generation}$) exceeds the kinematic braking distance of AGVs at operational speeds, necessitating a hybrid edge-cloud cognitive pipeline.
 
 ---
 
-## 🌟 Key Technical Highlights & Architectural Pillars
-
-### 1. Zero-Trust Network Perimeter & Micro-segmentation
-* **API Gateway Defense (CORS-free):**  
-  The public Next.js frontend container (`external: true`) acts as a secure **API Gateway**, dynamically proxying backend API requests through App Router's **[catch-all route handler](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/client-edge/src/app/api/[...path]/route.ts)** to avoid CORS issues and obscure private backend paths.
-* **Complete Backend Cloaking:**  
-  The backend FastAPI container is configured as VNet-internal only (`external: false`), completely hidden from the public internet. Communication between frontend and backend is routed strictly over Azure internal private DNS (`.internal`) inside the Singapore spoke subnet.
-* **Internalized Cloud Endpoints (Private Link):**  
-  Decommissioned all public endpoint access to Cosmos DB, Storage Account, and Azure OpenAI Service using four independent **Private Endpoints**. All data traffic flows exclusively over private subnets, securing compute-to-storage paths.
-
-### 2. Hybrid Edge-Cloud AI Reasoning Pipeline
-* **Local WebGPU In-Browser Inference ($0.00 Server Compute):**  
-  High-frequency user greetings and local vector matching (RAG) are processed directly inside the client's browser using **WebGPU** (Xenova/all-MiniLM-L6-v2 + Qwen2.5-Instruct). This protects user privacy and reduces cloud backend inferencing costs to absolute zero.
-* **Cloud Stream Fallback (SSE):**  
-  If the local semantic router determines that the query falls outside local knowledge limits, it seamlessly fallbacks to the cloud backend. The frontend proxy forwards the request to the private FastAPI worker, streaming response tokens (Server-Sent Events) from Azure OpenAI.
-
-### 3. Real-Time Telemetry Sandbox
-* Visualizes active edge device fleet metrics (HP, Battery, Velocity, Temp) with network jitter/latency sliders.
-* Renders the dynamic cloud network topology flowchart and multi-agent orchestration states, providing transparency of inference steps.
-
----
-
-## 📁 System Repository Structure
-
-```text
-├── .azure/                     # Infrastructure-as-Code (IaC) Templates
-│   ├── main.bicep              # Subscription-level deployment orchestrator
-│   ├── nested-infra.bicep      # Network infrastructure & Private Link configuration
-│   └── compute-module.bicep    # Frontend & Backend Container Apps configuration
-├── sh/                         # Operational Scripts
-│   ├── deploy-aca.sh           # Cache-busting compilation, push, and rolling update trigger
-│   ├── provision.sh            # Idempotent cloud infrastructure provisioning trigger
-│   └── start-backend.sh        # Local backend Functions emulator startup
-├── src/                        # Service Source Code
-│   ├── client-edge/            # Next.js frontend & dynamic API router proxy
-│   └── cloud-orchestrator/     # Python FastAPI ASGI worker inside Functions container
-│       ├── daily_cache/        # Persistent offline tweets scraping cache
-│       └── run_analysis.py     # Batch tweets scraper, translator & investor RAG analyzer
-├── Makefile                    # Unified command execution bus
-└── docs/                       # Diátaxis-compliant Documentation Directory
-```
-
----
-
-## 🌐 Network Topology Flowchart
+## 🏗️ Architecture Overview
 
 ```mermaid
 graph TD
-    User([Browser Client]) -->|HTTPS / Port 443| Frontend[omni-frontend Container App]
-    subgraph Singapore Spoke VNet [10.1.0.0/16]
-        subgraph ACA Subnet [10.1.4.0/23]
-            Frontend -->|Internal HTTPS / DNS| Backend[omni-backend Container App]
+    User([Browser Client]) -->|HTTPS / Port 443| Frontend["omni-frontend<br/>Container App<br/>(external: true)"]
+    
+    subgraph Edge["Client-Side Edge Computing"]
+        WebGPU["WebGPU Kernel<br/>Qwen2.5 + MiniLM-L6<br/>($0.00 server cost)"]
+        RAG["Local RAG<br/>Cosine Similarity<br/>Semantic Router"]
+    end
+    
+    subgraph SG["Singapore Spoke VNet — 10.1.0.0/16"]
+        subgraph ACA["ACA Subnet — 10.1.4.0/23"]
+            Frontend -->|"Internal HTTPS<br/>.internal DNS"| Backend["omni-backend<br/>Container App<br/>(external: false)"]
         end
-        subgraph Storage Subnet [10.1.2.0/24]
-            Backend -->|Private Link| Storage[(Azure Storage)]
-            Backend -->|Private Link| Cosmos[(Cosmos DB)]
-            Backend -->|Private Link| OpenAI[(Azure OpenAI)]
+        subgraph Storage["Storage Subnet — 10.1.2.0/24"]
+            Backend -->|Private Endpoint| Cosmos[(Cosmos DB)]
+            Backend -->|Private Endpoint| KV[(Key Vault)]
+            Backend -->|Private Endpoint| BlobStore[(Azure Storage)]
+            Backend -->|Private Endpoint| OpenAI[(Azure OpenAI)]
+        end
+        subgraph IoT["IoT Subnet"]
+            IoTHub["Azure IoT Hub"] -->|Event Hub Trigger| Backend
+            Backend -->|C2D Message<br/>HMAC-SHA256 SAS| IoTHub
         end
     end
+    
+    User --> Edge
+    Edge -->|"Fallback (SSE)"| Frontend
+    IoTHub -->|Telemetry| Devices["AGV Fleet<br/>(Edge Devices)"]
 ```
 
 ---
 
-## 🛠️ Operational Runbook & Developer Workflow
+## 🌟 Core Technical Highlights
 
-### 1. Spin Up Local Development
-Launch backend and frontend services in separate local terminals:
+### 1. Zero-Trust Network Security Perimeter
+
+| Layer | Implementation | Evidence |
+|:------|:---------------|:---------|
+| **API Gateway (CORS-free)** | Next.js App Router [catch-all route handler](src/client-edge/src/app/api/) dynamically proxies backend requests, eliminating CORS and obscuring private backend paths | BFF Pattern |
+| **Complete Backend Cloaking** | FastAPI container runs as VNet-internal only (`external: false`), invisible from public internet. Communication uses Azure internal private DNS (`.internal`) | `compute-module.bicep` |
+| **Private Link Endpoints** | 4 independent Private Endpoints for Cosmos DB, Key Vault, Azure Storage, and Azure OpenAI. All public access disabled | `nested-infra.bicep` |
+| **Managed Identity (Passwordless)** | User-Assigned Managed Identity + Key Vault RBAC + Cosmos DB role assignment. Zero hardcoded credentials | `nested-infra.bicep` L124-L160 |
+| **NSG Micro-segmentation** | Bidirectional NSG rules: Deny Internet Inbound + Allow Backend Only to Storage Subnet | `network-rules.json` |
+| **Hub-Spoke VNet Topology** | Subscription-level Bicep deployment with isolated subnets for compute, storage, and IoT | 3-layer modular IaC |
+
+### 2. Multi-Agent AI Orchestration Engine (3-Agent Pipeline)
+
+A production-grade multi-agent pipeline processes IoT telemetry through three specialized agents with **early circuit-breaking** to minimize LLM token costs:
+
+```
+IoT Telemetry
+    │
+    ▼
+┌─────────────────────────────────────────────────────────┐
+│ Physical Short-Circuit Layer                            │
+│   HP ≤ 0 → offline_lock         (skip all agents)      │
+│   Battery < 5% → emergency_halt (skip all agents)      │
+└─────────────┬───────────────────────────────────────────┘
+              │
+              ▼
+    ┌─────────────────┐
+    │ Agent 1: Router  │ ──── Intent Classification
+    │ (20 tokens max)  │      [CRITICAL_OBSTACLE | NORMAL_NAV | SENSOR_ERROR]
+    └────────┬────────┘
+             │ SENSOR_ERROR? → STOP (skip remaining agents)
+             ▼
+    ┌─────────────────┐
+    │ Agent 2: Safety  │ ──── Compliance & Risk Audit
+    │ (50 tokens max)  │      Evaluates $500K AGV tipping risk
+    └────────┬────────┘
+             │ BLOCK? → safety_override (skip compiler)
+             ▼
+    ┌─────────────────┐
+    │ Agent 3: Compiler│ ──── Action Compilation
+    │ (100 tokens max) │      Outputs JSON action sequence
+    └────────┬────────┘
+             │
+             ▼
+    C2D Message → Device Motor
+```
+
+- **Multi-tenant scenario registry**: Per-tenant agent prompts, safety rules, and action schemas (`scenario_registry.json`)
+- **Digital Twin persistence**: Device state upserted to Cosmos DB on every telemetry event (partitioned by `tenant_id`)
+- **Cloud metrics instrumentation**: Per-agent latency tracking (`agent_1_latency_ms`, `agent_2_latency_ms`, `agent_3_latency_ms`, Cosmos R/W latency)
+
+### 3. IoT Full-Duplex Data Pipeline
+
+- **Upstream**: Azure IoT Hub → Event Hub Compatible Endpoint → Functions EventHubTrigger → Agent Pipeline
+- **Downstream**: Agent Pipeline → C2D Message via HMAC-SHA256 SAS Token (hand-crafted, not SDK wrapper) → Device Motor
+- **Device Mock Simulator**: Python-based edge device simulator for local development (`edge-simulator/`)
+
+### 4. Kinematic-Token Theorem — Research Contribution
+
+The Fleet Dashboard proves that **cloud LLM response time exceeds AGV braking distance at operational speeds**, through four interactive modes:
+
+| Dashboard Route | Purpose | Backend Dependency |
+|:---|:---|:---|
+| `/dashboard/theorem` | Single-AGV kinematic proof sandbox | None (pure frontend physics) |
+| `/dashboard/compare` | Side-by-side cloud vs edge comparison | None |
+| `/dashboard` | 3-AGV fleet simulation (Cloud-Only / Cloud+Edge / Token-Breakdown) | None |
+| `/dashboard/live` | Live cloud integration with real Azure OpenAI latency | Azure Functions + Cosmos DB |
+
+**Key physics**: Step-based detection loop with configurable jitter, network latency, and LLM token breakdown sliders. Demonstrates that a 15ms edge brake beats a 2600ms+ cloud-only response.
+
+### 5. Hybrid Edge-Cloud Cognitive Pipeline (WebGPU)
+
+| Pipeline | Technology | Cost | Use Case |
+|:---------|:-----------|:-----|:---------|
+| **Edge (Pipeline A)** | WebGPU + Qwen2.5-0.5B-Instruct + Xenova/MiniLM-L6-v2 | **$0.00** server compute | High-frequency greetings, local RAG retrieval |
+| **Cloud (Pipeline B)** | Azure OpenAI (SSE streaming) via VNet-internal FastAPI | Per-token pricing | Complex queries exceeding local knowledge boundary |
+
+The semantic router uses **cosine similarity** (threshold ≥ 0.72) to classify whether a query can be answered locally. Sub-threshold queries fall back seamlessly to the Singapore cloud backend via SSE streaming.
+
+### 6. IaC Visual Configurator & Scenario Assembler
+
+An interactive **Infrastructure-as-Code configuration dashboard** (`/iac/configurator`) that:
+
+- Visually configures VNet CIDR ranges, SKU pricing tiers, managed identity toggles, and deployment regions
+- Generates and assembles Bicep templates from scenario presets (`sandbox` / `secure-iot`)
+- Renders interactive **Bicep topology diagrams** with module-level drill-down navigation
+- Exports downloadable IaC deployment packages (`.zip`)
+- Runs **Bicep preflight compilation** (`az bicep build`) to guarantee 100% ARM template correctness before deployment
+- Maintains **automated backup rotation** (max 5 backups with scenario-aware naming)
+
+### 7. Shadow Environment E2E Test Suite
+
+A self-healing end-to-end test that validates the **entire Zero-Trust infrastructure** in an isolated shadow environment:
+
+1. **Deploy**: Provisions a complete shadow resource group with overwritten prefix (`omnitest`)
+2. **Audit**: Validates Private DNS A records point to correct StorageSubnet IPs (`10.1.2.x`), verifies ACA container health status
+3. **Self-Heal**: Automatically destroys shadow resource group (async `--no-wait`) + cleans temp parameter files
+4. **Signal Safety**: Handles `Ctrl+C` interrupts with guaranteed teardown to prevent cost leakage
+
+### 8. KOL Prediction & Supply Chain Intelligence
+
+An AI-powered investment research pipeline (`/prediction`) that:
+
+- Scrapes Twitter/X KOL tweets with pagination
+- Runs **batch bilingual translation** (CN ↔ EN) via Azure OpenAI
+- Generates **supply chain bottleneck analysis**, conviction watchlists, and value chain mappings
+- Visualizes hot topics, industry breakdowns, and tweet timelines with configurable time windows
+
+### 9. Digital Human AI Assistant
+
+A context-aware streaming avatar with **route-sensitive system prompts**:
+
+- Detects the user's current page (`/`, `/resume`, `/canvas`) and dynamically adjusts the LLM's persona
+- Serves SAS-authenticated private blob assets (60-second expiry tokens)
+- Streams responses via SSE with `X-Accel-Buffering: no` for zero-latency delivery
+
+---
+
+## 📁 Repository Structure
+
+```text
+├── .azure/                         # Infrastructure-as-Code (IaC)
+│   ├── main.bicep                  # Subscription-level deployment orchestrator
+│   ├── nested-infra.bicep          # VNet + Private Link + NSG + Key Vault + Managed Identity
+│   ├── compute-module.bicep        # Frontend & Backend Container Apps + Log Analytics
+│   ├── network-rules.json          # NSG bidirectional security rules
+│   └── templates/                  # Scenario-specific Bicep template presets
+├── scripts/                        # Operational Automation
+│   ├── deploy-aca.sh               # Zero-cache Docker build → ACR push → ACA rolling update
+│   ├── provision.sh                # Idempotent infrastructure provisioning
+│   ├── provision-whatif.sh         # Dry-run deployment preview
+│   ├── destroy.sh                  # Full resource group teardown
+│   ├── iac-assembler.py            # Scenario-driven Bicep template assembler with backup rotation
+│   ├── preflight-validate.py       # Azure-side preflight deployment validation
+│   ├── trigger-ci.sh               # GitHub CI/CD pipeline trigger
+│   └── add-device.sh               # IoT Hub device identity registration
+├── src/
+│   ├── client-edge/                # Next.js 14 Frontend (App Router)
+│   │   └── src/
+│   │       ├── app/
+│   │       │   ├── page.tsx                # Interactive resume / landing page
+│   │       │   ├── dashboard/              # Fleet simulation & live telemetry dashboards
+│   │       │   │   ├── theorem/            # Kinematic-Token Theorem single-AGV sandbox
+│   │       │   │   ├── compare/            # Side-by-side cloud vs edge proof
+│   │       │   │   └── live/               # Real cloud integration dashboard
+│   │       │   ├── prediction/             # KOL supply chain intelligence console
+│   │       │   ├── iac/                    # IaC topology viewer & configurator
+│   │       │   └── api/[...path]/          # Catch-all API gateway proxy (BFF pattern)
+│   │       ├── components/
+│   │       │   ├── digital-human/          # AI avatar with WebGPU kernel
+│   │       │   │   └── kernel.ts           # Edge compute: Qwen2.5 + MiniLM-L6 + RAG
+│   │       │   └── canvas/                 # Bicep topology visualization
+│   │       └── workers/                    # Web Workers for Bicep parsing
+│   └── cloud-orchestrator/         # FastAPI Backend (Azure Functions ASGI)
+│       ├── function_app.py         # ASGI entrypoint with modular router registration
+│       ├── embodied_brain/         # Multi-Agent orchestration engine
+│       │   ├── brain.py            # 3-Agent pipeline + IoT Event Hub trigger
+│       │   └── utils.py            # Cosmos DB, SAS token signing, Agent wrapper
+│       ├── digitalhuman/           # Context-aware LLM streaming router
+│       ├── kol_analysis/           # KOL tweet analysis & prediction API
+│       ├── edge-simulator/         # IoT device mock for local development
+│       └── scenario_registry.json  # Multi-tenant agent configuration
+├── tests/
+│   └── shadow-e2e-test.py          # Self-healing shadow environment E2E test (287 lines)
+├── docs/                           # Diátaxis-Compliant Documentation
+│   ├── adrs/                       # 33 Architecture Decision Records
+│   ├── dashboard/                  # Fleet Dashboard reference & presentation scripts
+│   ├── audits/                     # Architecture audit reports
+│   ├── reference/                  # System design blueprints
+│   └── tutorials/                  # Quickstart deployment guides
+└── Makefile                        # Unified command bus (12 targets)
+```
+
+---
+
+## 🛠️ Quick Start
+
 ```bash
-# Terminal 1: Launch local Functions Host emulator (port 7071)
+# Terminal 1: Launch backend (Azure Functions host, port 7071)
 make start-backend
 
-# Terminal 2: Launch local Next.js frontend (port 3000)
+# Terminal 2: Launch frontend (Next.js, port 3000)
 make start-frontend
 ```
 
-### 2. Run Offline Tweets Harvesting & AI RAG Analysis
-Scrape tweets, run batch translations, and perform AI supply-chain analysis locally:
-```bash
-make research
-```
+### Deployment
 
-### 3. Deploy to Cloud (Bypassing Docker & Container Registry Cache)
-Containers are hosted inside a private subnet and referenced by the `:latest` tag. To force deployments to bypass Docker caching and force ACA to pull updated images:
 ```bash
+# Dry-run infrastructure changes
+make whatif
+
+# Provision Azure infrastructure (idempotent)
+make provision
+
+# Build & deploy containers (zero-cache, forced revision)
 make deploy-aca
+
+# Run shadow E2E test (deploy → audit → self-heal destroy)
+python tests/shadow-e2e-test.py
 ```
-*This command runs a `--no-cache` Docker compilation, pushes the image to ACR, and pollutes the Container App's environment variables with `TRIGGER_VERSION=$(date +%s)` to force Azure to retire the old replica and start a new revision.*
 
 ---
 
-## 🎯 Troubleshooting & Lessons Learned (Nourishment for Growth)
+## 📐 Architecture Decision Records (33 ADRs)
 
-* **Subnet Delegation Lock (`InUseSubnetCannotBeUpdated`):**  
-  Legacy Functions VNet integrations locked the `BackendSubnet` delegation. Fixed by running `az resource delete` to explicitly delete the old App Service Plan and free the locks.
-* **ACR Registry Bootstrapping Cold-Start:**  
-  Fresh deployments fail with `MANIFEST_UNKNOWN` when Container Apps start before ACR contains the image. Solved by placing a public dummy image (`aci-helloworld`) in Bicep first, and then deploying the actual image over it.
-* **308 Trailing Slash POST-to-GET Method Stripping:**  
-  Next.js `trailingSlash: true` forced a 308 redirect for non-slashed API requests. Browsers followed the redirect by dropping the method to `GET`, triggering a 405 Method Not Allowed in FastAPI. Resolved by appending trailing slashes in all client-side calls and changing `BACKEND_API_URL` to `https://` to bypass HTTP-to-HTTPS Envoy redirect method stripping.
-* **Path Assembly Slashes:**  
-  Catch-all routing evaluated `/api/chat/stream/` into segments ending with an empty string, creating `chat/stream/` which failed FastAPI routing. Resolved by filtering empty segments using `pathSegments.filter(Boolean).join('/')` in `route.ts`.
+All significant engineering decisions are documented in [ADR format](docs/adrs/INDEX.md), organized by concern domain:
+
+| Domain | Count | Key Decisions |
+|:-------|:-----:|:--------------|
+| ☁️ Cloud Infrastructure | 8 | VNet routing, SKU migration, Shadow E2E, ACA ingress POST demotion |
+| ⚙️ Backend | 6 | Pure ASGI migration, tenant fallback, dynamic orchestration API |
+| 🎨 Frontend | 13 | Step-based detection loop, Fleet simulation, Token breakdown control, Ref-based physics |
+| 🏗️ Cross-Domain Architecture | 10 | Shared physics kernel, Generation counter, Dual-mode architecture, Multi-agent engine |
 
 ---
 
-## 📚 Diátaxis Documentation Index
+## 🎓 Research & Academic Relevance
 
-* 📖 **[Migration & Troubleshooting Retrospective](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/migration_retrospective_aca.md)**: Exhaustive details on Container Apps, VNet routing details, and SWA-vs-ACA decisions.
-* 📐 **[System Design Blueprints](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/reference/system-integration-design.md)**: Architectural schemas for fleet routing and proof-of-cloud validation.
-* 🚀 **[Quickstart Deployment Guide](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/tutorials/quickstart.md)**: Step-by-step setup guides for developers.
+This project addresses the intersection of **cybersecurity**, **embodied AI safety**, and **cloud-edge computing**:
+
+- **Zero-Trust Architecture**: Enterprise-grade Private Link + VNet isolation + Managed Identity — applicable to critical infrastructure protection
+- **AI Safety & Alignment**: Multi-agent pipeline with safety firewall agent that can **BLOCK** unsafe actions before they reach physical actuators
+- **Edge Computing Security**: WebGPU-based local inference protects user privacy while reducing attack surface (no data leaves the browser)
+- **Formal Verification**: Kinematic-Token Theorem provides mathematical proof of cloud-only AI control deadlocks
+- **Infrastructure Security Testing**: Shadow E2E test suite validates Private DNS resolution and network isolation integrity
+
+---
+
+## 🏅 Certifications (Author)
+
+| Certification | Description |
+|:---|:---|
+| **AZ-305** | Azure Solutions Architect Expert |
+| **AZ-104** | Azure Administrator Associate |
+| **AI-102** | Azure AI Engineer Associate |
+| **SC-300** | Microsoft Identity and Access Administrator |
+| **AB-100** | Agentic AI Business Architect |
+
+---
+
+## 📜 License
+
+[MIT License](LICENSE) — Liu Shengwei
