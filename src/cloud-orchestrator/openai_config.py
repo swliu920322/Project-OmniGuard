@@ -1,65 +1,45 @@
 import os
 import logging
+from typing import Tuple, Union
 
-# 尝试自动从 local.settings.json 加载本地开发环境变量 (仅在本地开发且环境变量未定义时生效)
-_parent_dir = os.path.dirname(os.path.abspath(__file__))
-_settings_path = os.path.join(_parent_dir, "local.settings.json")
-if os.path.exists(_settings_path):
-    try:
-        import json
-        with open(_settings_path, "r", encoding="utf-8") as f:
-            _settings = json.load(f)
-        _values = _settings.get("Values", {})
-        for k, v in _values.items():
-            if k not in os.environ:
-                os.environ[k] = str(v)
-    except Exception as e:
-        logging.warning(f"Failed to load local.settings.json in openai_config: {e}")
+from llm_provider import (
+    resolve_llm_config,
+    create_llm_client,
+    create_async_llm_client,
+    LLMConfig,
+    LLMProviderType,
+    ensure_model_keyword,
+)
 
-from openai import AzureOpenAI, AsyncAzureOpenAI
+from openai import OpenAI, AsyncOpenAI, AzureOpenAI, AsyncAzureOpenAI
 
-def get_openai_credentials(model_env_var: str = None):
-    """
-    统一解析 Azure OpenAI 凭证，解决命名空间冗余与历史遗留变量命名不一致问题。
-    优先解析标准 Azure OpenAI 环境变量，回退解析 OpenAI 兼容变量。
-    若指定了 model_env_var，则优先从特定的服务变量中读取模型名称。
-    """
-    endpoint = (os.environ.get("AZURE_OPENAI_ENDPOINT") or os.environ.get("OPENAI_BASE_URL") or "").strip()
-    api_key = (os.environ.get("AZURE_OPENAI_API_KEY") or os.environ.get("OPENAI_API_KEY") or "").strip()
-    
-    deployment_name = ""
-    if model_env_var:
-        deployment_name = os.environ.get(model_env_var, "").strip()
-        
-    if not deployment_name:
-        deployment_name = (os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME") or 
-                           os.environ.get("OPENAI_DEPLOYMENT_NAME") or 
-                           os.environ.get("OPENAI_API_DEPLOYMENT_NAME") or 
-                           "gpt-5.4-mini").strip()
-    return endpoint, api_key, deployment_name
 
-def get_azure_openai_client() -> AzureOpenAI:
+def get_openai_credentials(model_env_var: str = None) -> Tuple[str, str, str]:
     """
-    获取同步的 Azure OpenAI 客户端。
+    Backward-compatible credential resolver.
+    Returns (endpoint, api_key, model_name).
+    If model_env_var is set (e.g. "BRAIN_DEPLOYMENT_NAME"), the service name
+    is inferred by stripping the _DEPLOYMENT_NAME suffix.
     """
-    endpoint, api_key, _ = get_openai_credentials()
-    if not endpoint or not api_key:
-        raise ValueError("Missing critical environment variables: AZURE_OPENAI_ENDPOINT (or OPENAI_BASE_URL) and AZURE_OPENAI_API_KEY (or OPENAI_API_KEY)")
-    return AzureOpenAI(
-        azure_endpoint=endpoint,
-        api_key=api_key,
-        api_version="2024-10-01-preview"
-    )
+    service_name = ""
+    if model_env_var and model_env_var.endswith("_DEPLOYMENT_NAME"):
+        service_name = model_env_var.replace("_DEPLOYMENT_NAME", "")
+    config = resolve_llm_config(service_name)
+    return config.endpoint, config.api_key, config.model_name
 
-def get_async_azure_openai_client() -> AsyncAzureOpenAI:
-    """
-    获取异步的 Azure OpenAI 客户端。
-    """
-    endpoint, api_key, _ = get_openai_credentials()
-    if not endpoint or not api_key:
-        raise ValueError("Missing critical environment variables: AZURE_OPENAI_ENDPOINT (or OPENAI_BASE_URL) and AZURE_OPENAI_API_KEY (or OPENAI_API_KEY)")
-    return AsyncAzureOpenAI(
-        azure_endpoint=endpoint,
-        api_key=api_key,
-        api_version="2024-10-01-preview"
-    )
+
+def get_azure_openai_client() -> Union[OpenAI, AzureOpenAI]:
+    """Get a synchronous LLM client (Azure OpenAI or OpenAI-compatible)."""
+    config = resolve_llm_config()
+    return create_llm_client(config)
+
+
+def get_async_azure_openai_client() -> Union[AsyncOpenAI, AsyncAzureOpenAI]:
+    """Get an asynchronous LLM client (Azure OpenAI or OpenAI-compatible)."""
+    config = resolve_llm_config()
+    return create_async_llm_client(config)
+
+
+def get_llm_config(service_name: str = "") -> LLMConfig:
+    """Get the resolved LLM configuration for a given service."""
+    return resolve_llm_config(service_name)

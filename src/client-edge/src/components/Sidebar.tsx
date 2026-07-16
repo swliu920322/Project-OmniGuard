@@ -19,7 +19,7 @@ import {
 interface NavItem {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string; size?: number }>;
+  icon: React.ComponentType<{ className?: string; size?: number | string }>;
 }
 
 interface NavGroup {
@@ -88,19 +88,19 @@ export default function Sidebar() {
         {/* Sidebar Header Brand */}
         <div className="p-4 border-b border-slate-900/60 flex items-center justify-between h-16 min-h-16">
           {!isCollapsed ? (
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+            <Link href="/" className="flex items-center gap-2 group hover:opacity-85 transition-opacity">
+              <div className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 group-hover:border-cyan-500/40 group-hover:text-cyan-300 transition-colors">
                 <Compass size={18} />
               </div>
               <div>
-                <div className="text-xs font-black tracking-widest text-slate-100 uppercase">OMNIGUARD</div>
+                <div className="text-xs font-black tracking-widest text-slate-100 uppercase group-hover:text-[#00f2fe] transition-colors">OMNIGUARD</div>
                 <div className="text-[9px] font-mono text-cyan-500/80 uppercase">PORTFOLIO HUB</div>
               </div>
-            </div>
+            </Link>
           ) : (
-            <div className="mx-auto p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+            <Link href="/" className="mx-auto p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:border-cyan-500/40 hover:text-cyan-300 transition-colors">
               <Compass size={18} />
-            </div>
+            </Link>
           )}
         </div>
 
@@ -121,8 +121,9 @@ export default function Sidebar() {
               <div className="space-y-1.5">
                 {group.items.map((item, iIdx) => {
                   const Icon = item.icon;
-                  // Handle active path matching
-                  const isActive = pathname === item.href;
+                  // Handle active path matching (normalizing trailing slashes from next.config.mjs trailingSlash: true)
+                  const normalizePath = (p: string) => p.replace(/\/$/, '') || '/';
+                  const isActive = normalizePath(pathname) === normalizePath(item.href);
                   
                   return (
                     <Link

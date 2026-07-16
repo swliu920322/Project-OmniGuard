@@ -4,8 +4,33 @@
     "FUNCTIONS_WORKER_RUNTIME": "python",
     "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=YOUR_STORAGE_NAME;AccountKey=YOUR_KEY;...",
     "LOCAL_MOCK_MODE": "false",
+
+    "LLM_PROVIDER": "azure",
     "AZURE_OPENAI_ENDPOINT": "https://YOUR_INSTANCE.openai.azure.com/",
-    "AZURE_OPENAI_API_KEY": "YOUR_OPENAI_PATCH_KEY",
-    "AZURE_OPENAI_DEPLOYMENT_NAME": "gpt-4o"
+    "AZURE_OPENAI_API_KEY": "YOUR_OPENAI_KEY",
+    "AZURE_OPENAI_DEPLOYMENT_NAME": "gpt-4o-mini",
+    "AZURE_OPENAI_API_VERSION": "2024-10-01-preview",
+
+    "BRAIN_LLM_PROVIDER": "",
+    "BRAIN_DEPLOYMENT_NAME": "",
+    "BRAIN_LLM_ENDPOINT": "",
+    "BRAIN_LLM_API_KEY": "",
+    "BRAIN_MODEL_NAME": "",
+
+    "DIGITAL_HUMAN_LLM_PROVIDER": "",
+    "DIGITAL_HUMAN_DEPLOYMENT_NAME": "",
+    "DIGITAL_HUMAN_LLM_ENDPOINT": "",
+    "DIGITAL_HUMAN_LLM_API_KEY": "",
+    "DIGITAL_HUMAN_MODEL_NAME": "",
+
+    "KOL_LLM_PROVIDER": "",
+    "KOL_DEPLOYMENT_NAME": "",
+    "KOL_LLM_ENDPOINT": "",
+    "KOL_LLM_API_KEY": "",
+    "KOL_MODEL_NAME": "",
+
+    "COSMOS_ENDPOINT": "",
+    "COSMOS_KEY": "",
+    "IotHubServiceConnectionString": ""
   }
 }

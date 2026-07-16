@@ -6,9 +6,11 @@ import base64
 import hmac
 import hashlib
 import logging
+import threading
 import requests
 from urllib.parse import quote
-from openai_config import get_azure_openai_client, get_openai_credentials
+from collections import OrderedDict
+from openai_config import get_azure_openai_client, get_openai_credentials, get_llm_config
 from azure.cosmos import CosmosClient
 
 SCENARIO_REGISTRY_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scenario_registry.json")
@@ -79,24 +81,51 @@ def send_c2d_message(device_id: str, message_body: str):
     except Exception as e:
         logging.error(f"Error calling IoT Hub C2D API: {e}")
 
-_openai_client = None
+_llm_client = None
+_llm_config = None
 
-def get_openai_client():
-    global _openai_client
-    if _openai_client is None:
-        _openai_client = get_azure_openai_client()
-    return _openai_client
+def get_llm_client():
+    global _llm_client, _llm_config
+    if _llm_client is None:
+        _llm_config = get_llm_config("BRAIN")
+        _llm_client = get_azure_openai_client()
+    return _llm_client
+
+_ask_agent_cache = OrderedDict()
+_ask_agent_cache_lock = threading.Lock()
+ASK_AGENT_CACHE_TTL = 60
+ASK_AGENT_CACHE_MAX_SIZE = 128
+
+def _ask_agent_cache_key(system_prompt: str, user_input: str, max_completion_tokens: int):
+    return (system_prompt, user_input, max_completion_tokens)
 
 def ask_agent(system_prompt: str, user_input: str, max_completion_tokens: int = 100) -> str:
-    _, _, deployment = get_openai_credentials("BRAIN_DEPLOYMENT_NAME")
-    client = get_openai_client()
-    
+    cache_key = _ask_agent_cache_key(system_prompt, user_input, max_completion_tokens)
+
+    with _ask_agent_cache_lock:
+        if cache_key in _ask_agent_cache:
+            result, ts = _ask_agent_cache[cache_key]
+            if time.time() - ts < ASK_AGENT_CACHE_TTL:
+                logging.info(f"[CACHE HIT] ask_agent (cache TTL={ASK_AGENT_CACHE_TTL}s)")
+                return result
+            del _ask_agent_cache[cache_key]
+
+    client = get_llm_client()
+    config = _llm_config if _llm_config is not None else get_llm_config("BRAIN")
+
     response = client.chat.completions.create(
-        model=deployment,
+        model=config.model_name,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_input}
         ],
         max_completion_tokens=max_completion_tokens
     )
-    return response.choices[0].message.content.strip()
+    result = response.choices[0].message.content.strip()
+
+    with _ask_agent_cache_lock:
+        _ask_agent_cache[cache_key] = (result, time.time())
+        if len(_ask_agent_cache) > ASK_AGENT_CACHE_MAX_SIZE:
+            _ask_agent_cache.popitem(last=False)
+
+    return result
