@@ -4,6 +4,7 @@ import json
 import logging
 import time
 import azure.functions as func
+from collections import defaultdict
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
@@ -16,6 +17,19 @@ from .utils import (
 
 bp = func.Blueprint()
 brain_router = APIRouter()
+
+RATE_LIMIT_WINDOW = 5
+RATE_LIMIT_MAX_REQUESTS = 1
+_rate_limit_store = defaultdict(list)
+
+def _check_rate_limit(client_ip: str) -> bool:
+    now = time.time()
+    cutoff = now - RATE_LIMIT_WINDOW
+    _rate_limit_store[client_ip] = [t for t in _rate_limit_store[client_ip] if t > cutoff]
+    if len(_rate_limit_store[client_ip]) >= RATE_LIMIT_MAX_REQUESTS:
+        return False
+    _rate_limit_store[client_ip].append(now)
+    return True
 
 @bp.event_hub_message_trigger(
     arg_name="azeventhub",
@@ -154,7 +168,8 @@ def iot_telemetry_processor(azeventhub: func.EventHubEvent):
     except Exception as e:
         logging.error(f"[FATAL] 系统熔断: {str(e)}")
 
-@brain_router.post("/api/simulate_agent")
+@brain_router.post("/api/simulate_agent", include_in_schema=False)
+@brain_router.post("/api/simulate_agent/", include_in_schema=False)
 async def simulate_agent_endpoint(request: Request):
     """Simulate the Multi-Agent pipeline via HTTP POST request for the dashboard."""
     start_time = time.time()
@@ -167,6 +182,16 @@ async def simulate_agent_endpoint(request: Request):
         return JSONResponse(
             status_code=400,
             content={"error": "Invalid JSON body"}
+        )
+
+    client_ip = request.client.host if request.client else "unknown"
+    if not _check_rate_limit(client_ip):
+        return JSONResponse(
+            status_code=429,
+            content={
+                "error": f"Rate limit exceeded. Max {RATE_LIMIT_MAX_REQUESTS} request(s) per {RATE_LIMIT_WINDOW}s.",
+                "retry_after_seconds": RATE_LIMIT_WINDOW
+            }
         )
         
     tenant_id = req_body.get("tenant_id")

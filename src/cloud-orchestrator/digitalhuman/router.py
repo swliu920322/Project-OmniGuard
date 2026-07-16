@@ -7,14 +7,16 @@ from fastapi.responses import StreamingResponse
 
 digital_human_router = APIRouter()
 
-from openai_config import get_openai_credentials, get_async_azure_openai_client
+from openai_config import get_llm_config, get_async_azure_openai_client
 
 def build_llm_client():
-  endpoint, api_key, model = get_openai_credentials("DIGITAL_HUMAN_DEPLOYMENT_NAME")
-  if model == "gpt-5.4-mini" or not model:
+  config = get_llm_config("DIGITAL_HUMAN")
+  model = config.model_name
+  if model in ("gpt-5.4-mini", "") or not model:
     model = "gpt-4o-mini"
 
-  print(f"[⚡ AZURE SIGN] 激活 Azure OpenAI 客户端 // DEPLOYMENT_NAME: {model} // ENDPOINT: {endpoint}")
+  provider_tag = "AZURE" if config.is_azure() else config.provider.value.upper()
+  print(f"[{provider_tag}] LLM client activated // MODEL: {model} // ENDPOINT: {config.endpoint}")
   client = get_async_azure_openai_client()
   return client, model
 

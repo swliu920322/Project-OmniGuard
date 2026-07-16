@@ -5,6 +5,8 @@ set -euo pipefail
 # 🚀 Project-OmniGuard: Azure Container Apps (ACA) 容器部署总线
 # =========================================================================
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 # 默认租户前缀
 PREFIX="omni"
 PARAM_FILE="$SCRIPT_DIR/../.azure/main.parameters.json"
@@ -41,7 +43,6 @@ echo "🎯 找到 Container Registry: $ACR_NAME"
 echo -e "\n🔐 正在登陆 ACR..."
 az acr login --name "$ACR_NAME"
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # 从 local.settings.json 读取 OpenAI 凭据（混合订阅：KV 无值则走本地注入）
 LOCAL_SETTINGS="$SCRIPT_DIR/../src/cloud-orchestrator/local.settings.json"
 OPENAI_KEY=""
@@ -55,13 +56,13 @@ fi
 
 # 构建并推送 Backend 镜像
 echo -e "\n📦 [1/4] 构建并推送后端镜像 (FastAPI) 到 ACR..."
-cd src/cloud-orchestrator
+cd "$SCRIPT_DIR/../src/cloud-orchestrator"
 docker build --no-cache --platform linux/amd64 -t "${ACR_NAME}.azurecr.io/omniguard-backend:latest" .
 docker push "${ACR_NAME}.azurecr.io/omniguard-backend:latest"
 
 # 构建并推送 Frontend 镜像
 echo -e "\n📦 [2/4] 构建并推送前端镜像 (Next.js Standalone) 到 ACR..."
-cd ../client-edge
+cd "$SCRIPT_DIR/../src/client-edge"
 docker build --no-cache --platform linux/amd64 -t "${ACR_NAME}.azurecr.io/omniguard-frontend:latest" .
 docker push "${ACR_NAME}.azurecr.io/omniguard-frontend:latest"
 
@@ -88,7 +89,7 @@ az containerapp update \
   --name "$BACKEND_NAME" \
   --resource-group "$RG" \
   --image "${ACR_NAME}.azurecr.io/omniguard-backend:latest" \
-  --set-env-vars $BACKEND_ENV_VARS \
+  --set-env-vars "$BACKEND_ENV_VARS" \
   --output none
 
 # 触发 Frontend Container App 升级

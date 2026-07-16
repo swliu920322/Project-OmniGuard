@@ -1,21 +1,21 @@
 import os
 from typing import List, Dict, Optional
-from openai_config import get_azure_openai_client, get_openai_credentials
+from openai_config import get_azure_openai_client, get_llm_config
 from dotenv import load_dotenv
 
+
 class AzureChatEngine:
-    """
-    标准化核心推理引擎（直连 Azure OpenAI，使用 API Key 鉴权，避免 Tenant 冲突）
-    """
 
     def __init__(self, default_system_prompt: Optional[str] = None):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         parent_dir = os.path.dirname(current_dir)
         load_dotenv(dotenv_path=os.path.join(parent_dir, ".env"))
 
-        endpoint, api_key, self.model_deployment = get_openai_credentials("KOL_DEPLOYMENT_NAME")
-        print(f"[🤖 AI ENGINE] 直连 Azure OpenAI Endpoint: {endpoint} | Deployment: {self.model_deployment}")
+        self._config = get_llm_config("KOL")
+        provider_tag = "AZURE" if self._config.is_azure() else self._config.provider.value.upper()
+        print(f"[{provider_tag} ENGINE] Endpoint: {self._config.endpoint} | Model: {self._config.model_name}")
         self.client = get_azure_openai_client()
+        self.model_deployment = self._config.model_name
 
         self.default_system_prompt = default_system_prompt or os.getenv(
             "DEFAULT_SYSTEM_PROMPT",
