@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WebGPU Edge Inference Benchmark — Qwen2.5-0.5B</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+  #status { padding: 12px; border-radius: 6px; margin: 12px 0; }
+  .loading { background: #fff3cd; }
+  .ready { background: #d4edda; }
+  .error { background: #f8d7da; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: right; }
+  th { background: #f5f5f5; }
+  td:first-child { text-align: left; font-weight: bold; }
+  button { padding: 10px 24px; font-size: 16px; cursor: pointer; }
+  .token { color: #666; font-size: 13px; }
+  .progress-bar { width: 100%; height: 8px; background: #eee; border-radius: 4px; margin: 8px 0; overflow: hidden; }
+  .progress-fill { height: 100%; background: #007bff; width: 0%; transition: width 0.3s; }
+</style>
+</head>
+<body>
+<h1>WebGPU Edge Inference Benchmark</h1>
+<p>Model: Qwen2.5-0.5B-Instruct-q4f16_1-MLC (via @mlc-ai/web-llm)</p>
+
+<div id="status" class="loading">
+  <strong>Initializing WebGPU engine...</strong>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div id="progressText">0%</div>
+</div>
+
+<div id="controls" style="display:none;">
+  <p>
+    Iterations:
+    <select id="iterCount">
+      <option value="5">5 (quick)</option>
+      <option value="10" selected>10 (standard)</option>
+      <option value="20">20 (thorough)</option>
+    </select>
+    <button id="runBtn">Run Benchmark</button>
+  </p>
+</div>
+
+<div id="results" style="display:none;">
+  <h2>Results</h2>
+  <table id="resultTable">
+    <thead>
+      <tr><th>Metric</th><th>Value</th></tr>
+    </thead>
+    <tbody id="resultBody"></tbody>
+  </table>
+
+  <h3>Per-Iteration Latency</h3>
+  <table>
+    <thead><tr><th>#</th><th>Latency (ms)</th><th>Prompt</th><th>Output Tokens</th><th>Output Preview</th></tr></thead>
+    <tbody id="detailBody"></tbody>
+  </table>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "@mlc-ai/web-llm": "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.84/lib/index.js"
+  }
+}
+</script>
+
+<script type="module">
+import { CreateMLCEngine } from '@mlc-ai/web-llm';
+
+const MODEL = "Qwen2.5-0.5B-Instruct-q4f16_1-MLC";
+const PROMPTS = [
+  "Classify this telemetry: obstacle_distance=12cm, velocity=2.3m/s, battery=78%. Output exactly: CRITICAL_OBSTACLE, NORMAL_NAV, or SENSOR_ERROR.",
+  "Classify this telemetry: obstacle_distance=250cm, velocity=1.1m/s, battery=92%. Output exactly: CRITICAL_OBSTACLE, NORMAL_NAV, or SENSOR_ERROR.",
+  "Classify this telemetry: obstacle_distance=5cm, velocity=0.5m/s, battery=15%. Output exactly: CRITICAL_OBSTACLE, NORMAL_NAV, or SENSOR_ERROR.",
+  "Classify: obstacle=999cm, velocity=0m/s, battery=3%, hp=0. Emergency?",
+  "Classify: obstacle=35cm, velocity=1.8m/s, battery=45%. Critical or normal?",
+  "Output a JSON command for: obstacle at 8cm, current speed 2.0 m/s. Options: continue, slow_down, emergency_stop, reroute.",
+  "Output a JSON command for: normal navigation, speed 1.2 m/s, path clear. Options: continue, slow_down, emergency_stop, reroute.",
+  "Is this safe? Obstacle=22cm, minimum safe distance=30cm, speed=1.5m/s. Answer BLOCK or PASS.",
+  "Is this safe? Obstacle=200cm, minimum safe distance=30cm, speed=0.8m/s. Answer BLOCK or PASS.",
+  "Generate motor command: obstacle behind, path clear ahead, continue at 2.0 m/s.",
+];
+
+const status = document.getElementById('status');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const controls = document.getElementById('controls');
+const results = document.getElementById('results');
+const runBtn = document.getElementById('runBtn');
+const iterSelect = document.getElementById('iterCount');
+const resultBody = document.getElementById('resultBody');
+const detailBody = document.getElementById('detailBody');
+
+let engine = null;
+
+async function init() {
+  try {
+    engine = await CreateMLCEngine(MODEL, {
+      initProgressCallback: (report) => {
+        const pct = Math.round(report.progress * 100);
+        progressFill.style.width = pct + '%';
+        progressText.textContent = pct + '%';
+      }
+    });
+    status.className = 'ready';
+    status.innerHTML = '<strong>Ready.</strong> WebGPU engine loaded Qwen2.5-0.5B.';
+    controls.style.display = 'block';
+  } catch (err) {
+    status.className = 'error';
+    status.innerHTML = '<strong>Error:</strong> ' + err.message;
+    console.error(err);
+  }
+}
+
+async function runBenchmark() {
+  runBtn.disabled = true;
+  results.style.display = 'none';
+  status.className = 'loading';
+  status.innerHTML = '<strong>Running benchmark...</strong>';
+
+  const iterations = parseInt(iterSelect.value);
+  const rows = [];
+  const latencies = [];
+
+  for (let i = 0; i < iterations; i++) {
+    const prompt = PROMPTS[i % PROMPTS.length];
+    const start = performance.now();
+
+    const reply = await engine.chat.completions.create({
+      messages: [
+        { role: "system", content: "You are an AGV safety controller. Be precise and concise." },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0,
+      max_tokens: 50,
+    });
+
+    const elapsed = performance.now() - start;
+    const output = reply.choices[0]?.message?.content || "";
+    const outputTokens = reply.usage?.completion_tokens || output.split(/\s+/).length;
+
+    latencies.push(elapsed);
+    rows.push({ iter: i+1, latency: elapsed, prompt: prompt.slice(0, 50) + '...', tokens: outputTokens, preview: output.slice(0, 60) });
+
+    status.innerHTML = `<strong>Running...</strong> ${i+1}/${iterations} complete`;
+  }
+
+  // Compute stats
+  const mean = latencies.reduce((a,b) => a+b, 0) / latencies.length;
+  const sorted = [...latencies].sort((a,b) => a-b);
+  const median = sorted[Math.floor(sorted.length/2)];
+  const min = sorted[0];
+  const max = sorted[sorted.length-1];
+  const std = Math.sqrt(latencies.reduce((s,v) => s + (v-mean)**2, 0) / latencies.length);
+
+  // Display stats
+  resultBody.innerHTML = [
+    ['Iterations', iterations],
+    ['Mean Latency', mean.toFixed(1) + ' ms'],
+    ['Median Latency', median.toFixed(1) + ' ms'],
+    ['Std Dev', std.toFixed(1) + ' ms'],
+    ['Min Latency', min.toFixed(1) + ' ms'],
+    ['Max Latency', max.toFixed(1) + ' ms'],
+    ['Temperature', '0 (deterministic)'],
+    ['Model', MODEL],
+  ].map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+
+  // Display per-iteration details
+  detailBody.innerHTML = rows.map(r =>
+    `<tr><td>${r.iter}</td><td>${r.latency.toFixed(1)}</td><td class="token">${r.prompt}</td><td>${r.tokens}</td><td class="token">${r.preview}</td></tr>`
+  ).join('');
+
+  status.className = 'ready';
+  status.innerHTML = `<strong>Done.</strong> ${iterations} iterations — mean ${mean.toFixed(0)} ms, median ${median.toFixed(0)} ms.`;
+  results.style.display = 'block';
+  runBtn.disabled = false;
+}
+
+runBtn.addEventListener('click', runBenchmark);
+
+// Also test determinism on page load
+async function testDeterminism() {
+  status.innerHTML = '<strong>Testing determinism...</strong><div class="progress-bar"><div class="progress-fill" id="detFill"></div></div>';
+
+  const samePrompt = PROMPTS[0];
+  const outputs = [];
+
+  for (let i = 0; i < 5; i++) {
+    const reply = await engine.chat.completions.create({
+      messages: [
+        { role: "system", content: "You are an AGV safety controller. Be precise." },
+        { role: "user", content: samePrompt }
+      ],
+      temperature: 0,
+      max_tokens: 20,
+    });
+    outputs.push(reply.choices[0]?.message?.content || "");
+  }
+
+  const unique = new Set(outputs);
+  const detNote = unique.size === 1 ? 'DETERMINISTIC ✓' : `NOT DETERMINISTIC (${unique.size}/5 unique outputs)`;
+
+  const detRow = document.createElement('tr');
+  detRow.innerHTML = '<td>Determinism (temp=0, 5 runs)</td><td>' + detNote + '</td>';
+  resultBody.appendChild(detRow);
+}
+
+init().then(() => {
+  // Auto-run on load
+  setTimeout(runBenchmark, 500);
+});
+</script>
+</body>
+</html>

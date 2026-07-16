@@ -93,14 +93,19 @@ def get_llm_client():
 
 _ask_agent_cache = OrderedDict()
 _ask_agent_cache_lock = threading.Lock()
-ASK_AGENT_CACHE_TTL = 60
+ASK_AGENT_CACHE_TTL = 5
 ASK_AGENT_CACHE_MAX_SIZE = 128
 
-def _ask_agent_cache_key(system_prompt: str, user_input: str, max_completion_tokens: int):
-    return (system_prompt, user_input, max_completion_tokens)
+def _ask_agent_cache_key(system_prompt: str, user_input: str, max_completion_tokens: int, temperature: float):
+    return (system_prompt, user_input, max_completion_tokens, temperature)
 
-def ask_agent(system_prompt: str, user_input: str, max_completion_tokens: int = 100) -> str:
-    cache_key = _ask_agent_cache_key(system_prompt, user_input, max_completion_tokens)
+def ask_agent(
+    system_prompt: str,
+    user_input: str,
+    max_completion_tokens: int = 100,
+    temperature: float = 0.0,
+) -> str:
+    cache_key = _ask_agent_cache_key(system_prompt, user_input, max_completion_tokens, temperature)
 
     with _ask_agent_cache_lock:
         if cache_key in _ask_agent_cache:
@@ -119,7 +124,8 @@ def ask_agent(system_prompt: str, user_input: str, max_completion_tokens: int = 
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_input}
         ],
-        max_completion_tokens=max_completion_tokens
+        max_completion_tokens=max_completion_tokens,
+        temperature=temperature,
     )
     result = response.choices[0].message.content.strip()
 

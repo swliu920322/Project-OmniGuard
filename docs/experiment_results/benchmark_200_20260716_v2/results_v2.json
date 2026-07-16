@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "seed": 42,
+    "num_scenarios": 200,
+    "model": "DeepSeek V4 Flash"
+  },
+  "total_scenarios": 200,
+  "by_type": {
+    "normal": 111,
+    "critical": 38,
+    "sensor_error": 51
+  },
+  "gate_counts": {
+    "PHYSICAL_HALT": 28,
+    "ROUTER_SKIP": 24,
+    "SAFETY_SKIP": 27,
+    "COMPILER_PASS": 121
+  },
+  "router_accuracy": {
+    "correct": 162,
+    "total": 172,
+    "accuracy_pct": 94.19,
+    "ci95_lower_pct": 90.7,
+    "ci95_upper_pct": 97.67,
+    "confusion_matrix": {
+      "CRITICAL_OBSTACLE": {
+        "CRITICAL_OBSTACLE": 29,
+        "NORMAL_NAV": 9,
+        "SENSOR_ERROR": 0
+      },
+      "NORMAL_NAV": {
+        "NORMAL_NAV": 110,
+        "SENSOR_ERROR": 1,
+        "CRITICAL_OBSTACLE": 0
+      },
+      "SENSOR_ERROR": {
+        "SENSOR_ERROR": 23,
+        "CRITICAL_OBSTACLE": 0,
+        "NORMAL_NAV": 0
+      }
+    }
+  },
+  "latency_ms": {
+    "router": {
+      "mean_ms": 1780.6,
+      "median_ms": 1642.3,
+      "stdev_ms": 827.8,
+      "min_ms": 796.4,
+      "max_ms": 7019.0,
+      "ci95_lower_ms": 1646.2,
+      "ci95_upper_ms": 1934.4
+    },
+    "safety": {
+      "mean_ms": 1201.7,
+      "median_ms": 1183.5,
+      "stdev_ms": 156.3,
+      "min_ms": 827.9,
+      "max_ms": 1722.0,
+      "ci95_lower_ms": 1174.4,
+      "ci95_upper_ms": 1230.1
+    },
+    "compiler": {
+      "mean_ms": 3191.3,
+      "median_ms": 2800.6,
+      "stdev_ms": 1549.3,
+      "min_ms": 1345.4,
+      "max_ms": 11583.5,
+      "ci95_lower_ms": 2931.7,
+      "ci95_upper_ms": 3481.6
+    },
+    "total_pipeline": {
+      "mean_ms": 6173.6,
+      "median_ms": 5680.1,
+      "stdev_ms": 1996.8,
+      "min_ms": 3955.7,
+      "max_ms": 16390.6,
+      "ci95_lower_ms": 5843.6,
+      "ci95_upper_ms": 6547.9
+    }
+  },
+  "circuit_breaking": {
+    "skip_events": 79,
+    "skip_rate_pct": 39.5,
+    "avg_saved_per_skip_ms": 4613.4,
+    "total_time_saved_ms": 364459.2,
+    "avg_router_used_ms": 1780.6,
+    "avg_safety_used_ms": 1201.7,
+    "avg_compiler_used_ms": 3191.3
+  },
+  "errors": {
+    "false_positive_skips": 1,
+    "false_negative_misses": 7
+  }
+}
