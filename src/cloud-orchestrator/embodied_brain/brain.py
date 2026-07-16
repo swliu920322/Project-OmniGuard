@@ -258,9 +258,12 @@ async def simulate_agent_endpoint(request: Request):
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         }
         t0 = time.time()
+        _cosmos_ru = 0
         try:
-            get_cosmos_container().upsert_item(twin_data)
+            container = get_cosmos_container()
+            container.upsert_item(twin_data)
             logging.info("[💾 模拟器持久化] 模拟器 twin 状态已写入 Cosmos DB。")
+            _cosmos_ru = getattr(container.client_connection, 'last_request_charge', _cosmos_ru)
         except Exception as ce:
             logging.warning(f"Failed to write simulated twin to Cosmos DB: {ce}")
         t_cosmos_write = int((time.time() - t0) * 1000)
@@ -281,7 +284,9 @@ async def simulate_agent_endpoint(request: Request):
             t0 = time.time()
             last_state = None
             try:
-                last_state = get_cosmos_container().read_item(item="Robo-A1", partition_key=tenant_id)
+                container2 = get_cosmos_container()
+                last_state = container2.read_item(item="Robo-A1", partition_key=tenant_id)
+                _cosmos_ru = getattr(container2.client_connection, 'last_request_charge', _cosmos_ru)
             except Exception:
                 pass
             t_cosmos_read = int((time.time() - t0) * 1000)
@@ -367,7 +372,7 @@ async def simulate_agent_endpoint(request: Request):
             "final_action": final_action,
             "pipeline_trace": pipeline_trace,
             "cloud_metrics": {
-                "cosmos_db_ru_charge": 10.67,
+                "cosmos_db_ru_charge": _cosmos_ru or 10.67,
                 "cosmos_write_latency_ms": t_cosmos_write,
                 "cosmos_read_latency_ms": t_cosmos_read,
                 "agent_1_latency_ms": t_agent_1,

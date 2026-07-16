@@ -106,6 +106,7 @@ export async function runLocalGPUPipeline(prompt: string, context: string, onTok
       { role: "system", content: `You are Shengwei's local assistant. Answer strictly based on this fact: ${context}` },
       { role: "user", content: prompt }
     ],
+    temperature: 0,
     stream: true,
   });
   for await (const chunk of chunks) {

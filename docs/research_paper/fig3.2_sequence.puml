@@ -1,0 +1,63 @@
+@startuml
+<style>
+sequenceDiagram {
+  BackgroundColor white
+  FontSize 10
+  ParticipantPadding 8
+  BoxPadding 5
+}
+</style>
+
+title 3-Agent Pipeline: Router → Safety → Compiler
+
+actor AGV
+participant "Physical\nGate" as G
+participant "Router" as R
+participant "Safety" as S
+participant "Compiler" as C
+database "Cosmos DB" as DB
+
+== Normal Flow ==
+
+AGV -> G: telemetry (obstacle, vel, batt, hp)
+G -> G: hp > 0 and batt >= 5%?
+note right: HALT if fail
+G -> R: PASS
+R -> R: classify intent
+note right: CRITICAL_OBSTACLE\nNORMAL_NAV\nSENSOR_ERROR
+R -> G: label
+G -> G: SENSOR_ERROR? → SKIP
+G -> S: PASS
+S -> S: audit safety rules
+note right: obstacle < 30cm → BLOCK\nelse PASS
+S -> G: BLOCK / PASS
+G -> G: BLOCK? → SKIP
+G -> C: PASS
+C -> C: generate motor command
+C -> AGV: C2D: continue / stop
+C -> DB: write trace
+
+== Physical HALT ==
+
+AGV -> G: hp=0 or batt<5%
+G -> G: HALT
+G -> AGV: emergency stop
+note right
+  <color:green>0 LLM calls</color>
+  <color:green>saves ~6174ms</color>
+end note
+
+== Safety BLOCK ==
+
+AGV -> G: obstacle=12cm
+G -> R: PASS
+R -> R: CRITICAL_OBSTACLE
+R -> S: PASS
+S -> S: 12 < 30 → BLOCK
+S -> G: BLOCK
+G -> AGV: safety stop
+note right
+  <color:green>saves ~3191ms</color>
+  <color:green>Compiler skipped</color>
+end note
+@enduml
