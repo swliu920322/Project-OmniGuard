@@ -1,7 +1,7 @@
 # =========================================================================
 # 🛠️ Project-OmniGuard 统一控制总线
 # =========================================================================
-.PHONY: provision whatif start-backend start-frontend destroy deploy-aca trigger-ci help add-device research clean
+.PHONY: provision whatif start-backend start-frontend destroy deploy-aca trigger-ci help add-device research clean test test-all
 
 help:
 	@echo "======================================================"
@@ -14,6 +14,8 @@ help:
 	@echo "make destroy         - 销毁所有 Azure 资源"
 	@echo "make deploy-aca      - 部署 容器 到 Azure Container Apps"
 	@echo "make trigger-ci      - 触发 GitHub CI/CD 流水线"
+	@echo "make test            - 运行单元测试 (pytest)"
+	@echo "make test-all        - 运行所有测试 (含影子环境 E2E)"
 	@echo "======================================================"
 	@echo "💡 提示: 分别在两个终端中运行 make start-backend 和 make start-frontend"
 
@@ -54,3 +56,14 @@ research:
 
 clean:
 	docker builder prune -a -f
+
+test:
+	@echo "🔬 [CLI] 运行单元测试..."
+	@cd src/cloud-orchestrator && python3 -m pytest ../../tests/ -v --tb=short
+
+test-all:
+	@echo "🔬 [CLI] 运行所有测试 (单元 + 影子 E2E)..."
+	@cd src/cloud-orchestrator && python3 -m pytest ../../tests/ -v --tb=short
+	@echo ""
+	@echo "📡 [CLI] 运行影子环境 E2E 测试..."
+	python3 tests/shadow-e2e-test.py
