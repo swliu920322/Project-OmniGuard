@@ -21,11 +21,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     if (saved === 'zh' || saved === 'en') {
       setLocaleState(saved);
     } else {
-      // Auto-detect browser language
-      const lang = navigator.language || '';
-      if (lang.toLowerCase().startsWith('zh')) {
-        setLocaleState('zh');
-      }
+      setLocaleState('en'); // Unconditionally default to English
     }
   }, []);
 
