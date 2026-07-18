@@ -43,15 +43,19 @@ echo "🎯 找到 Container Registry: $ACR_NAME"
 echo -e "\n🔐 正在登陆 ACR..."
 az acr login --name "$ACR_NAME"
 
-# 从 local.settings.json 读取 OpenAI 凭据（混合订阅：KV 无值则走本地注入）
+# 从 local.settings.json 读取 OpenAI/DeepSeek 凭据与提供商设置
 LOCAL_SETTINGS="$SCRIPT_DIR/../src/cloud-orchestrator/local.settings.json"
 OPENAI_KEY=""
 OPENAI_ENDPOINT=""
 OPENAI_DEPLOYMENT=""
+LLM_PROVIDER=""
+OPENAI_MODEL_NAME=""
 if [ -f "$LOCAL_SETTINGS" ]; then
   OPENAI_KEY=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_API_KEY','') or json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_API_KEY',''))" 2>/dev/null || true)
   OPENAI_ENDPOINT=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_ENDPOINT','') or json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_BASE_URL',''))" 2>/dev/null || true)
   OPENAI_DEPLOYMENT=$(python3 -c "import json; d=json.load(open('$LOCAL_SETTINGS'))['Values']; print(d.get('AZURE_OPENAI_DEPLOYMENT_NAME','') or d.get('OPENAI_API_DEPLOYMENT_NAME','') or d.get('OPENAI_DEPLOYMENT_NAME',''))" 2>/dev/null || true)
+  LLM_PROVIDER=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('LLM_PROVIDER',''))" 2>/dev/null || true)
+  OPENAI_MODEL_NAME=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_MODEL_NAME',''))" 2>/dev/null || true)
 fi
 
 # 构建并推送 Backend 镜像
@@ -82,8 +86,14 @@ if [ -n "$OPENAI_DEPLOYMENT" ]; then
   BACKEND_ENV_VARS+=" OPENAI_DEPLOYMENT_NAME=$OPENAI_DEPLOYMENT"
   BACKEND_ENV_VARS+=" AZURE_OPENAI_DEPLOYMENT_NAME=$OPENAI_DEPLOYMENT"
 fi
-if [ -n "$OPENAI_KEY" ] || [ -n "$OPENAI_ENDPOINT" ] || [ -n "$OPENAI_DEPLOYMENT" ]; then
-  echo "🔑 已注入 OpenAI 凭据 (来源: local.settings.json)"
+if [ -n "$LLM_PROVIDER" ]; then
+  BACKEND_ENV_VARS+=" LLM_PROVIDER=$LLM_PROVIDER"
+fi
+if [ -n "$OPENAI_MODEL_NAME" ]; then
+  BACKEND_ENV_VARS+=" OPENAI_MODEL_NAME=$OPENAI_MODEL_NAME"
+fi
+if [ -n "$OPENAI_KEY" ] || [ -n "$OPENAI_ENDPOINT" ] || [ -n "$OPENAI_DEPLOYMENT" ] || [ -n "$LLM_PROVIDER" ]; then
+  echo "🔑 已注入 LLM 凭据与提供商设置 (Provider: ${LLM_PROVIDER:-azure}, Source: local.settings.json)"
 fi
 az containerapp update \
   --name "$BACKEND_NAME" \
