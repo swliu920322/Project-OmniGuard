@@ -1,4 +1,5 @@
 import React from 'react';
+import { useI18n } from '@/components/I18nProvider';
 import { Lock, Globe, Cpu, Network, Activity } from 'lucide-react';
 
 interface FeaturePacksSelectorProps {
@@ -16,11 +17,13 @@ export const FeaturePacksSelector: React.FC<FeaturePacksSelectorProps> = ({
   packIoTDps,
   onTogglePack
 }) => {
+  const { t, locale } = useI18n();
+
   return (
     <div className="bg-[#0b101d]/60 border border-slate-900 rounded-2xl p-6 shadow-2xl relative">
       <h2 className="text-xs font-bold font-mono text-slate-400 mb-4 flex items-center gap-2 border-b border-slate-900 pb-2 uppercase tracking-wider">
         <Activity size={15} className="text-cyan-400" />
-        <span>业务功能包快速启闭 (Feature Packs Toggles)</span>
+        <span>{t('configurator.sec_features')}</span>
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -30,7 +33,7 @@ export const FeaturePacksSelector: React.FC<FeaturePacksSelectorProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Lock className={`size-4 ${packZeroTrust ? 'text-cyan-400' : 'text-slate-500'}`} />
-              <h4 className="text-xs font-bold font-mono text-slate-200">零信任网络安全包</h4>
+              <h4 className="text-xs font-bold font-mono text-slate-200">{t('configurator.feature_zero_trust_title')}</h4>
             </div>
             <input 
               type="checkbox" 
@@ -40,11 +43,11 @@ export const FeaturePacksSelector: React.FC<FeaturePacksSelectorProps> = ({
             />
           </div>
           <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-            开启后强制停用数据组件（Cosmos/Storage）公网端点，自动编排 Private Link 和私有 DNS 劫持。
+            {t('configurator.feature_zero_trust_desc')}
           </p>
           <div className="mt-2.5 font-mono text-xs flex items-center justify-between text-cyan-400 bg-cyan-950/30 px-2 py-1.5 rounded">
-            <span>性能指标: 虚网内网隔离 | 时延 &lt;5ms</span>
-            <span>成本影响: +$24/月</span>
+            <span>{locale === 'zh' ? '性能指标: 虚网内网隔离 | 时延 <5ms' : 'Metrics: Private Link Isolation | Latency <5ms'}</span>
+            <span>{locale === 'zh' ? '成本影响: +$24/月' : 'Cost: +$24/month'}</span>
           </div>
         </div>
 
@@ -53,7 +56,7 @@ export const FeaturePacksSelector: React.FC<FeaturePacksSelectorProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Globe className={`size-4 ${packGlobalWaf ? 'text-amber-400' : 'text-slate-500'}`} />
-              <h4 className="text-xs font-bold font-mono text-slate-200">全球边缘分发与 WAF 防护包</h4>
+              <h4 className="text-xs font-bold font-mono text-slate-200">{t('configurator.feature_waf_title')}</h4>
             </div>
             <input 
               type="checkbox" 
@@ -63,11 +66,11 @@ export const FeaturePacksSelector: React.FC<FeaturePacksSelectorProps> = ({
             />
           </div>
           <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-            部署 Front Door Premium 全球专线 CDN 与高级 WAF 防御规则，并挂载 APIM 网关，实施边缘反爬虫与 JWT 验证。
+            {t('configurator.feature_waf_desc')}
           </p>
           <div className="mt-2.5 font-mono text-xs flex items-center justify-between text-amber-400 bg-amber-950/30 px-2 py-1.5 rounded">
-            <span>性能指标: 全球时延 &lt;30ms | 智能 WAF 防御</span>
-            <span>成本影响: +$477/月</span>
+            <span>{locale === 'zh' ? '性能指标: 全球时延 <30ms | 智能 WAF 防御' : 'Metrics: Global Latency <30ms | Edge WAF'}</span>
+            <span>{locale === 'zh' ? '成本影响: +$477/月' : 'Cost: +$477/month'}</span>
           </div>
         </div>
 
@@ -76,7 +79,7 @@ export const FeaturePacksSelector: React.FC<FeaturePacksSelectorProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Cpu className={`size-4 ${packScaleToZero ? 'text-emerald-400' : 'text-slate-500'}`} />
-              <h4 className="text-xs font-bold font-mono text-slate-200">FinOps 绿能冷启动休眠包</h4>
+              <h4 className="text-xs font-bold font-mono text-slate-200">{t('configurator.feature_scale_title')}</h4>
             </div>
             <input 
               type="checkbox" 
@@ -86,11 +89,11 @@ export const FeaturePacksSelector: React.FC<FeaturePacksSelectorProps> = ({
             />
           </div>
           <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-            开启后强制设置 ACA 最低副本数为 0。闲置时计算实例完全归零，测试请求时唤醒。
+            {t('configurator.feature_scale_desc')}
           </p>
           <div className="mt-2.5 font-mono text-xs flex items-center justify-between text-emerald-400 bg-emerald-950/30 px-2 py-1.5 rounded">
-            <span>性能指标: 存在 2-5秒 的容器冷启动时延</span>
-            <span>成本影响: 缩减 90% 闲置开销</span>
+            <span>{locale === 'zh' ? '性能指标: 存在 2-5秒 的容器冷启动时延' : 'Metrics: 2-5s Container Cold-Start Latency'}</span>
+            <span>{locale === 'zh' ? '成本影响: 缩减 90% 闲置开销' : 'Cost: Saves 90% Idle Compute Cost'}</span>
           </div>
         </div>
 
@@ -99,7 +102,7 @@ export const FeaturePacksSelector: React.FC<FeaturePacksSelectorProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Network className={`size-4 ${packIoTDps ? 'text-purple-400' : 'text-slate-500'}`} />
-              <h4 className="text-xs font-bold font-mono text-slate-200">IoT 零接触安全接入包</h4>
+              <h4 className="text-xs font-bold font-mono text-slate-200">{t('configurator.feature_dps_title')}</h4>
             </div>
             <input 
               type="checkbox" 
@@ -109,11 +112,11 @@ export const FeaturePacksSelector: React.FC<FeaturePacksSelectorProps> = ({
             />
           </div>
           <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-            一键配置设备注册服务 (DPS)，支持海量智能设备通过 X.509 CA 证书进行动态安全免密注册。
+            {t('configurator.feature_dps_desc')}
           </p>
           <div className="mt-2.5 font-mono text-xs flex items-center justify-between text-purple-400 bg-purple-950/30 px-2 py-1.5 rounded">
-            <span>性能指标: 每日 400,000 遥测吞吐</span>
-            <span>成本影响: +$25/月</span>
+            <span>{locale === 'zh' ? '性能指标: 每日 400,000 遥测吞吐' : 'Metrics: 400,000 Daily Telemetry Ingestion'}</span>
+            <span>{locale === 'zh' ? '成本影响: +$25/月' : 'Cost: +$25/month'}</span>
           </div>
         </div>
 
