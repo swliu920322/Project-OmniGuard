@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useI18n } from '@/components/I18nProvider';
 import { 
   User, 
   Layers, 
@@ -29,6 +30,7 @@ interface NavGroup {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { t, locale, setLocale } = useI18n();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -51,28 +53,23 @@ export default function Sidebar() {
 
   const navGroups: NavGroup[] = [
     {
-      title: '个人主页',
+      title: t('sidebar.title_profile'),
       items: [
-        { label: '个人求职履历', href: '/', icon: User },
+        { label: t('sidebar.resume'), href: '/', icon: User },
       ]
     },
     {
-      title: '云原生 IaC 军火库',
+      title: t('sidebar.title_iac'),
       items: [
-        { label: 'IaC 架构看板', href: '/iac', icon: Layers },
-        { label: '可视化配置台', href: '/iac/configurator', icon: Settings },
+        { label: t('sidebar.iacDashboard'), href: '/iac', icon: Layers },
+        { label: t('sidebar.configurator'), href: '/iac/configurator', icon: Settings },
       ]
     },
     {
-      title: '边缘仿真与计算',
+      title: t('sidebar.title_simulation'),
       items: [
-        { label: '车队动力学仿真', href: '/dashboard', icon: Truck },
-      ]
-    },
-    {
-      title: 'AI 智能体投研',
-      items: [
-        { label: '大 V 投研分析仪', href: '/prediction', icon: TrendingUp },
+        { label: t('sidebar.fleet'), href: '/dashboard', icon: Truck },
+        { label: t('sidebar.prediction'), href: '/prediction', icon: TrendingUp },
       ]
     }
   ];
@@ -156,21 +153,47 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Footer / Collapse Trigger */}
-      <div className="p-4 border-t border-slate-900/60 flex items-center justify-between h-16 min-h-16 bg-slate-950/20">
-        {!isCollapsed ? (
-          <div className="text-xs font-mono text-slate-300 uppercase flex items-center gap-1.5 pl-1 font-semibold tracking-wider">
-            <Terminal size={12} className="text-cyan-500" /> SYS_V2.6_OK
-          </div>
-        ) : null}
+      {/* Footer / Language Selector + Collapse Trigger */}
+      <div className="p-4 border-t border-slate-900/60 flex flex-col gap-3 bg-slate-950/20">
+        <div className="flex items-center justify-between">
+          {!isCollapsed ? (
+            <button
+              onClick={() => setLocale(locale === 'zh' ? 'en' : 'zh')}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-800 bg-slate-900/40 text-[11px] font-mono font-bold text-slate-300 hover:text-cyan-300 hover:border-cyan-500/30 transition-all cursor-pointer"
+            >
+              <span>🌐</span>
+              <span>{locale === 'zh' ? 'English' : '中文'}</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setLocale(locale === 'zh' ? 'en' : 'zh')}
+              className="mx-auto p-2 rounded-xl border border-slate-800 bg-slate-900/40 text-slate-300 hover:text-cyan-300 hover:border-cyan-500/30 transition-all cursor-pointer"
+              title={locale === 'zh' ? 'Switch to English' : '切换为中文'}
+            >
+              🌐
+            </button>
+          )}
+          
+          {!isCollapsed && (
+            <div className="text-[10px] font-mono text-slate-300 uppercase flex items-center gap-1.5 font-semibold tracking-wider">
+              <Terminal size={12} className="text-cyan-500" /> {t('sidebar.systemOk')}
+            </div>
+          )}
+        </div>
+
         <button 
           onClick={toggleCollapse}
-          className={`p-2 rounded-xl border border-slate-800 bg-slate-950/80 text-slate-300 hover:text-[#00f2fe] hover:border-cyan-500/30 transition-all shadow ${
-            isCollapsed ? 'mx-auto' : ''
-          }`}
-          title={isCollapsed ? "展开导航" : "折叠导航"}
+          className="w-full py-2 rounded-xl border border-slate-800 bg-slate-950/80 text-slate-300 hover:text-[#00f2fe] hover:border-cyan-500/30 transition-all shadow flex items-center justify-center gap-1.5 text-xs font-mono"
+          title={isCollapsed ? t('sidebar.expand') : t('sidebar.collapse')}
         >
-          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          {isCollapsed ? (
+            <ChevronRight size={14} />
+          ) : (
+            <>
+              <ChevronLeft size={14} />
+              <span>{t('sidebar.collapse')}</span>
+            </>
+          )}
         </button>
       </div>
     </aside>

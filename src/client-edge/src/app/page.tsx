@@ -1,9 +1,12 @@
 'use client';
 
 import React from 'react';
+import { useI18n } from '@/components/I18nProvider';
 import { Terminal, MapPin, Mail, Phone, Linkedin } from 'lucide-react';
 
 export default function RootResumePage() {
+  const { t } = useI18n();
+
   return (
     <div className="relative min-h-screen text-gray-100 font-sans p-6 md:p-12 animate-in fade-in duration-200 select-none">
       <div
@@ -24,11 +27,11 @@ export default function RootResumePage() {
               LIU SHENGWEI
             </h1>
             <div className="text-[#00f2fe] text-lg mt-1 uppercase tracking-widest font-semibold font-mono">
-              Solutions Architect (AI & Cloud Transformation)
+              {t('resume.role')}
             </div>
           </div>
           <div className="flex flex-wrap md:flex-col items-start md:items-end gap-3 text-xs text-gray-300 font-mono">
-            <span className="flex items-center gap-1.5"><MapPin size={13} /> Singapore</span>
+            <span className="flex items-center gap-1.5"><MapPin size={13} /> {t('resume.location')}</span>
             <span className="flex items-center gap-1.5"><Mail size={13} /> lsw19920322@gmail.com</span>
             <span className="flex items-center gap-1.5"><Phone size={13} /> +6011-1121-6759</span>
             <a 
@@ -44,88 +47,85 @@ export default function RootResumePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            <Section title="PROFESSIONAL SUMMARY">
+            <Section title={t('resume.summary_title')}>
               <p className="text-gray-300 text-sm leading-relaxed">
-                10+ years of engineering excellence, bridging robust software systems with AI-native solutions.
-                Expert in transitioning complex front-end modularity into high-level Azure Cloud Architectures and
-                Agentic Workflows. Proven track record in Fortune 500 environments delivering standardized SOPs and
-                measurable ROI.
+                {t('resume.summary_content')}
               </p>
             </Section>
 
-            <Section title="SIGNATURE PROJECT (THIS PLATFORM)">
+            <Section title={t('resume.project_title')}>
               <div className="mb-6">
                 <div className="flex justify-between font-bold text-white text-sm md:text-base">
-                  <span>Azure-Based Multi-Agent Orchestration Platform</span>
-                  <span className="text-[#00f2fe] text-xs font-mono">2025 - Present</span>
+                  <span>{t('resume.exp.omniguard.company')}</span>
+                  <span className="text-[#00f2fe] text-xs font-mono">{t('resume.period_current')}</span>
                 </div>
-                <div className="text-[#00f2fe] text-xs font-mono mt-1">Lead Architect</div>
-                <ul className="mt-3 space-y-2 text-gray-300 text-sm leading-relaxed">
+                <div className="text-[#00f2fe] text-xs font-mono mt-1">{t('resume.exp.omniguard.title')}</div>
+                <ul className="mt-3 space-y-2 text-gray-300 text-sm leading-relaxed font-mono">
                   <li className="relative pl-5 before:content-['↪'] before:absolute before:left-0 before:text-[#00f2fe]">
-                    <strong className="text-gray-200">Visual configuration & package assembler:</strong> Designed and implemented the compiler frontend and API to dynamically assemble Sandbox and Secure IoT Hub Bicep templates. Enables custom VNet CIDRs, managed identity, and physical SKU configuration with zip download.
+                    {t('resume.exp.omniguard.bullet1')}
                   </li>
                   <li className="relative pl-5 before:content-['↪'] before:absolute before:left-0 before:text-[#00f2fe]">
-                    <strong className="text-gray-200">Zero-Trust security envelope:</strong> Architected VNet Hub-Spoke network topology with Private Endpoints and Private DNS Zones. Enforces strict Entra ID RBAC and blocks public access, ensuring secure private network database connectivity (Key Vault & Cosmos DB).
+                    {t('resume.exp.omniguard.bullet2')}
                   </li>
                   <li className="relative pl-5 before:content-['↪'] before:absolute before:left-0 before:text-[#00f2fe]">
-                    <strong className="text-gray-200">Agentic workflows:</strong> Abstracted and unified client initialization for Azure OpenAI. Supports aliases for service-specific overrides, implementing live API bilingual tweet translation and investment archives.
+                    {t('resume.exp.omniguard.bullet3')}
                   </li>
                 </ul>
               </div>
             </Section>
 
-            <Section title="WORK EXPERIENCE">
+            <Section title={t('resume.experience_title')}>
               <Experience
-                company="Accenture"
+                company={t('resume.exp.accenture.company')}
                 period="2021 – 2023"
-                title="Associate Manager (Technical Lead / Architect)"
+                title={t('resume.exp.accenture.title')}
                 bullets={[
-                  'Led the 0-to-1 foundational architecture for FinTech platforms with modular micro-frontend isolation.',
-                  'Devised isomorphic multi-project builds and optimized asset bundling strategies, improving compile efficiency by 40%.',
-                  'Developed a generic runtime intelligent state machine for centralized dialog controls and audit token life-cycle management.',
+                  t('resume.exp.accenture.bullet1'),
+                  t('resume.exp.accenture.bullet2'),
+                  t('resume.exp.accenture.bullet3'),
                 ]}
               />
               <Experience
-                company="Scania Group"
+                company={t('resume.exp.scania.company')}
                 period="2023.7 - 2024.1"
-                title="Software Engineer"
+                title={t('resume.exp.scania.title')}
                 bullets={[
-                  'Collaborated with cross-functional European and Asian teams to evaluate and build MES/MOM production line data acquisition control layers.',
-                  'Addressed frontend scalability and system integration challenges under strict industrial compliance and security audit standards.',
+                  t('resume.exp.scania.bullet1'),
+                  t('resume.exp.scania.bullet2'),
                 ]}
               />
               <Experience
-                company="Aosheng Information Technology"
+                company={t('resume.exp.aosheng.company')}
                 period="2020.5 – 2021.9"
-                title="Lead Systems Architect (Migration)"
+                title={t('resume.exp.aosheng.title')}
                 bullets={[
-                  'Orchestrated frontend architecture refactoring for legacy corporate banking platforms from legacy manual patterns to a modular assembly model.',
-                  'Introduced static code review and dry-run preflight check mechanisms to secure critical banking asset migrations.',
+                  t('resume.exp.aosheng.bullet1'),
+                  t('resume.exp.aosheng.bullet2'),
                 ]}
               />
             </Section>
           </div>
 
           <div className="space-y-8">
-            <Section title="AZURE CERTIFICATIONS">
+            <Section title={t('resume.certs_title')}>
               <div className="flex flex-col gap-3">
-                <CertBadge title="AZ-305" desc="Azure Solutions Architect Expert" status="Achieved" />
-                <CertBadge title="AZ-104" desc="Azure Administrator Associate" status="Achieved" />
-                <CertBadge title="AI-102" desc="Azure AI Engineer Associate" status="Achieved" />
-                <CertBadge title="SC-300" desc="Microsoft Identity and Access Administrator Associate" status="Achieved" />
-                <CertBadge title="AB-100" desc="Agentic AI Business Architect" status="Achieved" />
+                <CertBadge title="AZ-305" desc="Azure Solutions Architect Expert" status={t('resume.status_achieved')} />
+                <CertBadge title="AZ-104" desc="Azure Administrator Associate" status={t('resume.status_achieved')} />
+                <CertBadge title="AI-102" desc="Azure AI Engineer Associate" status={t('resume.status_achieved')} />
+                <CertBadge title="SC-300" desc="Microsoft Identity and Access Administrator Associate" status={t('resume.status_achieved')} />
+                <CertBadge title="AB-100" desc="Agentic AI Business Architect" status={t('resume.status_achieved')} />
               </div>
             </Section>
 
-            <Section title="EDUCATION">
+            <Section title={t('resume.education_title')}>
               <div className="mb-4">
                 <div className="font-bold text-sm text-white">Taylor’s University</div>
-                <div className="text-xs text-[#00f2fe] mt-0.5">MSc in Applied Computing (AI Specialization)</div>
+                <div className="text-xs text-[#00f2fe] mt-0.5">{t('resume.deg_taylors')}</div>
                 <div className="text-xs text-gray-500 mt-0.5">2025.9 – 2026.8</div>
               </div>
               <div>
                 <div className="font-bold text-sm text-white">Taiyuan University of Technology</div>
-                <div className="text-xs text-gray-300 mt-0.5">B.Eng in Mechanical Engineering</div>
+                <div className="text-xs text-gray-300 mt-0.5">{t('resume.deg_tyut')}</div>
                 <div className="text-xs text-gray-500 mt-0.5">2010.9 – 2014.9</div>
               </div>
             </Section>
@@ -167,14 +167,13 @@ function Experience({ company, period, title, bullets }: { company: string; peri
   );
 }
 
-function CertBadge({ title, desc, status, time }: { title: string; desc: string; status: 'Achieved' | 'Pending'; time?: string }) {
-  const isAchieved = status === 'Achieved';
+function CertBadge({ title, desc, status }: { title: string; desc: string; status: string }) {
   return (
     <div className="bg-[#00f2fe]/5 border border-slate-900 p-3.5 rounded-xl flex flex-col gap-1.5 border-l-4 border-l-[#00f2fe] shadow-sm">
       <div className="flex items-center justify-between gap-2">
         <span className="font-bold text-xs text-white font-mono">{title}</span>
         <span className="text-[9px] font-mono text-[#00f2fe] bg-[#00f2fe]/10 px-1.5 py-0.5 rounded shrink-0">
-          {isAchieved ? 'Achieved' : 'Pending'}
+          {status}
         </span>
       </div>
       <div className="text-[10px] text-gray-500 leading-snug">{desc}</div>
