@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useI18n } from '@/components/I18nProvider';
 import { 
   Terminal, 
   Settings, 
@@ -65,6 +66,7 @@ function highlightJson(jsonStr: string): string {
 }
 
 export default function IaCConfigDashboard() {
+  const { t, locale } = useI18n();
   const [config, setConfig] = useState<ConfigState | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -125,11 +127,16 @@ export default function IaCConfigDashboard() {
 
   const getScenarioLabel = (scenario: string) => {
     switch (scenario) {
-      case 'sandbox': return '零特特权极简沙箱 (Sandbox)';
-      case 'secure-iot': return '零信任身网双锁隔离 (Secure IoT)';
-      case 'global-portal': return '全球分发边缘网关 (Portal)';
-      case 'custom': return '自定义混合场景 (Custom)';
-      default: return scenario;
+      case 'sandbox': 
+        return locale === 'zh' ? '零特特权极简沙箱 (Sandbox)' : 'Privilege-Free Sandbox (Sandbox)';
+      case 'secure-iot': 
+        return locale === 'zh' ? '零信任身网双锁隔离 (Secure IoT)' : 'Zero-Trust Network Isolation (Secure IoT)';
+      case 'global-portal': 
+        return locale === 'zh' ? '全球分发边缘网关 (Portal)' : 'Global Distribution API Gateway (Portal)';
+      case 'custom': 
+        return locale === 'zh' ? '自定义混合场景 (Custom)' : 'Custom Hybrid Integration (Custom)';
+      default: 
+        return scenario;
     }
   };
 
@@ -142,10 +149,10 @@ export default function IaCConfigDashboard() {
             <Terminal size={12} /> IAC_PROVISION_DASHBOARD
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-            IaC 拓扑与编排看板
+            {t('iac.title')}
           </h1>
           <p className="text-xs text-slate-300 font-mono mt-1">
-            读取本地编译状态，将全局云参数与 Bicep 模块依赖链（ VFS ）整合进行双维度直观呈现。
+            {t('iac.subtitle')}
           </p>
         </div>
         <div className="flex gap-3">
@@ -153,14 +160,14 @@ export default function IaCConfigDashboard() {
             href="/iac/configurator" 
             className="text-xs font-mono border border-cyan-500/30 bg-cyan-950/20 hover:bg-cyan-500 hover:text-slate-950 hover:border-cyan-400 px-4 py-2.5 rounded-xl text-cyan-400 font-bold transition-all shadow-xl flex items-center gap-1.5"
           >
-            <Settings size={14} /> ⚙️ 进入配置台调优
+            <Settings size={14} /> {t('iac.btn_configurator')}
           </Link>
           {config && (
             <a 
               href="/api/download-iac"
               className="text-xs font-mono border border-slate-800 bg-slate-900 hover:border-cyan-500 px-4 py-2.5 rounded-xl text-slate-300 hover:text-slate-100 transition-all shadow-xl flex items-center gap-1.5"
             >
-              <Download size={14} /> 📥 打包下载 IaC 包
+              <Download size={14} /> {t('iac.btn_download')}
             </a>
           )}
         </div>
@@ -170,7 +177,7 @@ export default function IaCConfigDashboard() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-3">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>
-            <div className="text-slate-300 text-xs font-mono">正在检索本地 IaC 物理配置...</div>
+            <div className="text-slate-300 text-xs font-mono">{t('common.loading')}</div>
           </div>
         ) : !config ? (
           /* Empty State */
@@ -179,16 +186,16 @@ export default function IaCConfigDashboard() {
               <AlertCircle size={48} />
             </div>
             <div className="space-y-2">
-              <h3 className="text-base font-bold text-slate-300">尚未保存任何本地架构配置</h3>
+              <h3 className="text-base font-bold text-slate-300">{t('iac.empty_title')}</h3>
               <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
-                您的本地工作区中目前没有有效的配置文件。请点击下方按钮进入可视化配置中心，微调您的云端算力网络与托管凭证。
+                {t('iac.empty_desc')}
               </p>
             </div>
             <Link 
               href="/iac/configurator" 
               className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-mono font-bold rounded-xl transition-all shadow-lg"
             >
-              <Settings size={14} /> 立即开始配置第一套拓扑
+              <Settings size={14} /> {t('iac.empty_btn')}
             </Link>
           </div>
         ) : (
@@ -200,10 +207,10 @@ export default function IaCConfigDashboard() {
               {/* Card 1: Scenario */}
               <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md p-4 space-y-2.5 shadow-lg hover:border-cyan-500/30 hover:bg-slate-900/60 transition-all duration-300 group hover:shadow-[0_0_25px_rgba(0,242,254,0.06)]">
                 <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold group-hover:text-cyan-400 transition-colors">
-                  <Shield size={12} className="text-cyan-400" /> Scenario
+                  <Shield size={12} className="text-cyan-400" /> {t('iac.card_scenario')}
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-slate-300">当前激活场景</div>
+                  <div className="text-xs font-mono text-slate-300">{t('iac.card_scenario_desc')}</div>
                   <div className="text-sm font-bold text-slate-200 mt-1 truncate">
                     {getScenarioLabel(config.uiState.activeScenario)}
                   </div>
@@ -213,10 +220,10 @@ export default function IaCConfigDashboard() {
               {/* Card 2: Network VNet */}
               <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md p-4 space-y-2.5 shadow-lg hover:border-cyan-500/30 hover:bg-slate-900/60 transition-all duration-300 group hover:shadow-[0_0_25px_rgba(0,242,254,0.06)]">
                 <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold group-hover:text-amber-400 transition-colors">
-                  <Network size={12} className="text-amber-400" /> Virtual Network
+                  <Network size={12} className="text-amber-400" /> {t('iac.card_vnet')}
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-slate-300">骨干 CIDR 网段</div>
+                  <div className="text-xs font-mono text-slate-300">{t('iac.card_vnet_desc')}</div>
                   <div className="text-sm font-bold text-slate-200 mt-1 font-mono">
                     {config.uiState.vnetAddressPrefix || '10.1.0.0/16'}
                   </div>
@@ -226,10 +233,10 @@ export default function IaCConfigDashboard() {
               {/* Card 3: Prefix & Location */}
               <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md p-4 space-y-2.5 shadow-lg hover:border-cyan-500/30 hover:bg-slate-900/60 transition-all duration-300 group hover:shadow-[0_0_25px_rgba(0,242,254,0.06)]">
                 <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold group-hover:text-emerald-400 transition-colors">
-                  <Cpu size={12} className="text-emerald-400" /> Global Scope
+                  <Cpu size={12} className="text-emerald-400" /> {t('iac.card_scope')}
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-slate-300">前缀 / 物理区域</div>
+                  <div className="text-xs font-mono text-slate-300">{t('iac.card_scope_desc')}</div>
                   <div className="text-sm font-bold text-slate-200 mt-1 font-mono">
                     {config.uiState.prefix} / {config.uiState.location}
                   </div>
@@ -239,12 +246,20 @@ export default function IaCConfigDashboard() {
               {/* Card 4: Active SKUs */}
               <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md p-4 space-y-2.5 shadow-lg hover:border-cyan-500/30 hover:bg-slate-900/60 transition-all duration-300 group hover:shadow-[0_0_25px_rgba(0,242,254,0.06)]">
                 <div className="text-[10px] font-mono tracking-wider text-slate-300 flex items-center gap-1.5 uppercase font-semibold group-hover:text-indigo-400 transition-colors">
-                  <Database size={12} className="text-indigo-400" /> SKU Pricing
+                  <Database size={12} className="text-indigo-400" /> {t('iac.card_sku')}
                 </div>
                 <div>
-                  <div className="text-xs font-mono text-slate-300">已激活服务计费项</div>
+                  <div className="text-xs font-mono text-slate-300">{t('iac.card_sku_desc')}</div>
                   <div className="text-sm font-bold text-[#00f2fe] mt-1 font-mono">
-                    {Object.values(config.uiState.selectedSkus).filter(x => x !== 'none').length} 个服务已激活
+                    {locale === 'zh' ? (
+                      <>
+                        {Object.values(config.uiState.selectedSkus).filter(x => x !== 'none').length} {t('iac.card_sku_active')}
+                      </>
+                    ) : (
+                      <>
+                        {Object.values(config.uiState.selectedSkus).filter(x => x !== 'none').length} {t('iac.card_sku_active')}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -264,7 +279,7 @@ export default function IaCConfigDashboard() {
                       : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  <Activity size={14} /> 🖼️ 物理拓扑依赖关系图 (Topology Diagram)
+                  <Activity size={14} /> {t('iac.tab_topology')}
                 </button>
                 <button
                   onClick={() => setActiveTab('parameters')}
@@ -274,7 +289,7 @@ export default function IaCConfigDashboard() {
                       : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  <Server size={14} /> 💻 parameters.json 变量预览 (Variables Preview)
+                  <Server size={14} /> {t('iac.tab_parameters')}
                 </button>
               </div>
 
@@ -284,7 +299,7 @@ export default function IaCConfigDashboard() {
                 <div className="space-y-4 animate-in fade-in duration-150">
                   {/* Canvas Breadcrumbs */}
                   <div className="flex items-center gap-1.5 text-xs text-slate-300 font-mono px-1">
-                    <span className="text-slate-400">拓扑视角:</span>
+                    <span className="text-slate-400">{t('iac.canvas_perspective')}:</span>
                     {pathStack.map((file, idx) => (
                       <React.Fragment key={idx}>
                         {idx > 0 && <ChevronRight size={12} className="text-slate-800" />}
@@ -306,7 +321,7 @@ export default function IaCConfigDashboard() {
                         }}
                         className="ml-auto text-[10px] text-slate-300 hover:text-slate-100 font-mono bg-slate-900 border border-slate-800 px-2 py-0.5 rounded"
                       >
-                        重置主视角 [main.bicep]
+                        {t('iac.canvas_reset')}
                       </button>
                     )}
                   </div>
@@ -332,7 +347,7 @@ export default function IaCConfigDashboard() {
                       className="text-xs font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700"
                     >
                       {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                      {copied ? '已复制' : '复制 JSON'}
+                      {copied ? t('iac.json_copied') : t('iac.json_copy')}
                     </button>
                   </div>
                   <div className="rounded-2xl border border-slate-800/80 bg-slate-950/85 p-5 font-mono text-xs overflow-auto h-[500px] shadow-2xl select-text">
