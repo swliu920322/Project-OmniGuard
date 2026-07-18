@@ -30,40 +30,46 @@ if [ ! -f "$LOCAL_SETTINGS" ]; then
   exit 1
 fi
 
-# 从 local.settings.json 中提取最新 LLM 变量
-OPENAI_KEY=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_API_KEY','') or json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_API_KEY',''))" 2>/dev/null || true)
-OPENAI_ENDPOINT=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_ENDPOINT','') or json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_BASE_URL',''))" 2>/dev/null || true)
-OPENAI_DEPLOYMENT=$(python3 -c "import json; d=json.load(open('$LOCAL_SETTINGS'))['Values']; print(d.get('AZURE_OPENAI_DEPLOYMENT_NAME','') or d.get('OPENAI_API_DEPLOYMENT_NAME','') or d.get('OPENAI_DEPLOYMENT_NAME',''))" 2>/dev/null || true)
-LLM_PROVIDER=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('LLM_PROVIDER',''))" 2>/dev/null || true)
+# 从 local.settings.json 中独立提取最新 LLM 变量
+AZURE_OPENAI_API_KEY=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_API_KEY',''))" 2>/dev/null || true)
+AZURE_OPENAI_ENDPOINT=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_ENDPOINT',''))" 2>/dev/null || true)
+AZURE_OPENAI_DEPLOYMENT_NAME=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_DEPLOYMENT_NAME',''))" 2>/dev/null || true)
+
+OPENAI_API_KEY=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_API_KEY',''))" 2>/dev/null || true)
+OPENAI_BASE_URL=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_BASE_URL',''))" 2>/dev/null || true)
 OPENAI_MODEL_NAME=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_MODEL_NAME',''))" 2>/dev/null || true)
 
-# 动态组装更新参数
+LLM_PROVIDER=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('LLM_PROVIDER',''))" 2>/dev/null || true)
+
+# 动态组装更新参数 - 彻底解耦，按需对齐
 BACKEND_ENV_VARS="TRIGGER_VERSION=$(date +%s)"
-if [ -n "$OPENAI_KEY" ]; then
-  BACKEND_ENV_VARS+=" OPENAI_API_KEY=$OPENAI_KEY"
-  BACKEND_ENV_VARS+=" AZURE_OPENAI_API_KEY=$OPENAI_KEY"
+if [ -n "$AZURE_OPENAI_API_KEY" ]; then
+  BACKEND_ENV_VARS+=" AZURE_OPENAI_API_KEY=$AZURE_OPENAI_API_KEY"
 fi
-if [ -n "$OPENAI_ENDPOINT" ]; then
-  BACKEND_ENV_VARS+=" OPENAI_BASE_URL=$OPENAI_ENDPOINT"
-  BACKEND_ENV_VARS+=" AZURE_OPENAI_ENDPOINT=$OPENAI_ENDPOINT"
+if [ -n "$AZURE_OPENAI_ENDPOINT" ]; then
+  BACKEND_ENV_VARS+=" AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT"
 fi
-if [ -n "$OPENAI_DEPLOYMENT" ]; then
-  BACKEND_ENV_VARS+=" OPENAI_API_DEPLOYMENT_NAME=$OPENAI_DEPLOYMENT"
-  BACKEND_ENV_VARS+=" OPENAI_DEPLOYMENT_NAME=$OPENAI_DEPLOYMENT"
-  BACKEND_ENV_VARS+=" AZURE_OPENAI_DEPLOYMENT_NAME=$OPENAI_DEPLOYMENT"
+if [ -n "$AZURE_OPENAI_DEPLOYMENT_NAME" ]; then
+  BACKEND_ENV_VARS+=" AZURE_OPENAI_DEPLOYMENT_NAME=$AZURE_OPENAI_DEPLOYMENT_NAME"
 fi
-if [ -n "$LLM_PROVIDER" ]; then
-  BACKEND_ENV_VARS+=" LLM_PROVIDER=$LLM_PROVIDER"
+if [ -n "$OPENAI_API_KEY" ]; then
+  BACKEND_ENV_VARS+=" OPENAI_API_KEY=$OPENAI_API_KEY"
+fi
+if [ -n "$OPENAI_BASE_URL" ]; then
+  BACKEND_ENV_VARS+=" OPENAI_BASE_URL=$OPENAI_BASE_URL"
 fi
 if [ -n "$OPENAI_MODEL_NAME" ]; then
   BACKEND_ENV_VARS+=" OPENAI_MODEL_NAME=$OPENAI_MODEL_NAME"
+fi
+if [ -n "$LLM_PROVIDER" ]; then
+  BACKEND_ENV_VARS+=" LLM_PROVIDER=$LLM_PROVIDER"
 fi
 
 echo "🚀 正在通过 Azure CLI 进行热更新环境推送..."
 echo "📋 已注入的 LLM 变量:"
 echo "   - Provider: ${LLM_PROVIDER:-azure}"
 echo "   - Model: ${OPENAI_MODEL_NAME:-gpt-4o-mini}"
-echo "   - Endpoint: $OPENAI_ENDPOINT"
+echo "   - Endpoint: ${OPENAI_BASE_URL:-$AZURE_OPENAI_ENDPOINT}"
 
 # 执行容器热重载升级
 az containerapp update \
