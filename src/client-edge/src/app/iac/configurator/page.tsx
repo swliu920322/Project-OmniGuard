@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useI18n } from '@/components/I18nProvider';
 import { 
   ShieldAlert, 
   ShieldCheck, 
@@ -262,6 +263,25 @@ const SCENARIO_PRESETS: ScenarioPreset[] = [
 ];
 
 export default function BicepConfiguratorPage() {
+  const { t, locale } = useI18n();
+
+  const getPresetName = (id: string) => {
+    switch (id) {
+      case 'sandbox': return t('configurator.preset_sandbox_name');
+      case 'secure-iot': return t('configurator.preset_iot_name');
+      case 'global-portal': return t('configurator.preset_portal_name');
+      default: return id;
+    }
+  };
+
+  const getPresetDesc = (id: string) => {
+    switch (id) {
+      case 'sandbox': return t('configurator.preset_sandbox_desc');
+      case 'secure-iot': return t('configurator.preset_iot_desc');
+      case 'global-portal': return t('configurator.preset_portal_desc');
+      default: return '';
+    }
+  };
   // Scenario selector
   const [activeScenario, setActiveScenario] = useState<string>('sandbox');
 
@@ -682,15 +702,15 @@ export default function BicepConfiguratorPage() {
             <Zap size={13} className="animate-pulse" /> SCENARIO_INTEGRATION_DASHBOARD
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-            云原生基于场景的集成拓扑配置台
+            {t('configurator.title')}
           </h1>
           <p className="text-sm text-slate-400 font-mono mt-1 leading-relaxed">
-            融合功能视角与规格细节的“双维度控制台”：左侧按功能包一键配置业务指标，右侧实时测算性能水位与成本阻尼。
+            {t('configurator.subtitle')}
           </p>
         </div>
         <div className="flex gap-3">
           <Link href="/iac" className="text-xs font-mono border border-slate-800 bg-slate-900/60 hover:border-cyan-500 px-4 py-2 rounded-lg text-slate-300 transition-all shadow-xl">
-            ➔ 返回方案大厅
+            {locale === 'zh' ? '➔ 返回方案大厅' : '➔ Back to IaC Dashboard'}
           </Link>
         </div>
       </div>
@@ -705,7 +725,7 @@ export default function BicepConfiguratorPage() {
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:24px_24px] opacity-[0.02] pointer-events-none"></div>
             <h2 className="text-xs font-bold font-mono text-slate-400 mb-4 flex items-center gap-2 border-b border-slate-900 pb-2 uppercase tracking-wider">
               <Boxes size={15} className="text-cyan-400" />
-              <span>选择集成主预设 (Choose Core Presets)</span>
+              <span>{t('configurator.sec_preset')}</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -726,11 +746,11 @@ export default function BicepConfiguratorPage() {
                         {preset.icon}
                       </div>
                       <span className={`text-xs font-bold font-mono ${isActive ? 'text-cyan-400' : 'text-slate-300'}`}>
-                        {preset.name.split(' ')[1]}
+                        {getPresetName(preset.id)}
                       </span>
                     </div>
                     <p className="text-xs text-slate-400 leading-relaxed font-sans min-h-12">
-                      {preset.desc}
+                      {getPresetDesc(preset.id)}
                     </p>
                   </button>
                 );
@@ -802,17 +822,17 @@ export default function BicepConfiguratorPage() {
           <div className="bg-[#0b101d]/60 border border-slate-900 rounded-2xl p-6 shadow-2xl relative flex flex-col gap-4 font-mono text-[11px]">
             <h2 className="text-sm font-bold text-slate-200 border-b border-slate-900 pb-2 flex items-center gap-2 font-sans">
               <Terminal size={14} className="text-cyan-400" />
-              <span>05. 一键终端部署指令</span>
+              <span>{t('configurator.sec_cmd')}</span>
             </h2>
             <p className="text-slate-400 font-sans text-sm">
-              保存参数后，直接打开本地终端执行以下指令，即可以该规格完成自动化物理部署：
+              {t('configurator.cmd_desc')}
             </p>
             <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl text-emerald-400 relative overflow-hidden select-text">
               <pre className="whitespace-pre-wrap leading-relaxed">
-{`# 1. 登录云账号
+{`${t('configurator.cmd_login')}
 az login
 
-# 2. 注入参数执行订阅级一键组装部署
+${t('configurator.cmd_deploy')}
 az deployment sub create \\
   --location ${location} \\
   --template-file .azure/main.bicep \\
@@ -820,7 +840,7 @@ az deployment sub create \\
               </pre>
             </div>
             <div className="text-xs text-slate-400 font-sans italic flex items-center gap-1">
-              <HelpCircle size={12} /> 提示：本地 parameters 格式已完成自愈适配，一键复制即可运行。
+              <HelpCircle size={12} /> {locale === 'zh' ? '提示：本地 parameters 格式已完成自愈适配，一键复制即可运行。' : 'Note: Local parameters are self-healed and formatted, ready to copy and run.'}
             </div>
           </div>
 
@@ -833,9 +853,9 @@ az deployment sub create \\
 
       {/* JSON Preview window at the bottom */}
       <div className="max-w-8xl mx-auto mt-8 bg-[#070b15] border border-slate-900 rounded-2xl p-6 shadow-2xl relative font-mono text-xs">
-        <h3 className="text-slate-400 mb-3 border-b border-slate-900 pb-2 flex items-center gap-1.5">
+        <h3 className="text-slate-400 mb-3 border-b border-slate-900 pb-2 flex items-center gap-1.5 font-sans">
           <Terminal size={12} className="text-cyan-400" />
-          <span>PREVIEW: .azure/main.parameters.json (自愈生成参数)</span>
+          <span>PREVIEW: .azure/main.parameters.json ({locale === 'zh' ? '自愈生成参数' : 'Self-Healed Parameters'})</span>
         </h3>
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-900 overflow-x-auto text-cyan-500 select-text max-h-60 overflow-y-auto">
           <pre>{parametersJsonString}</pre>
