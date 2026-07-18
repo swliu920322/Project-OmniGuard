@@ -1,7 +1,7 @@
 # =========================================================================
 # 🛠️ Project-OmniGuard 统一控制总线
 # =========================================================================
-.PHONY: provision whatif start-backend start-frontend destroy deploy-aca trigger-ci help add-device research clean test test-all
+.PHONY: provision whatif start-backend start-frontend destroy deploy-aca patch-env trigger-ci help add-device research clean test test-all
 
 help:
 	@echo "======================================================"
@@ -13,6 +13,7 @@ help:
 	@echo "make start-frontend  - 启动前端 (Next.js, 端口 3000)"
 	@echo "make destroy         - 销毁所有 Azure 资源"
 	@echo "make deploy-aca      - 部署 容器 到 Azure Container Apps"
+	@echo "make patch-env       - 极速同步本地 LLM 变量热更新至云端容器"
 	@echo "make trigger-ci      - 触发 GitHub CI/CD 流水线"
 	@echo "make test            - 运行单元测试 (pytest)"
 	@echo "make test-all        - 运行所有测试 (含影子环境 E2E)"
@@ -42,6 +43,10 @@ destroy:
 deploy-aca:
 	@chmod +x ./scripts/deploy-aca.sh
 	./scripts/deploy-aca.sh
+
+patch-env:
+	@chmod +x ./scripts/patch-env.sh
+	./scripts/patch-env.sh
 
 trigger-ci:
 	@chmod +x ./scripts/trigger-ci.sh
