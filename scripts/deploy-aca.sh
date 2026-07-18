@@ -43,19 +43,26 @@ echo "🎯 找到 Container Registry: $ACR_NAME"
 echo -e "\n🔐 正在登陆 ACR..."
 az acr login --name "$ACR_NAME"
 
-# 从 local.settings.json 读取 OpenAI/DeepSeek 凭据与提供商设置
+# 从 local.settings.json 中独立提取最新 LLM 变量
 LOCAL_SETTINGS="$SCRIPT_DIR/../src/cloud-orchestrator/local.settings.json"
-OPENAI_KEY=""
-OPENAI_ENDPOINT=""
-OPENAI_DEPLOYMENT=""
-LLM_PROVIDER=""
+AZURE_OPENAI_API_KEY=""
+AZURE_OPENAI_ENDPOINT=""
+AZURE_OPENAI_DEPLOYMENT_NAME=""
+OPENAI_API_KEY=""
+OPENAI_BASE_URL=""
 OPENAI_MODEL_NAME=""
+LLM_PROVIDER=""
+
 if [ -f "$LOCAL_SETTINGS" ]; then
-  OPENAI_KEY=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_API_KEY','') or json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_API_KEY',''))" 2>/dev/null || true)
-  OPENAI_ENDPOINT=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_ENDPOINT','') or json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_BASE_URL',''))" 2>/dev/null || true)
-  OPENAI_DEPLOYMENT=$(python3 -c "import json; d=json.load(open('$LOCAL_SETTINGS'))['Values']; print(d.get('AZURE_OPENAI_DEPLOYMENT_NAME','') or d.get('OPENAI_API_DEPLOYMENT_NAME','') or d.get('OPENAI_DEPLOYMENT_NAME',''))" 2>/dev/null || true)
-  LLM_PROVIDER=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('LLM_PROVIDER',''))" 2>/dev/null || true)
+  AZURE_OPENAI_API_KEY=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_API_KEY',''))" 2>/dev/null || true)
+  AZURE_OPENAI_ENDPOINT=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_ENDPOINT',''))" 2>/dev/null || true)
+  AZURE_OPENAI_DEPLOYMENT_NAME=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('AZURE_OPENAI_DEPLOYMENT_NAME',''))" 2>/dev/null || true)
+
+  OPENAI_API_KEY=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_API_KEY',''))" 2>/dev/null || true)
+  OPENAI_BASE_URL=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_BASE_URL',''))" 2>/dev/null || true)
   OPENAI_MODEL_NAME=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('OPENAI_MODEL_NAME',''))" 2>/dev/null || true)
+
+  LLM_PROVIDER=$(python3 -c "import json; print(json.load(open('$LOCAL_SETTINGS'))['Values'].get('LLM_PROVIDER',''))" 2>/dev/null || true)
 fi
 
 # 构建并推送 Backend 镜像
@@ -73,26 +80,29 @@ docker push "${ACR_NAME}.azurecr.io/omniguard-frontend:latest"
 # 触发 Backend Container App 升级
 echo -e "\n🔄 [3/4] 触发后端 Container App 滚动发布..."
 BACKEND_ENV_VARS="TRIGGER_VERSION=$(date +%s)"
-if [ -n "$OPENAI_KEY" ]; then
-  BACKEND_ENV_VARS+=" OPENAI_API_KEY=$OPENAI_KEY"
-  BACKEND_ENV_VARS+=" AZURE_OPENAI_API_KEY=$OPENAI_KEY"
+if [ -n "$AZURE_OPENAI_API_KEY" ]; then
+  BACKEND_ENV_VARS+=" AZURE_OPENAI_API_KEY=$AZURE_OPENAI_API_KEY"
 fi
-if [ -n "$OPENAI_ENDPOINT" ]; then
-  BACKEND_ENV_VARS+=" OPENAI_BASE_URL=$OPENAI_ENDPOINT"
-  BACKEND_ENV_VARS+=" AZURE_OPENAI_ENDPOINT=$OPENAI_ENDPOINT"
+if [ -n "$AZURE_OPENAI_ENDPOINT" ]; then
+  BACKEND_ENV_VARS+=" AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT"
 fi
-if [ -n "$OPENAI_DEPLOYMENT" ]; then
-  BACKEND_ENV_VARS+=" OPENAI_API_DEPLOYMENT_NAME=$OPENAI_DEPLOYMENT"
-  BACKEND_ENV_VARS+=" OPENAI_DEPLOYMENT_NAME=$OPENAI_DEPLOYMENT"
-  BACKEND_ENV_VARS+=" AZURE_OPENAI_DEPLOYMENT_NAME=$OPENAI_DEPLOYMENT"
+if [ -n "$AZURE_OPENAI_DEPLOYMENT_NAME" ]; then
+  BACKEND_ENV_VARS+=" AZURE_OPENAI_DEPLOYMENT_NAME=$AZURE_OPENAI_DEPLOYMENT_NAME"
 fi
-if [ -n "$LLM_PROVIDER" ]; then
-  BACKEND_ENV_VARS+=" LLM_PROVIDER=$LLM_PROVIDER"
+if [ -n "$OPENAI_API_KEY" ]; then
+  BACKEND_ENV_VARS+=" OPENAI_API_KEY=$OPENAI_API_KEY"
+fi
+if [ -n "$OPENAI_BASE_URL" ]; then
+  BACKEND_ENV_VARS+=" OPENAI_BASE_URL=$OPENAI_BASE_URL"
 fi
 if [ -n "$OPENAI_MODEL_NAME" ]; then
   BACKEND_ENV_VARS+=" OPENAI_MODEL_NAME=$OPENAI_MODEL_NAME"
 fi
-if [ -n "$OPENAI_KEY" ] || [ -n "$OPENAI_ENDPOINT" ] || [ -n "$OPENAI_DEPLOYMENT" ] || [ -n "$LLM_PROVIDER" ]; then
+if [ -n "$LLM_PROVIDER" ]; then
+  BACKEND_ENV_VARS+=" LLM_PROVIDER=$LLM_PROVIDER"
+fi
+
+if [ -n "$OPENAI_API_KEY" ] || [ -n "$AZURE_OPENAI_API_KEY" ] || [ -n "$LLM_PROVIDER" ]; then
   echo "🔑 已注入 LLM 凭据与提供商设置 (Provider: ${LLM_PROVIDER:-azure}, Source: local.settings.json)"
 fi
 az containerapp update \
