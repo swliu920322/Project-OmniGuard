@@ -12,6 +12,22 @@ PERSPECTIVES = {
     "cloud-architecture",
     "frontend-engineering",
     "enterprise-audit",
+    # 用户自定义开放标签（与 @omnidocs/schema 开放 taxonomy 对齐）
+    "product-strategy",
+    "architecture-design",
+}
+DOMAINS = {
+    "cyber-physical-safety",
+    "multi-agent",
+    "zero-trust-network",
+    "edge-inference",
+    "iac-bicep",
+    "finops",
+    "observability",
+    "iot-telemetry",
+    # 用户自定义开放标签
+    "product-design",
+    "ai-systems",
 }
 DOC_TYPES = {"adr", "blueprint", "specification", "tutorial", "playbook", "theorem"}
 REQUIRED_KEYS = ["id", "title", "summary", "domains", "perspectives", "layers", "doc_type"]
@@ -47,9 +63,19 @@ def test_markdown_frontmatter_validity(filepath):
         assert key in frontmatter, f"Missing required frontmatter key '{key}' in: {filepath}"
         assert frontmatter[key], f"Frontmatter key '{key}' is empty in: {filepath}"
 
-    # 枚举校验（与 @omnidocs/schema 枚举一致）
+    # 标签校验：内置集强校验 + 开放 taxonomy 允许用户自定义（仅格式约束，与 schema 一致）
     for p in frontmatter["perspectives"]:
-        assert p in PERSPECTIVES, f"Unknown perspective '{p}' in: {filepath}"
+        if p in PERSPECTIVES:
+            continue
+        assert re.fullmatch(r"[a-z0-9][a-z0-9-_]*", p), (
+            f"Invalid perspective tag '{p}' in: {filepath}"
+        )
+    for d in frontmatter["domains"]:
+        if d in DOMAINS:
+            continue
+        assert re.fullmatch(r"[a-z0-9][a-z0-9-_]*", d), (
+            f"Invalid domain tag '{d}' in: {filepath}"
+        )
     assert frontmatter["doc_type"] in DOC_TYPES, (
         f"Unknown doc_type '{frontmatter['doc_type']}' in: {filepath}"
     )

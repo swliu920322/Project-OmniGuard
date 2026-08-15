@@ -17,15 +17,27 @@ import { z } from 'zod';
  */
 export const DOCS_CONTRACT_VERSION = '1.0.0';
 
-export const PERSPECTIVES = [
+/**
+ * Built-in taxonomy — recommended defaults shipped with the contract.
+ *
+ * These are NOT an exhaustive closed set: a host may define their own
+ * perspectives/domains (e.g. an external user whose docs have nothing to
+ * do with cyber-physical safety). Built-ins act as a curated starting point
+ * and as the axis along which the shipped content is already tagged.
+ * Validate with the OPEN schemas below; the enum variants descend from these
+ * lists and stay available for strict consumers that opt into them.
+ */
+export const BUILTIN_PERSPECTIVES = [
   'academic-research',
   'cloud-architecture',
   'frontend-engineering',
   'enterprise-audit',
 ] as const;
-export type Perspective = (typeof PERSPECTIVES)[number];
+/** @deprecated Use `BUILTIN_PERSPECTIVES` — the taxonomy is now open. */
+export const PERSPECTIVES = BUILTIN_PERSPECTIVES;
+export type BuiltInPerspective = (typeof BUILTIN_PERSPECTIVES)[number];
 
-export const DOMAINS = [
+export const BUILTIN_DOMAINS = [
   'cyber-physical-safety',
   'multi-agent',
   'zero-trust-network',
@@ -35,7 +47,40 @@ export const DOMAINS = [
   'observability',
   'iot-telemetry',
 ] as const;
-export type Domain = (typeof DOMAINS)[number];
+/** @deprecated Use `BUILTIN_DOMAINS` — the taxonomy is now open. */
+export const DOMAINS = BUILTIN_DOMAINS;
+export type BuiltInDomain = (typeof BUILTIN_DOMAINS)[number];
+
+/**
+ * Open taxonomy tags — hosts may define arbitrary perspectives/domains.
+ * Constrained to lowercase kebab/case-dashed identifiers so they stay safe
+ * in URLs, CSS class names and manifest JSON keys.
+ */
+const TAG_PATTERN = /^[a-z0-9][a-z0-9-_]*$/;
+
+export const PerspectiveSchema = z
+  .string()
+  .min(1)
+  .max(48)
+  .regex(TAG_PATTERN, 'Perspective must be a lowercase kebab-case identifier.')
+  .describe('Perspective tag — built-in or host-defined.');
+export type Perspective = z.infer<typeof PerspectiveSchema>;
+
+export const DomainSchema = z
+  .string()
+  .min(1)
+  .max(48)
+  .regex(TAG_PATTERN, 'Domain must be a lowercase kebab-case identifier.')
+  .describe('Domain tag — built-in or host-defined.');
+export type Domain = z.infer<typeof DomainSchema>;
+
+export function isBuiltInPerspective(v: string): v is BuiltInPerspective {
+  return (BUILTIN_PERSPECTIVES as readonly string[]).includes(v);
+}
+
+export function isBuiltInDomain(v: string): v is BuiltInDomain {
+  return (BUILTIN_DOMAINS as readonly string[]).includes(v);
+}
 
 export const LAYERS = [
   'edge-client',
@@ -68,8 +113,8 @@ export type DocStatus = (typeof DOC_STATUSES)[number];
 /* Metadata schema — validated against every markdown frontmatter under docs/  */
 /* ------------------------------------------------------------------ */
 
-export const PerspectiveEnum = z.enum(PERSPECTIVES);
-export const DomainEnum = z.enum(DOMAINS);
+export const PerspectiveEnum = z.enum(BUILTIN_PERSPECTIVES);
+export const DomainEnum = z.enum(BUILTIN_DOMAINS);
 export const LayerEnum = z.enum(LAYERS);
 export const DocTypeEnum = z.enum(DOC_TYPES);
 export const DocStatusEnum = z.enum(DOC_STATUSES);
@@ -84,8 +129,8 @@ export const DocMetadataSchema = z.object({
   version: z.string().default('1.0.0'),
   updated_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format must be YYYY-MM-DD'),
   authors: z.array(z.string()).default(['OmniGuard Team']),
-  domains: z.array(DomainEnum).min(1),
-  perspectives: z.array(PerspectiveEnum).min(1),
+  domains: z.array(DomainSchema).min(1),
+  perspectives: z.array(PerspectiveSchema).min(1),
   layers: z.array(LayerEnum).min(1),
   doc_type: DocTypeEnum,
   status: DocStatusEnum.default('accepted'),

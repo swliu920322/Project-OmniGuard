@@ -20,7 +20,8 @@
     "reactflow": "^11.11.2",
     "tailwind-merge": "^2.3.0",
     "zustand": "^4.5.2",
-    "@omnidocs/schema": "file:../../../packages/schema"
+    "@omnidocs/schema": "file:../../../packages/schema",
+    "@omnidocs/interpreter": "file:../../../packages/interpreter"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",

@@ -6,6 +6,10 @@ import {
   DocManifestSchema,
   RelationGraphSchema,
   assertContractCompatible,
+  PerspectiveSchema,
+  DomainSchema,
+  isBuiltInPerspective,
+  isBuiltInDomain,
 } from './index.js';
 
 const validMeta = {
@@ -38,13 +42,30 @@ test('metadata rejects an invalid ID format', () => {
   assert.throws(() => DocMetadataSchema.parse({ ...validMeta, id: 'not-a-doc-id' }));
 });
 
-test('metadata rejects unknown perspective', () => {
-  assert.throws(() =>
-    DocMetadataSchema.parse({
-      ...validMeta,
-      perspectives: ['academic-research', 'not-a-perspective'],
-    }),
-  );
+test('metadata accepts user-defined (open) perspective', () => {
+  const parsed = DocMetadataSchema.parse({
+    ...validMeta,
+    perspectives: ['academic-research', 'retail-margin-analytics'],
+  });
+  assert.ok(parsed.perspectives.includes('retail-margin-analytics'));
+  assert.equal(isBuiltInPerspective('academic-research'), true);
+  assert.equal(isBuiltInPerspective('retail-margin-analytics'), false);
+});
+
+test('metadata accepts user-defined (open) domain', () => {
+  const parsed = DocMetadataSchema.parse({
+    ...validMeta,
+    domains: ['edge-inference', 'payment-processing'],
+  });
+  assert.ok(parsed.domains.includes('payment-processing'));
+  assert.equal(isBuiltInDomain('edge-inference'), true);
+  assert.equal(isBuiltInDomain('payment-processing'), false);
+});
+
+test('open taxonomy tag must be kebab-case identifier', () => {
+  assert.throws(() => PerspectiveSchema.parse('Bad Tag With Spaces'));
+  assert.throws(() => DomainSchema.parse('UPPER_CASE'));
+  assert.equal(DomainSchema.parse('my-custom-domain-2'), 'my-custom-domain-2');
 });
 
 test('metadata rejects empty domains', () => {

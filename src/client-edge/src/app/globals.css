@@ -1,3 +1,54 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Content Interpreter — form-specific entrance motions.
+   "v1 只是换主题色" → v2 每个形态自带结构与动效，切换即"换骨"。 */
+
+/* Shared reveal keyframe */
+@keyframes ci-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ci-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Academic: dignified whole fade-up */
+.form-academic {
+  animation: ci-reveal 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Playbook: terminal print — sections stagger in row by row */
+.form-playbook {
+  animation: ci-reveal 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.form-playbook section {
+  animation: ci-reveal 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.form-playbook section:nth-child(1) { animation-delay: 40ms; }
+.form-playbook section:nth-child(2) { animation-delay: 110ms; }
+.form-playbook section:nth-child(3) { animation-delay: 180ms; }
+.form-playbook section:nth-child(4) { animation-delay: 250ms; }
+
+/* Narrative: book-like scale-in, long breath */
+.form-narrative {
+  animation: ci-scale-in 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.form-narrative section {
+  animation: ci-reveal 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}

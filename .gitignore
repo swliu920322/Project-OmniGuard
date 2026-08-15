@@ -3,6 +3,7 @@ __pycache__/
 *.py[codz]
 *$py.class
 .idea/
+employment/
 # 彻底斩断本地 Python 虚拟环境向 GitHub 漂移
 src/cloud-orchestrator/.venv/
 src/cloud-orchestrator/__pycache__/

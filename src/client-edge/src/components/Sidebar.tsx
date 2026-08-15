@@ -14,7 +14,8 @@ import {
   ChevronLeft, 
   ChevronRight,
   Terminal,
-  Compass
+  Compass,
+  BookOpen
 } from 'lucide-react';
 
 interface NavItem {
@@ -56,6 +57,12 @@ export default function Sidebar() {
       title: t('sidebar.title_profile'),
       items: [
         { label: t('sidebar.resume'), href: '/', icon: User },
+      ]
+    },
+    {
+      title: t('sidebar.title_interpreter'),
+      items: [
+        { label: t('sidebar.interpreterDemo'), href: '/interpreter', icon: BookOpen },
       ]
     },
     {

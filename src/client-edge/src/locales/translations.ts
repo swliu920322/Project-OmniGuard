@@ -2,9 +2,11 @@ export const translations = {
   zh: {
     sidebar: {
       title_profile: "个人空间",
+      title_interpreter: "内容解释器",
       title_iac: "云原生 IaC 军火库",
       title_simulation: "分布式仿真沙箱",
       resume: "个人求职履历",
+      interpreterDemo: "三形态演示",
       iacDashboard: "IaC 架构看板",
       configurator: "可视化配置台",
       fleet: "车队动力学仿真",
@@ -134,9 +136,11 @@ export const translations = {
   en: {
     sidebar: {
       title_profile: "PROFILE",
+      title_interpreter: "CONTENT INTERPRETER",
       title_iac: "IAC ARMORY",
       title_simulation: "SIMULATION SANDBOX",
       resume: "Personal Resume",
+      interpreterDemo: "Three-Form Demo",
       iacDashboard: "IaC Dashboard",
       configurator: "Configurator Studio",
       fleet: "Fleet Dynamics",

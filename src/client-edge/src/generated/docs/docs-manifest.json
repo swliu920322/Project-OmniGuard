@@ -1,7 +1,7 @@
 {
   "contractVersion": "1.0.0",
-  "generatedAt": "2026-08-15T05:41:51.613Z",
-  "docCount": 98,
+  "generatedAt": "2026-08-15T07:20:21.329Z",
+  "docCount": 100,
   "docs": [
     {
       "id": "DOC-AI_NATIVE_DOC_SYSTEM_MASTER_PLAN-MD-41",
@@ -5201,6 +5201,357 @@
       ],
       "wordCount": 15915,
       "readingTimeMinutes": 40
+    },
+    {
+      "id": "DOC-PLAN-PHILOSOPHY-REVIEW",
+      "title": "审查与评审：内容解释器原型",
+      "summary": "对 ai-era-software-philosophy-and-prototype.md 的首席架构师理性评审：逐章精评、结构性风险与盲区（震撼阈值/产品化鸿沟/契约与即兴张力）、延伸思考与修订建议清单。",
+      "version": "1.0.0",
+      "updated_at": "2026-08-15",
+      "authors": [
+        "Claude (Chief Architect Review)"
+      ],
+      "domains": [
+        "product-design",
+        "ai-systems"
+      ],
+      "perspectives": [
+        "architecture-design"
+      ],
+      "layers": [
+        "cross-cutting"
+      ],
+      "doc_type": "specification",
+      "status": "draft",
+      "code_refs": [],
+      "test_refs": [],
+      "slug": "plan/ai-era-philosophy-review",
+      "filePath": "docs/plan/ai-era-philosophy-review.md",
+      "headings": [
+        {
+          "depth": 1,
+          "text": "审查与评审：AI 时代软件哲学与内容解释器原型",
+          "slug": "ai-"
+        },
+        {
+          "depth": 1,
+          "text": "Review & Extended Critique of the AI-Era Software Philosophy",
+          "slug": "review-extended-critique-of-the-ai-era-software-philosophy"
+        },
+        {
+          "depth": 2,
+          "text": "一、总体评价 (Overall Assessment)",
+          "slug": "-overall-assessment"
+        },
+        {
+          "depth": 2,
+          "text": "二、逐章精细评审 (Section-by-Section Critique)",
+          "slug": "-section-by-section-critique"
+        },
+        {
+          "depth": 3,
+          "text": "§1 一句话哲学 — ✅ 立住了，但需要更锋利",
+          "slug": "1-"
+        },
+        {
+          "depth": 3,
+          "text": "§2 五大支柱 — ✅ 框架扎实，但有一个隐含假设需要检验",
+          "slug": "2-"
+        },
+        {
+          "depth": 4,
+          "text": "§2.1 受限自由 — 最强的一条支柱",
+          "slug": "21-"
+        },
+        {
+          "depth": 4,
+          "text": "§2.2 数据受控 — 正确，但边界需要更精确",
+          "slug": "22-"
+        },
+        {
+          "depth": 4,
+          "text": "§2.3 成本分层 — 最具商业洞察的一条",
+          "slug": "23-"
+        },
+        {
+          "depth": 4,
+          "text": "§2.4 分布式个人智能 — 方向对，但当前优先级存疑",
+          "slug": "24-"
+        },
+        {
+          "depth": 4,
+          "text": "§2.5 人机审查闭环 — ✅ 工程正解",
+          "slug": "25-"
+        },
+        {
+          "depth": 3,
+          "text": "§3 原型构想 — 最有想象力的部分，也是风险最集中的部分",
+          "slug": "3-"
+        },
+        {
+          "depth": 4,
+          "text": "§3.1 认知问题 — 切中要害",
+          "slug": "31-"
+        },
+        {
+          "depth": 4,
+          "text": "§3.3 低成本高交互引擎 — 理论优美，落地需要勇气",
+          "slug": "33-"
+        },
+        {
+          "depth": 4,
+          "text": "§3.4 业务驱动的动态语言方法论 — 文档中最成熟的一节",
+          "slug": "34-"
+        },
+        {
+          "depth": 3,
+          "text": "§4 用户建模 — 最具原创性的部分",
+          "slug": "4-"
+        },
+        {
+          "depth": 4,
+          "text": "§4.1-4.2 偏好空间 — 理论框架优秀",
+          "slug": "41-42-"
+        },
+        {
+          "depth": 4,
+          "text": "§4.3 从\"类型\"到\"引导\" — 概念正确，表述可以更精确",
+          "slug": "43-"
+        },
+        {
+          "depth": 2,
+          "text": "三、结构性风险与盲区 (Structural Risks & Blind Spots)",
+          "slug": "-structural-risks-blind-spots"
+        },
+        {
+          "depth": 3,
+          "text": "风险 1：形式变化的\"震撼阈值\"",
+          "slug": "-1"
+        },
+        {
+          "depth": 3,
+          "text": "风险 2：从\"内部文档系统\"到\"通用产品\"的鸿沟",
+          "slug": "-2"
+        },
+        {
+          "depth": 3,
+          "text": "风险 3：\"契约驱动\"和\"动态即兴\"之间的张力",
+          "slug": "-3"
+        },
+        {
+          "depth": 3,
+          "text": "风险 4：缺失的竞争分析",
+          "slug": "-4"
+        },
+        {
+          "depth": 2,
+          "text": "四、我的延伸思考 (Extended Reflections)",
+          "slug": "-extended-reflections"
+        },
+        {
+          "depth": 3,
+          "text": "思考 1：你真正在做的事情是什么？",
+          "slug": "-1"
+        },
+        {
+          "depth": 3,
+          "text": "思考 2：最小可证明内核 (Minimum Provable Kernel)",
+          "slug": "-2-minimum-provable-kernel"
+        },
+        {
+          "depth": 3,
+          "text": "思考 3：你的文档集合本身就是最好的测试数据",
+          "slug": "-3"
+        },
+        {
+          "depth": 3,
+          "text": "思考 4：关于\"AI 不写动画代码，AI 只生成时间线编排脚本\"",
+          "slug": "-4ai-ai-"
+        },
+        {
+          "depth": 3,
+          "text": "思考 5：这个项目和你个人叙事的关系",
+          "slug": "-5"
+        },
+        {
+          "depth": 2,
+          "text": "五、修订建议清单 (Recommended Revisions)",
+          "slug": "-recommended-revisions"
+        },
+        {
+          "depth": 2,
+          "text": "六、结论 (Conclusion)",
+          "slug": "-conclusion"
+        }
+      ],
+      "wordCount": 9546,
+      "readingTimeMinutes": 24
+    },
+    {
+      "id": "DOC-PLAN-SOFTWARE-PHILOSOPHY",
+      "title": "AI 时代软件哲学与内容解释器原型构想",
+      "summary": "内容解释器 (Content Interpreter)：把文档从静态信息载体变成能感知读者并自我调整的动态媒介——两句话哲学、五大支柱、业务驱动的动态语言方法论、最小可证明内核与演进路线。",
+      "version": "1.0.0",
+      "updated_at": "2026-08-15",
+      "authors": [
+        "Shengwei Liu"
+      ],
+      "domains": [
+        "product-design",
+        "ai-systems"
+      ],
+      "perspectives": [
+        "product-strategy",
+        "architecture-design"
+      ],
+      "layers": [
+        "cross-cutting"
+      ],
+      "doc_type": "specification",
+      "status": "draft",
+      "code_refs": [],
+      "test_refs": [],
+      "slug": "plan/ai-era-software-philosophy-and-prototype",
+      "filePath": "docs/plan/ai-era-software-philosophy-and-prototype.md",
+      "headings": [
+        {
+          "depth": 1,
+          "text": "AI 时代软件哲学与内容解释器原型构想",
+          "slug": "ai-"
+        },
+        {
+          "depth": 1,
+          "text": "AI-Era Software Philosophy & The Content-Interpreter Prototype",
+          "slug": "ai-era-software-philosophy-the-content-interpreter-prototype"
+        },
+        {
+          "depth": 2,
+          "text": "1. 两句话哲学 (The Two-Line Thesis)",
+          "slug": "1-the-two-line-thesis"
+        },
+        {
+          "depth": 2,
+          "text": "2. 五大支柱 (Five Pillars)",
+          "slug": "2-five-pillars"
+        },
+        {
+          "depth": 3,
+          "text": "2.1 受限自由 (Constrained Freedom)",
+          "slug": "21-constrained-freedom"
+        },
+        {
+          "depth": 3,
+          "text": "2.2 数据受控 (Controlled Data)",
+          "slug": "22-controlled-data"
+        },
+        {
+          "depth": 3,
+          "text": "2.3 成本分层 (Cost Layering)",
+          "slug": "23-cost-layering"
+        },
+        {
+          "depth": 3,
+          "text": "2.4 分布式个人智能 (Distributed Personal Intelligence) — ⚠️ 远期架构预留",
+          "slug": "24-distributed-personal-intelligence-"
+        },
+        {
+          "depth": 3,
+          "text": "2.5 人机审查闭环 (Human-in-the-Loop Review)",
+          "slug": "25-human-in-the-loop-review"
+        },
+        {
+          "depth": 2,
+          "text": "3. 原型构想：内容解释器 (Content Interpreter)",
+          "slug": "3-content-interpreter"
+        },
+        {
+          "depth": 3,
+          "text": "3.1 认知问题：\"怎么让人们知道？\"",
+          "slug": "31-"
+        },
+        {
+          "depth": 3,
+          "text": "3.2 原型范围 (MVP)",
+          "slug": "32-mvp"
+        },
+        {
+          "depth": 3,
+          "text": "3.3 低成本高交互引擎 (Low-Cost High-Interaction Engine)",
+          "slug": "33-low-cost-high-interaction-engine"
+        },
+        {
+          "depth": 3,
+          "text": "3.4 业务驱动的动态语言方法论 (Business-Driven Motion Methodology)",
+          "slug": "34-business-driven-motion-methodology"
+        },
+        {
+          "depth": 4,
+          "text": "核心法则 (The Prime Law)",
+          "slug": "-the-prime-law"
+        },
+        {
+          "depth": 4,
+          "text": "业务分类二维象限 (2×2 Business Taxonomy)",
+          "slug": "-22-business-taxonomy"
+        },
+        {
+          "depth": 4,
+          "text": "动态语言五法则 (Five Motion Laws)",
+          "slug": "-five-motion-laws"
+        },
+        {
+          "depth": 4,
+          "text": "Dashboard 专属章程 (Dashboard Doctrine)",
+          "slug": "dashboard-dashboard-doctrine"
+        },
+        {
+          "depth": 4,
+          "text": "§3.4 落地约束 (Implementation Guards)",
+          "slug": "34-implementation-guards"
+        },
+        {
+          "depth": 3,
+          "text": "3.5 最小可证明内核 (Minimum Provable Kernel)",
+          "slug": "35-minimum-provable-kernel"
+        },
+        {
+          "depth": 2,
+          "text": "4. 用户建模：人很复杂，不能简单分成几种",
+          "slug": "4-"
+        },
+        {
+          "depth": 3,
+          "text": "4.1 核心判断",
+          "slug": "41-"
+        },
+        {
+          "depth": 3,
+          "text": "4.2 偏好空间设计 (Preference Space)",
+          "slug": "42-preference-space"
+        },
+        {
+          "depth": 3,
+          "text": "4.3 从\"类型\"到\"引导\"",
+          "slug": "43-"
+        },
+        {
+          "depth": 2,
+          "text": "5. 原型落地路径 (Roadmap)",
+          "slug": "5-roadmap"
+        },
+        {
+          "depth": 2,
+          "text": "5.1 竞品定位 (Competitive Positioning)",
+          "slug": "51-competitive-positioning"
+        },
+        {
+          "depth": 2,
+          "text": "6. 演进守则 (Evolution Rules)",
+          "slug": "6-evolution-rules"
+        }
+      ],
+      "wordCount": 8321,
+      "readingTimeMinutes": 21
     },
     {
       "id": "DOC-PLAN-DASHBOARD-REDESIGN-V2-MD-92",
