@@ -1,3 +1,21 @@
+---
+id: "DOC-REFERENCE-TEST-1-SANDBOX-MD-29"
+title: "Sandbox"
+summary: "Sandbox — specification reference auto-profiled into the OmniDocs multi-perspective index. (reference/test/1-Sandbox.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # 部署完资源列表
 | **资源名称 (Resource Name)** | **资源类型 (Type)** | **区域 (Location)** |
 | --- | --- | --- |

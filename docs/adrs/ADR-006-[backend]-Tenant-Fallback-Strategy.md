@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-006"
+title: "Tenant Fallback Strategy"
+summary: "Tenant Fallback Strategy — auto-generated summary. (docs/adrs/ADR-006-[backend]-Tenant-Fallback-Strategy.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cloud-orchestrator
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # ADR-006: Tenant Policy Fallback via Connection String under Authorization Restrictions
 # ADR-006: 权限受限租户下基于连接字符串的拓扑平替策略
 

@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-20"
+title: "gitops pipeline integration"
+summary: "gitops pipeline integration — auto-generated summary. (docs/reference/blueprints/20-gitops-pipeline-integration.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # DeepSeek V4 开发任务规范：动态注入 GitOps 流水线与一键部署 README 引导
 
 > **任务目标**: 在用户导出 IaC 压缩包时，动态往 Zip 包内注入符合企业安全规范的 GitHub Actions 工作流定义文件与 README 使用指南，实现从“界面配置”到“GitOps 代码化部署”的一键连通。

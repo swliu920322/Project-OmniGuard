@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-015"
+title: "Live Dashboard Restoration"
+summary: "Live Dashboard Restoration — auto-generated summary. (docs/adrs/ADR-015-[frontend]-Live-Dashboard-Restoration.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - edge-inference
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 015)
 
 ## Title

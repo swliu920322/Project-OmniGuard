@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-003"
+title: "Serverless SKU Migration"
+summary: "Serverless SKU Migration — auto-generated summary. (docs/adrs/ADR-003-[infra]-Serverless-SKU-Migration.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+layers:
+  - iac-infra
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architecture Decision Record (ADR-003)
 # 架构决策记录 (ADR-003)
 

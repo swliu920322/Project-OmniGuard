@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-19"
+title: "tags and package downloader"
+summary: "tags and package downloader — auto-generated summary. (docs/reference/blueprints/19-tags-and-package-downloader.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # DeepSeek V4 开发任务规范：企业标签治理与 IaC 配置包打包下载
 
 > **任务目标**: 支持在配置台中输入企业合规标签，并在 Bicep 层面自动合并；同时开发后端打包 API 与前端下载按钮，使用户能一键将生成的 IaC 架构包打包为 `.zip` 格式下载。

@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-04"
+title: "observability platform"
+summary: "observability platform — auto-generated summary. (docs/reference/blueprints/04-observability-platform.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 04: 可观测平台 (Observability Platform)
 
 > **领域**: 监控与可观测性 | **优先级**: P1 | **复杂度**: 中 | **预估工时**: 2~4天

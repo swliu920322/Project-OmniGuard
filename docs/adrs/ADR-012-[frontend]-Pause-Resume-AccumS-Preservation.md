@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-012"
+title: "Pause Resume AccumS Preservation"
+summary: "Pause Resume AccumS Preservation — auto-generated summary. (docs/adrs/ADR-012-[frontend]-Pause-Resume-AccumS-Preservation.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - edge-inference
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 012)
 
 ## Title

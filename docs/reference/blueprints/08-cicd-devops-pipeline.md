@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-08"
+title: "cicd devops pipeline"
+summary: "cicd devops pipeline — auto-generated summary. (docs/reference/blueprints/08-cicd-devops-pipeline.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 08: CI/CD 与 DevOps 流水线
 
 > **领域**: DevOps | **优先级**: P1 | **复杂度**: 中 | **预估工时**: 2~3天

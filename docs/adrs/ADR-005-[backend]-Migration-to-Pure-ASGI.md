@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-005"
+title: "Migration to Pure ASGI"
+summary: "Migration to Pure ASGI — auto-generated summary. (docs/adrs/ADR-005-[backend]-Migration-to-Pure-ASGI.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cloud-orchestrator
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 005)
 # 架构决策记录 (ADR 005)
 

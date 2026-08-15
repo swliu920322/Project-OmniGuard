@@ -1,3 +1,21 @@
+---
+id: "DOC-ADRS-_STANDARDS-MD-61"
+title: "ADR Standards"
+summary: "ADR Standards — specification reference auto-profiled into the OmniDocs multi-perspective index. (adrs/_STANDARDS.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # ADR Classification & Document Standards
 
 > 本文档定义哪些内容应归档为 ADR、如何分类，以及项目文档的目录结构规范。

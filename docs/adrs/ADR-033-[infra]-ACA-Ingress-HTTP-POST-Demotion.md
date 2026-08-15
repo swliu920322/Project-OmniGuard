@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-033"
+title: "ACA Ingress HTTP POST Demotion"
+summary: "ACA Ingress HTTP POST Demotion — auto-generated summary. (docs/adrs/ADR-033-[infra]-ACA-Ingress-HTTP-POST-Demotion.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+layers:
+  - iac-infra
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 033)
 # 架构决策记录 (ADR 033)
 

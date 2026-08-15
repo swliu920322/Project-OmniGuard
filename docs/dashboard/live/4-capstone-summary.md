@@ -1,3 +1,21 @@
+---
+id: "DOC-DASHBOARD-LIVE-4-CAPSTONE-SUMMARY-MD-92"
+title: "capstone summary"
+summary: "capstone summary — playbook reference auto-profiled into the OmniDocs multi-perspective index. (dashboard/live/4-capstone-summary.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - observability
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: playbook
+status: draft
+code_refs: []
+test_refs: []
+---
 # Capstone Summary: Embodied AI Zero-Trust Fleet Control Plane
 
 > **Document Status**: Complete (Executive Summary)

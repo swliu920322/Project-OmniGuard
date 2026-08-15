@@ -1,3 +1,21 @@
+---
+id: "DOC-PLAN-PHASE2-ROADMAP-MD-09"
+title: "phase2 roadmap"
+summary: "phase2 roadmap — specification reference auto-profiled into the OmniDocs multi-perspective index. (plan/phase2-roadmap.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # Phase 2 Roadmap — Polish & Token Breakdown
 # 第二阶段路线 — 打磨与 Token 分解
 

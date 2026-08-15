@@ -1,3 +1,21 @@
+---
+id: "DOC-AUDITS-DESTINATION-MD-94"
+title: "destination"
+summary: "destination — specification reference auto-profiled into the OmniDocs multi-perspective index. (audits/destination.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - enterprise-audit
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 ## 架构之“神” (The Spirit) —— 解密今日运行本质
 
 根据你上传的 `截屏2026-06-15 16.21.14.png`，你的目录拓扑已经清晰地划分为 `.azure`（基础设施层）与 `src`（应用数据面）。

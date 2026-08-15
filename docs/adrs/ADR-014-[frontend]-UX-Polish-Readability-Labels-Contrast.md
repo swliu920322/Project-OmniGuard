@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-014"
+title: "UX Polish Readability Labels Contrast"
+summary: "UX Polish Readability Labels Contrast — auto-generated summary. (docs/adrs/ADR-014-[frontend]-UX-Polish-Readability-Labels-Contrast.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - edge-inference
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 014)
 
 ## Title

@@ -1,3 +1,21 @@
+---
+id: "DOC-ADRS-INDEX-MD-78"
+title: "ADR Index"
+summary: "ADR Index — specification reference auto-profiled into the OmniDocs multi-perspective index. (adrs/INDEX.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # Architecture Decision Records
 
 > Project OmniGuard 的架构决策记录，按**关注域（Tag）**分类，方便不同角色的读者快速定位相关决策。
@@ -74,6 +92,7 @@
 | 030 | [IaC Configurator — Enterprise Compliance, Key Vault Integration & GitOps Pipeline](./ADR-030-%5Barchitecture%5D-IaC-Configurator-Enterprise-Compliance.md) — also `[infra]`, `[frontend]` | ✅ |
 | 032 | [Dual-Track Identity Decoupling, Bicep Parameter Filtering, and Preset Fallback Governance](./ADR-032-%5Barchitecture%5D-Dual-Track-Identity-Decoupling-and-Fallback-Governance.md) — also `[infra]`, `[backend]`, `[frontend]` | ✅ |
 | 034 | [Azure OpenAI Client Instantiation and Credential Loading Unification](./ADR-034-%5Barchitecture%5D-OpenAI-Credentials-Unification.md) — also `[backend]` | ✅ |
+| 035 | [Data-Contract-First Multi-System Productization for the AI-Native Doc System](./ADR-035-%5Barchitecture%5D-Data-Contract-First-Multi-System-Productization.md) — also `[backend]`, `[frontend]` | ✅ |
 
 ---
 

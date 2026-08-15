@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-00"
+title: "configurator development plan"
+summary: "configurator development plan — auto-generated summary. (docs/reference/blueprints/configurator-development-plan.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Project-OmniGuard Bicep 基于场景的配置器开发计划
 
 > **文档性质**: 架构设计与开发计划 | **编写者**: AI Cloud Architect | **当前时间**: 2026-07-02

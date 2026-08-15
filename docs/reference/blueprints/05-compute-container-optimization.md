@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-05"
+title: "compute container optimization"
+summary: "compute container optimization — auto-generated summary. (docs/reference/blueprints/05-compute-container-optimization.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 05: 计算与容器优化 (Compute & Container Optimization)
 
 > **领域**: 计算 | **优先级**: P0 | **复杂度**: 中~高 | **预估工时**: 2~5天

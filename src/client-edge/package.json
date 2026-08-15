@@ -19,7 +19,8 @@
     "react-draggable": "^4.7.0",
     "reactflow": "^11.11.2",
     "tailwind-merge": "^2.3.0",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.2",
+    "@omnidocs/schema": "file:../../../packages/schema"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",

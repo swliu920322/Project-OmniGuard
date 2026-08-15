@@ -1,3 +1,21 @@
+---
+id: "DOC-REFERENCE-SYSTEM-INTEGRATION-DESIGN-MD-00"
+title: "system integration design"
+summary: "system integration design — specification reference auto-profiled into the OmniDocs multi-perspective index. (reference/system-integration-design.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # Embodied AI Fleet Control Plane: System Integration & Operations Guide
 
 This guide details the architecture, dual-mode data pipeline, and pre-deployment analysis for the **Project-OmniGuard Fleet Control Plane**.

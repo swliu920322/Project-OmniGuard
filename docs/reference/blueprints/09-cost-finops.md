@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-09"
+title: "cost finops"
+summary: "cost finops — auto-generated summary. (docs/reference/blueprints/09-cost-finops.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 09: 成本优化与 FinOps (Cost Optimization & FinOps)
 
 > **领域**: 成本管理 | **优先级**: P1 | **复杂度**: 低 | **预估工时**: 1天

@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-029"
+title: "Proof of Cloud Metadata Exfiltration"
+summary: "Proof of Cloud Metadata Exfiltration — auto-generated summary. (docs/adrs/ADR-029-[frontend]-Proof-of-Cloud-Metadata-Exfiltration.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - edge-inference
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 029)
 # 架构决策记录 (ADR 029)
 

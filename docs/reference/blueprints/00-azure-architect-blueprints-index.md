@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-00"
+title: "azure architect blueprints index"
+summary: "azure architect blueprints index — auto-generated summary. (docs/reference/blueprints/00-azure-architect-blueprints-index.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Azure Cloud Architect — Blueprint Catalog
 
 > *Project-OmniGuard 云架构蓝图索引*

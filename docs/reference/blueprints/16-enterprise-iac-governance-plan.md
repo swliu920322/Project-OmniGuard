@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-16"
+title: "enterprise iac governance plan"
+summary: "enterprise iac governance plan — auto-generated summary. (docs/reference/blueprints/16-enterprise-iac-governance-plan.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 16: 企业级 IaC 加速器产品化开发与生命周期治理规划 (Enterprise IaC Governance Plan)
 
 > **领域**: 云产品治理 | **优先级**: 战略规划 | **复杂度**: 高 | **预估工时**: 持续迭代

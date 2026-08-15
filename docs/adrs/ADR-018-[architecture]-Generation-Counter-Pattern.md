@@ -1,3 +1,22 @@
+---
+id: "DOC-ADR-018"
+title: "Generation Counter Pattern"
+summary: "Generation Counter Pattern — auto-generated summary. (docs/adrs/ADR-018-[architecture]-Generation-Counter-Pattern.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+layers:
+  - cross-cutting
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 018)
 
 ## Title

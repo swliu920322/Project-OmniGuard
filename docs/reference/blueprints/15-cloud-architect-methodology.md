@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-15"
+title: "cloud architect methodology"
+summary: "cloud architect methodology — auto-generated summary. (docs/reference/blueprints/15-cloud-architect-methodology.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 15: 云架构师方法论与高壁垒集成场景 (Methodology & High-Barrier Scenarios)
 
 > **领域**: 云架构方法论 | **优先级**: 核心方法论 | **复杂度**: 极高 | **预估工时**: 持续迭代

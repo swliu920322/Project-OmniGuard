@@ -1,3 +1,21 @@
+---
+id: "DOC-AUDITS-REDESIGN-PLAN-MD-49"
+title: "redesign plan"
+summary: "redesign plan — specification reference auto-profiled into the OmniDocs multi-perspective index. (audits/redesign-plan.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - enterprise-audit
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # Project-OmniGuard 架构重构与修改计划
 
 本报告旨在评估 DeepSeek 架构审计报告的合理性，补充审计中未涉及的潜在架构漏洞，并制定详细的重构与修改计划。

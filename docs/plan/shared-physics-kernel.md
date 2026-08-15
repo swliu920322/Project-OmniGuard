@@ -1,3 +1,21 @@
+---
+id: "DOC-PLAN-SHARED-PHYSICS-KERNEL-MD-56"
+title: "shared physics kernel"
+summary: "shared physics kernel — specification reference auto-profiled into the OmniDocs multi-perspective index. (plan/shared-physics-kernel.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # Shared Physics Kernel — Explanation
 # 共享物理内核 — 概念详解
 

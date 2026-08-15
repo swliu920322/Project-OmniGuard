@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-23"
+title: "shadow e2e integration"
+summary: "shadow e2e integration — auto-generated summary. (docs/reference/blueprints/23-shadow-e2e-integration.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # DeepSeek V4 开发任务规范：隔离影子环境 E2E 部署与网络自愈测试脚本
 
 > **任务目标**: 编写自动化集成测试脚本 `tests/shadow-e2e-test.py`。该脚本需读取现有参数，动态将其前缀修改为隔离的 `omnitest`，安全地在云端拉起影子环境资源组，验证内网 Private Endpoint 及 DNS 解析连通性后，自动清退销毁资源组以防费用泄露。

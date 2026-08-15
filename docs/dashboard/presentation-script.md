@@ -1,3 +1,21 @@
+---
+id: "DOC-DASHBOARD-PRESENTATION-SCRIPT-MD-14"
+title: "presentation script"
+summary: "presentation script — playbook reference auto-profiled into the OmniDocs multi-perspective index. (dashboard/presentation-script.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - observability
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: playbook
+status: draft
+code_refs: []
+test_refs: []
+---
 # Fleet Dashboard — Presentation Script
 
 > **Target audience**: Thesis defense committee / Tech interviewers

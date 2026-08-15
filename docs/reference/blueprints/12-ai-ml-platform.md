@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-12"
+title: "ai ml platform"
+summary: "ai ml platform — auto-generated summary. (docs/reference/blueprints/12-ai-ml-platform.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 12: AI/ML 平台 (预留)
 
 > **领域**: AI | **优先级**: P2 | **复杂度**: 高 | **预估工时**: 待定

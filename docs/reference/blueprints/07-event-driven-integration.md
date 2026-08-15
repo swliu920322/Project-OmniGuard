@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-07"
+title: "event driven integration"
+summary: "event driven integration — auto-generated summary. (docs/reference/blueprints/07-event-driven-integration.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 07: 事件驱动集成 (Event-Driven Integration)
 
 > **领域**: 集成与消息 | **优先级**: P2 | **复杂度**: 中~高 | **预估工时**: 3~6天

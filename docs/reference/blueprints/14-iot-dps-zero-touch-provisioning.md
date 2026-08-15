@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-14"
+title: "iot dps zero touch provisioning"
+summary: "iot dps zero touch provisioning — auto-generated summary. (docs/reference/blueprints/14-iot-dps-zero-touch-provisioning.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 14: IoT 设备零接触自动注册 (IoT DPS & Zero-Touch Provisioning)
 
 > **领域**: 物联网与安全 | **优先级**: P2 | **复杂度**: 高 | **预估工时**: 3~5天

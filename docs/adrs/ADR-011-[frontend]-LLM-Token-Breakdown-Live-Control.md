@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-011"
+title: "LLM Token Breakdown Live Control"
+summary: "LLM Token Breakdown Live Control — auto-generated summary. (docs/adrs/ADR-011-[frontend]-LLM-Token-Breakdown-Live-Control.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - edge-inference
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 011)
 
 ## Title

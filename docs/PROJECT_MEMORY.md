@@ -1,3 +1,22 @@
+---
+id: "DOC-PROJECT_MEMORY-MD-18"
+title: "Project Memory Map"
+summary: "Project Memory Map — specification reference auto-profiled into the OmniDocs multi-perspective index. (PROJECT_MEMORY.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # Project-OmniGuard 持久记忆与维护地图
 
 > 目的：给后续维护、扩展、排障、重构提供一份长期可复用的项目心智地图。

@@ -1,3 +1,23 @@
+---
+id: "DOC-README-MD-91"
+title: "Documentation Home"
+summary: "Documentation Home — specification reference auto-profiled into the OmniDocs multi-perspective index. (README.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+  - enterprise-audit
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # Project-OmniGuard — Documentation Hub
 
 > **Diátaxis-compliant documentation** for the Cloud-Edge Collaborative Security Orchestrator.  

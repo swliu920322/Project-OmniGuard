@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-010"
+title: "Dashboard v2 Fleet Simulation"
+summary: "Dashboard v2 Fleet Simulation — auto-generated summary. (docs/adrs/ADR-010-[frontend]-Dashboard-v2-Fleet-Simulation.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - edge-inference
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 010)
 
 ## Title

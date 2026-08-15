@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-026"
+title: "Fleet Control Plane Dashboard"
+summary: "Fleet Control Plane Dashboard — auto-generated summary. (docs/adrs/ADR-026-[frontend]-Fleet-Control-Plane-Dashboard.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - edge-inference
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 026)
 # 架构决策记录 (ADR 026)
 

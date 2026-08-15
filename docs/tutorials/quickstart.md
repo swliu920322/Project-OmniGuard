@@ -1,3 +1,22 @@
+---
+id: "DOC-TUTORIALS-QUICKSTART-MD-74"
+title: "quickstart"
+summary: "quickstart — tutorial reference auto-profiled into the OmniDocs multi-perspective index. (tutorials/quickstart.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+layers:
+  - cross-cutting
+doc_type: tutorial
+status: draft
+code_refs: []
+test_refs: []
+---
 # 🚀 Project-OmniGuard 快速开始指南
 
 ## 新架构说明

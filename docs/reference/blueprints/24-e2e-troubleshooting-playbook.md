@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-24"
+title: "e2e troubleshooting playbook"
+summary: "e2e troubleshooting playbook — auto-generated summary. (docs/reference/blueprints/24-e2e-troubleshooting-playbook.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 24: 场景预设与功能包交叉测试手册 (Feature Pack Cross-Testing Playbook)
 
 > **文档目的**: 指导架构师针对“极简沙箱 (Sandbox)”、“内网隔离 (Secure-IoT)”、“全球门户 (Global Portal)”三大场景预设，与四个核心“功能包 (Feature Packs)”进行深度交叉组合测试，定义其在 IaC 模板与参数文件中的期望输出和验证规程，为每个物理资源提供基于动态前缀的 Azure CLI 验收测试链。

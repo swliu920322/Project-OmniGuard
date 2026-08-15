@@ -1,3 +1,21 @@
+---
+id: "DOC-DASHBOARD-LIVE-2-EXECUTION-PROMPTS-MD-98"
+title: "execution prompts"
+summary: "execution prompts — playbook reference auto-profiled into the OmniDocs multi-perspective index. (dashboard/live/2-execution-prompts.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - observability
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: playbook
+status: draft
+code_refs: []
+test_refs: []
+---
 # Execution Prompts: Dashboard Core Refactoring
 
 > **Document Status**: Active (AI Directive / 执行协议)

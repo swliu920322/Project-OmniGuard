@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-03"
+title: "security posture"
+summary: "security posture — auto-generated summary. (docs/reference/blueprints/03-security-posture.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 03: 安全态势 (Security Posture)
 
 > **领域**: 安全 | **优先级**: P1 | **复杂度**: 低~高 | **预估工时**: 0.5~5天

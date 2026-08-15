@@ -1,3 +1,21 @@
+---
+id: "DOC-REFERENCE-TEST-3-GLOBAL-PORTAL-MD-98"
+title: "global portal"
+summary: "global portal — specification reference auto-profiled into the OmniDocs multi-perspective index. (reference/test/3-global-portal.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # 3. 全球门户 (Global Portal) 场景验证
 
 ## 部署资源清单

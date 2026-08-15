@@ -1,3 +1,21 @@
+---
+id: "DOC-DASHBOARD-LIVE-1-SYSTEM-BLUEPRINT-MD-56"
+title: "system blueprint"
+summary: "system blueprint — playbook reference auto-profiled into the OmniDocs multi-perspective index. (dashboard/live/1-system-blueprint.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - observability
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: playbook
+status: draft
+code_refs: []
+test_refs: []
+---
 # System Blueprint: Fleet Dashboard Control Plane
 
 > **Document Status**: Active (System Constitution)

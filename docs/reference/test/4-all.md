@@ -1,3 +1,21 @@
+---
+id: "DOC-REFERENCE-TEST-4-ALL-MD-14"
+title: "all"
+summary: "all — specification reference auto-profiled into the OmniDocs multi-perspective index. (reference/test/4-all.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # 4. 配置拉满测试 (Maxed-out E2E Integration Test)
 
 ## 1. 物理资源配置与 SKU 规格清单

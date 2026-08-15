@@ -1,3 +1,21 @@
+---
+id: "DOC-AUDITS-DEEPSEEK-AUDIT-REPORT-MD-03"
+title: "deepseek audit report"
+summary: "deepseek audit report — specification reference auto-profiled into the OmniDocs multi-perspective index. (audits/deepseek-audit-report.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - enterprise-audit
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 架构审计报告：Project-OmniGuard
 
   红线 1：状态解耦 — 未通过

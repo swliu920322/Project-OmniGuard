@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-22"
+title: "key vault physical integration"
+summary: "key vault physical integration — auto-generated summary. (docs/reference/blueprints/22-key-vault-physical-integration.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # DeepSeek V4 开发任务规范：Bicep 物理整合 Key Vault 与零信任双轨身份闭环
 
 > **任务目标**: 在 Bicep 模板中真正部署 Key Vault、User-Assigned Identity 以及 RBAC 授权；在 `secure-iot` 场景中为其建立 Private Endpoint 与 DNS 解析自愈；最后在 Container App 层面实现 Key Vault Reference 动态注入与退避。

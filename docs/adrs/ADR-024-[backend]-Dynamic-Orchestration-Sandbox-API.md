@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-024"
+title: "Dynamic Orchestration Sandbox API"
+summary: "Dynamic Orchestration Sandbox API — auto-generated summary. (docs/adrs/ADR-024-[backend]-Dynamic-Orchestration-Sandbox-API.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cloud-orchestrator
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 024)
 # 架构决策记录 (ADR 024)
 

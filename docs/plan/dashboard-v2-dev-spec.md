@@ -1,3 +1,21 @@
+---
+id: "DOC-PLAN-DASHBOARD-V2-DEV-SPEC-MD-20"
+title: "dashboard v2 dev spec"
+summary: "dashboard v2 dev spec — specification reference auto-profiled into the OmniDocs multi-perspective index. (plan/dashboard-v2-dev-spec.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # Dashboard v2 — Development Specification
 # Dashboard v2 — 详细开发规格书
 

@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-007"
+title: "IoT Hub Long Lived Connection"
+summary: "IoT Hub Long Lived Connection — auto-generated summary. (docs/adrs/ADR-007-[infra]-IoT-Hub-Long-Lived-Connection.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+layers:
+  - iac-infra
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 007)
 # 架构决策记录 (ADR 007)
 

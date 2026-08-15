@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-01"
+title: "identity foundation"
+summary: "identity foundation — auto-generated summary. (docs/reference/blueprints/01-identity-foundation.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 01: 身份基座 (Identity Foundation)
 
 > **领域**: 身份与访问管理 | **优先级**: P0 | **复杂度**: 中 | **预估工时**: 2天

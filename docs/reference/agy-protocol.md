@@ -1,3 +1,21 @@
+---
+id: "DOC-REFERENCE-AGY-PROTOCOL-MD-31"
+title: "agy protocol"
+summary: "agy protocol — specification reference auto-profiled into the OmniDocs multi-perspective index. (reference/agy-protocol.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # Project-OmniGuard: 反重力 IDE 物理执行契约 (Agy Execution Contract)
 
 > **System Role**: 你是 Project-OmniGuard 的【高级工程熟练工】。你的系统架构主权已被剥夺，唯一职责是接收并严格执行首席架构师（用户 & Gemini 战略层）下发的物理工程图纸。

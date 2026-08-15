@@ -1,4 +1,21 @@
-
+---
+id: "DOC-ADR-002"
+title: "SWA Control Plane Cross Region Routing"
+summary: "SWA Control Plane Cross Region Routing — auto-generated summary. (docs/adrs/ADR-002-[infra]-SWA-Control-Plane-Cross-Region-Routing.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+layers:
+  - iac-infra
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 ### ADR 002: SWA Control Plane Cross-Region Routing & BYO AI Asset Integration 
 
 #### 1. Context

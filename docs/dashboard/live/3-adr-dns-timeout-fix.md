@@ -1,3 +1,21 @@
+---
+id: "DOC-DASHBOARD-LIVE-3-ADR-DNS-TIMEOUT-FIX-MD-28"
+title: "adr dns timeout fix"
+summary: "adr dns timeout fix — playbook reference auto-profiled into the OmniDocs multi-perspective index. (dashboard/live/3-adr-dns-timeout-fix.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - observability
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: playbook
+status: draft
+code_refs: []
+test_refs: []
+---
 # ADR: Azure Container Apps Migration & Networking Decision Log
 
 > **Document Status**: Approved (Architecture Decision Records)

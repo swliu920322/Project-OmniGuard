@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-008"
+title: "Unified Step Based Detection Loop"
+summary: "Unified Step Based Detection Loop — auto-generated summary. (docs/adrs/ADR-008-[frontend]-Unified-Step-Based-Detection-Loop.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - edge-inference
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 008)
 
 ## Title

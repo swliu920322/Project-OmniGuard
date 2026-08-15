@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-00"
+title: "migration_plan_azure_container_apps"
+summary: "migration_plan_azure_container_apps — auto-generated summary. (docs/reference/blueprints/migration_plan_azure_container_apps.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Azure Container Apps (ACA) Migration Plan
 
 This document outlines the step-by-step technical plan to migrate the **Project-OmniGuard** Next.js frontend and FastAPI backend from Azure Static Web Apps (SWA) + Azure Functions (Japan East) to **Azure Container Apps (ACA)** in the **Southeast Asia (Singapore)** region. 

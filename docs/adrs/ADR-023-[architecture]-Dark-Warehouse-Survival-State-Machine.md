@@ -1,3 +1,22 @@
+---
+id: "DOC-ADR-023"
+title: "Dark Warehouse Survival State Machine"
+summary: "Dark Warehouse Survival State Machine — auto-generated summary. (docs/adrs/ADR-023-[architecture]-Dark-Warehouse-Survival-State-Machine.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+layers:
+  - cross-cutting
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 023)
 # 架构决策记录 (ADR 023)
 

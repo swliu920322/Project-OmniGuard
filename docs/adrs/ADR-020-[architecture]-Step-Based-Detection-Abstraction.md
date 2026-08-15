@@ -1,3 +1,22 @@
+---
+id: "DOC-ADR-020"
+title: "Step Based Detection Abstraction"
+summary: "Step Based Detection Abstraction — auto-generated summary. (docs/adrs/ADR-020-[architecture]-Step-Based-Detection-Abstraction.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+layers:
+  - cross-cutting
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 020)
 
 ## Title

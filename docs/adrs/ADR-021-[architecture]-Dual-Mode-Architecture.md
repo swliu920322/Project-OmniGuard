@@ -1,3 +1,22 @@
+---
+id: "DOC-ADR-021"
+title: "Dual Mode Architecture"
+summary: "Dual Mode Architecture — auto-generated summary. (docs/adrs/ADR-021-[architecture]-Dual-Mode-Architecture.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+layers:
+  - cross-cutting
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 021)
 
 ## Title

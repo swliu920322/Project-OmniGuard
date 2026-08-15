@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-00"
+title: "migration_retrospective_aca"
+summary: "migration_retrospective_aca — auto-generated summary. (docs/reference/blueprints/migration_retrospective_aca.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Azure Container Apps (ACA) 架构迁移与排查复盘白皮书
 
 本文件旨在记录 **Project-OmniGuard** 从原有的 `Static Web Apps (SWA) + Azure Functions` 服务器端无服务器架构，迁移到 `Azure Container Apps (ACA) + 专有虚拟网络 (VNet)` 独立容器化运行时的完整演进过程、技术原理、以及在迁移和调试期间踩坑的排查手册。

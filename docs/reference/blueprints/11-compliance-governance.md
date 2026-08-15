@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-11"
+title: "compliance governance"
+summary: "compliance governance — auto-generated summary. (docs/reference/blueprints/11-compliance-governance.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 11: 合规与治理 (Compliance & Governance)
 
 > **领域**: 治理 | **优先级**: P2 | **复杂度**: 中~高 | **预估工时**: 2~5天

@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-17"
+title: "deepseek implementation target"
+summary: "deepseek implementation target — auto-generated summary. (docs/reference/blueprints/17-deepseek-implementation-target.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # DeepSeek V4 开发任务规范：API 侧网络网段校验与预检执行器设计
 
 > **任务目标**: 实现配置台后端（API 侧）的 CIDR 安全校验、非破坏性干跑（Dry-Run）机制，以及云端预飞行自动校验脚本。

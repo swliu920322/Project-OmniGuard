@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-02"
+title: "api management gateway"
+summary: "api management gateway — auto-generated summary. (docs/reference/blueprints/02-api-management-gateway.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 02: API 网关与边界 (API Management Gateway)
 
 > **领域**: 网络与 API 管理 | **优先级**: P1 | **复杂度**: 高 | **预估工时**: 3~5天

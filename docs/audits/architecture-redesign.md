@@ -1,3 +1,21 @@
+---
+id: "DOC-AUDITS-ARCHITECTURE-REDESIGN-MD-17"
+title: "architecture redesign"
+summary: "architecture redesign — specification reference auto-profiled into the OmniDocs multi-perspective index. (audits/architecture-redesign.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - enterprise-audit
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # 🎯 Project-OmniGuard 架构重新设计总结
 
 ## 问题背景

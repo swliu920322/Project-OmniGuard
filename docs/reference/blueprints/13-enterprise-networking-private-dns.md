@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-13"
+title: "enterprise networking private dns"
+summary: "enterprise networking private dns — auto-generated summary. (docs/reference/blueprints/13-enterprise-networking-private-dns.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 13: 企业级网络拓扑与私有 DNS (Enterprise Networking & Private DNS)
 
 > **领域**: 网络与安全 | **优先级**: P1 | **复杂度**: 高 | **预估工时**: 3~5天

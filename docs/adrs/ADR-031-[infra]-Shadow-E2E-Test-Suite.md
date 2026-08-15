@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-031"
+title: "Shadow E2E Test Suite"
+summary: "Shadow E2E Test Suite — auto-generated summary. (docs/adrs/ADR-031-[infra]-Shadow-E2E-Test-Suite.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+layers:
+  - iac-infra
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 031)
 # 架构决策记录 (ADR 031)
 

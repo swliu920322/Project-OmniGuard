@@ -1,3 +1,21 @@
+---
+id: "DOC-AUDITS-5W2H-REDESIGN-SPEC-MD-80"
+title: "w2h redesign spec"
+summary: "w2h redesign spec — specification reference auto-profiled into the OmniDocs multi-perspective index. (audits/5w2h-redesign-spec.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - enterprise-audit
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # Project-OmniGuard 投研看板系统重构规范与操作指南
 *(Project-OmniGuard Redesign Specification & Run Guide)*
 

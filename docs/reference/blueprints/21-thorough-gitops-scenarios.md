@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-21"
+title: "thorough gitops scenarios"
+summary: "thorough gitops scenarios — auto-generated summary. (docs/reference/blueprints/21-thorough-gitops-scenarios.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # DeepSeek V4 开发任务规范：企业级双轨 GitOps 流水线模板与自愈文档重构
 
 > **任务目标**: 在导出的 IaC 压缩包中同时提供“企业 OIDC 无密模式”与“经典 SP 密钥模式”的双流水线模板，并重构 README 引导，使用户在“企业生产态”与“个人测试态”下都能获得像素级完整的配置指引。

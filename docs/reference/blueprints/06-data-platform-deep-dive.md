@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-06"
+title: "data platform deep dive"
+summary: "data platform deep dive — auto-generated summary. (docs/reference/blueprints/06-data-platform-deep-dive.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 06: 数据平台深化 (Data Platform Deep Dive)
 
 > **领域**: 数据 | **优先级**: P1 | **复杂度**: 中~高 | **预估工时**: 3~6天

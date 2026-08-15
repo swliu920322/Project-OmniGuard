@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-004"
+title: "Standard SKU Pivot"
+summary: "Standard SKU Pivot — auto-generated summary. (docs/adrs/ADR-004-[infra]-Standard-SKU-Pivot.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+layers:
+  - iac-infra
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architecture Decision Record (ADR-004)
 # 架构决策记录 (ADR-004)
 

@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-00"
+title: "cloud architecture review"
+summary: "cloud architecture review — auto-generated summary. (docs/reference/blueprints/cloud-architecture-review.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # OmniGuard 云架构设计审查报告 (Blueprints 00-12)
 
 > **评级与验证报告** | **架构师**: AI Cloud Architect | **当前时间**: 2026-07-02

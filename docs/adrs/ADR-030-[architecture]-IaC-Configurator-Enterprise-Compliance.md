@@ -1,3 +1,22 @@
+---
+id: "DOC-ADR-030"
+title: "IaC Configurator Enterprise Compliance"
+summary: "IaC Configurator Enterprise Compliance — auto-generated summary. (docs/adrs/ADR-030-[architecture]-IaC-Configurator-Enterprise-Compliance.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+layers:
+  - cross-cutting
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 030)
 # 架构决策记录 (ADR 030)
 

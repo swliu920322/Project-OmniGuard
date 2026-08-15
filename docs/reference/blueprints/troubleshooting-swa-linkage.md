@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-00"
+title: "troubleshooting swa linkage"
+summary: "troubleshooting swa linkage — auto-generated summary. (docs/reference/blueprints/troubleshooting-swa-linkage.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 **暴力结论：本地活、远程 404，不是代码逻辑溃败，而是你被本地开发工具链的“仿真网桥”给欺骗了。云端此时发生了“前后端公网路由断层”或“大模型流式内核索引踩空”。**
 
 必须要看穿本地（`make dev`）与云端（Azure 生产环境）在处理 `/api` 相对路径时的物理本质差异：

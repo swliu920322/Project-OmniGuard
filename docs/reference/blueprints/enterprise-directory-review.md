@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-00"
+title: "enterprise directory review"
+summary: "enterprise directory review — auto-generated summary. (docs/reference/blueprints/enterprise-directory-review.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Enterprise Directory Structure Review — Project-OmniGuard
 # 企业级目录结构架构评审与演进报告
 

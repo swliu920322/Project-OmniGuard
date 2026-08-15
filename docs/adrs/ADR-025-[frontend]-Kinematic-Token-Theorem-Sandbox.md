@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-025"
+title: "Kinematic Token Theorem Sandbox"
+summary: "Kinematic Token Theorem Sandbox — auto-generated summary. (docs/adrs/ADR-025-[frontend]-Kinematic-Token-Theorem-Sandbox.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - edge-inference
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 025)
 # 架构决策记录 (ADR 025)
 

@@ -1,3 +1,22 @@
+---
+id: "DOC-ADR-034"
+title: "OpenAI Credentials Unification"
+summary: "OpenAI Credentials Unification — auto-generated summary. (docs/adrs/ADR-034-[architecture]-OpenAI-Credentials-Unification.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+layers:
+  - cross-cutting
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 034)
 # 架构决策记录 (ADR 034)
 

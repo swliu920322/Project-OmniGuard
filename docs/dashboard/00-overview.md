@@ -1,3 +1,21 @@
+---
+id: "DOC-DASHBOARD-00-OVERVIEW-MD-70"
+title: "overview"
+summary: "overview — playbook reference auto-profiled into the OmniDocs multi-perspective index. (dashboard/00-overview.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - observability
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: playbook
+status: draft
+code_refs: []
+test_refs: []
+---
 # Fleet Dashboard — Complete Reference
 
 > Routes under `/dashboard/`: `theorem` (single-AGV sandbox), `compare` (side-by-side proof), `fleet` (3-AGV simulation), `live` (real cloud integration)

@@ -1,3 +1,21 @@
+---
+id: "DOC-AUDITS-BOOKMARKLET-SYNC-DESIGN-MD-92"
+title: "bookmarklet sync design"
+summary: "bookmarklet sync design — specification reference auto-profiled into the OmniDocs multi-perspective index. (audits/bookmarklet-sync-design.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - enterprise-audit
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # X.com 爬虫书签一键同步方案设计 (Bookmarklet Sync)
 
 本设计方案旨在解决云端爬虫因 X.com (Twitter) 的 GraphQL 频繁变更 `queryId`、`features` 且极易封禁云端模拟登录账号的问题。

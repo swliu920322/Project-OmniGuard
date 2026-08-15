@@ -1,3 +1,21 @@
+---
+id: "DOC-PLAN-DASHBOARD-REDESIGN-V2-MD-92"
+title: "dashboard redesign v2"
+summary: "dashboard redesign v2 — specification reference auto-profiled into the OmniDocs multi-perspective index. (plan/dashboard-redesign-v2.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # Dashboard Redesign v2 — Fleet Kinematic-Token Control Plane (Opus Edition)
 # Dashboard 重构方案 v2 — 舰队级运动学-Token 控制面（Opus 优化版）
 

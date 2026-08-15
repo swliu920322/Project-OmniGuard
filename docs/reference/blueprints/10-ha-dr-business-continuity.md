@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-10"
+title: "ha dr business continuity"
+summary: "ha dr business continuity — auto-generated summary. (docs/reference/blueprints/10-ha-dr-business-continuity.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 蓝图 10: 高可用与灾备 (HA/DR & Business Continuity)
 
 > **领域**: 高可用 | **优先级**: P2 | **复杂度**: 中 | **预估工时**: 2~3天

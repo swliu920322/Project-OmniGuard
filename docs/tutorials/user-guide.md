@@ -1,3 +1,22 @@
+---
+id: "DOC-TUTORIALS-USER-GUIDE-MD-75"
+title: "user guide"
+summary: "user guide — tutorial reference auto-profiled into the OmniDocs multi-perspective index. (tutorials/user-guide.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+layers:
+  - cross-cutting
+doc_type: tutorial
+status: draft
+code_refs: []
+test_refs: []
+---
 声威，切入终极交付沙盘。既然物理底座（Landing Zone）已经通过全域清理和永久脚本完成合拢，我们立刻进行全量业务流与系统设计的深度设计。
 
 为了在新加坡高级云架构师面试中形成技术降维打击，我们彻底剥离所有练习生标签（如待办列表、通用聊天），将这三大模块重构为**高并发、零服务器算力损耗、强数据隔离**的工业级生产线。

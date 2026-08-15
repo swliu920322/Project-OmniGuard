@@ -1,3 +1,22 @@
+---
+id: "DOC-ADR-032"
+title: "Dual Track Identity Decoupling and Fallback Governance"
+summary: "Dual Track Identity Decoupling and Fallback Governance — auto-generated summary. (docs/adrs/ADR-032-[architecture]-Dual-Track-Identity-Decoupling-and-Fallback-Governance.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+layers:
+  - cross-cutting
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 032)
 # 架构决策记录 (ADR 032)
 

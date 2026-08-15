@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-18"
+title: "web preflight integration"
+summary: "web preflight integration — auto-generated summary. (docs/reference/blueprints/18-web-preflight-integration.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # DeepSeek V4 开发任务规范：配置台一键云端预检与 Web 控制台日志联调
 
 > **任务目标**: 将 `sh/preflight-validate.py` 命令深度集成到配置台的 Web 界面，实现“一键云端预检并在 Web 页面实时输出编译/订阅权限审计日志”的 DevOps 闭环。

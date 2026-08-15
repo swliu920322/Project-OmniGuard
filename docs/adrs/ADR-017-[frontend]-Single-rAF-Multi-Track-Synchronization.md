@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-017"
+title: "Single rAF Multi Track Synchronization"
+summary: "Single rAF Multi Track Synchronization — auto-generated summary. (docs/adrs/ADR-017-[frontend]-Single-rAF-Multi-Track-Synchronization.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - edge-inference
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 017)
 
 ## Title

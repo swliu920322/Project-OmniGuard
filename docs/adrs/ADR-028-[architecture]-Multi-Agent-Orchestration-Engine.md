@@ -1,3 +1,22 @@
+---
+id: "DOC-ADR-028"
+title: "Multi Agent Orchestration Engine"
+summary: "Multi Agent Orchestration Engine — auto-generated summary. (docs/adrs/ADR-028-[architecture]-Multi-Agent-Orchestration-Engine.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+  - frontend-engineering
+layers:
+  - cross-cutting
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 028)
 # 架构决策记录 (ADR 028)
 

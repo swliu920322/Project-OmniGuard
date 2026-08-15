@@ -1,3 +1,21 @@
+---
+id: "DOC-REFERENCE-TEST-2-SECURE-IOT-MD-41"
+title: "secure IoT"
+summary: "secure IoT — specification reference auto-profiled into the OmniDocs multi-perspective index. (reference/test/2-secure-IoT.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # 2: 内网隔离 (Secure-IoT) 验收文档
 
 ## 生成资源组omni3-guard-infra-sea-rg

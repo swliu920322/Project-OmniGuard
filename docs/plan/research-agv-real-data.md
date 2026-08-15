@@ -1,3 +1,21 @@
+---
+id: "DOC-PLAN-RESEARCH-AGV-REAL-DATA-MD-23"
+title: "research agv real data"
+summary: "research agv real data — specification reference auto-profiled into the OmniDocs multi-perspective index. (plan/research-agv-real-data.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - multi-agent
+perspectives:
+  - cloud-architecture
+layers:
+  - cross-cutting
+doc_type: specification
+status: draft
+code_refs: []
+test_refs: []
+---
 # AGV Real-World Parameter Research
 # AGV 真实参数调研
 

@@ -1,3 +1,22 @@
+---
+id: "DOC-BP-99"
+title: "project backlog"
+summary: "project backlog — auto-generated summary. (docs/reference/blueprints/99-project-backlog.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+  - enterprise-audit
+layers:
+  - iac-infra
+doc_type: blueprint
+status: accepted
+code_refs: []
+test_refs: []
+---
 # 项目待办任务库与技术债备忘 (Project Backlog & Tech Debt)
 
 > **文档目的**: 记录 OmniGuard IaC 加速器未来演进思路、中长期低优先级（Low Priority）待办以及技术架构备忘，体现系统前瞻性设计思想。

@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-022"
+title: "ACA IaC Topology Refactoring"
+summary: "ACA IaC Topology Refactoring — auto-generated summary. (docs/adrs/ADR-022-[infra]-ACA-IaC-Topology-Refactoring.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - iac-bicep
+perspectives:
+  - cloud-architecture
+layers:
+  - iac-infra
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 022)
 # 架构决策记录 (ADR 022)
 

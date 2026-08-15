@@ -1,3 +1,21 @@
+---
+id: "DOC-ADR-016"
+title: "Ref Based Physics vs React State Separation"
+summary: "Ref Based Physics vs React State Separation — auto-generated summary. (docs/adrs/ADR-016-[frontend]-Ref-Based-Physics-vs-React-State-Separation.md)"
+version: "1.0.0"
+updated_at: "2026-08-15"
+authors: ["Shengwei Liu"]
+domains:
+  - edge-inference
+perspectives:
+  - frontend-engineering
+layers:
+  - edge-client
+doc_type: adr
+status: accepted
+code_refs: []
+test_refs: []
+---
 # Architectural Decision Record (ADR 016)
 
 ## Title
