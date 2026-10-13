@@ -11,8 +11,8 @@ graph LR
     B -- "EventHub Stream" --> C["[Azure Functions]<br>iot_telemetry_processor"]
 ```
 
-- **边缘端 (Edge)**：[device_mock.py](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/cloud-orchestrator/edge-simulator/device_mock.py) 建立 MQTT 双向长连接，每秒持续上报设备坐标与避障遥测数据。
-- **云控制端 (Cloud)**：[function_app.py](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/cloud-orchestrator/function_app.py) 中的 [iot_telemetry_processor](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/cloud-orchestrator/function_app.py#L46) 函数通过 Event Hub 触发器实时监听并解析物理探针上报的遥测信号。
+- **边缘端 (Edge)**：[device_mock.py](device_mock.py) 建立 MQTT 双向长连接，每秒持续上报设备坐标与避障遥测数据。
+- **云控制端 (Cloud)**：[function_app.py](../function_app.py) 中的 [iot_telemetry_processor](../function_app.py#L46) 函数通过 Event Hub 触发器实时监听并解析物理探针上报的遥测信号。
 
 ---
 
@@ -40,8 +40,8 @@ make add-device DEV=Robo-A1
 ```
 
 > **自动化底层细节说明：**
-> 1. **边缘端同步**：自动查询 `Robo-A1` 设备专属的 `Device Connection String`，并写入至边缘模拟器配置文件 [src/cloud-orchestrator/edge-simulator/.env](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/cloud-orchestrator/edge-simulator/.env)。
-> 2. **后端同步**：自动查询 IoT Hub 的 Event Hub 兼容连接串，注入至后端配置文件 [src/cloud-orchestrator/local.settings.json](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/cloud-orchestrator/local.settings.json) 的 `IotHubEventHubConnectionString` 中。
+> 1. **边缘端同步**：自动查询 `Robo-A1` 设备专属的 `Device Connection String`，并写入本地、未纳入版本控制的 `src/cloud-orchestrator/edge-simulator/.env`。
+> 2. **后端同步**：自动查询 IoT Hub 的 Event Hub 兼容连接串，注入本地 `src/cloud-orchestrator/local.settings.json` 的 `IotHubEventHubConnectionString` 中；配置结构参考 [`local.settings.example.json`](../local.settings.example.json)。
 
 ---
 
@@ -87,7 +87,7 @@ cd src/cloud-orchestrator/edge-simulator
 
 ### 问题 1: Functions 启动失败，提示 `Storage account connection string 'AzureWebJobsStorage' does not exist`
 * **原因**：Azure Functions Local Runtime 依赖 `AzureWebJobsStorage` 管理事件租赁和分区的检查点（Checkpoint）。
-* **修复方法**：在 [local.settings.json](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/cloud-orchestrator/local.settings.json) 文件的 `Values` 对象中添加 `AzureWebJobsStorage` 连接串。
+* **修复方法**：在本地 `local.settings.json` 文件的 `Values` 对象中添加 `AzureWebJobsStorage` 连接串；字段结构参考 [`local.settings.example.json`](../local.settings.example.json)。
 
 ### 问题 2: Functions 启动后监听触发器报错 `Status: 403 (This request is not authorized to perform this operation.)`
 * **原因**：Azure 存储账户的网络访问策略处于关闭状态（`publicNetworkAccess: Disabled`）或开启了防火墙且当前本机的 IP 地址未被加入白名单。

@@ -37,7 +37,7 @@ This resulted in redundant configuration in Bicep templates and deployment scrip
 ## Decision Drivers / 决策驱动因素
 - **DRY Principle (Don't Repeat Yourself)**: Eliminate duplicate logic for resolving keys, endpoints, and model deployments.
 - **Resilience**: Ensure all backend modules benefit from the same robust environment variable fallback and settings-loading mechanisms.
-- **Maintainability**: Simplify the IaC layer and the deployment script (`sh/deploy-aca.sh`) by providing a single source of truth for LLM client generation.
+- **Maintainability**: Simplify the IaC layer and the deployment script (`scripts/deploy-aca.sh`) by providing a single source of truth for LLM client generation.
 
 - **DRY 原则**：消除解析密钥、端点和模型部署的重复逻辑。
 - **高弹性**：确保所有后端模块都能从相同的环境变量回退和本地配置文件加载机制中受益。

@@ -1,9 +1,9 @@
 ---
 id: "DOC-ADRS-INDEX-MD-78"
 title: "ADR Index"
-summary: "ADR Index — specification reference auto-profiled into the OmniDocs multi-perspective index. (adrs/INDEX.md)"
-version: "1.0.0"
-updated_at: "2026-08-15"
+summary: "Index of the 34 retained architecture decisions, with current-use guidance."
+version: "2.0.0"
+updated_at: "2026-10-14"
 authors: ["Shengwei Liu"]
 domains:
   - multi-agent
@@ -12,7 +12,7 @@ perspectives:
 layers:
   - cross-cutting
 doc_type: specification
-status: draft
+status: accepted
 code_refs: []
 test_refs: []
 ---
@@ -20,6 +20,8 @@ test_refs: []
 
 > Project OmniGuard 的架构决策记录，按**关注域（Tag）**分类，方便不同角色的读者快速定位相关决策。
 > Architecture decisions tagged by concern domain — jump to what matters to you.
+
+The repository retains 34 numbered decisions (ADR-002 through ADR-035; ADR-001 is not present). “Accepted” records the decision at the time it was made. Always compare an older ADR with current code before treating it as the present implementation; superseded decisions should be relabeled rather than silently rewritten.
 
 ---
 

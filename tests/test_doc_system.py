@@ -1,5 +1,8 @@
 import os
 import re
+from pathlib import Path
+from urllib.parse import unquote
+
 import yaml
 import pytest
 
@@ -30,7 +33,21 @@ DOMAINS = {
     "ai-systems",
 }
 DOC_TYPES = {"adr", "blueprint", "specification", "tutorial", "playbook", "theorem"}
-REQUIRED_KEYS = ["id", "title", "summary", "domains", "perspectives", "layers", "doc_type"]
+REQUIRED_KEYS = [
+    "id",
+    "title",
+    "summary",
+    "version",
+    "updated_at",
+    "domains",
+    "perspectives",
+    "layers",
+    "doc_type",
+    "status",
+]
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
 
 
 def get_all_markdown_files():
@@ -103,6 +120,52 @@ def test_frontmatter_coverage_full():
     assert not uncovered, f"Documents missing valid frontmatter: {uncovered}"
 
 
+def get_current_markdown_files():
+    """Return maintained Markdown, excluding generated/dependency trees and archives."""
+    ignored_parts = {
+        ".git",
+        ".next",
+        ".pytest_cache",
+        ".venv",
+        "archive",
+        "dist",
+        "node_modules",
+        "venv",
+    }
+    return sorted(
+        path
+        for path in REPO_ROOT.rglob("*.md")
+        if not ignored_parts.intersection(path.parts)
+    )
+
+
+def test_current_markdown_links_are_portable_and_resolve():
+    """Current docs may not depend on one developer's filesystem or dead local links."""
+    broken = []
+    nonportable = []
+
+    for source in get_current_markdown_files():
+        content = source.read_text(encoding="utf-8")
+        for raw_target in MARKDOWN_LINK_RE.findall(content):
+            target = raw_target.strip().split()[0].strip("<>")
+            if not target or target.startswith(("#", "http://", "https://", "mailto:", "data:")):
+                continue
+            if target.startswith("file://"):
+                nonportable.append((source.relative_to(REPO_ROOT), target))
+                continue
+            # Leading-slash links are application routes, not repository files.
+            if target.startswith("/"):
+                continue
+
+            path_part = unquote(target.split("#", 1)[0])
+            resolved = (source.parent / path_part).resolve()
+            if not resolved.exists():
+                broken.append((source.relative_to(REPO_ROOT), target))
+
+    assert not nonportable, f"Non-portable file:// links: {nonportable}"
+    assert not broken, f"Broken relative Markdown links: {broken}"
+
+
 def test_default_manifest_exists_and_contract_valid():
     """契约产物存在，且 contractVersion 大版本为 1。"""
     import json
@@ -113,4 +176,12 @@ def test_default_manifest_exists_and_contract_valid():
         manifest = json.load(f)
     assert manifest["contractVersion"].startswith("1."), "contractVersion major must be 1 (CPV)"
     assert manifest["docCount"] == len(manifest["docs"])
-    assert manifest["docCount"] >= len(get_all_markdown_files()) - 5  # 允许少量敏感/预览文档未入册
+    manifest_paths = {doc["filePath"] for doc in manifest["docs"]}
+    expected_paths = {
+        os.path.join("docs", filepath) for filepath in get_all_markdown_files()
+    }
+    assert manifest_paths == expected_paths, (
+        "Documentation manifest is stale; run `make docs-build`. "
+        f"Missing: {sorted(expected_paths - manifest_paths)}; "
+        f"unexpected: {sorted(manifest_paths - expected_paths)}"
+    )

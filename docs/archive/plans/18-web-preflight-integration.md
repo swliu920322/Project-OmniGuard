@@ -19,7 +19,7 @@ test_refs: []
 ---
 # DeepSeek V4 开发任务规范：配置台一键云端预检与 Web 控制台日志联调
 
-> **任务目标**: 将 `sh/preflight-validate.py` 命令深度集成到配置台的 Web 界面，实现“一键云端预检并在 Web 页面实时输出编译/订阅权限审计日志”的 DevOps 闭环。
+> **任务目标**: 将 `scripts/preflight-validate.py` 命令深度集成到配置台的 Web 界面，实现“一键云端预检并在 Web 页面实时输出编译/订阅权限审计日志”的 DevOps 闭环。
 > **目标分支**: `feat/scenario-configurator`
 
 ---
@@ -68,14 +68,14 @@ test_refs: []
 * 👉 `src/client-edge/src/app/iac/configurator/page.tsx`
 
 ### 2.2 实现细节
-1. **[CostCalculatorPanel.tsx](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/client-edge/src/app/iac/configurator/components/CostCalculatorPanel.tsx) 组件改造**:
+1. **[CostCalculatorPanel.tsx](../../../src/client-edge/src/app/iac/configurator/components/CostCalculatorPanel.tsx) 组件改造**:
    * 在 Props 接口中，增加 `onPreflightValidate: () => Promise<void>` 和 `isValidatingCloud: boolean`。
    * 在【保存并组装】按钮的左侧，新增一个按钮：
      * **文案**：`☁️ 云端预检` (Cloud Check)
      * **样式**：采用带有透明度的 Slate/Cyan 边框的按钮（与保存按钮区分开），在 `isValidatingCloud` 为 `true` 时显示 Loading 动画或禁用点击。
      * **点击事件**：触发 `onPreflightValidate`。
 
-2. **[page.tsx](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/client-edge/src/app/iac/configurator/page.tsx) 核心页联调**:
+2. **[page.tsx](../../../src/client-edge/src/app/iac/configurator/page.tsx) 核心页联调**:
    * 声明两个新状态：
      * `const [isValidatingCloud, setIsValidatingCloud] = useState<boolean>(false);`
    * 编写事件回调 `handlePreflightValidate`：
@@ -88,7 +88,7 @@ test_refs: []
        }
        ```
      * 获取返回的 `output` 日志（包括 Python 脚本运行产生的颜色终端输出字符）。
-     * 将其塞入 `setAssemblerConsole(data.output || data.message)`，以呈现在 [ConsoleOutputPanel.tsx](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/client-edge/src/app/iac/configurator/components/ConsoleOutputPanel.tsx) 终端区域。
+     * 将其塞入 `setAssemblerConsole(data.output || data.message)`，以呈现在 [ConsoleOutputPanel.tsx](../../../src/client-edge/src/app/iac/configurator/components/ConsoleOutputPanel.tsx) 终端区域。
      * 若成功，将 `saveMessage` 设置为绿色成功条：“云端预飞行校验成功通过，网段与权限 100% 兼容！”。若失败，设置为红色提示。
      * 恢复 `isValidatingCloud` 状态。
    * 将 `onPreflightValidate={handlePreflightValidate}` 以及 `isValidatingCloud={isValidatingCloud}` 传给 `<CostCalculatorPanel ... />`。

@@ -1,9 +1,9 @@
 ---
-id: "DOC-TUTORIALS-QUICKSTART-MD-74"
-title: "quickstart"
-summary: "quickstart — tutorial reference auto-profiled into the OmniDocs multi-perspective index. (tutorials/quickstart.md)"
-version: "1.0.0"
-updated_at: "2026-08-15"
+id: "DOC-TUTORIAL-QUICKSTART"
+title: "Quickstart"
+summary: "Minimal path to install dependencies, configure the backend, start both applications, and run tests."
+version: "2.0.0"
+updated_at: "2026-10-14"
 authors: ["Shengwei Liu"]
 domains:
   - multi-agent
@@ -13,243 +13,76 @@ perspectives:
 layers:
   - cross-cutting
 doc_type: tutorial
-status: draft
-code_refs: []
-test_refs: []
+status: accepted
+code_refs:
+  - "Makefile"
+  - "src/cloud-orchestrator/local.settings.example.json"
+test_refs:
+  - "tests/test_brain.py"
 ---
-# 🚀 Project-OmniGuard 快速开始指南
+# Quickstart
 
-## 新架构说明
+## 1. Prerequisites
 
-这个项目已经重新设计，采用了更清晰的分离方式：
+- Python 3.10 or newer
+- Node.js 20 or newer
+- npm
+- Azure Functions Core Tools when using the Functions host
 
-- **前端配置**: 只处理 Azure 基础配置（订阅、资源组、账户名、部署名）
-- **OpenAI 凭证**: 完全存储在 `local.settings.json`，不暴露给前端
-- **脚本简化**: 清晰的 4 个核心脚本处理不同的任务
+Azure CLI is needed only for Azure provisioning and deployment.
 
-## 前置条件
+## 2. Backend environment
 
-1. **Azure CLI**: 已登录并有权限创建资源
-   ```bash
-   az login
-   az account set --subscription "<your-subscription>"
-   ```
+From the repository root:
 
-2. **Azure Functions Core Tools**: 用于本地开发
-   ```bash
-   brew tap azure/azure
-   brew install azure-functions-core-tools@4
-   ```
+    cd src/cloud-orchestrator
+    python3 -m venv .venv
+    .venv/bin/pip install -r requirements.txt
+    cp local.settings.example.json local.settings.json
 
-3. **Node.js & npm**: 前端开发
-   ```bash
-   node --version  # >= 18.x
-   npm --version   # >= 9.x
-   ```
+Edit local.settings.json with the provider and model configuration required for your environment. The local settings file is not documentation and should not be committed.
 
-4. **Python 3.11+**: 后端 Function 开发
-   ```bash
-   python3 --version
-   ```
+## 3. Frontend environment
 
-## 快速开始步骤
+    cd src/client-edge
+    npm install
 
-### 1️⃣ 准备 OpenAI 凭证
+## 4. Start locally
 
-复制配置模板：
-```bash
-cp src/cloud-orchestrator/digitalhuman/local.settings.example.json \
-   src/cloud-orchestrator/digitalhuman/local.settings.json
-```
+From the repository root, use two terminals:
 
-编辑 `local.settings.json`，填入你的 OpenAI 凭证：
+    make start-backend
 
-**选项 A: Azure OpenAI**
-```json
-{
-  "IsEncrypted": false,
-  "Values": {
-    "FUNCTIONS_WORKER_RUNTIME": "python",
-    "LOCAL_MOCK_MODE": "false",
-    "LLM_PROVIDER": "azure",
-    "AZURE_OPENAI_ENDPOINT": "https://your-instance.openai.azure.com/",
-    "AZURE_OPENAI_API_KEY": "your-key-here",
-    "AZURE_OPENAI_DEPLOYMENT_NAME": "gpt-4o"
-  }
-}
-```
+and:
 
-**选项 B: 第三方 OpenAI 兼容**
-```json
-{
-  "IsEncrypted": false,
-  "Values": {
-    "FUNCTIONS_WORKER_RUNTIME": "python",
-    "LOCAL_MOCK_MODE": "false",
-    "LLM_PROVIDER": "openai-compatible",
-    "OPENAI_BASE_URL": "https://api.openai.com/v1",
-    "OPENAI_API_KEY": "sk-...",
-    "OPENAI_MODEL": "gpt-4o-mini"
-  }
-}
-```
+    make start-frontend
 
-### 2️⃣ 部署 Azure 基础设施
+Open http://localhost:3000. Backend startup normally uses port 7071.
 
-```bash
-make provision
-# 或
-./sh/provision.sh
-```
+## 5. Choose a route
 
-这会创建：
-- Resource Group: `omni-guard-infra-sea-rg`
-- Function App (Azure Functions Serverless)
-- Storage Account (用于 Function App 存储)
-- VNet 和必要的网络配置
+- /dashboard — local three-track AGV simulation
+- /dashboard/theorem — latency/clearance sandbox
+- /dashboard/compare — cloud/edge comparison
+- /dashboard/live — backend-dependent flow
+- /iac — IaC tools
+- /prediction and /interpreter — Labs experiments
 
-### 3️⃣ 启动本地开发环境
+Start with /dashboard when no Azure environment is available.
 
-```bash
-make start
-# 或
-./sh/start.sh
-```
+## 6. Validate
 
-这会启动：
-- **后端**: Azure Functions (端口 7071)
-- **前端**: Next.js 开发服务器 (端口 3000)
+With the backend virtual environment available:
 
-访问 `http://localhost:3000` 即可看到启动台。
+    make test
+    PATH="src/cloud-orchestrator/.venv/bin:$PATH" make docs-test
 
-### 4️⃣ 选择（可选）部署到云端
+The second command ensures the Python documentation checks use the environment containing PyYAML and pytest.
 
-当本地开发完成后，将 Function 部署到 Azure：
+## 7. Azure work
 
-```bash
-make deploy-function
-# 或
-./sh/deploy-function.sh
-```
+Do not provision resources as part of the local quickstart. When Azure work is intended, read the [operations guide](../operations.md), verify the active subscription, and preview changes with:
 
-这会：
-1. 读取 `local.settings.json` 中的 OpenAI 配置
-2. 同步配置到 Azure Function App Settings
-3. 部署 Python 代码到云端
+    make whatif
 
-### 5️⃣ 销毁资源（FinOps 止血）
-
-当不再需要时，可以清理所有 Azure 资源：
-
-```bash
-make destroy
-# 或
-./sh/destroy.sh
-```
-
-## 前端启动台说明
-
-访问 `http://localhost:3000` 后，你会看到一个启动台，其中包含：
-
-1. **启动模式选择**:
-   - 本地订阅 + 第三方 OpenAI
-   - 本地订阅 + Azure OpenAI
-   - 云端订阅 + Azure OpenAI
-
-2. **Azure 基础配置字段**:
-   - Azure 订阅
-   - Azure 资源组
-   - Azure OpenAI 账户名
-   - Azure Deployment 名称
-
-3. **启动命令预览**: 显示当前选择下要执行的脚本命令
-
-4. **销毁命令**: 一键查看销毁命令
-
-## 关键改动说明
-
-### ✅ 已移除
-
-- ❌ 前端的 OpenAI Base URL 和 Model 动态配置表单
-- ❌ 后端 `/api/chat/stream` 中的 `deploymentName` 覆盖逻辑
-- ❌ infra-up.sh 中复杂的凭证注入逻辑
-- ❌ 混乱的 Makefile 和脚本
-
-### ✅ 已添加
-
-- ✨ 清晰的 4 个核心脚本：`provision.sh`, `start.sh`, `deploy-function.sh`, `trigger-ci.sh`
-- ✨ 简化的 Makefile（仅 5 个目标）
-- ✨ 完整的 `local.settings.json` 配置管理
-- ✨ 自动从 `local.settings.json` 读取 OpenAI 凭证上传到云端
-
-## 故障排除
-
-### 问题：`local.settings.json` 未找到
-
-**解决**: 
-```bash
-cp src/cloud-orchestrator/digitalhuman/local.settings.example.json \
-   src/cloud-orchestrator/digitalhuman/local.settings.json
-```
-
-### 问题：后端 Function 404 错误
-
-**检查项**:
-1. `local.settings.json` 中的 `AZURE_OPENAI_ENDPOINT` 是否正确
-2. `AZURE_OPENAI_DEPLOYMENT_NAME` 是否与 Azure 中的实际部署名一致
-3. `AZURE_OPENAI_API_KEY` 是否有效
-
-### 问题：前端无法连接到后端
-
-**检查项**:
-1. 后端是否在运行（`func start` 是否成功）
-2. 端口 7071 是否被占用：`lsof -i :7071`
-3. Next.js 是否在 3000 端口运行：`lsof -i :3000`
-
-## GitHub CI/CD
-
-触发流水线：
-
-```bash
-make trigger-ci
-# 或
-./sh/trigger-ci.sh
-```
-
-这会创建一个空提交并推送，自动触发 GitHub Actions 流程。
-
-## 常用命令速查
-
-```bash
-# 首次部署
-make provision
-make start
-
-# 开发中
-./sh/start.sh
-
-# 部署到生产
-./sh/deploy-function.sh
-
-# 清理资源
-./sh/destroy.sh
-
-# CI 流程
-./sh/trigger-ci.sh
-
-# 查看帮助
-make help
-```
-
-## 更多信息
-
-- 前端源码：`src/client-edge/`
-- 后端源码：`src/cloud-orchestrator/digitalhuman/`
-- 基础设施代码：`.azure/`
-- 脚本：`./sh/`
-
----
-
-**最后更新**: 2026-06-27
-**维护者**: Shengwei Liu
-
+The [root README](../../README.md) explains scope and limitations; the [evidence index](../evidence/README.md) explains which numbers may be quoted.

@@ -1,202 +1,115 @@
-# Project-OmniGuard
+# Project OmniGuard
 
-**云边协同安全编排器 · 零信任容器化沙盘 · 运动学-Token 定理验证平台**
+一个研究 AI Agent 应该放在运动机器控制回路中什么位置的云边协同安全实验平台。
 
-[![Azure Container Apps](https://img.shields.io/badge/Azure-Container%20Apps-0078D4.svg?style=flat-square&logo=microsoftazure)](https://azure.microsoft.com/en-us/products/container-apps/)
-[![Next.js](https://img.shields.io/badge/Next.js-14.2-black.svg?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100-009688.svg?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Azure IoT Hub](https://img.shields.io/badge/Azure-IoT%20Hub-0078D4.svg?style=flat-square&logo=microsoftazure)](https://azure.microsoft.com/en-us/products/iot-hub/)
-[![WebGPU](https://img.shields.io/badge/WebGPU-边缘AI-764ABC.svg?style=flat-square)](https://www.w3.org/TR/webgpu/)
-[![ADRs](https://img.shields.io/badge/ADRs-33%20项决策-green.svg?style=flat-square)]()
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
+OmniGuard 包含模拟 AGV 仪表盘、三级云端 Agent 流水线、Azure 基础设施模板和可追溯的 benchmark 结果。它是研究与工程验证项目，不是经过安全认证的实体机器人控制产品。
 
----
+[English](README.md) · [系统架构](ARCHITECTURE.md) · [文档入口](docs/README.md) · [证据索引](docs/evidence/README.md)
 
-**Project-OmniGuard** 是一个企业级云边协同安全决策平台。项目提出并验证了一个核心研究命题——**运动学-Token 定理**：在具身智能 AGV 机队实时控制场景中，纯云端大模型推理延迟必然造成物理安全死锁。平台通过 **零信任网络隔离**、**多智能体 AI 编排（含早期熔断短路）** 和 **WebGPU 边缘推理** 三层防线，证明并解决了这一安全问题。
+## 仓库包含什么
 
-> **研究贡献：** 形式化证明云端大模型响应时间 ($T_{cloud} = T_{network} + T_{prompt} + T_{generation}$) 超出 AGV 运营速度下的运动学制动距离，必须引入混合边缘-云端认知管线。
+| 区域 | 作用 | 定位 |
+|---|---|---|
+| AGV Dashboard | 模拟纯云端、云+边缘、长 Token 控制回路 | 核心演示 |
+| Embodied Brain | Router → Safety → Compiler，支持提前退出 | 核心研究实现 |
+| Azure IaC | Bicep 模板和部署脚本 | 工程参考 |
+| Benchmark Archive | 保存历史跑次、诊断跑次及局限 | 实验证据 |
+| Prediction、Interpreter、OmniDocs | 共用仓库的独立产品实验 | Labs，不作为 OmniGuard 核心结论 |
 
----
+本仓库明确区分已实现行为、模拟参数、实测结果和未来方案。引用数字前请先阅读[证据规则](docs/evidence/README.md)。
 
-## 🌟 九大核心技术亮点
-
-### 1. 零信任网络安全纵深
-
-| 层级 | 实现方式 | 工程证据 |
-|:-----|:---------|:---------|
-| **API 网关防线** | Next.js App Router 捕获性路由代理后端请求，消除 CORS 并混淆私有路径 | BFF 模式 |
-| **后端物理隐身** | FastAPI 容器设为 VNet 内网独占 (`external: false`)，对公网完全不可见 | `compute-module.bicep` |
-| **私网端点合拢** | Cosmos DB、Key Vault、Azure Storage、Azure OpenAI 共 4 个独立 Private Endpoint，切断公网 | `nested-infra.bicep` |
-| **托管身份（无密码）** | User-Assigned Managed Identity + Key Vault RBAC + Cosmos DB 角色分配 | 零硬编码凭据 |
-| **NSG 双向微分段** | Deny Internet Inbound + Allow Backend Only to Storage Subnet | `network-rules.json` |
-| **Hub-Spoke 网络拓扑** | 订阅级 Bicep 部署，计算/存储/IoT 子网物理隔离 | 三层模块化 IaC |
-
-### 2. 多智能体 AI 编排引擎（三级流水线 + 早期熔断）
-
-```
-IoT 遥测数据
-    │
-    ▼
-┌─────────────────────────────────────────────────────────┐
-│ 物理短路层                                               │
-│   HP ≤ 0 → offline_lock         (跳过全部 Agent)        │
-│   Battery < 5% → emergency_halt (跳过全部 Agent)        │
-└─────────────┬───────────────────────────────────────────┘
-              ▼
-    ┌─────────────────┐
-    │ Agent 1: 路由器   │ ─── 意图分类 (≤20 tokens)
-    └────────┬────────┘
-             │ SENSOR_ERROR? → 立即 STOP
-             ▼
-    ┌─────────────────┐
-    │ Agent 2: 安全防火墙│ ─── 合规审计 (≤50 tokens)
-    └────────┬────────┘
-             │ BLOCK? → 安全覆盖
-             ▼
-    ┌─────────────────┐
-    │ Agent 3: 动作编译器│ ─── 生成 JSON 动作序列 (≤100 tokens)
-    └────────┬────────┘
-             ▼
-    C2D 消息 → 设备电机
-```
-
-- **多租户场景注册表**：按租户自定义 Agent 提示词、安全规则和动作 Schema
-- **数字孪生持久化**：每次遥测事件高频 Upsert 到 Cosmos DB（按 `tenant_id` 分区）
-- **逐 Agent 延迟追踪**：`agent_1_latency_ms`、`agent_2_latency_ms`、`agent_3_latency_ms` + Cosmos R/W 延迟
-
-### 3. IoT 全双工数据管线
-
-- **上行链路**：IoT Hub → Event Hub 兼容端点 → Functions EventHubTrigger → Agent 流水线
-- **下行链路**：Agent 流水线 → HMAC-SHA256 SAS Token 手签 → C2D 消息 → 设备电机
-- **设备模拟器**：Python 边缘设备 Mock（`edge-simulator/`），支持本地全链路联调
-
-### 4. 运动学-Token 定理（研究贡献）
-
-Fleet Dashboard 四模态交互式验证：
-
-| 仪表盘路由 | 验证目标 | 后端依赖 |
-|:-----------|:---------|:---------|
-| `/dashboard/theorem` | 单 AGV 运动学定理沙盒 | 无（纯前端物理引擎） |
-| `/dashboard/compare` | 云端 vs 边缘并排对照 | 无 |
-| `/dashboard` | 三 AGV 机队仿真（纯云 / 云+边缘 / Token 分解） | 无 |
-| `/dashboard/live` | 接入真实 Azure OpenAI 延迟的生产验证 | Azure Functions + Cosmos DB |
-
-### 5. 混合边缘-云端认知管线（WebGPU）
-
-| 管线 | 技术栈 | 服务端算力成本 | 场景 |
-|:-----|:-------|:-------------|:-----|
-| **边缘管线 A** | WebGPU + Qwen2.5-0.5B + Xenova/MiniLM-L6-v2 | **$0.00** | 高频寒暄、本地 RAG |
-| **云端管线 B** | Azure OpenAI（SSE 流式）经 VNet 内网 FastAPI | 按 Token 计费 | 超出本地知识边界的复杂查询 |
-
-语义路由器通过 **余弦相似度**（阈值 ≥ 0.72）判断查询是否可本地解算，不达标则无缝滑向新加坡云端。
-
-### 6. IaC 可视化配置器与场景编译器
-
-- 可视化配置 VNet CIDR、SKU 定价、托管身份、部署区域
-- 从场景预设（`sandbox` / `secure-iot`）动态组装 Bicep 模板
-- 交互式 Bicep 拓扑依赖图，支持模块级下钻导航
-- 导出可下载的 IaC 部署包（`.zip`）
-- Bicep 预检编译 + Azure 云端预飞行校验（`az deployment sub validate`）
-- 自动备份轮转（最多 5 份，场景感知命名）
-
-### 7. 影子环境 E2E 测试套件
-
-自愈式端到端测试，验证**整个零信任基础设施**：
-
-1. **部署**：在影子资源组拉起完整基础设施（前缀 `omnitest`）
-2. **审计**：校验 Private DNS A 记录指向正确子网 IP (`10.1.2.x`)、ACA 容器健康状态
-3. **自愈**：自动销毁影子资源组 + 清理临时参数文件
-4. **中断安全**：Ctrl+C 信号处理，确保资源不泄露
-
-### 8. KOL 投研预测与供应链情报
-
-- Twitter/X 大 V 推文翻页采集 + AI 批量双语翻译
-- 供应链瓶颈分析、信念观察清单、价值链映射
-- 可配置时间窗口的热点话题、行业分布与推文时间线可视化
-
-### 9. 数字人 AI 助手
-
-- **路由感知系统提示**：根据用户当前页面动态切换大模型人格
-- **SAS 认证私有资产**：60 秒过期的短时令牌签发
-- **SSE 流式响应**：`X-Accel-Buffering: no` 零延迟推送
-
----
-
-## 📁 仓库源码结构
+## 系统流程
 
 ```text
-├── .azure/                         # 基础设施即代码 (IaC)
-│   ├── main.bicep                  # 订阅级部署指挥官
-│   ├── nested-infra.bicep          # VNet + Private Link + NSG + Key Vault + 托管身份
-│   ├── compute-module.bicep        # 前后端容器与日志分析
-│   └── templates/                  # 场景预设 Bicep 模板库
-├── scripts/                        # 自动化运维工具箱 (10 个脚本)
-├── src/
-│   ├── client-edge/                # Next.js 14 前端 (App Router)
-│   │   └── src/app/
-│   │       ├── dashboard/          # 机队仿真与遥测仪表盘 (4 模态)
-│   │       ├── prediction/         # KOL 供应链情报控制台
-│   │       ├── iac/                # IaC 拓扑查看器与配置台
-│   │       └── api/[...path]/      # 捕获性 API 网关代理 (BFF)
-│   └── cloud-orchestrator/         # FastAPI 后端 (Azure Functions ASGI)
-│       ├── embodied_brain/         # 多智能体编排引擎
-│       ├── digitalhuman/           # 上下文感知流式路由器
-│       ├── kol_analysis/           # KOL 投研分析 API
-│       └── edge-simulator/         # IoT 设备 Mock
-├── tests/                          # 影子环境 E2E 测试 (287 行，自愈)
-├── docs/                           # Diátaxis 规范文档库
-│   └── adrs/                       # 33 份架构决策记录
-└── Makefile                        # 统一命令总线 (12 个目标)
+遥测数据 / 固定种子场景
+          |
+          v
+      物理预检查
+          |
+          v
+   Router Agent ------ 传感器异常 ------> stop
+          |
+          v
+   Safety Agent ------ 策略阻断 --------> safety override
+          |
+          v
+ Action Compiler -----------------------> 结构化动作
 ```
 
----
+浏览器 Dashboard 是仿真；Python benchmark 会调用当前配置的 LLM provider；Azure 资源通过 IaC 描述，但代码仓库本身不能证明某套云环境此刻正在运行。
 
-## 🛠️ 快速上手
+## 当前 benchmark 证据
+
+| 跑次 | 场景数 | Router 准确率 | Critical 召回 | 提前退出率 | 端到端时延 |
+|---|---:|---:|---:|---:|---|
+| 2026-07-16 历史论文跑次 | 200 | 172 条可解析输出中 94.19% | 现有摘要无法恢复 | 39.5% | 均值 6.174 秒 |
+| 2026-08-18 诊断跑次 | 60 | 52 条可解析输出中 90.38% | 9/14，64.29% | 41.67% | 中位数 7.67 秒；均值 16.72 秒；最大 73.88 秒 |
+
+两个跑次不能混用。60 条诊断跑次暴露了长尾时延和 5 个 critical 漏判，不能描述成已经完成的 200 场景 benchmark。详细来源和指标定义见 [benchmark results guide](src/cloud-orchestrator/embodied_brain/benchmark_results/README.md)。
+
+## 目录结构
+
+```text
+.azure/                         Azure Bicep 模块和部署参数
+scripts/                        部署、校验与本地启动脚本
+src/client-edge/                Next.js 前端和浏览器实验
+src/cloud-orchestrator/         FastAPI/Azure Functions 后端与 Agent 流水线
+src/cloud-orchestrator/
+  embodied_brain/               AGV Agent、场景协议与 benchmark 证据
+packages/                       OmniDocs/Interpreter 实验包
+standalone/                     独立演示
+tests/                          单元、契约、benchmark 与影子环境测试
+docs/                           当前文档与历史归档
+```
+
+## 本地运行
+
+前置条件：Python 3.10+、Node.js 20+；使用 Functions Host 时还需要 Azure Functions Core Tools。
+
+在两个终端分别运行：
 
 ```bash
-# 终端 1：启动后端 (Azure Functions, 端口 7071)
 make start-backend
-
-# 终端 2：启动前端 (Next.js, 端口 3000)
 make start-frontend
 ```
 
-### 部署指令
+常用检查：
 
 ```bash
-make whatif         # 预检基础设施变更 (干跑)
-make provision      # 幂等部署 Azure 基础设施
-make deploy-aca     # 零缓存编译 → ACR 推送 → ACA 滚动更新
-python tests/shadow-e2e-test.py  # 影子 E2E 测试 (部署→审计→自愈销毁)
+make test
+make docs-test
 ```
 
----
+Azure 操作见 [docs/operations.md](docs/operations.md)。执行部署或销毁前必须检查订阅和参数。
 
-## 📊 项目数据
+## 页面路由
 
-| 指标 | 数值 |
-|:-----|:-----|
-| 前端组件 | 30+ TSX 文件，约 3,500 行 |
-| 后端模块 | 10 文件，约 800 行 |
-| IaC 模板 | 3 Bicep 文件，约 560 行 |
-| 自动化脚本 | 10 脚本，约 1,200 行 |
-| E2E 测试 | 287 行（自愈式） |
-| 架构决策记录 | **33 份 ADR** |
-| 作者 Azure 认证 | 5 项 (AZ-305, AZ-104, AI-102, SC-300, AB-100) |
-| 估算总代码量 | **6,300+ 行** |
+| 路由 | 作用 | 数据来源 |
+|---|---|---|
+| `/dashboard` | 三 AGV 仿真 | 浏览器模拟 |
+| `/dashboard/theorem` | 单 AGV 时延/安全距离沙盒 | 浏览器模拟 |
+| `/dashboard/compare` | 云端与边缘并排比较 | 浏览器模拟 |
+| `/dashboard/live` | 后端可用时发起真实请求 | 取决于运行环境 |
+| `/iac`、`/iac/configurator` | IaC 拓扑和配置工具 | 仓库模板 |
+| `/prediction` | KOL/供应链实验 | Labs 数据管线 |
+| `/interpreter` | 内容解释实验 | Labs 包 |
 
----
+## 文档规则
 
-## 📚 延伸阅读
+- [docs/README.md](docs/README.md) 是唯一文档入口。
+- [ARCHITECTURE.md](ARCHITECTURE.md) 只描述当前系统和边界。
+- [docs/evidence/README.md](docs/evidence/README.md) 管理实测、模拟、配置和计划类结论。
+- [docs/adrs/INDEX.md](docs/adrs/INDEX.md) 记录架构决策。
+- `docs/archive/` 保存旧计划、审查、面试稿和 prompt；归档文件不是当前规范。
 
-- 📐 [系统架构设计蓝图](docs/reference/) — 机队路由与云端验证设计图纸
-- 📖 [Fleet Dashboard 完整参考](docs/dashboard/00-overview.md) — 626 行详细参考文档
-- 🎤 [仪表盘演示脚本](docs/dashboard/presentation-script.md) — 现场演示引导词
-- 🗺️ [项目企业级演进路线图](docs/PROJECT_EVOLUTION_ROADMAP_20260706.md) — 深度审计与演进规划
-- 📋 [ADR 索引](docs/adrs/INDEX.md) — 全部 33 份架构决策记录
+## 已知限制
 
----
+- AGV 为模拟对象，没有控制实体机器人。
+- LLM 结果受 provider、模型、区域和运行条件影响。
+- 历史 200 跑次没有保存现代安全分析所需的全部指标。
+- 60 跑次没有可靠记录模型名称。
+- WebGPU 和刹车时延演示不构成安全认证证据。
 
-## 📜 License
+## License
 
-[MIT License](LICENSE) — 刘圣伟
+[MIT](LICENSE)

@@ -119,17 +119,17 @@ test_refs: []
 * 👉 `src/client-edge/src/app/iac/configurator/page.tsx`
 
 ### 3.2 实现细节
-1. **[GlobalParamsPanel.tsx](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/client-edge/src/app/iac/configurator/components/GlobalParamsPanel.tsx) 改造**:
+1. **[GlobalParamsPanel.tsx](../../../src/client-edge/src/app/iac/configurator/components/GlobalParamsPanel.tsx) 改造**:
    * 在 Props 中增加 `costCenter`、`setCostCenter`、`finOpsOwner`、`setFinOpsOwner`。
    * 在 **01. 基础标识 (Basics)** 标签页中增加两个输入框：
      * 成本中心 (Cost Center)：默认值 `'IT-Dept'`
      * 负责人 (FinOps Owner)：默认值 `'Shengwei'`
      * 高度限制为 `h-11 px-3.5`，符合像素一致性对齐。
-2. **[page.tsx](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/client-edge/src/app/iac/configurator/page.tsx) 状态同步与持久化**:
+2. **[page.tsx](../../../src/client-edge/src/app/iac/configurator/page.tsx) 状态同步与持久化**:
    * 声明 `costCenter` 和 `finOpsOwner` 的 React State。
    * 在 `generateParametersObj` 以及 `handleSaveConfig` (包括 `uiState` 存盘) 中序列化这两个标签参数，保证点击保存时会写入 `main.parameters.json` 的 `costCenter` 与 `finOpsOwner`。
    * 在 mount 挂载时的 `useEffect` 回填逻辑中读取并填充这两个值。
-3. **[CostCalculatorPanel.tsx](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/src/client-edge/src/app/iac/configurator/components/CostCalculatorPanel.tsx) 新增下载入口**:
+3. **[CostCalculatorPanel.tsx](../../../src/client-edge/src/app/iac/configurator/components/CostCalculatorPanel.tsx) 新增下载入口**:
    * 增加 `onDownloadPackage: () => void` Props。
    * 在【云端预检】与【保存并组装】按钮正下方，新增一个跨行宽按钮：
      * **文案**：`📦 导出 IaC 压缩包`

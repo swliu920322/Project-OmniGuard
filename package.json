@@ -2,7 +2,7 @@
   "name": "omnidocs",
   "version": "1.0.0",
   "private": true,
-  "description": "OmniDocs — AI-native documentation system. Data contract as core. Monorepo for schema / indexer / ui / elements / portal.",
+  "description": "Documentation tooling workspace embedded in Project OmniGuard; not the identity of the overall repository.",
   "workspaces": [
     "packages/*"
   ],

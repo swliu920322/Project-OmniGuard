@@ -62,7 +62,7 @@ Additionally, the backend Python modules use three different sets of environment
 Set `ingress.allowInsecure: true` on the backend ACA to disable the HTTP→HTTPS redirect for internal traffic. Persisted in all three Bicep templates (`.azure/compute-module.bicep`, sandbox, secure-iot).
 
 ### 2. Local-First Env-Var Injection via deploy-aca.sh
-Modify `sh/deploy-aca.sh` to read `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and deployment name from `local.settings.json` and inject them as ACA environment variables on every deployment. This bypasses the Key Vault reference that was automatically inserted by `deployManagedIdentities: true` with an empty/expired secret.
+Modify `scripts/deploy-aca.sh` to read `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and deployment name from `local.settings.json` and inject them as ACA environment variables on every deployment. This bypasses the Key Vault reference that was automatically inserted by `deployManagedIdentities: true` with an empty/expired secret.
 
 The script injects both `OPENAI_*` and `AZURE_OPENAI_*` variants to satisfy all three Python modules. If the local file is absent, the existing ACA env vars (including the Key Vault reference) are preserved unchanged.
 

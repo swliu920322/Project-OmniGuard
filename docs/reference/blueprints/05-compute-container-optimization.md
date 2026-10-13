@@ -173,7 +173,7 @@ resource backendApp 'Microsoft.App/containerApps@2023-05-01' = {
 CI/CD 部署脚本示例:
 
 ```bash
-# sh/deploy-aca.sh 增强
+# scripts/deploy-aca.sh 增强
 # 1. 构建新版本镜像
 docker build -t "$ACR_NAME.azurecr.io/omni-backend:${BUILD_ID}" ./src/cloud-orchestrator
 docker push "$ACR_NAME.azurecr.io/omni-backend:${BUILD_ID}"

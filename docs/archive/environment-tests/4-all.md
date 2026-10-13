@@ -167,7 +167,7 @@ omni5-mem-npihnwvfyr7zk-southeastasia  10.1.2.7
 
 | **高级功能项** | **UI 配置台状态** | **Bicep 物理模板状态** | **技术说明与去向** |
 | --- | --- | --- | --- |
-| **API 网关 (APIM)** | 允许调整 SKU 档位 | ❌ 物理模板暂无 | 在 React UI 中用于 FinOps 成本估算，物理集成设计已归档在 [02-api-management-gateway.md](file:///Users/liushengwei/project/PythonProject/Project-OmniGuard/docs/reference/blueprints/02-api-management-gateway.md) 中，计划于后续 Sprint 引入。 |
+| **API 网关 (APIM)** | 允许调整 SKU 档位 | ❌ 物理模板暂无 | 在 React UI 中用于 FinOps 成本估算，物理集成设计已归档在 [02-api-management-gateway.md](../blueprints/02-api-management-gateway.md) 中，计划于后续 Sprint 引入。 |
 | **边缘网关 (Front Door WAF)** | 允许勾选/配置 | ❌ 物理模板暂无 | 全球 CDN 边缘转发目前以 SWA (Static Web App) 作为轻量化平替。Front Door Premium 模板处于 Backlog 中。 |
 | **分布式缓存 (Redis)** | 允许调整大小 | ❌ 物理模板暂无 | 缓存层暂由内存级缓存平替，物理组件未加入 `secure-iot` 模板。 |
 | **搜索引擎 (AI Search)** | 允许配置开关 | ❌ 物理模板暂无 | 高级向量搜索组件目前以 Cosmos DB 内置索引平替，物理组件未加入模板。 |

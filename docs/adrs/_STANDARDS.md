@@ -1,9 +1,9 @@
 ---
 id: "DOC-ADRS-_STANDARDS-MD-61"
 title: "ADR Standards"
-summary: "ADR Standards — specification reference auto-profiled into the OmniDocs multi-perspective index. (adrs/_STANDARDS.md)"
-version: "1.0.0"
-updated_at: "2026-08-15"
+summary: "Rules for architecture decisions and the current documentation lifecycle."
+version: "2.0.0"
+updated_at: "2026-10-14"
 authors: ["Shengwei Liu"]
 domains:
   - multi-agent
@@ -12,7 +12,7 @@ perspectives:
 layers:
   - cross-cutting
 doc_type: specification
-status: draft
+status: accepted
 code_refs: []
 test_refs: []
 ---
@@ -39,12 +39,12 @@ test_refs: []
 | 文档类型 | 应放入 |
 |---|---|
 | 操作步骤、部署指南 | `docs/tutorials/` |
-| 阶段规划、路线图 | `docs/plan/` |
-| 竞品分析、技术调研 | `docs/plan/` (标记为 research) |
-| 代码重构设计思路 | `docs/plan/` |
-| 审计报告、第三方评估 | `docs/audits/` |
-| 概念解释、公式推导 | `docs/archive/` (路由失效后) |
-| NLP / Engineering 成长日志 | `docs/logs/` |
+| 正在执行且有明确负责人的短期计划 | Issue / project tracker；完成后记录必要 ADR |
+| 历史路线图、竞品分析、技术调研 | `docs/archive/plans/` |
+| 已结束的代码重构设计思路 | `docs/archive/plans/` |
+| 点时审计报告、第三方评估 | `docs/archive/audits/` |
+| 已失效的概念解释、公式推导 | `docs/archive/` |
+| 演讲稿、面试稿、成长日志 | `docs/archive/` 对应子目录 |
 
 ---
 

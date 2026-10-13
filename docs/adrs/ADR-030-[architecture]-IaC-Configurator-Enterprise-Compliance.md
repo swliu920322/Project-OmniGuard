@@ -56,7 +56,7 @@ The scenario-configurator dashboard allows users to configure Azure infrastructu
 - 前缀必须符合 `^[a-z0-9]{2,8}$` 规范
 - Dry-run mode (`action: 'preflight'`) bypasses file write, returns compilation result only
 - Dry-Run 模式跳过文件写入，仅返回编译结果
-- Cloud preflight via `sh/preflight-validate.py` executes `az deployment sub validate` with error classification
+- Cloud preflight via `scripts/preflight-validate.py` executes `az deployment sub validate` with error classification
 - 云端预检脚本执行 `az deployment sub validate` 并分类错误类型
 
 ### 2. Enterprise Tag Governance (Blueprint 19)
