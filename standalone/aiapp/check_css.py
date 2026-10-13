@@ -1,7 +1,7 @@
 import re
 
 html = open('index.html').read()
-src = open('../packages/interpreter/src/render.tsx').read() + open('src/demo.tsx').read()
+src = open('../../packages/interpreter/src/render.tsx').read() + open('src/demo.tsx').read()
 classes = set()
 for m in re.finditer(r'className="([^"]*)"|className=\{`([^`]*)`\}', src):
     c = m.group(1) or m.group(2)

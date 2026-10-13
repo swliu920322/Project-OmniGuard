@@ -893,10 +893,14 @@ export function isSafe(speedMps, clearanceM, detectionLatencyS, brakeLatencyS): 
 
 ### 11.2 Benchmark 评估系统
 
+> 数据口径以 [`benchmark_results/README.md`](src/cloud-orchestrator/embodied_brain/benchmark_results/README.md)
+> 为唯一入口。下列 6.174 秒、39.5% 和 4,613 ms 均属于
+> `2026-07-16-thesis-200` 历史 v2 跑次，不代表后续 60 条诊断跑次或尚未执行的 v3 协议。
+
 | 项目 | 内容 |
 |------|------|
 | **文件** | `src/cloud-orchestrator/embodied_brain/benchmark.py` |
-| **场景数** | 200 个确定性场景（随机种子 42，temperature=0.0） |
+| **场景数** | 当前 v3 协议固定 200 个分层场景（随机种子 42，temperature=0.0） |
 | **分类** | NORMAL_NAV (50%) / CRITICAL_OBSTACLE (25%) / SENSOR_ERROR (25%) |
 | **指标** | 完整混淆矩阵、Bootstrap 95% 置信区间、延迟统计、熔断节省计算 |
 | **消融实验** | `benchmark_baseline.py`: 单体 Agent 无流水线；`benchmark_no_safety.py`: 无安全防火墙 |
@@ -909,9 +913,9 @@ export function isSafe(speedMps, clearanceM, detectionLatencyS, brakeLatencyS): 
 | **No Safety** | Router → Compiler | ~4s (少 1 Agent) | 中 (无合规审计) |
 | **Monolithic** | 单一大模型 | ~3s (1 次调用) | 低 (无意图分类) |
 
-**关键发现（实证）**：
+**历史 v2 跑次发现**：
 - Early Circuit-Breaking 在 39.5% 的事件中跳过了下游 Agent
-- 每次跳过一个 Agent 调用节省约 4,613 ms
+- 按 PASS 样本的阶段均值反事实估算，每次提前退出少等待约 4,613 ms；这不是直接观测到的节省时长
 - Router Agent 仅用 ≤20 tokens，Safety ≤50 tokens，Compiler ≤100 tokens
 
 ---

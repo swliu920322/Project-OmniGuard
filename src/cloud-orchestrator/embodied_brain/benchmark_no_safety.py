@@ -6,33 +6,20 @@ Same 200 scenarios as benchmark.py, temperature=0.
 Purpose: Isolate the Safety gate's contribution.
 """
 import sys, os, json, time, random, statistics
+from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 os.environ["LOCAL_MOCK_MODE"] = "false"
 
 from embodied_brain.utils import ask_agent
-
-SEED = 42
-NUM_SCENARIOS = 200
-
-SCENARIO_TEMPLATES = {
-    "normal": {
-        "obstacle_range": (200, 500), "velocity_range": (0.5, 2.0),
-        "battery_range": (20, 100), "hp_range": (50, 100),
-        "temperature_range": (25, 45), "weight": 0.5, "expected_label": "NORMAL_NAV",
-    },
-    "critical": {
-        "obstacle_range": (5, 50), "velocity_range": (0.5, 2.5),
-        "battery_range": (20, 100), "hp_range": (50, 100),
-        "temperature_range": (25, 45), "weight": 0.25, "expected_label": "CRITICAL_OBSTACLE",
-    },
-    "sensor_error": {
-        "obstacle_range": (50, 300), "velocity_range": (0.5, 2.0),
-        "battery_range": (0, 10), "hp_range": (0, 20),
-        "temperature_range": (60, 100), "weight": 0.25, "expected_label": "SENSOR_ERROR",
-    },
-}
+from embodied_brain.benchmark_scenarios import (
+    NUM_SCENARIOS,
+    SCENARIO_DEFINITION_VERSION,
+    SEED,
+    generate_scenarios,
+)
+from openai_config import get_llm_config
 
 ROUTER_PROMPT = """You are an intent classifier for an AGV fleet. Classify the telemetry into exactly one label:
 - CRITICAL_OBSTACLE: obstacle is dangerously close, immediate action required
@@ -50,24 +37,6 @@ EXECUTION_SCHEMA = json.dumps([
     {"action": "stop", "reason": "obstacle_detected"},
     {"action": "reroute", "reason": "path_blocked"},
 ])
-
-
-def generate_scenarios(num: int) -> list[dict]:
-    scenarios = []
-    types = list(SCENARIO_TEMPLATES.keys())
-    weights = [SCENARIO_TEMPLATES[t]["weight"] for t in types]
-    for i in range(num):
-        stype = random.choices(types, weights=weights, k=1)[0]
-        tpl = SCENARIO_TEMPLATES[stype]
-        scenarios.append({
-            "id": i, "type": stype, "expected_label": tpl["expected_label"],
-            "obstacle": random.randint(*tpl["obstacle_range"]),
-            "velocity": round(random.uniform(*tpl["velocity_range"]), 2),
-            "battery": round(random.uniform(*tpl["battery_range"]), 1),
-            "hp": random.randint(*tpl["hp_range"]),
-            "temperature": round(random.uniform(*tpl["temperature_range"]), 1),
-        })
-    return scenarios
 
 
 def run_pipeline(scenario: dict) -> dict:
@@ -238,9 +207,21 @@ def main():
     # False positive = normal scenario that was HALTed or SKIPped
     fp = sum(1 for r in results if r["gate_decision"] in ("HALT", "SKIP") and r["expected_label"] == "NORMAL_NAV")
 
+    llm_config = get_llm_config("BRAIN")
+    run_id = os.environ.get("BENCHMARK_RUN_ID") or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     metrics = {
-        "metadata": {"seed": SEED, "num_scenarios": total, "model": "DeepSeek V4 Flash",
-                      "ablation": "no_safety_gate"},
+        "metadata": {
+            "run_id": run_id,
+            "seed": SEED,
+            "scenario_definition_version": SCENARIO_DEFINITION_VERSION,
+            "planned_scenarios": NUM_SCENARIOS,
+            "completed_scenarios": total,
+            "run_status": "complete" if total == NUM_SCENARIOS else "incomplete",
+            "temperature": 0.0,
+            "provider": llm_config.provider.value,
+            "model": llm_config.model_name,
+            "ablation": "no_safety_gate",
+        },
         "total_scenarios": total,
         "by_type": type_counts,
         "gate_counts": gates,
@@ -262,8 +243,8 @@ def main():
         "errors": {"false_positive_skips": fp},
     }
 
-    out_dir = Path(__file__).parent / "benchmark_results"
-    out_dir.mkdir(exist_ok=True)
+    out_dir = Path(__file__).parent / "benchmark_results" / "runs" / run_id
+    out_dir.mkdir(parents=True, exist_ok=True)
     with open(out_dir / "no_safety_results.json", "w") as f:
         json.dump({"metrics": metrics, "results": results}, f, indent=2)
 

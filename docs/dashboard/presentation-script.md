@@ -177,6 +177,8 @@ test_refs: []
 
 > "Third scenario: Verbose LLM. Network is fine — only 200ms. But the LLM generates 2500 tokens of output at 150 tokens per second. That's 16.7 seconds of computation.
 >
+> This 16.7-second value is an illustrative simulator preset, not the measured mean from an archived benchmark run.
+>
 > AGV-01 with 200ms cloud latency — fast, stops safely.
 > AGV-02 with 200ms cloud plus 20ms edge — also safe.
 >
@@ -417,6 +419,8 @@ test_refs: []
 
 > "第三个场景：啰嗦的 LLM。网络很好——只有 200ms。但 LLM 生成了 2500 个 token 的输出，每秒 150 token。这就是 16.7 秒的计算时间。
 >
+> 这里的 16.7 秒是仿真参数计算值，不是某次归档 benchmark 的实测均值。
+>
 > AGV-01 200ms 云延迟——快，安全停下。
 > AGV-02 200ms 云 + 20ms 边缘——也安全。
 >
@@ -499,6 +503,8 @@ test_refs: []
 > 3. **边缘回退不是可选项。** 当云延迟飙升或 LLM 耗时过长时，它是保证安全的唯一方式。
 >
 > 谢谢。欢迎提问。"
+>
+> 📘 **答辩提问与技术深挖手册**：详细论述与 7 大核心高频反问请参考 [agv-interview-defense-guide.md](./agv-interview-defense-guide.md)。
 
 ---
 

@@ -123,7 +123,7 @@ Scenario presets set initial drawer values via `tc.llm`, but user slider adjustm
 
 A note in the drawer reads: *"These sliders control AGV-03's cloud latency in real-time. Scenario presets set initial values; adjust here to find the crash boundary."*
 
-Real-world calibration (2026 benchmarks):
+Illustrative simulation presets (not measured benchmark results):
 
 | Preset | networkRttMs | prompt | completion | tok/s | Result | Equivalent model |
 |---|---|---|---|---|---|---|
@@ -131,7 +131,7 @@ Real-world calibration (2026 benchmarks):
 | Verbose | 100ms | 500 | 2000 | 150 | **16767ms** | ~GPT-4o, long output |
 | Drawer default | 80ms | 250 | 300 | 200 | **2830ms** | Mid-range model |
 
-Reference data:
+Model-throughput assumptions used by the simulation:
 - GPT-4o output throughput: ~92 tok/s → blended rate ≈ 120–150 tok/s
 - GPT-4o-mini: ~115 tok/s → blended ≈ 180–220 tok/s
 - Groq Llama 3.1 8B: ~520 tok/s output → blended ≈ 300–500 tok/s (fast inference hardware)
@@ -435,7 +435,7 @@ cloudLatencyMs = networkRttMs + ((promptTokens + completionTokens) / tokenRateTo
 
 抽屉中显示提示："These sliders control AGV-03's cloud latency in real-time. Scenario presets set initial values; adjust here to find the crash boundary."
 
-基于 2026 年真实基准校准：
+用于演示的仿真假设（不是 benchmark 实测结果）：
 
 | 预设 | networkRttMs | prompt | completion | tok/s | 结果 | 对应真实模型 |
 |---|---|---|---|---|---|---|
@@ -443,7 +443,7 @@ cloudLatencyMs = networkRttMs + ((promptTokens + completionTokens) / tokenRateTo
 | Verbose | 100ms | 500 | 2000 | 150 | **16767ms** | ~GPT-4o 长输出 |
 | Drawer 默认 | 80ms | 250 | 300 | 200 | **2830ms** | 中端模型 |
 
-参考数据：
+仿真采用的模型吞吐假设：
 - GPT-4o 输出吞吐: ~92 tok/s → 综合率 ≈ 120–150 tok/s
 - GPT-4o-mini: ~115 tok/s → 综合率 ≈ 180–220 tok/s
 - Groq Llama 3.1 8B: ~520 tok/s 输出 → 综合率 ≈ 300–500 tok/s（超快推理硬件）

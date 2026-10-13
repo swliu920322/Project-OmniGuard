@@ -61,7 +61,7 @@ function Fraction({ num, den }: { num: ReactNode; den: ReactNode }) {
 }
 
 function FormulaInline({ value }: { value: string }) {
-  return <span className="font-mono whitespace-nowrap">{value}</span>;
+  return <span className="font-mono break-words whitespace-normal">{value}</span>;
 }
 
 function FormulaCard({ value, label, cls }: { value: string; label?: BilingualText; cls: SpecClasses }) {
@@ -70,7 +70,7 @@ function FormulaCard({ value, label, cls }: { value: string; label?: BilingualTe
       {label && (
         <p className="text-xs uppercase tracking-widest opacity-70 text-center mb-3">{label.en}</p>
       )}
-      <p className="text-center font-medium text-xl whitespace-nowrap">{value}</p>
+      <p className="text-center font-medium text-xl break-words whitespace-normal leading-snug">{value}</p>
     </div>
   );
 }
@@ -79,7 +79,7 @@ function FormulaFraction({ value, label, cls }: { value: string; label?: Bilingu
   return (
     <div className={`rounded-lg border p-6 text-center overflow-x-auto ${cls.accent}`}>
       {label && <p className="text-[10px] uppercase opacity-60 mb-3">{label.en}</p>}
-      <p className="font-mono text-base whitespace-nowrap">{value}</p>
+      <p className="font-mono text-base break-words whitespace-normal leading-snug">{value}</p>
     </div>
   );
 }

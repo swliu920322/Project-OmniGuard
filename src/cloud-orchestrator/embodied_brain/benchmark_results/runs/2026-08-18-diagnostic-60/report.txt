@@ -1,0 +1,44 @@
+==========================================================
+  3-Agent Pipeline Benchmark Report
+==========================================================
+  Seed:        42
+  Scenarios:   60
+  Temperature: 0.0
+  Model:       unknown
+
+  Type breakdown:
+    normal: 29
+    critical: 14
+    sensor_error: 17
+
+  Gate Counts:
+    PHYSICAL_HALT: 8
+    ROUTER_SKIP: 9
+    SAFETY_SKIP: 8
+    COMPILER_PASS: 35
+
+  Router Accuracy:
+    90.38% (47/52)
+    95% CI: [0.83%, 0.98%]
+
+  Confusion Matrix:
+                                        NORMAL_NAV     CRITICAL_OBSTACLE          SENSOR_ERROR
+                   NORMAL_NAV                   29                     0                     0
+            CRITICAL_OBSTACLE                    5                     9                     0
+                 SENSOR_ERROR                    0                     0                     9
+
+  Latency (PASS scenarios only):
+                  router: mean=  1298.4 median=  1215.8 stdev=   295.9 95%CI=[1204.2,1397.3] ms
+                  safety: mean=  1184.0 median=  1208.3 stdev=   218.9 95%CI=[1116.7,1259.2] ms
+                compiler: mean= 14238.1 median=  5175.5 stdev= 19071.0 95%CI=[8579.1,20848.9] ms
+          total_pipeline: mean= 16720.6 median=  7667.4 stdev= 19078.4 95%CI=[11046.5,23398.5] ms
+
+  Circuit Breaking:
+    Skip events:           25 (41.67%)
+    Avg saved per skip:    15458.7 ms
+    Total time saved:      386467.7 ms
+
+  Errors:
+    False positive skips:  0
+    False negative passes: 5
+==========================================================

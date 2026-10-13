@@ -24,6 +24,10 @@ export interface ConvictionStock {
   ticker: string;
   conviction_level: string;
   mention_count: number;
+  mention_days?: number;
+  conviction_score?: number;
+  horizon?: string;
+  trend?: string;
   investment_thesis: string;
 }
 
@@ -31,6 +35,9 @@ export interface BottleneckItem {
   category: string;
   status: string;
   affected_tickers: string | string[];
+  tightness?: number;
+  beneficiaries?: string[];
+  impacted?: string[];
 }
 
 export interface MappingNode {

@@ -1,13 +1,52 @@
 'use client';
 
-import React from 'react';
-import { Calendar, Database, Globe, Languages } from 'lucide-react';
+import React, { useState } from 'react';
+import { Calendar, Database, Globe, Languages, ChevronDown, ChevronUp } from 'lucide-react';
 import { DailyTweets } from './types';
 
 interface TweetTimelineProps {
   filteredTweets: DailyTweets[];
   selectedKolId: string;
   lastUpdated: string;
+}
+
+// 截取标准由前端自行定义：超过该长度才显示"查看更多"，展示时按 4 行截断。
+// 当前博主推文一般在 400 字符内，直接全文展示；更长时才需要展开按钮。
+const TRUNCATE_CHARS = 400;
+
+function TweetText({ text, tone }: { text: string; tone: 'en' | 'zh' }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = text.length > TRUNCATE_CHARS;
+  const showClamped = isLong && !expanded;
+
+  return (
+    <div>
+      <p
+        className={`text-sm leading-relaxed max-w-none break-words whitespace-pre-wrap font-sans ${
+          tone === 'en' ? 'text-slate-200' : 'text-emerald-300/90'
+        } ${showClamped ? 'line-clamp-4' : ''}`}
+      >
+        {text}
+      </p>
+      {isLong && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-1.5 inline-flex items-center gap-1 text-[10px] font-mono text-[#00f2fe] hover:text-white transition-colors"
+        >
+          {expanded ? (
+            <>
+              <ChevronUp size={12} /> 收起
+            </>
+          ) : (
+            <>
+              <ChevronDown size={12} /> 查看更多（全文）
+            </>
+          )}
+        </button>
+      )}
+    </div>
+  );
 }
 
 export const TweetTimeline: React.FC<TweetTimelineProps> = ({
@@ -28,7 +67,7 @@ export const TweetTimeline: React.FC<TweetTimelineProps> = ({
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2 text-xs font-mono text-slate-500 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
           <Database size={12} className="text-[#00f2fe]" /> 本地缓存文件: report_translated_{selectedKolId}.json
         </div>
@@ -56,16 +95,14 @@ export const TweetTimeline: React.FC<TweetTimelineProps> = ({
                     className="rounded-3xl border border-slate-800 bg-slate-900/10 hover:border-slate-700/60 p-6 shadow-md transition-all duration-300 group"
                   >
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      
+
                       {/* English Original */}
                       <div className="space-y-2 border-r border-slate-800/0 lg:border-r lg:border-slate-800/80 pr-0 lg:pr-6">
                         <div className="flex items-center gap-2 text-[10px] tracking-wider uppercase text-slate-500 font-mono font-bold">
                           <Globe size={12} className="text-[#00f2fe]" />
                           Original English Post
                         </div>
-                        <p className="text-sm text-slate-200 leading-relaxed max-w-none break-words whitespace-pre-wrap font-sans">
-                          {tweet.original}
-                        </p>
+                        <TweetText text={tweet.original} tone="en" />
                       </div>
 
                       {/* Chinese Translation */}
@@ -74,9 +111,7 @@ export const TweetTimeline: React.FC<TweetTimelineProps> = ({
                           <Languages size={12} className="text-emerald-400" />
                           Bilingual Translation (中文对照)
                         </div>
-                        <p className="text-sm text-emerald-300/90 leading-relaxed max-w-none break-words whitespace-pre-wrap font-sans">
-                          {tweet.translation}
-                        </p>
+                        <TweetText text={tweet.translation} tone="zh" />
                       </div>
 
                     </div>

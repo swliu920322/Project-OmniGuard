@@ -9,6 +9,14 @@ interface ChainAnalysisProps {
   valueChain: MappingNode[];
 }
 
+function getTightness(t?: number) {
+  const v = t ?? 0;
+  if (v >= 8) return { label: '严重紧缺', color: 'text-rose-400', border: 'border-rose-500/30', bar: 'bg-rose-500' };
+  if (v >= 6) return { label: '偏紧', color: 'text-amber-400', border: 'border-amber-500/30', bar: 'bg-amber-500' };
+  if (v >= 4) return { label: '均衡', color: 'text-emerald-400', border: 'border-emerald-500/30', bar: 'bg-emerald-500' };
+  return { label: '宽松/过剩', color: 'text-slate-400', border: 'border-slate-700', bar: 'bg-slate-600' };
+}
+
 export const ChainAnalysis: React.FC<ChainAnalysisProps> = ({ bottlenecks, valueChain }) => {
   const hasBottlenecks = bottlenecks && bottlenecks.length > 0;
   const hasValueChain = valueChain && valueChain.length > 0;
@@ -20,27 +28,53 @@ export const ChainAnalysis: React.FC<ChainAnalysisProps> = ({ bottlenecks, value
       {/* Supply Chain Bottlenecks */}
       {hasBottlenecks && (
         <div className="rounded-3xl border border-slate-800 bg-slate-900/40 p-6 md:p-8 space-y-6 shadow-md">
-          <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-            <ShieldAlert size={16} className="text-amber-500" />
-            供应链卡脖子/缺货跟踪 (Bottlenecks)
-          </h3>
+          <div className="space-y-1.5">
+            <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+              <ShieldAlert size={16} className="text-amber-500" />
+              供应链卡脖子/缺货跟踪 (Bottlenecks)
+            </h3>
+            <p className="text-[10px] font-mono text-slate-500">
+              紧缺度 0-10：≥8 严重紧缺 / 6-7 偏紧 / 4-5 均衡 / ≤3 宽松；受益=涨价传导方，受损=成本承压方
+            </p>
+          </div>
           <div className="space-y-4">
-            {bottlenecks.map((item, i) => (
-              <div key={i} className="rounded-2xl border border-amber-550/10 bg-amber-500/5 p-4 space-y-2 flex items-start gap-3">
-                <ShieldAlert className="shrink-0 mt-1 text-amber-500" size={16} />
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-amber-200">{item.category}</span>
-                    <span className="text-[9px] font-mono bg-amber-500/10 text-amber-400 px-1.5 py-0.2 rounded border border-amber-500/20">
-                      影响标的: {Array.isArray(item.affected_tickers) ? item.affected_tickers.join(', ') : item.affected_tickers}
+            {bottlenecks.map((item, i) => {
+              const t = getTightness(item.tightness);
+              const bens = item.beneficiaries ?? [];
+              const imps = item.impacted ?? [];
+              return (
+                <div key={i} className="rounded-2xl border border-amber-550/10 bg-amber-500/5 p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <ShieldAlert className="shrink-0 text-amber-500" size={16} />
+                      <span className="text-xs font-bold text-amber-200">{item.category}</span>
+                    </div>
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border font-bold ${t.color} ${t.border}`}>
+                      {item.tightness ?? 0}/10 · {t.label}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed mt-1">
+                  <div className="h-1 w-full rounded-full bg-slate-900 overflow-hidden border border-slate-800/60">
+                    <div className={`h-full rounded-full ${t.bar}`} style={{ width: `${(item.tightness ?? 0) * 10}%` }} />
+                  </div>
+                  <p className="text-xs text-slate-400 leading-relaxed">
                     {item.status}
                   </p>
+                  <div className="text-[9px] font-mono text-slate-500">
+                    影响标的: {Array.isArray(item.affected_tickers) ? item.affected_tickers.join(', ') : item.affected_tickers}
+                  </div>
+                  {(bens.length > 0 || imps.length > 0) && (
+                    <div className="flex flex-wrap gap-1.5 text-[9px] font-mono">
+                      {bens.map((b, bi) => (
+                        <span key={bi} className="px-1.5 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">受益 {b}</span>
+                      ))}
+                      {imps.map((b, bi) => (
+                        <span key={bi} className="px-1.5 py-0.5 rounded border border-rose-500/30 bg-rose-500/10 text-rose-400">受损 {b}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

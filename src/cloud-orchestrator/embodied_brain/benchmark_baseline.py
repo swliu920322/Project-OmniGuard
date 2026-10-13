@@ -6,64 +6,29 @@ that does all jobs at once (classify + safety + action).
 Purpose: Ablation comparison — measure latency & accuracy without circuit-breaking.
 """
 import sys, os, json, time, random, statistics
+from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 os.environ["LOCAL_MOCK_MODE"] = "false"
 
 from embodied_brain.utils import ask_agent
-
-SEED = 42
-NUM_SCENARIOS = 200
-
-SCENARIO_TEMPLATES = {
-    "normal": {
-        "obstacle_range": (200, 500), "velocity_range": (0.5, 2.0),
-        "battery_range": (20, 100), "hp_range": (50, 100),
-        "temperature_range": (25, 45), "weight": 0.5,
-        "expected_label": "NORMAL_NAV",
-    },
-    "critical": {
-        "obstacle_range": (5, 50), "velocity_range": (0.5, 2.5),
-        "battery_range": (20, 100), "hp_range": (50, 100),
-        "temperature_range": (25, 45), "weight": 0.25,
-        "expected_label": "CRITICAL_OBSTACLE",
-    },
-    "sensor_error": {
-        "obstacle_range": (50, 300), "velocity_range": (0.5, 2.0),
-        "battery_range": (0, 10), "hp_range": (0, 20),
-        "temperature_range": (60, 100), "weight": 0.25,
-        "expected_label": "SENSOR_ERROR",
-    },
-}
+from embodied_brain.benchmark_scenarios import (
+    NUM_SCENARIOS,
+    SCENARIO_DEFINITION_VERSION,
+    SEED,
+    generate_scenarios,
+)
+from openai_config import get_llm_config
 
 SINGLE_AGENT_PROMPT = """You are an AGV controller. Analyze the telemetry and output a JSON action.
 Rules:
-- If obstacle distance < 50cm: output {"action": "emergency_stop", "reason": "obstacle_too_close"}
-- If obstacle distance >= 50cm and < 200cm: output {"action": "slow_down", "reason": "obstacle_ahead"}
+- If obstacle distance < 30cm: output {"action": "emergency_stop", "reason": "obstacle_too_close"}
+- If obstacle distance >= 30cm and < 200cm: output {"action": "slow_down", "reason": "obstacle_ahead"}
 - If battery < 5% or HP <= 0: output {"action": "halt", "reason": "critical_sensor_error"}
 - Otherwise: output {"action": "continue", "reason": "normal_navigation"}
 
 Respond with ONLY the JSON object, nothing else."""
-
-
-def generate_scenarios(num: int) -> list[dict]:
-    random.seed(SEED)
-    scenarios = []
-    types = list(SCENARIO_TEMPLATES.keys())
-    weights = [SCENARIO_TEMPLATES[t]["weight"] for t in types]
-    for i in range(num):
-        stype = random.choices(types, weights=weights, k=1)[0]
-        tpl = SCENARIO_TEMPLATES[stype]
-        scenarios.append({
-            "id": i, "type": stype, "expected_label": tpl["expected_label"],
-            "obstacle": random.randint(*tpl["obstacle_range"]),
-            "velocity": round(random.uniform(*tpl["velocity_range"]), 2),
-            "battery": round(random.uniform(*tpl["battery_range"]), 1),
-            "hp": random.randint(*tpl["hp_range"]),
-            "temperature": round(random.uniform(*tpl["temperature_range"]), 1),
-        })
-    return scenarios
 
 
 def run_single_agent(scenario: dict) -> dict:
@@ -184,8 +149,20 @@ def main():
     obstacle_close = sum(1 for r in results if r["type"] == "critical")
     safety_rate = (obstacle_close - safety_failures) / obstacle_close * 100 if obstacle_close else 0
 
+    llm_config = get_llm_config("BRAIN")
+    run_id = os.environ.get("BENCHMARK_RUN_ID") or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     metrics = {
-        "metadata": {"seed": SEED, "num_scenarios": total, "model": "DeepSeek V4 Flash"},
+        "metadata": {
+            "run_id": run_id,
+            "seed": SEED,
+            "scenario_definition_version": SCENARIO_DEFINITION_VERSION,
+            "planned_scenarios": NUM_SCENARIOS,
+            "completed_scenarios": total,
+            "run_status": "complete" if total == NUM_SCENARIOS else "incomplete",
+            "temperature": 0.0,
+            "provider": llm_config.provider.value,
+            "model": llm_config.model_name,
+        },
         "total_scenarios": total,
         "by_type": type_counts,
         "latency_ms": {
@@ -211,8 +188,8 @@ def main():
         },
     }
 
-    out_dir = Path(__file__).parent / "benchmark_results"
-    out_dir.mkdir(exist_ok=True)
+    out_dir = Path(__file__).parent / "benchmark_results" / "runs" / run_id
+    out_dir.mkdir(parents=True, exist_ok=True)
     with open(out_dir / "baseline_results.json", "w") as f:
         json.dump({"metrics": metrics, "results": results}, f, indent=2)
 

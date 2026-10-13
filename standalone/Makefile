@@ -1,29 +1,47 @@
-# Content Interpreter — standalone 静态 demo 构建命令
+# =========================================================================
+# 🏗️ Project-OmniGuard — standalone 统一构建入口
 #
-#   make build   # 打包 React + interpreter → dist/（单 HTML + 单 JS，可手动部署）
-#   make serve   # 本地预览（http://localhost:8765）
-#   make check   # 构建 + Chrome headless 截图验证（可选依赖 Chrome）
-#   make clean   # 清空产物
+#   make build          # 构建全部模块
+#   make aiapp          # 只构建 aiapp（内容解释器）
+#   make prediction     # 只构建 prediction（大V预测）
+#   make research       # 触发推文采集与投研分析，并自动同步数据源
+#   make sync-data      # 仅从 daily_cache 同步最新数据到 prediction
+#   make serve          # 本地预览 aiapp（http://localhost:8765）
+#   make serve-prediction # 本地预览 prediction（http://localhost:8766）
+#   make clean          # 清空全部模块产物
 #
-# 部署方式：dist/index.html + dist/demo.js 拷贝到你的 GitHub Pages 仓库即可，
-# 两个文件保持同目录即可运行（demo.js 用相对路径 ./demo.js 引用）。
+# 每个模块目录内保留自己的 build.sh（模块专属打包逻辑），Makefile 统一在此调度。
+# 前端架构已解耦：前端页面在运行时动态 fetch kol/*.json。
+# 数据更新：运行 make research 即可自动采集并同步数据源，无需重新构建前端。
+# =========================================================================
+.PHONY: build aiapp prediction research sync-data serve serve-aiapp serve-prediction clean
 
-.PHONY: build serve check clean
+MODULES = aiapp prediction
 
-build:
-	./build.sh
+build: $(MODULES)
 
-serve:
-	cd dist && python3 -m http.server 8765
+aiapp:
+	cd aiapp && ./build.sh
 
-check: build
-	python3 -m http.server 8765 > /dev/null 2>&1 & \
-	  sleep 2; \
-	  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
-	    --headless --disable-gpu --screenshot=preview.png --window-size=1200,900 \
-	    --virtual-time-budget=3000 http://localhost:8765/index.html 2>/dev/null; \
-	  pkill -f "http.server 8765" || true; \
-	  echo "已生成 preview.png，请人工确认渲染正确。"
+prediction:
+	cd prediction && ./build.sh
+
+research:
+	@$(MAKE) -C .. research
+
+sync-data:
+	@mkdir -p prediction/kol
+	@cp ../src/cloud-orchestrator/daily_cache/report_translated_*.json prediction/kol/ 2>/dev/null || true
+	@if [ -d "prediction/dist/kol" ]; then cp prediction/kol/*.json prediction/dist/kol/ 2>/dev/null || true; fi
+	@echo "✅ [CLI] KOL 数据源已成功同步至 standalone/prediction"
+
+serve-aiapp:
+	cd aiapp/dist && python3 -m http.server 8765
+
+serve-prediction:
+	cd prediction/dist && python3 -m http.server 8766
+
+serve: serve-aiapp
 
 clean:
-	rm -rf dist
+	rm -rf aiapp/dist prediction/dist

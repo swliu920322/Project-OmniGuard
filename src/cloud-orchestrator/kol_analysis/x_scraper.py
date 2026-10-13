@@ -2,6 +2,48 @@ import requests
 import json
 from . import config
 
+def _extract_full_text(result):
+    """
+    从 GraphQL tweet result 中提取最完整的正文。
+
+    X 对长推文（note_tweet，最多 25k 字）会把 legacy.full_text 截断成带 "…" 的预览，
+    完整正文在 note_tweet.note_tweet_results.result.text。
+    TweetWithVisibilityResults 包装下内容在 result.tweet 里。
+    """
+    if not result:
+        return None
+
+    def _text(r):
+        if not r:
+            return None
+        note = (r.get("note_tweet") or {}).get("note_tweet_results", {}).get("result") or {}
+        if note.get("text"):
+            return note["text"]
+        wrapped = r.get("tweet")
+        if wrapped:
+            inner = (wrapped.get("note_tweet") or {}).get("note_tweet_results", {}).get("result") or {}
+            if inner.get("text"):
+                return inner["text"]
+            if wrapped.get("legacy", {}).get("full_text"):
+                return wrapped["legacy"]["full_text"]
+        legacy = r.get("legacy") or {}
+        if legacy.get("full_text"):
+            return legacy["full_text"]
+        return None
+
+    return _text(result)
+
+def _extract_legacy(result):
+    """定位 result 中最顶层的 legacy 元数据（created_at 等时间戳）。"""
+    if not result:
+        return {}
+    if result.get("legacy"):
+        return result["legacy"]
+    wrapped = result.get("tweet")
+    if wrapped and wrapped.get("legacy"):
+        return wrapped["legacy"]
+    return {}
+
 def fetch_user_tweets(user_id, count=20, cursor=None):
     """
     根据用户 ID 查询具体的推文内容
@@ -10,7 +52,7 @@ def fetch_user_tweets(user_id, count=20, cursor=None):
     :param cursor: 分页游标 (可选)
     :return: 接口返回的 JSON 数据或 None
     """
-    url = f'https://api.x.com/graphql/{config.QUERY_ID}/UserTweets'
+    url = f'https://api.x.com/graphql/{config.QUERY_ID}/UserOriginalsTimeline'
 
     # 1. 动态构建变量，把传入的 user_id 和 count 塞进去
     variables = {

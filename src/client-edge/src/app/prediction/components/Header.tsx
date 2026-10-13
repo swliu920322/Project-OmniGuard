@@ -45,6 +45,9 @@ export const Header: React.FC<HeaderProps> = ({
           <p className="text-sm text-slate-400 mt-2 max-w-3xl leading-relaxed">
             本模块整合了对大 V 推特时序数据的深度投研提炼。包含核心标的仓位信心、硬核产业链卡脖子分析及上中下游流动图谱，下方配有双语对照原文供您自主对账。
           </p>
+          <p className="text-[10px] text-slate-500 mt-1.5 font-mono">
+            风险提示：本页内容仅为公开信息整理展示，不构成任何投资建议；股市有风险，入市需谨慎。
+          </p>
         </div>
         
         <div className="flex flex-wrap items-center gap-4">
@@ -79,8 +82,6 @@ export const Header: React.FC<HeaderProps> = ({
                 <option value="7">近一周 (7天)</option>
                 <option value="30">近一个月 (30天)</option>
                 <option value="90">近三个月 (90天)</option>
-                <option value="180">近半年 (180天)</option>
-                <option value="365">近一年 (365天)</option>
               </select>
               <ChevronDown size={14} className="absolute right-3.5 top-2.5 text-slate-500 pointer-events-none" />
             </div>

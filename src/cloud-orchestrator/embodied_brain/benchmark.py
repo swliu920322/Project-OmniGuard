@@ -27,47 +27,25 @@ Methodology (for top-venue peer review):
 Usage:
   python benchmark.py
 """
-import sys, os, json, time, random, statistics
+import sys, os, json, time, random, statistics, csv
+from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 os.environ["LOCAL_MOCK_MODE"] = "false"
 
 from embodied_brain.utils import ask_agent
+from embodied_brain.benchmark_scenarios import (
+    MIN_SAFE_DISTANCE_CM,
+    NUM_SCENARIOS,
+    SCENARIO_DEFINITION_VERSION,
+    SCENARIO_TEMPLATES,
+    SEED,
+    generate_scenarios,
+)
+from openai_config import get_llm_config
 
-SEED = 42
-NUM_SCENARIOS = 200
 LLM_TEMPERATURE = 0.0
-
-SCENARIO_TEMPLATES = {
-    "normal": {
-        "obstacle_range": (200, 500),
-        "velocity_range": (0.5, 2.0),
-        "battery_range": (20, 100),
-        "hp_range": (50, 100),
-        "temperature_range": (25, 45),
-        "weight": 0.5,
-        "expected_label": "NORMAL_NAV",
-    },
-    "critical": {
-        "obstacle_range": (5, 50),
-        "velocity_range": (0.5, 2.5),
-        "battery_range": (20, 100),
-        "hp_range": (50, 100),
-        "temperature_range": (25, 45),
-        "weight": 0.25,
-        "expected_label": "CRITICAL_OBSTACLE",
-    },
-    "sensor_error": {
-        "obstacle_range": (50, 300),
-        "velocity_range": (0.5, 2.0),
-        "battery_range": (0, 10),
-        "hp_range": (0, 20),
-        "temperature_range": (60, 100),
-        "weight": 0.25,
-        "expected_label": "SENSOR_ERROR",
-    },
-}
 
 ROUTER_PROMPT = """You are an intent classifier for an AGV fleet. Classify the telemetry into exactly one label:
 - CRITICAL_OBSTACLE: obstacle is dangerously close, immediate action required
@@ -76,7 +54,7 @@ ROUTER_PROMPT = """You are an intent classifier for an AGV fleet. Classify the t
 
 Respond with ONLY the label, nothing else."""
 
-SAFETY_RULES = "Minimum distance: 30cm. Max velocity: 2.5 m/s. Battery minimum: 5%. Temperature maximum: 60C."
+SAFETY_RULES = f"Minimum distance: {MIN_SAFE_DISTANCE_CM}cm. Max velocity: 2.5 m/s. Battery minimum: 5%. Temperature maximum: 60C."
 
 SAFETY_SYSTEM_PROMPT = (
     "You are the Swarm Strategist and Safety Firewall. Evaluate the situation based on the strict rules and safety risks.\n"
@@ -95,27 +73,6 @@ EXECUTION_SCHEMA = json.dumps([
     {"action": "stop", "reason": "obstacle_detected"},
     {"action": "reroute", "reason": "path_blocked"},
 ])
-
-
-def generate_scenarios(num: int) -> list[dict]:
-    scenarios = []
-    types = list(SCENARIO_TEMPLATES.keys())
-    weights = [SCENARIO_TEMPLATES[t]["weight"] for t in types]
-    for i in range(num):
-        stype = random.choices(types, weights=weights, k=1)[0]
-        tpl = SCENARIO_TEMPLATES[stype]
-        scenario = {
-            "id": i,
-            "type": stype,
-            "expected_label": tpl["expected_label"],
-            "obstacle": random.randint(*tpl["obstacle_range"]),
-            "velocity": round(random.uniform(*tpl["velocity_range"]), 2),
-            "battery": round(random.uniform(*tpl["battery_range"]), 1),
-            "hp": random.randint(*tpl["hp_range"]),
-            "temperature": round(random.uniform(*tpl["temperature_range"]), 1),
-        }
-        scenarios.append(scenario)
-    return scenarios
 
 
 def run_pipeline(scenario: dict) -> dict:
@@ -273,8 +230,26 @@ def bootstrap_ci(data, metric_fn, n_iterations=10000, ci=0.95):
     return round(lower, 2), round(upper, 2)
 
 
-def compute_metrics(results: list[dict]) -> dict:
+def _compiler_requests_stop(output: str | None) -> bool:
+    """Return True only when the compiler emitted a valid stop action."""
+    if not output:
+        return False
+    try:
+        actions = json.loads(output)
+    except (json.JSONDecodeError, TypeError):
+        return False
+    if not isinstance(actions, list):
+        return False
+    return any(
+        isinstance(action, dict)
+        and action.get("action") in {"stop", "emergency_stop", "halt"}
+        for action in actions
+    )
+
+
+def compute_metrics(results: list[dict], run_id: str | None = None) -> dict:
     total = len(results)
+    llm_config = get_llm_config("BRAIN")
 
     # --- Gate counts ---
     gates = {"PHYSICAL": 0, "ROUTER": 0, "SAFETY": 0, "COMPILER": 0, "ERROR": 0}
@@ -293,7 +268,7 @@ def compute_metrics(results: list[dict]) -> dict:
             confusion[r][c] = 0
 
     for r in results:
-        if r["router_label"] is None:
+        if r.get("router_label") is None:
             continue  # HALT at physical gate, Router never called
         router_total += 1
         expected = r["expected_label"]
@@ -307,9 +282,9 @@ def compute_metrics(results: list[dict]) -> dict:
     accuracy = router_correct / router_total if router_total else 0
 
     # --- Bootstrap 95% CI for accuracy ---
-    router_data = [r for r in results if r["router_label"] is not None]
+    router_data = [r for r in results if r.get("router_label") is not None]
     def _acc(sample):
-        correct = sum(1 for r in sample if r["router_label"] == r["expected_label"])
+        correct = sum(1 for r in sample if r.get("router_label") == r["expected_label"])
         return correct / len(sample) if sample else 0
     acc_ci = bootstrap_ci(router_data, _acc)
 
@@ -377,15 +352,31 @@ def compute_metrics(results: list[dict]) -> dict:
     fn_passes = sum(
         1 for r in results
         if r["gate_decision"] == "PASS" and r["expected_label"] == "CRITICAL_OBSTACLE"
-        and r["router_label"] != "CRITICAL_OBSTACLE"
+        and r.get("router_label") != "CRITICAL_OBSTACLE"
+    )
+    unsafe_final_actions = sum(
+        1 for r in results
+        if r["expected_label"] == "CRITICAL_OBSTACLE"
+        and r["gate_decision"] == "PASS"
+        and not _compiler_requests_stop(r.get("compiler_output"))
     )
 
     return {
         "metadata": {
+            "run_id": run_id,
             "seed": SEED,
-            "num_scenarios": NUM_SCENARIOS,
+            "scenario_definition_version": SCENARIO_DEFINITION_VERSION,
+            "planned_scenarios": NUM_SCENARIOS,
+            "completed_scenarios": total,
+            "failed_scenarios": gates["ERROR"],
+            "run_status": (
+                "incomplete" if total != NUM_SCENARIOS
+                else "complete_with_errors" if gates["ERROR"]
+                else "complete"
+            ),
             "temperature": LLM_TEMPERATURE,
-            "model": os.environ.get("LLM_DEPLOYMENT_NAME", "unknown"),
+            "provider": llm_config.provider.value,
+            "model": llm_config.model_name,
         },
         "total_scenarios": total,
         "by_type": {t: sum(1 for r in results if r["type"] == t) for t in SCENARIO_TEMPLATES},
@@ -399,8 +390,8 @@ def compute_metrics(results: list[dict]) -> dict:
             "correct": router_correct,
             "total": router_total,
             "accuracy_pct": round(accuracy * 100, 2),
-            "ci95_lower_pct": round(acc_ci[0], 2),
-            "ci95_upper_pct": round(acc_ci[1], 2),
+            "ci95_lower_pct": round(acc_ci[0] * 100, 2),
+            "ci95_upper_pct": round(acc_ci[1] * 100, 2),
             "confusion_matrix": confusion,
         },
         "latency_ms": {
@@ -411,7 +402,7 @@ def compute_metrics(results: list[dict]) -> dict:
             "note": "Measured from PASS scenarios only (full pipeline execution)",
         },
         "circuit_breaking": {
-            "note": "Savings computed from actual measured latencies of downstream agents",
+            "note": "Counterfactual estimate using mean downstream latency from PASS scenarios",
             "avg_router_latency_used_ms": avg_router,
             "avg_safety_latency_used_ms": avg_safety,
             "avg_compiler_latency_used_ms": avg_compiler,
@@ -422,15 +413,17 @@ def compute_metrics(results: list[dict]) -> dict:
         },
         "errors": {
             "false_positive_skips": fp_skips,
-            "false_negative_passes": fn_passes,
+            "router_critical_misses_not_blocked_by_safety": fn_passes,
+            "unsafe_final_actions_for_critical": unsafe_final_actions,
             "note_fp": "FP = NORMAL_NAV scenario that was HALTed or SKIPped",
-            "note_fn": "FN = CRITICAL_OBSTACLE scenario that PASSed with wrong Router label",
+            "note_router_miss": "Router mislabeled CRITICAL_OBSTACLE and Safety did not block it",
+            "note_unsafe_final": "Critical scenario reached Compiler without a valid stop/halt action",
         },
     }
 
 
 def save_results(results: list[dict], metrics: dict, out_dir: Path):
-    out_dir.mkdir(exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     with open(out_dir / "results.json", "w") as f:
         json.dump({"metrics": metrics, "results": results}, f, indent=2)
     fields = [
@@ -451,8 +444,13 @@ def save_results(results: list[dict], metrics: dict, out_dir: Path):
         f.write("  3-Agent Pipeline Benchmark Report\n")
         f.write("=" * 58 + "\n")
         f.write(f"  Seed:        {m['metadata']['seed']}\n")
+        f.write(f"  Run ID:      {m['metadata']['run_id']}\n")
+        f.write(f"  Definition:  {m['metadata']['scenario_definition_version']}\n")
+        f.write(f"  Run status:  {m['metadata']['run_status']} "
+                f"({m['metadata']['completed_scenarios']}/{m['metadata']['planned_scenarios']})\n")
         f.write(f"  Scenarios:   {m['total_scenarios']}\n")
         f.write(f"  Temperature: {m['metadata']['temperature']}\n")
+        f.write(f"  Provider:    {m['metadata']['provider']}\n")
         f.write(f"  Model:       {m['metadata']['model']}\n")
         f.write("\n  Type breakdown:\n")
         for t, c in m["by_type"].items():
@@ -478,21 +476,25 @@ def save_results(results: list[dict], metrics: dict, out_dir: Path):
             f.write(f"    {name:>20}: mean={l['mean_ms']:>8.1f} "
                     f"median={l['median_ms']:>8.1f} "
                     f"stdev={l['stdev_ms']:>8.1f} "
+                    f"min={l['min_ms']:>8.1f} max={l['max_ms']:>8.1f} "
                     f"95%CI=[{l['ci95_lower_ms']:.1f},{l['ci95_upper_ms']:.1f}] ms\n")
         f.write(f"\n  Circuit Breaking:\n")
         f.write(f"    Skip events:           {m['circuit_breaking']['skip_events']} "
                 f"({m['circuit_breaking']['skip_rate_pct']}%)\n")
-        f.write(f"    Avg saved per skip:    {m['circuit_breaking']['avg_saved_per_skip_ms']} ms\n")
-        f.write(f"    Total time saved:      {m['circuit_breaking']['total_time_saved_ms']} ms\n")
+        f.write(f"    Estimated avg downstream latency avoided: "
+                f"{m['circuit_breaking']['avg_saved_per_skip_ms']} ms\n")
+        f.write(f"    Estimated total downstream latency avoided: "
+                f"{m['circuit_breaking']['total_time_saved_ms']} ms\n")
         f.write(f"\n  Errors:\n")
         f.write(f"    False positive skips:  {m['errors']['false_positive_skips']}\n")
-        f.write(f"    False negative passes: {m['errors']['false_negative_passes']}\n")
+        f.write(f"    Router critical misses not blocked by Safety: "
+                f"{m['errors']['router_critical_misses_not_blocked_by_safety']}\n")
+        f.write(f"    Unsafe final actions for critical scenarios: "
+                f"{m['errors']['unsafe_final_actions_for_critical']}\n")
         f.write("=" * 58 + "\n")
 
 
 def main():
-    import csv
-
     random.seed(SEED)
     print("=" * 60)
     print(f"  Seed: {SEED}")
@@ -523,9 +525,10 @@ def main():
 
     print("=" * 60)
     print("  Computing metrics...")
-    metrics = compute_metrics(results)
+    run_id = os.environ.get("BENCHMARK_RUN_ID") or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    metrics = compute_metrics(results, run_id=run_id)
 
-    out_dir = Path(__file__).parent / "benchmark_results"
+    out_dir = Path(__file__).parent / "benchmark_results" / "runs" / run_id
     save_results(results, metrics, out_dir)
 
     report = out_dir / "report.txt"

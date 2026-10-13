@@ -279,18 +279,20 @@ This project addresses the intersection of **cybersecurity**, **embodied AI safe
 - **Edge Computing Security**: WebGPU-based local inference protects user privacy while reducing attack surface (no data leaves the browser)
 - **Formal Verification**: Kinematic-Token Theorem provides mathematical proof of cloud-only AI control deadlocks
 - **Infrastructure Security Testing**: Shadow E2E test suite validates Private DNS resolution and network isolation integrity
+- **Benchmark Evidence**: Historical and diagnostic runs, metric definitions, and limitations are indexed in the [AGV benchmark results guide](src/cloud-orchestrator/embodied_brain/benchmark_results/README.md)
 
 ---
 
 ## 🏅 Certifications (Author)
 
-| Certification | Description |
-|:---|:---|
-| **AZ-305** | Azure Solutions Architect Expert |
-| **AZ-104** | Azure Administrator Associate |
-| **AI-102** | Azure AI Engineer Associate |
-| **SC-300** | Microsoft Identity and Access Administrator |
-| **AB-100** | Agentic AI Business Architect |
+| Certification | Description                                 |
+|:--------------|:--------------------------------------------|
+| **AZ-305**    | Azure Solutions Architect Expert            |
+| **AZ-104**    | Azure Administrator Associate               |
+| **AI-102**    | Azure AI Engineer Associate                 |
+| **AI-103**    | Azure Agent and Apps Associate              |
+| **SC-300**    | Microsoft Identity and Access Administrator |
+| **AB-100**    | Agentic AI Business Architect               |
 
 ---
 
