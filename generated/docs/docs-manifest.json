@@ -1,7 +1,7 @@
 {
   "contractVersion": "1.0.0",
-  "generatedAt": "2026-10-14T05:36:15.513Z",
-  "docCount": 63,
+  "generatedAt": "2026-10-14T14:01:47.323Z",
+  "docCount": 64,
   "docs": [
     {
       "id": "DOC-PROJECT-MEMORY",
@@ -3359,7 +3359,7 @@
       "id": "DOC-INTERVIEW-HOME",
       "title": "OmniGuard Interview Documentation",
       "summary": "Single entry point for the current AGV interview narrative, writing handoff, evidence links, and preparation order.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "updated_at": "2026-10-14",
       "authors": [
         "Shengwei Liu"
@@ -3412,16 +3412,21 @@
           "depth": 2,
           "text": "Maintenance rule",
           "slug": "maintenance-rule"
+        },
+        {
+          "depth": 2,
+          "text": "Information needed for a personalized plan",
+          "slug": "information-needed-for-a-personalized-plan"
         }
       ],
-      "wordCount": 1957,
-      "readingTimeMinutes": 5
+      "wordCount": 3112,
+      "readingTimeMinutes": 8
     },
     {
       "id": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
       "title": "OmniGuard 面试准备：把项目讲成一次可信的工程演进",
       "summary": "面向面试的项目定位、技术深挖主题、AI 协作说明、岗位匹配度和优先改进清单。",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "updated_at": "2026-10-14",
       "authors": [
         "Shengwei Liu"
@@ -3639,7 +3644,7 @@
           "slug": ""
         }
       ],
-      "wordCount": 8560,
+      "wordCount": 8679,
       "readingTimeMinutes": 22
     },
     {
@@ -3866,6 +3871,317 @@
       ],
       "wordCount": 28382,
       "readingTimeMinutes": 71
+    },
+    {
+      "id": "DOC-INTERVIEW-CORE-PRINCIPLES",
+      "title": "从 OmniGuard 学懂核心原理",
+      "summary": "从零解释项目涉及的事件驱动、Azure IoT、采样控制、云边安全、多 Agent、评价和 IaC 原理，并给出代码入口与练习。",
+      "version": "1.0.0",
+      "updated_at": "2026-10-14",
+      "authors": [
+        "Shengwei Liu"
+      ],
+      "domains": [
+        "cyber-physical-safety",
+        "multi-agent"
+      ],
+      "perspectives": [
+        "cloud-architecture",
+        "academic-research"
+      ],
+      "layers": [
+        "cross-cutting"
+      ],
+      "doc_type": "tutorial",
+      "status": "accepted",
+      "code_refs": [
+        "src/cloud-orchestrator/embodied_brain/brain.py",
+        "src/cloud-orchestrator/embodied_brain/utils.py",
+        "src/cloud-orchestrator/edge-simulator/device_mock.py",
+        "src/client-edge/src/app/shared/physics/kinematic-token.ts",
+        ".azure/main.bicep"
+      ],
+      "test_refs": [
+        "tests/test_brain.py",
+        "tests/test_benchmark_archives.py",
+        "tests/test_benchmark_scenarios.py"
+      ],
+      "slug": "interview/core-principles-learning-guide",
+      "filePath": "docs/interview/core-principles-learning-guide.md",
+      "headings": [
+        {
+          "depth": 1,
+          "text": "从 OmniGuard 学懂核心原理",
+          "slug": "-omniguard-"
+        },
+        {
+          "depth": 2,
+          "text": "先建立一张完整地图",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "原理一：事件驱动系统把生产者和消费者解耦",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "什么是事件驱动",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "为什么不让设备直接调用模型 API",
+          "slug": "-api"
+        },
+        {
+          "depth": 3,
+          "text": "Partition、consumer group 和 checkpoint",
+          "slug": "partitionconsumer-group-checkpoint"
+        },
+        {
+          "depth": 3,
+          "text": "At-least-once 和幂等",
+          "slug": "at-least-once-"
+        },
+        {
+          "depth": 3,
+          "text": "Backpressure 是什么",
+          "slug": "backpressure-"
+        },
+        {
+          "depth": 3,
+          "text": "项目入口与练习",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "原理二：Azure Functions 是事件计算，不是硬实时控制器",
+          "slug": "azure-functions-"
+        },
+        {
+          "depth": 3,
+          "text": "Trigger 和 binding",
+          "slug": "trigger-binding"
+        },
+        {
+          "depth": 3,
+          "text": "为什么会有冷启动",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "应该怎样使用 Functions",
+          "slug": "-functions"
+        },
+        {
+          "depth": 3,
+          "text": "项目入口与练习",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "原理三：数字控制是离散采样，不是连续观察",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "采样周期",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "停车需要的不只是检测时间",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "Deadline 比“最终成功”更重要",
+          "slug": "deadline-"
+        },
+        {
+          "depth": 3,
+          "text": "项目入口与练习",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "原理四：云端智能路径与本地安全路径属于不同时间尺度",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "两条路径",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "边缘不等于绝对安全",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "项目当前的意义",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "原理五：确定性规则和概率模型承担不同责任",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "什么是确定性检查",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "什么是概率模型",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "Guardrail 应该怎样分层",
+          "slug": "guardrail-"
+        },
+        {
+          "depth": 2,
+          "text": "原理六：多 Agent 的价值来自职责和可观察性，不来自数量",
+          "slug": "-agent-"
+        },
+        {
+          "depth": 3,
+          "text": "当前三个阶段",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "串行延迟",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "什么时候不需要多 Agent",
+          "slug": "-agent"
+        },
+        {
+          "depth": 2,
+          "text": "原理七：评价必须把标签、组件和系统结果分开",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "Confusion matrix 的基本含义",
+          "slug": "confusion-matrix-"
+        },
+        {
+          "depth": 3,
+          "text": "为什么旧结果会误导",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "四层评价",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "为什么同时报告 median、mean 和 tail",
+          "slug": "-medianmean-tail"
+        },
+        {
+          "depth": 3,
+          "text": "可复现性最低要求",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "原理八：IaC 的价值是可重复表达约束，不是文件很多",
+          "slug": "iac-"
+        },
+        {
+          "depth": 3,
+          "text": "Declarative infrastructure",
+          "slug": "declarative-infrastructure"
+        },
+        {
+          "depth": 3,
+          "text": "Idempotency",
+          "slug": "idempotency"
+        },
+        {
+          "depth": 3,
+          "text": "Control plane 与 data plane",
+          "slug": "control-plane-data-plane"
+        },
+        {
+          "depth": 3,
+          "text": "Managed Identity 与连接字符串",
+          "slug": "managed-identity-"
+        },
+        {
+          "depth": 3,
+          "text": "Private Endpoint 与 Private DNS",
+          "slug": "private-endpoint-private-dns"
+        },
+        {
+          "depth": 3,
+          "text": "区域与配额也是架构约束",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "学习方法",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "原理九：可观察性必须贯穿整条控制链",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "建议的学习顺序",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第一层：先会讲系统",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第二层：再会读代码",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第三层：用小练习证明理解",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第四层：最后准备架构改进",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "现在不需要优先学习什么",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "面试最低掌握检查",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "这份指南与后续个人规划的关系",
+          "slug": ""
+        }
+      ],
+      "wordCount": 11872,
+      "readingTimeMinutes": 30
     },
     {
       "id": "DOC-OPERATIONS",

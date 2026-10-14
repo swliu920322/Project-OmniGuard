@@ -2,7 +2,7 @@
 id: "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE"
 title: "OmniGuard 面试准备：把项目讲成一次可信的工程演进"
 summary: "面向面试的项目定位、技术深挖主题、AI 协作说明、岗位匹配度和优先改进清单。"
-version: "1.0.1"
+version: "1.0.2"
 updated_at: "2026-10-14"
 authors: ["Shengwei Liu"]
 domains:
@@ -38,6 +38,8 @@ OmniGuard 的价值不在于提出了新的机器人算法，也不在于代码�
 3. 能审查并纠正 AI 生成的代码、文档和实验结论，而不是只展示生成结果。
 
 这个项目适合支持 Azure/Cloud Engineer、Applied AI Engineer、AI Solution Architect、IoT/Platform Engineer 和偏架构的全栈岗位。它不能证明候选人已经具备机器人控制、嵌入式实时系统或机器学习研究岗位所要求的专业深度。
+
+如果下文中的 Event Hub、checkpoint、幂等、采样周期或 Private Endpoint 仍不熟悉，先阅读 [核心原理学习指南](core-principles-learning-guide.md)，再准备面试话术。
 
 ## 项目应该怎样定位
 
