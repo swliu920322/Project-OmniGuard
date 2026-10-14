@@ -47,3 +47,42 @@ def test_diagnostic_archive_is_a_distinct_60_row_run():
     assert payload["metrics"]["metadata"]["num_scenarios"] == 200
     assert payload["metrics"]["router_accuracy"]["correct"] == 47
     assert payload["metrics"]["router_accuracy"]["total"] == 52
+    assert payload["metrics"]["circuit_breaking"]["skip_events"] == 25
+
+    pass_results = [
+        row
+        for row in payload["results"]
+        if row["gate_stage"] == "COMPILER" and row["gate_decision"] == "PASS"
+    ]
+    pipeline_latency = [
+        row["router_latency_ms"]
+        + row["safety_latency_ms"]
+        + row["compiler_latency_ms"]
+        for row in pass_results
+    ]
+    assert len(pass_results) == 35
+    assert round(statistics.median(pipeline_latency), 2) == 7667.35
+    assert round(statistics.mean(pipeline_latency), 2) == 16720.57
+    assert round(max(pipeline_latency), 2) == 73892.47
+
+
+def test_diagnostic_router_disagreements_are_not_unsafe_final_actions():
+    """Preserve the distinction between legacy labels and end-to-end actions."""
+    run_dir = RUNS / "2026-08-18-diagnostic-60"
+    results = json.loads((run_dir / "results.json").read_text())["results"]
+
+    critical = [row for row in results if row["type"] == "critical"]
+    disagreements = [
+        row for row in critical if row["router_label"] == "NORMAL_NAV"
+    ]
+    policy_critical = [row for row in critical if row["obstacle"] < 30]
+
+    assert sorted(row["obstacle"] for row in disagreements) == [31, 39, 41, 42, 46]
+    assert all('"action":"stop"' in row["compiler_output"].replace(" ", "") for row in disagreements)
+
+    assert len(policy_critical) == 8
+    assert all(row["router_label"] == "CRITICAL_OBSTACLE" for row in policy_critical)
+    assert all(
+        row["gate_stage"] == "SAFETY" and row["gate_decision"] == "SKIP"
+        for row in policy_critical
+    )

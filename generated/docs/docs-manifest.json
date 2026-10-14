@@ -1,7 +1,7 @@
 {
   "contractVersion": "1.0.0",
-  "generatedAt": "2026-10-13T16:30:42.634Z",
-  "docCount": 60,
+  "generatedAt": "2026-10-14T01:39:57.737Z",
+  "docCount": 61,
   "docs": [
     {
       "id": "DOC-PROJECT-MEMORY",
@@ -3271,8 +3271,145 @@
           "slug": "maintenance"
         }
       ],
-      "wordCount": 4318,
-      "readingTimeMinutes": 11
+      "wordCount": 4481,
+      "readingTimeMinutes": 12
+    },
+    {
+      "id": "DOC-EVIDENCE-CLAUDE-LINKEDIN",
+      "title": "Claude Handoff for the AGV Benchmark LinkedIn Post",
+      "summary": "Source-backed writing brief that reconciles the 200-run and 60-run benchmark results and prevents unsafe or unsupported LinkedIn claims.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-14",
+      "authors": [
+        "Shengwei Liu"
+      ],
+      "domains": [
+        "cyber-physical-safety",
+        "multi-agent"
+      ],
+      "perspectives": [
+        "academic-research",
+        "product-strategy"
+      ],
+      "layers": [
+        "cross-cutting"
+      ],
+      "doc_type": "specification",
+      "status": "accepted",
+      "code_refs": [
+        "src/cloud-orchestrator/embodied_brain/benchmark.py",
+        "src/cloud-orchestrator/embodied_brain/benchmark_scenarios.py"
+      ],
+      "test_refs": [
+        "tests/test_benchmark_archives.py",
+        "tests/test_benchmark_scenarios.py"
+      ],
+      "slug": "evidence/CLAUDE_LINKEDIN_BENCHMARK_BRIEF",
+      "filePath": "docs/evidence/CLAUDE_LINKEDIN_BENCHMARK_BRIEF.md",
+      "headings": [
+        {
+          "depth": 1,
+          "text": "Claude Handoff for the AGV Benchmark LinkedIn Post",
+          "slug": "claude-handoff-for-the-agv-benchmark-linkedin-post"
+        },
+        {
+          "depth": 2,
+          "text": "Instructions to Claude",
+          "slug": "instructions-to-claude"
+        },
+        {
+          "depth": 2,
+          "text": "The strongest defensible story",
+          "slug": "the-strongest-defensible-story"
+        },
+        {
+          "depth": 2,
+          "text": "The three benchmark states",
+          "slug": "the-three-benchmark-states"
+        },
+        {
+          "depth": 3,
+          "text": "1. Historical thesis run: 2026-07-16",
+          "slug": "1-historical-thesis-run-2026-07-16"
+        },
+        {
+          "depth": 3,
+          "text": "2. Diagnostic run: 2026-08-18",
+          "slug": "2-diagnostic-run-2026-08-18"
+        },
+        {
+          "depth": 3,
+          "text": "3. Current v3 protocol",
+          "slug": "3-current-v3-protocol"
+        },
+        {
+          "depth": 2,
+          "text": "Why the old documents appeared inconsistent",
+          "slug": "why-the-old-documents-appeared-inconsistent"
+        },
+        {
+          "depth": 2,
+          "text": "Forensic interpretation of the five Router disagreements",
+          "slug": "forensic-interpretation-of-the-five-router-disagreements"
+        },
+        {
+          "depth": 2,
+          "text": "The latency finding that survives the audit",
+          "slug": "the-latency-finding-that-survives-the-audit"
+        },
+        {
+          "depth": 2,
+          "text": "The early-exit finding",
+          "slug": "the-early-exit-finding"
+        },
+        {
+          "depth": 2,
+          "text": "Known reporting bug",
+          "slug": "known-reporting-bug"
+        },
+        {
+          "depth": 2,
+          "text": "Claim review",
+          "slug": "claim-review"
+        },
+        {
+          "depth": 2,
+          "text": "Recommended LinkedIn angle",
+          "slug": "recommended-linkedin-angle"
+        },
+        {
+          "depth": 2,
+          "text": "Recommended English draft",
+          "slug": "recommended-english-draft"
+        },
+        {
+          "depth": 3,
+          "text": "A small piece from my own work",
+          "slug": "a-small-piece-from-my-own-work"
+        },
+        {
+          "depth": 2,
+          "text": "Shorter alternative",
+          "slug": "shorter-alternative"
+        },
+        {
+          "depth": 2,
+          "text": "Prompt to give Claude",
+          "slug": "prompt-to-give-claude"
+        },
+        {
+          "depth": 2,
+          "text": "Authoritative source map",
+          "slug": "authoritative-source-map"
+        },
+        {
+          "depth": 2,
+          "text": "Final pre-publication checklist",
+          "slug": "final-pre-publication-checklist"
+        }
+      ],
+      "wordCount": 14554,
+      "readingTimeMinutes": 37
     },
     {
       "id": "DOC-EVIDENCE-INDEX",
@@ -3352,8 +3489,8 @@
           "slug": "change-policy"
         }
       ],
-      "wordCount": 3561,
-      "readingTimeMinutes": 9
+      "wordCount": 4189,
+      "readingTimeMinutes": 11
     },
     {
       "id": "DOC-OPERATIONS",

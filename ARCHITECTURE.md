@@ -164,7 +164,7 @@ The evidence index defines the allowed terminology. Historical summaries are pre
 The canonical numbers are maintained in the benchmark results guide:
 
 - 2026-07-16 historical run: 200 scenarios, 94.19% router accuracy on 172 parseable outputs, 39.5% early exit, 6.174-second mean end-to-end latency.
-- 2026-08-18 diagnostic run: 60 scenarios, 90.38% router accuracy on 52 parseable outputs, 64.29% critical recall, 41.67% early exit, 7.67-second median and 16.72-second mean latency.
+- 2026-08-18 diagnostic run: 60 scenarios, 90.38% router accuracy on 52 parseable outputs, 9/14 recall under the legacy 5–50 cm critical label, all eight sub-30 cm cases caught and blocked, 41.67% early exit, 7.67-second median and 16.72-second mean latency.
 
 The historical and diagnostic numbers describe different runs and denominators. Neither should be substituted for the other.
 

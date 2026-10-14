@@ -90,7 +90,7 @@ Aggregate accuracy is insufficient. A useful review asks:
 - How long was the tail of the latency distribution?
 - Was the result measured, simulated, or configured?
 
-The 60-scenario diagnostic run is particularly useful because its five router errors were all critical-obstacle misses. That observation belongs to the named diagnostic run, not to every model or deployment.
+The 60-scenario diagnostic run is particularly useful because it revealed a metric-definition problem: its five Router disagreements were labeled critical by a legacy 5–50 cm generator, but all were 31–46 cm, above the 30 cm blocking threshold, and all produced a final stop action. That observation belongs to the named diagnostic run, not to every model or deployment.
 
 ## Demo wording
 

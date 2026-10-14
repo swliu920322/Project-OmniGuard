@@ -25,6 +25,8 @@ test_refs:
 
 This document defines how quantitative claims may be used across README files, architecture documents, presentations, and posts.
 
+For a complete Claude/LinkedIn writing handoff—including the corrected interpretation of the five Router disagreements—use the [Claude LinkedIn benchmark brief](CLAUDE_LINKEDIN_BENCHMARK_BRIEF.md).
+
 ## Evidence classes
 
 | Label | Meaning | Allowed wording |
@@ -64,11 +66,14 @@ Critical recall and modern final-action safety metrics cannot be reconstructed f
 
 - Scenario count: 60, despite the older requested-count configuration indicating 200.
 - Router accuracy: 90.38% over 52 parseable router outputs.
-- Critical recall: 9/14, or 64.29%.
-- Critical misses: five; all were classified as normal and passed through at the router stage.
+- Recall under the legacy 5–50 cm critical label: 9/14, or 64.29%.
+- Label-policy disagreements: five, at 31, 39, 41, 42, and 46 cm. All were above the 30 cm blocking threshold, and all five Compiler outputs contained a stop action.
+- Policy-critical cases: all eight scenarios below 30 cm were recognized and blocked.
 - Early exit: 25/60, or 41.67%.
 - End-to-end latency: median 7.67 seconds, mean 16.72 seconds, maximum 73.88 seconds.
 - The model identifier is unknown in the preserved output.
+
+The archived report calls the five disagreements “false negative passes,” but that metric stops at the Router/gate interpretation and does not inspect the final Compiler action. It must not be paraphrased as five unsafe end-to-end actions.
 
 ### Dashboard timing values
 

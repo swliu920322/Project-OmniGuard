@@ -45,9 +45,9 @@ Two preserved runs serve different purposes:
 | Run | Scenarios | Router accuracy | Critical recall | Early exit | End-to-end latency |
 |---|---:|---:|---:|---:|---|
 | Historical thesis run, 2026-07-16 | 200 | 94.19% on 172 parseable router outputs | Not recoverable from the preserved summary | 39.5% | Mean 6.174 s |
-| Diagnostic run, 2026-08-18 | 60 | 90.38% on 52 parseable router outputs | 9/14, 64.29% | 41.67% | Median 7.67 s; mean 16.72 s; max 73.88 s |
+| Diagnostic run, 2026-08-18 | 60 | 90.38% on 52 parseable router outputs | 9/14 under the legacy 5–50 cm label; all 8 cases below 30 cm were caught and blocked | 41.67% | Median 7.67 s; mean 16.72 s; max 73.88 s |
 
-These runs are not directly interchangeable. The diagnostic run exposed a long latency tail and five critical-obstacle misses; it should not be presented as a completed 200-scenario benchmark. Full provenance and metric definitions are in the [benchmark results guide](src/cloud-orchestrator/embodied_brain/benchmark_results/README.md).
+These runs are not directly interchangeable. The diagnostic run exposed a long latency tail and five label-policy disagreements at 31–46 cm; all five still produced a final stop action. It should not be presented as a completed 200-scenario benchmark or as five demonstrated unsafe passes. Full provenance and metric definitions are in the [benchmark results guide](src/cloud-orchestrator/embodied_brain/benchmark_results/README.md).
 
 ## Repository layout
 

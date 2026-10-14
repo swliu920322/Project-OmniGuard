@@ -43,9 +43,9 @@ OmniGuard 包含模拟 AGV 仪表盘、三级云端 Agent 流水线、Azure 基�
 | 跑次 | 场景数 | Router 准确率 | Critical 召回 | 提前退出率 | 端到端时延 |
 |---|---:|---:|---:|---:|---|
 | 2026-07-16 历史论文跑次 | 200 | 172 条可解析输出中 94.19% | 现有摘要无法恢复 | 39.5% | 均值 6.174 秒 |
-| 2026-08-18 诊断跑次 | 60 | 52 条可解析输出中 90.38% | 9/14，64.29% | 41.67% | 中位数 7.67 秒；均值 16.72 秒；最大 73.88 秒 |
+| 2026-08-18 诊断跑次 | 60 | 52 条可解析输出中 90.38% | 旧 5–50 cm 标签口径下为 9/14；低于 30 cm 的 8 条全部识别并阻断 | 41.67% | 中位数 7.67 秒；均值 16.72 秒；最大 73.88 秒 |
 
-两个跑次不能混用。60 条诊断跑次暴露了长尾时延和 5 个 critical 漏判，不能描述成已经完成的 200 场景 benchmark。详细来源和指标定义见 [benchmark results guide](src/cloud-orchestrator/embodied_brain/benchmark_results/README.md)。
+两个跑次不能混用。60 条诊断跑次暴露了长尾时延，以及 31–46 cm 区间内的 5 个标签/策略口径分歧；这 5 条的 Compiler 最终都输出了 stop，不能写成 5 个危险动作被放行。该跑次也不能描述成已经完成的 200 场景 benchmark。详细来源和指标定义见 [benchmark results guide](src/cloud-orchestrator/embodied_brain/benchmark_results/README.md)。
 
 ## 目录结构
 
