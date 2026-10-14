@@ -1,6 +1,6 @@
 {
   "contractVersion": "1.0.0",
-  "generatedAt": "2026-10-14T01:46:43.107Z",
+  "generatedAt": "2026-10-14T05:33:07.025Z",
   "nodes": [
     {
       "id": "DOC-PROJECT-MEMORY",
@@ -74,7 +74,7 @@
       "id": "DOC-HOME",
       "title": "Project OmniGuard Documentation",
       "summary": "Navigation for current architecture, operations, evidence, decisions, and historical archives.",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "updated_at": "2026-10-14",
       "authors": [
         "Shengwei Liu"
@@ -132,7 +132,7 @@
           "slug": "maintenance-checklist"
         }
       ],
-      "wordCount": 2175,
+      "wordCount": 2272,
       "readingTimeMinutes": 6
     },
     {
@@ -5498,6 +5498,231 @@
       "readingTimeMinutes": 27
     },
     {
+      "id": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "title": "OmniGuard 面试准备：把项目讲成一次可信的工程演进",
+      "summary": "面向面试的项目定位、技术深挖主题、AI 协作说明、岗位匹配度和优先改进清单。",
+      "version": "1.0.0",
+      "updated_at": "2026-10-14",
+      "authors": [
+        "Shengwei Liu"
+      ],
+      "domains": [
+        "cyber-physical-safety",
+        "multi-agent"
+      ],
+      "perspectives": [
+        "cloud-architecture",
+        "academic-research"
+      ],
+      "layers": [
+        "cross-cutting"
+      ],
+      "doc_type": "tutorial",
+      "status": "accepted",
+      "code_refs": [
+        "src/cloud-orchestrator/embodied_brain/brain.py",
+        "src/cloud-orchestrator/edge-simulator/device_mock.py",
+        "src/client-edge/src/app/shared/physics/kinematic-token.ts",
+        ".azure/main.bicep"
+      ],
+      "test_refs": [
+        "tests/test_brain.py",
+        "tests/test_benchmark_archives.py",
+        "tests/test_benchmark_scenarios.py"
+      ],
+      "slug": "tutorials/agv-interview-guide",
+      "filePath": "docs/tutorials/agv-interview-guide.md",
+      "headings": [
+        {
+          "depth": 1,
+          "text": "OmniGuard 面试准备：把项目讲成一次可信的工程演进",
+          "slug": "omniguard-"
+        },
+        {
+          "depth": 2,
+          "text": "结论先行",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "项目应该怎样定位",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "最有价值的项目演进",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "阶段一：先让事件链路跑起来",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "阶段二：在事件处理后加入 AI 决策",
+          "slug": "-ai-"
+        },
+        {
+          "depth": 3,
+          "text": "阶段三：从“消息成功”转向“动作是否及时”",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "阶段四：从可视化演示转向可重复评价",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "阶段五：审查 benchmark 本身",
+          "slug": "-benchmark-"
+        },
+        {
+          "depth": 2,
+          "text": "面试最值得深挖的四个技术主题",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "1. 事件驱动架构不等于实时控制",
+          "slug": "1-"
+        },
+        {
+          "depth": 3,
+          "text": "2. 离散控制循环中，延迟为什么会变成距离",
+          "slug": "2-"
+        },
+        {
+          "depth": 3,
+          "text": "3. 确定性 guardrail 与概率 Agent 如何组合",
+          "slug": "3-guardrail-agent-"
+        },
+        {
+          "depth": 3,
+          "text": "4. 评价标签、运行策略和最终动作必须对齐",
+          "slug": "4-"
+        },
+        {
+          "depth": 2,
+          "text": "Azure 模板真正能证明什么",
+          "slug": "azure-"
+        },
+        {
+          "depth": 2,
+          "text": "岗位匹配度",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "如何诚实说明 AI 写了大部分代码",
+          "slug": "-ai-"
+        },
+        {
+          "depth": 2,
+          "text": "面试前最值得完成的工作",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "P0：恢复项目可信度",
+          "slug": "p0"
+        },
+        {
+          "depth": 3,
+          "text": "P1：建立一份新的可信证据",
+          "slug": "p1"
+        },
+        {
+          "depth": 3,
+          "text": "P1：准备面试材料",
+          "slug": "p1"
+        },
+        {
+          "depth": 3,
+          "text": "P2：暂时不要继续扩展",
+          "slug": "p2"
+        },
+        {
+          "depth": 2,
+          "text": "五分钟面试结构",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第一分钟：问题",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第二分钟：架构",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第三分钟：碰撞模拟",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第四分钟：实验结果",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第五分钟：纠错与结论",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "高频追问",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "为什么不用一个 Agent？",
+          "slug": "-agent"
+        },
+        {
+          "depth": 3,
+          "text": "为什么选择 Azure Functions？",
+          "slug": "-azure-functions"
+        },
+        {
+          "depth": 3,
+          "text": "为什么 IoT Hub，而不是设备直接调 API？",
+          "slug": "-iot-hub-api"
+        },
+        {
+          "depth": 3,
+          "text": "Dashboard 中 20 ms edge latency 是实测吗？",
+          "slug": "dashboard-20-ms-edge-latency-"
+        },
+        {
+          "depth": 3,
+          "text": "这个项目最大的错误是什么？",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "如果重新设计会怎么做？",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "必须掌握的五个入口",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "最终检查表",
+          "slug": ""
+        }
+      ],
+      "wordCount": 8569,
+      "readingTimeMinutes": 22
+    },
+    {
       "id": "DOC-TUTORIAL-QUICKSTART",
       "title": "Quickstart",
       "summary": "Minimal path to install dependencies, configure the backend, start both applications, and run tests.",
@@ -5819,6 +6044,41 @@
       "type": "test_ref"
     },
     {
+      "source": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "target": "src/cloud-orchestrator/embodied_brain/brain.py",
+      "type": "code_ref"
+    },
+    {
+      "source": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "target": "src/cloud-orchestrator/edge-simulator/device_mock.py",
+      "type": "code_ref"
+    },
+    {
+      "source": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "target": "src/client-edge/src/app/shared/physics/kinematic-token.ts",
+      "type": "code_ref"
+    },
+    {
+      "source": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "target": ".azure/main.bicep",
+      "type": "code_ref"
+    },
+    {
+      "source": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "target": "tests/test_brain.py",
+      "type": "test_ref"
+    },
+    {
+      "source": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "target": "tests/test_benchmark_archives.py",
+      "type": "test_ref"
+    },
+    {
+      "source": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "target": "tests/test_benchmark_scenarios.py",
+      "type": "test_ref"
+    },
+    {
       "source": "DOC-TUTORIAL-QUICKSTART",
       "target": "Makefile",
       "type": "code_ref"
@@ -5950,6 +6210,11 @@
     },
     {
       "source": "DOC-PROJECT-MEMORY",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-PROJECT-MEMORY",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -5971,6 +6236,11 @@
     {
       "source": "DOC-HOME",
       "target": "DOC-EVIDENCE-INDEX",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-HOME",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
       "type": "same_domain"
     },
     {
@@ -6410,6 +6680,11 @@
     },
     {
       "source": "DOC-ADR-005",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-005",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -6491,6 +6766,11 @@
     {
       "source": "DOC-ADR-006",
       "target": "DOC-EVIDENCE-INDEX",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-006",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
       "type": "same_domain"
     },
     {
@@ -6745,6 +7025,11 @@
     },
     {
       "source": "DOC-ADR-009",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-009",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -7160,6 +7445,11 @@
     },
     {
       "source": "DOC-ADR-018",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-018",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -7230,6 +7520,11 @@
     },
     {
       "source": "DOC-ADR-019",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-019",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -7295,6 +7590,11 @@
     },
     {
       "source": "DOC-ADR-020",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-020",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -7351,6 +7651,11 @@
     {
       "source": "DOC-ADR-021",
       "target": "DOC-EVIDENCE-INDEX",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-021",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
       "type": "same_domain"
     },
     {
@@ -7510,6 +7815,11 @@
     },
     {
       "source": "DOC-ADR-023",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-023",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -7556,6 +7866,11 @@
     {
       "source": "DOC-ADR-024",
       "target": "DOC-EVIDENCE-INDEX",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-024",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
       "type": "same_domain"
     },
     {
@@ -7650,6 +7965,11 @@
     },
     {
       "source": "DOC-ADR-028",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-028",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -7691,6 +8011,11 @@
     {
       "source": "DOC-ADR-030",
       "target": "DOC-EVIDENCE-INDEX",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-030",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
       "type": "same_domain"
     },
     {
@@ -7825,6 +8150,11 @@
     },
     {
       "source": "DOC-ADR-032",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-032",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -7945,6 +8275,11 @@
     },
     {
       "source": "DOC-ADR-034",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-034",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -7970,6 +8305,11 @@
     },
     {
       "source": "DOC-ADR-035",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADR-035",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -7990,6 +8330,11 @@
     },
     {
       "source": "DOC-ADRS-INDEX-MD-78",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADRS-INDEX-MD-78",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -8005,6 +8350,11 @@
     },
     {
       "source": "DOC-ADRS-_STANDARDS-MD-61",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-ADRS-_STANDARDS-MD-61",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
@@ -8020,6 +8370,11 @@
     },
     {
       "source": "DOC-DASHBOARD-OVERVIEW",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-DASHBOARD-OVERVIEW",
       "target": "DOC-TUTORIAL-USER-GUIDE",
       "type": "same_domain"
     },
@@ -8030,12 +8385,22 @@
     },
     {
       "source": "DOC-EVIDENCE-CLAUDE-LINKEDIN",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-EVIDENCE-CLAUDE-LINKEDIN",
       "target": "DOC-TUTORIAL-QUICKSTART",
       "type": "same_domain"
     },
     {
       "source": "DOC-EVIDENCE-CLAUDE-LINKEDIN",
       "target": "DOC-TUTORIAL-USER-GUIDE",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-EVIDENCE-INDEX",
+      "target": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
       "type": "same_domain"
     },
     {
@@ -8811,6 +9176,16 @@
     {
       "source": "DOC-BP-15",
       "target": "DOC-BP-24",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "target": "DOC-TUTORIAL-QUICKSTART",
+      "type": "same_domain"
+    },
+    {
+      "source": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "target": "DOC-TUTORIAL-USER-GUIDE",
       "type": "same_domain"
     }
   ]
