@@ -1,7 +1,7 @@
 {
   "contractVersion": "1.0.0",
-  "generatedAt": "2026-10-14T05:33:07.025Z",
-  "docCount": 62,
+  "generatedAt": "2026-10-14T05:36:15.513Z",
+  "docCount": 63,
   "docs": [
     {
       "id": "DOC-PROJECT-MEMORY",
@@ -75,7 +75,7 @@
       "id": "DOC-HOME",
       "title": "Project OmniGuard Documentation",
       "summary": "Navigation for current architecture, operations, evidence, decisions, and historical archives.",
-      "version": "2.0.1",
+      "version": "2.0.2",
       "updated_at": "2026-10-14",
       "authors": [
         "Shengwei Liu"
@@ -133,7 +133,7 @@
           "slug": "maintenance-checklist"
         }
       ],
-      "wordCount": 2272,
+      "wordCount": 2281,
       "readingTimeMinutes": 6
     },
     {
@@ -3275,10 +3275,378 @@
       "readingTimeMinutes": 12
     },
     {
+      "id": "DOC-EVIDENCE-INDEX",
+      "title": "Evidence and Metric Index",
+      "summary": "Canonical definitions, provenance, and allowed wording for OmniGuard quantitative claims.",
+      "version": "1.0.1",
+      "updated_at": "2026-10-14",
+      "authors": [
+        "Shengwei Liu"
+      ],
+      "domains": [
+        "cyber-physical-safety",
+        "multi-agent"
+      ],
+      "perspectives": [
+        "academic-research"
+      ],
+      "layers": [
+        "cross-cutting"
+      ],
+      "doc_type": "specification",
+      "status": "accepted",
+      "code_refs": [
+        "src/cloud-orchestrator/embodied_brain/benchmark.py",
+        "src/cloud-orchestrator/embodied_brain/benchmark_scenarios.py"
+      ],
+      "test_refs": [
+        "tests/test_benchmark_archives.py",
+        "tests/test_benchmark_scenarios.py"
+      ],
+      "slug": "evidence/README",
+      "filePath": "docs/evidence/README.md",
+      "headings": [
+        {
+          "depth": 1,
+          "text": "Evidence and Metric Index",
+          "slug": "evidence-and-metric-index"
+        },
+        {
+          "depth": 2,
+          "text": "Evidence classes",
+          "slug": "evidence-classes"
+        },
+        {
+          "depth": 2,
+          "text": "Canonical benchmark runs",
+          "slug": "canonical-benchmark-runs"
+        },
+        {
+          "depth": 2,
+          "text": "Approved current statements",
+          "slug": "approved-current-statements"
+        },
+        {
+          "depth": 3,
+          "text": "Historical 200-scenario run",
+          "slug": "historical-200-scenario-run"
+        },
+        {
+          "depth": 3,
+          "text": "Diagnostic 60-scenario run",
+          "slug": "diagnostic-60-scenario-run"
+        },
+        {
+          "depth": 3,
+          "text": "Dashboard timing values",
+          "slug": "dashboard-timing-values"
+        },
+        {
+          "depth": 2,
+          "text": "Required reporting dimensions",
+          "slug": "required-reporting-dimensions"
+        },
+        {
+          "depth": 2,
+          "text": "Change policy",
+          "slug": "change-policy"
+        }
+      ],
+      "wordCount": 4265,
+      "readingTimeMinutes": 11
+    },
+    {
+      "id": "DOC-INTERVIEW-HOME",
+      "title": "OmniGuard Interview Documentation",
+      "summary": "Single entry point for the current AGV interview narrative, writing handoff, evidence links, and preparation order.",
+      "version": "1.0.0",
+      "updated_at": "2026-10-14",
+      "authors": [
+        "Shengwei Liu"
+      ],
+      "domains": [
+        "cyber-physical-safety",
+        "multi-agent"
+      ],
+      "perspectives": [
+        "cloud-architecture",
+        "academic-research"
+      ],
+      "layers": [
+        "cross-cutting"
+      ],
+      "doc_type": "tutorial",
+      "status": "accepted",
+      "code_refs": [
+        "src/cloud-orchestrator/embodied_brain/brain.py",
+        "src/cloud-orchestrator/edge-simulator/device_mock.py"
+      ],
+      "test_refs": [
+        "tests/test_brain.py",
+        "tests/test_benchmark_archives.py"
+      ],
+      "slug": "interview/README",
+      "filePath": "docs/interview/README.md",
+      "headings": [
+        {
+          "depth": 1,
+          "text": "Interview documentation",
+          "slug": "interview-documentation"
+        },
+        {
+          "depth": 2,
+          "text": "Read in this order",
+          "slug": "read-in-this-order"
+        },
+        {
+          "depth": 2,
+          "text": "What belongs here",
+          "slug": "what-belongs-here"
+        },
+        {
+          "depth": 2,
+          "text": "What does not belong here",
+          "slug": "what-does-not-belong-here"
+        },
+        {
+          "depth": 2,
+          "text": "Maintenance rule",
+          "slug": "maintenance-rule"
+        }
+      ],
+      "wordCount": 1957,
+      "readingTimeMinutes": 5
+    },
+    {
+      "id": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
+      "title": "OmniGuard 面试准备：把项目讲成一次可信的工程演进",
+      "summary": "面向面试的项目定位、技术深挖主题、AI 协作说明、岗位匹配度和优先改进清单。",
+      "version": "1.0.1",
+      "updated_at": "2026-10-14",
+      "authors": [
+        "Shengwei Liu"
+      ],
+      "domains": [
+        "cyber-physical-safety",
+        "multi-agent"
+      ],
+      "perspectives": [
+        "cloud-architecture",
+        "academic-research"
+      ],
+      "layers": [
+        "cross-cutting"
+      ],
+      "doc_type": "tutorial",
+      "status": "accepted",
+      "code_refs": [
+        "src/cloud-orchestrator/embodied_brain/brain.py",
+        "src/cloud-orchestrator/edge-simulator/device_mock.py",
+        "src/client-edge/src/app/shared/physics/kinematic-token.ts",
+        ".azure/main.bicep"
+      ],
+      "test_refs": [
+        "tests/test_brain.py",
+        "tests/test_benchmark_archives.py",
+        "tests/test_benchmark_scenarios.py"
+      ],
+      "slug": "interview/agv-project-interview-guide",
+      "filePath": "docs/interview/agv-project-interview-guide.md",
+      "headings": [
+        {
+          "depth": 1,
+          "text": "OmniGuard 面试准备：把项目讲成一次可信的工程演进",
+          "slug": "omniguard-"
+        },
+        {
+          "depth": 2,
+          "text": "结论先行",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "项目应该怎样定位",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "最有价值的项目演进",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "阶段一：先让事件链路跑起来",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "阶段二：在事件处理后加入 AI 决策",
+          "slug": "-ai-"
+        },
+        {
+          "depth": 3,
+          "text": "阶段三：从“消息成功”转向“动作是否及时”",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "阶段四：从可视化演示转向可重复评价",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "阶段五：审查 benchmark 本身",
+          "slug": "-benchmark-"
+        },
+        {
+          "depth": 2,
+          "text": "面试最值得深挖的四个技术主题",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "1. 事件驱动架构不等于实时控制",
+          "slug": "1-"
+        },
+        {
+          "depth": 3,
+          "text": "2. 离散控制循环中，延迟为什么会变成距离",
+          "slug": "2-"
+        },
+        {
+          "depth": 3,
+          "text": "3. 确定性 guardrail 与概率 Agent 如何组合",
+          "slug": "3-guardrail-agent-"
+        },
+        {
+          "depth": 3,
+          "text": "4. 评价标签、运行策略和最终动作必须对齐",
+          "slug": "4-"
+        },
+        {
+          "depth": 2,
+          "text": "Azure 模板真正能证明什么",
+          "slug": "azure-"
+        },
+        {
+          "depth": 2,
+          "text": "岗位匹配度",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "如何诚实说明 AI 写了大部分代码",
+          "slug": "-ai-"
+        },
+        {
+          "depth": 2,
+          "text": "面试前最值得完成的工作",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "P0：恢复项目可信度",
+          "slug": "p0"
+        },
+        {
+          "depth": 3,
+          "text": "P1：建立一份新的可信证据",
+          "slug": "p1"
+        },
+        {
+          "depth": 3,
+          "text": "P1：准备面试材料",
+          "slug": "p1"
+        },
+        {
+          "depth": 3,
+          "text": "P2：暂时不要继续扩展",
+          "slug": "p2"
+        },
+        {
+          "depth": 2,
+          "text": "五分钟面试结构",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第一分钟：问题",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第二分钟：架构",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第三分钟：碰撞模拟",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第四分钟：实验结果",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "第五分钟：纠错与结论",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "高频追问",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "为什么不用一个 Agent？",
+          "slug": "-agent"
+        },
+        {
+          "depth": 3,
+          "text": "为什么选择 Azure Functions？",
+          "slug": "-azure-functions"
+        },
+        {
+          "depth": 3,
+          "text": "为什么 IoT Hub，而不是设备直接调 API？",
+          "slug": "-iot-hub-api"
+        },
+        {
+          "depth": 3,
+          "text": "Dashboard 中 20 ms edge latency 是实测吗？",
+          "slug": "dashboard-20-ms-edge-latency-"
+        },
+        {
+          "depth": 3,
+          "text": "这个项目最大的错误是什么？",
+          "slug": ""
+        },
+        {
+          "depth": 3,
+          "text": "如果重新设计会怎么做？",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "必须掌握的五个入口",
+          "slug": ""
+        },
+        {
+          "depth": 2,
+          "text": "最终检查表",
+          "slug": ""
+        }
+      ],
+      "wordCount": 8560,
+      "readingTimeMinutes": 22
+    },
+    {
       "id": "DOC-EVIDENCE-CLAUDE-LINKEDIN",
       "title": "Claude Handoff for the Simulated AGV Project and Benchmark",
       "summary": "Source-backed project and writing brief covering the simulated AGV architecture, evidence boundaries, benchmark history, and safe LinkedIn claims.",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "updated_at": "2026-10-14",
       "authors": [
         "Shengwei Liu"
@@ -3307,8 +3675,8 @@
         "tests/test_benchmark_archives.py",
         "tests/test_benchmark_scenarios.py"
       ],
-      "slug": "evidence/CLAUDE_LINKEDIN_BENCHMARK_BRIEF",
-      "filePath": "docs/evidence/CLAUDE_LINKEDIN_BENCHMARK_BRIEF.md",
+      "slug": "interview/claude-project-and-benchmark-brief",
+      "filePath": "docs/interview/claude-project-and-benchmark-brief.md",
       "headings": [
         {
           "depth": 1,
@@ -3498,87 +3866,6 @@
       ],
       "wordCount": 28382,
       "readingTimeMinutes": 71
-    },
-    {
-      "id": "DOC-EVIDENCE-INDEX",
-      "title": "Evidence and Metric Index",
-      "summary": "Canonical definitions, provenance, and allowed wording for OmniGuard quantitative claims.",
-      "version": "1.0.0",
-      "updated_at": "2026-10-14",
-      "authors": [
-        "Shengwei Liu"
-      ],
-      "domains": [
-        "cyber-physical-safety",
-        "multi-agent"
-      ],
-      "perspectives": [
-        "academic-research"
-      ],
-      "layers": [
-        "cross-cutting"
-      ],
-      "doc_type": "specification",
-      "status": "accepted",
-      "code_refs": [
-        "src/cloud-orchestrator/embodied_brain/benchmark.py",
-        "src/cloud-orchestrator/embodied_brain/benchmark_scenarios.py"
-      ],
-      "test_refs": [
-        "tests/test_benchmark_archives.py",
-        "tests/test_benchmark_scenarios.py"
-      ],
-      "slug": "evidence/README",
-      "filePath": "docs/evidence/README.md",
-      "headings": [
-        {
-          "depth": 1,
-          "text": "Evidence and Metric Index",
-          "slug": "evidence-and-metric-index"
-        },
-        {
-          "depth": 2,
-          "text": "Evidence classes",
-          "slug": "evidence-classes"
-        },
-        {
-          "depth": 2,
-          "text": "Canonical benchmark runs",
-          "slug": "canonical-benchmark-runs"
-        },
-        {
-          "depth": 2,
-          "text": "Approved current statements",
-          "slug": "approved-current-statements"
-        },
-        {
-          "depth": 3,
-          "text": "Historical 200-scenario run",
-          "slug": "historical-200-scenario-run"
-        },
-        {
-          "depth": 3,
-          "text": "Diagnostic 60-scenario run",
-          "slug": "diagnostic-60-scenario-run"
-        },
-        {
-          "depth": 3,
-          "text": "Dashboard timing values",
-          "slug": "dashboard-timing-values"
-        },
-        {
-          "depth": 2,
-          "text": "Required reporting dimensions",
-          "slug": "required-reporting-dimensions"
-        },
-        {
-          "depth": 2,
-          "text": "Change policy",
-          "slug": "change-policy"
-        }
-      ],
-      "wordCount": 4249,
-      "readingTimeMinutes": 11
     },
     {
       "id": "DOC-OPERATIONS",
@@ -5497,231 +5784,6 @@
       ],
       "wordCount": 10425,
       "readingTimeMinutes": 27
-    },
-    {
-      "id": "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE",
-      "title": "OmniGuard 面试准备：把项目讲成一次可信的工程演进",
-      "summary": "面向面试的项目定位、技术深挖主题、AI 协作说明、岗位匹配度和优先改进清单。",
-      "version": "1.0.0",
-      "updated_at": "2026-10-14",
-      "authors": [
-        "Shengwei Liu"
-      ],
-      "domains": [
-        "cyber-physical-safety",
-        "multi-agent"
-      ],
-      "perspectives": [
-        "cloud-architecture",
-        "academic-research"
-      ],
-      "layers": [
-        "cross-cutting"
-      ],
-      "doc_type": "tutorial",
-      "status": "accepted",
-      "code_refs": [
-        "src/cloud-orchestrator/embodied_brain/brain.py",
-        "src/cloud-orchestrator/edge-simulator/device_mock.py",
-        "src/client-edge/src/app/shared/physics/kinematic-token.ts",
-        ".azure/main.bicep"
-      ],
-      "test_refs": [
-        "tests/test_brain.py",
-        "tests/test_benchmark_archives.py",
-        "tests/test_benchmark_scenarios.py"
-      ],
-      "slug": "tutorials/agv-interview-guide",
-      "filePath": "docs/tutorials/agv-interview-guide.md",
-      "headings": [
-        {
-          "depth": 1,
-          "text": "OmniGuard 面试准备：把项目讲成一次可信的工程演进",
-          "slug": "omniguard-"
-        },
-        {
-          "depth": 2,
-          "text": "结论先行",
-          "slug": ""
-        },
-        {
-          "depth": 2,
-          "text": "项目应该怎样定位",
-          "slug": ""
-        },
-        {
-          "depth": 2,
-          "text": "最有价值的项目演进",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "阶段一：先让事件链路跑起来",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "阶段二：在事件处理后加入 AI 决策",
-          "slug": "-ai-"
-        },
-        {
-          "depth": 3,
-          "text": "阶段三：从“消息成功”转向“动作是否及时”",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "阶段四：从可视化演示转向可重复评价",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "阶段五：审查 benchmark 本身",
-          "slug": "-benchmark-"
-        },
-        {
-          "depth": 2,
-          "text": "面试最值得深挖的四个技术主题",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "1. 事件驱动架构不等于实时控制",
-          "slug": "1-"
-        },
-        {
-          "depth": 3,
-          "text": "2. 离散控制循环中，延迟为什么会变成距离",
-          "slug": "2-"
-        },
-        {
-          "depth": 3,
-          "text": "3. 确定性 guardrail 与概率 Agent 如何组合",
-          "slug": "3-guardrail-agent-"
-        },
-        {
-          "depth": 3,
-          "text": "4. 评价标签、运行策略和最终动作必须对齐",
-          "slug": "4-"
-        },
-        {
-          "depth": 2,
-          "text": "Azure 模板真正能证明什么",
-          "slug": "azure-"
-        },
-        {
-          "depth": 2,
-          "text": "岗位匹配度",
-          "slug": ""
-        },
-        {
-          "depth": 2,
-          "text": "如何诚实说明 AI 写了大部分代码",
-          "slug": "-ai-"
-        },
-        {
-          "depth": 2,
-          "text": "面试前最值得完成的工作",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "P0：恢复项目可信度",
-          "slug": "p0"
-        },
-        {
-          "depth": 3,
-          "text": "P1：建立一份新的可信证据",
-          "slug": "p1"
-        },
-        {
-          "depth": 3,
-          "text": "P1：准备面试材料",
-          "slug": "p1"
-        },
-        {
-          "depth": 3,
-          "text": "P2：暂时不要继续扩展",
-          "slug": "p2"
-        },
-        {
-          "depth": 2,
-          "text": "五分钟面试结构",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "第一分钟：问题",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "第二分钟：架构",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "第三分钟：碰撞模拟",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "第四分钟：实验结果",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "第五分钟：纠错与结论",
-          "slug": ""
-        },
-        {
-          "depth": 2,
-          "text": "高频追问",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "为什么不用一个 Agent？",
-          "slug": "-agent"
-        },
-        {
-          "depth": 3,
-          "text": "为什么选择 Azure Functions？",
-          "slug": "-azure-functions"
-        },
-        {
-          "depth": 3,
-          "text": "为什么 IoT Hub，而不是设备直接调 API？",
-          "slug": "-iot-hub-api"
-        },
-        {
-          "depth": 3,
-          "text": "Dashboard 中 20 ms edge latency 是实测吗？",
-          "slug": "dashboard-20-ms-edge-latency-"
-        },
-        {
-          "depth": 3,
-          "text": "这个项目最大的错误是什么？",
-          "slug": ""
-        },
-        {
-          "depth": 3,
-          "text": "如果重新设计会怎么做？",
-          "slug": ""
-        },
-        {
-          "depth": 2,
-          "text": "必须掌握的五个入口",
-          "slug": ""
-        },
-        {
-          "depth": 2,
-          "text": "最终检查表",
-          "slug": ""
-        }
-      ],
-      "wordCount": 8569,
-      "readingTimeMinutes": 22
     },
     {
       "id": "DOC-TUTORIAL-QUICKSTART",

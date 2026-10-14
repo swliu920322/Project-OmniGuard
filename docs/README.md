@@ -2,7 +2,7 @@
 id: "DOC-HOME"
 title: "Project OmniGuard Documentation"
 summary: "Navigation for current architecture, operations, evidence, decisions, and historical archives."
-version: "2.0.1"
+version: "2.0.2"
 updated_at: "2026-10-14"
 authors: ["Shengwei Liu"]
 domains:
@@ -35,7 +35,7 @@ This page is the only navigation entry for Project OmniGuard documentation. Docu
 | Understand the AGV dashboard | [Dashboard reference](dashboard/00-overview.md) |
 | Review an architecture decision | [ADR index](adrs/INDEX.md) |
 | Learn the system | [Quickstart](tutorials/quickstart.md) and [user guide](tutorials/user-guide.md) |
-| Prepare the project for interviews | [AGV interview guide](tutorials/agv-interview-guide.md) |
+| Prepare the project for interviews or public writing | [Interview documentation](interview/README.md) |
 
 ## Reference material
 

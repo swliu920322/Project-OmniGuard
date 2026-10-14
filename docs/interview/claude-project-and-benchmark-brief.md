@@ -2,7 +2,7 @@
 id: "DOC-EVIDENCE-CLAUDE-LINKEDIN"
 title: "Claude Handoff for the Simulated AGV Project and Benchmark"
 summary: "Source-backed project and writing brief covering the simulated AGV architecture, evidence boundaries, benchmark history, and safe LinkedIn claims."
-version: "1.1.0"
+version: "1.1.1"
 updated_at: "2026-10-14"
 authors: ["Shengwei Liu"]
 domains:

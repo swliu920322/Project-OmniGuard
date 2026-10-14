@@ -8,7 +8,7 @@ Contents:
 - dashboard-live/ — superseded live-dashboard design and execution notes;
 - environment-tests/ — point-in-time Azure outputs and resource observations;
 - plans/ — completed, abandoned, or uncommitted proposals;
-- interviews/ — presentation and interview narratives;
+- interviews/ — superseded presentation and interview narratives; current interview material lives in `docs/interview/`;
 - prompts/ — reusable or historical AI prompts;
 - system-design/ — superseded meta-system designs.
 

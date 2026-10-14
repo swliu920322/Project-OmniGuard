@@ -2,7 +2,7 @@
 id: "DOC-TUTORIAL-AGV-INTERVIEW-GUIDE"
 title: "OmniGuard 面试准备：把项目讲成一次可信的工程演进"
 summary: "面向面试的项目定位、技术深挖主题、AI 协作说明、岗位匹配度和优先改进清单。"
-version: "1.0.0"
+version: "1.0.1"
 updated_at: "2026-10-14"
 authors: ["Shengwei Liu"]
 domains:
@@ -359,7 +359,7 @@ IoT Hub 提供设备级身份、MQTT 长连接、遥测摄取和 C2D。不过设
 | 浏览器物理公式 | [kinematic-token.ts](../../src/client-edge/src/app/shared/physics/kinematic-token.ts) |
 | benchmark 事实与限制 | [Benchmark guide](../../src/cloud-orchestrator/embodied_brain/benchmark_results/README.md) |
 
-进一步准备 benchmark 或 LinkedIn 表述时，使用 [Claude project and benchmark brief](../evidence/CLAUDE_LINKEDIN_BENCHMARK_BRIEF.md)。历史面试稿已经归档，不应作为当前事实来源。
+进一步准备 benchmark 或 LinkedIn 表述时，使用 [Claude project and benchmark brief](claude-project-and-benchmark-brief.md)。历史面试稿已经归档，不应作为当前事实来源。
 
 ## 最终检查表
 

@@ -2,7 +2,7 @@
 id: "DOC-EVIDENCE-INDEX"
 title: "Evidence and Metric Index"
 summary: "Canonical definitions, provenance, and allowed wording for OmniGuard quantitative claims."
-version: "1.0.0"
+version: "1.0.1"
 updated_at: "2026-10-14"
 authors: ["Shengwei Liu"]
 domains:
@@ -25,7 +25,7 @@ test_refs:
 
 This document defines how quantitative claims may be used across README files, architecture documents, presentations, and posts.
 
-For a complete Claude/LinkedIn writing handoff—including the simulated AGV project overview, evidence boundaries, and corrected interpretation of the five Router disagreements—use the [Claude project and benchmark brief](CLAUDE_LINKEDIN_BENCHMARK_BRIEF.md).
+For a complete Claude/LinkedIn writing handoff—including the simulated AGV project overview, evidence boundaries, and corrected interpretation of the five Router disagreements—use the [Claude project and benchmark brief](../interview/claude-project-and-benchmark-brief.md).
 
 ## Evidence classes
 
