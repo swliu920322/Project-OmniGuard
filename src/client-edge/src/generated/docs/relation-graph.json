@@ -1,6 +1,6 @@
 {
   "contractVersion": "1.0.0",
-  "generatedAt": "2026-10-14T01:39:57.573Z",
+  "generatedAt": "2026-10-14T01:46:42.940Z",
   "nodes": [
     {
       "id": "DOC-PROJECT-MEMORY",
@@ -3275,9 +3275,9 @@
     },
     {
       "id": "DOC-EVIDENCE-CLAUDE-LINKEDIN",
-      "title": "Claude Handoff for the AGV Benchmark LinkedIn Post",
-      "summary": "Source-backed writing brief that reconciles the 200-run and 60-run benchmark results and prevents unsafe or unsupported LinkedIn claims.",
-      "version": "1.0.0",
+      "title": "Claude Handoff for the Simulated AGV Project and Benchmark",
+      "summary": "Source-backed project and writing brief covering the simulated AGV architecture, evidence boundaries, benchmark history, and safe LinkedIn claims.",
+      "version": "1.1.0",
       "updated_at": "2026-10-14",
       "authors": [
         "Shengwei Liu"
@@ -3296,8 +3296,11 @@
       "doc_type": "specification",
       "status": "accepted",
       "code_refs": [
+        "src/client-edge/src/app/dashboard/",
         "src/cloud-orchestrator/embodied_brain/benchmark.py",
-        "src/cloud-orchestrator/embodied_brain/benchmark_scenarios.py"
+        "src/cloud-orchestrator/embodied_brain/benchmark_scenarios.py",
+        "src/cloud-orchestrator/embodied_brain/brain.py",
+        "src/cloud-orchestrator/edge-simulator/device_mock.py"
       ],
       "test_refs": [
         "tests/test_benchmark_archives.py",
@@ -3308,13 +3311,73 @@
       "headings": [
         {
           "depth": 1,
-          "text": "Claude Handoff for the AGV Benchmark LinkedIn Post",
-          "slug": "claude-handoff-for-the-agv-benchmark-linkedin-post"
+          "text": "Claude Handoff for the Simulated AGV Project and Benchmark",
+          "slug": "claude-handoff-for-the-simulated-agv-project-and-benchmark"
         },
         {
           "depth": 2,
           "text": "Instructions to Claude",
           "slug": "instructions-to-claude"
+        },
+        {
+          "depth": 2,
+          "text": "Project in one sentence",
+          "slug": "project-in-one-sentence"
+        },
+        {
+          "depth": 2,
+          "text": "The research question",
+          "slug": "the-research-question"
+        },
+        {
+          "depth": 2,
+          "text": "What the project actually contains",
+          "slug": "what-the-project-actually-contains"
+        },
+        {
+          "depth": 3,
+          "text": "1. Browser-side AGV motion simulation",
+          "slug": "1-browser-side-agv-motion-simulation"
+        },
+        {
+          "depth": 3,
+          "text": "2. Three-stage embodied-brain pipeline",
+          "slug": "2-three-stage-embodied-brain-pipeline"
+        },
+        {
+          "depth": 3,
+          "text": "3. Live dashboard and HTTP experiment path",
+          "slug": "3-live-dashboard-and-http-experiment-path"
+        },
+        {
+          "depth": 3,
+          "text": "4. IoT/Azure reference path",
+          "slug": "4-iotazure-reference-path"
+        },
+        {
+          "depth": 3,
+          "text": "5. Multi-tenant policy demonstration",
+          "slug": "5-multi-tenant-policy-demonstration"
+        },
+        {
+          "depth": 3,
+          "text": "6. Reproducible benchmark layer",
+          "slug": "6-reproducible-benchmark-layer"
+        },
+        {
+          "depth": 2,
+          "text": "Three evidence levels Claude must keep separate",
+          "slug": "three-evidence-levels-claude-must-keep-separate"
+        },
+        {
+          "depth": 2,
+          "text": "What this project does and does not establish",
+          "slug": "what-this-project-does-and-does-not-establish"
+        },
+        {
+          "depth": 2,
+          "text": "Important implementation boundary discovered during review",
+          "slug": "important-implementation-boundary-discovered-during-review"
         },
         {
           "depth": 2,
@@ -3377,9 +3440,34 @@
           "slug": "recommended-linkedin-angle"
         },
         {
+          "depth": 3,
+          "text": "Project-post message",
+          "slug": "project-post-message"
+        },
+        {
+          "depth": 3,
+          "text": "Evaluation-post message",
+          "slug": "evaluation-post-message"
+        },
+        {
           "depth": 2,
-          "text": "Recommended English draft",
-          "slug": "recommended-english-draft"
+          "text": "Recommended project-overview English draft",
+          "slug": "recommended-project-overview-english-draft"
+        },
+        {
+          "depth": 3,
+          "text": "When AI latency becomes physical distance",
+          "slug": "when-ai-latency-becomes-physical-distance"
+        },
+        {
+          "depth": 2,
+          "text": "Short project-overview alternative",
+          "slug": "short-project-overview-alternative"
+        },
+        {
+          "depth": 2,
+          "text": "Recommended benchmark-audit English draft",
+          "slug": "recommended-benchmark-audit-english-draft"
         },
         {
           "depth": 3,
@@ -3407,8 +3495,8 @@
           "slug": "final-pre-publication-checklist"
         }
       ],
-      "wordCount": 14554,
-      "readingTimeMinutes": 37
+      "wordCount": 28382,
+      "readingTimeMinutes": 71
     },
     {
       "id": "DOC-EVIDENCE-INDEX",
@@ -3488,7 +3576,7 @@
           "slug": "change-policy"
         }
       ],
-      "wordCount": 4189,
+      "wordCount": 4249,
       "readingTimeMinutes": 11
     },
     {
@@ -5627,12 +5715,27 @@
     },
     {
       "source": "DOC-EVIDENCE-CLAUDE-LINKEDIN",
+      "target": "src/client-edge/src/app/dashboard/",
+      "type": "code_ref"
+    },
+    {
+      "source": "DOC-EVIDENCE-CLAUDE-LINKEDIN",
       "target": "src/cloud-orchestrator/embodied_brain/benchmark.py",
       "type": "code_ref"
     },
     {
       "source": "DOC-EVIDENCE-CLAUDE-LINKEDIN",
       "target": "src/cloud-orchestrator/embodied_brain/benchmark_scenarios.py",
+      "type": "code_ref"
+    },
+    {
+      "source": "DOC-EVIDENCE-CLAUDE-LINKEDIN",
+      "target": "src/cloud-orchestrator/embodied_brain/brain.py",
+      "type": "code_ref"
+    },
+    {
+      "source": "DOC-EVIDENCE-CLAUDE-LINKEDIN",
+      "target": "src/cloud-orchestrator/edge-simulator/device_mock.py",
       "type": "code_ref"
     },
     {
