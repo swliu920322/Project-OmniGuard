@@ -4,9 +4,6 @@ __pycache__/
 *.py[codz]
 *$py.class
 .idea/
-employment/
-# Local-only personal career material (CV, profile notes, private assessments)
-self/
 # 彻底斩断本地 Python 虚拟环境向 GitHub 漂移
 src/cloud-orchestrator/.venv/
 src/cloud-orchestrator/__pycache__/
@@ -239,3 +236,10 @@ out
 *.tsbuildinfo
 
 new
+
+# Local deployment secrets / UI state (copy from the *.example.json)
+.azure/main.parameters.json
+.env
+.env.*
+!.env.example
+local.settings.json

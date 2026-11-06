@@ -25,8 +25,6 @@ test_refs:
 
 This document defines how quantitative claims may be used across README files, architecture documents, presentations, and posts.
 
-For a complete Claude/LinkedIn writing handoff—including the simulated AGV project overview, evidence boundaries, and corrected interpretation of the five Router disagreements—use the [Claude project and benchmark brief](../interview/claude-project-and-benchmark-brief.md).
-
 ## Evidence classes
 
 | Label | Meaning | Allowed wording |

@@ -6,7 +6,6 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     // 语义 → CSS 映射声明在 interpreter 包内，必须纳入扫描，否则切换形式无视觉变化
-    "../../packages/interpreter/src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {

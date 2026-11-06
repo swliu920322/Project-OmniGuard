@@ -65,7 +65,7 @@ Live mode calls the configured backend and can display observed request timing. 
 - a deployed Azure call is evidence only for the named environment and time;
 - model and provider metadata should be captured with any reported latency.
 
-Historical live-dashboard design and troubleshooting notes are preserved in [the dashboard-live archive](../archive/dashboard-live/1-system-blueprint.md). Current behavior is defined by `src/client-edge/src/app/dashboard/live/page.tsx`.
+Current behavior is defined by `src/client-edge/src/app/dashboard/live/page.tsx`.
 
 ## Relationship to benchmark results
 

@@ -5,10 +5,10 @@ param prefix string = 'omni'
 
 @secure()
 param openAiKey string = ''
-param openAiEndpoint string = 'https://southeastaisa-0322-resource.openai.azure.com'
+param openAiEndpoint string = 'https://YOUR-OPENAI-RESOURCE.openai.azure.com'
 param openAiDeploymentName string = 'gpt-5.4-mini'
 
-// Configurator Parameter Set
+// Parameter set (snapshot of the Bicep Studio "secure-iot" preset)
 param deployStaticWebApp bool = false
 param customResourceGroupName string = ''
 param vnetAddressPrefix string = '10.1.0.0/16'

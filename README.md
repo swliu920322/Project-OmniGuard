@@ -12,9 +12,8 @@ OmniGuard combines a simulated AGV dashboard, a three-stage cloud agent pipeline
 |---|---|---|
 | AGV dashboard | Simulates cloud-only, cloud+edge, and token-heavy control loops | Core demonstrator |
 | Embodied-brain pipeline | Router → safety → action compiler with early exit | Core research implementation |
-| Azure IaC | Bicep templates and deployment scripts for the reference topology | Engineering reference |
+| Azure IaC | Frozen Bicep snapshot and deployment scripts for the reference topology (generated with the separate Bicep Studio project) | Engineering reference |
 | Benchmark archive | Immutable historical and diagnostic runs with limitations | Evidence |
-| Prediction, Interpreter, OmniDocs | Separate product experiments sharing this monorepo | Labs, not OmniGuard claims |
 
 The repository deliberately distinguishes implemented behavior, simulated parameters, measured results, and future proposals. See the [evidence policy](docs/evidence/README.md) before quoting a number.
 
@@ -58,10 +57,8 @@ src/client-edge/                Next.js frontend and browser-side experiments
 src/cloud-orchestrator/         FastAPI/Azure Functions backend and agent pipelines
 src/cloud-orchestrator/
   embodied_brain/               AGV agent pipeline, scenarios, and benchmark evidence
-packages/                       OmniDocs/Interpreter experimental packages
-standalone/                     Standalone demos
 tests/                          Unit, contract, benchmark, and shadow-environment tests
-docs/                           Current documentation and archived historical material
+docs/                           Current documentation
 ```
 
 ## Local development
@@ -97,9 +94,6 @@ Azure operations are documented in [docs/operations.md](docs/operations.md). Rev
 | `/dashboard/theorem` | Single-AGV latency/clearance sandbox | Browser simulation |
 | `/dashboard/compare` | Cloud versus edge comparison | Browser simulation |
 | `/dashboard/live` | Calls the configured backend when available | Runtime-dependent |
-| `/iac` and `/iac/configurator` | IaC topology and configuration tools | Repository templates |
-| `/prediction` | KOL/supply-chain experiment | Labs data pipeline |
-| `/interpreter` | Content interpretation experiment | Labs package |
 
 ## Documentation contract
 
@@ -107,7 +101,6 @@ Azure operations are documented in [docs/operations.md](docs/operations.md). Rev
 - [ARCHITECTURE.md](ARCHITECTURE.md) describes the current system and its boundaries.
 - [docs/evidence/README.md](docs/evidence/README.md) defines which claims are measured, simulated, configured, or planned.
 - [docs/adrs/INDEX.md](docs/adrs/INDEX.md) records architecture decisions.
-- `docs/archive/` preserves old plans, audits, interview scripts, and prompts; archived files are not current specifications.
 
 ## Known limitations
 

@@ -12,7 +12,7 @@ param deployStaticWebApp bool = false
 
 @secure()
 param openAiKey string
-param openAiEndpoint string = 'https://southeastaisa-0322-resource.openai.azure.com'
+param openAiEndpoint string = 'https://YOUR-OPENAI-RESOURCE.openai.azure.com'
 param openAiDeploymentName string = 'gpt-5.4-mini'
 @secure()
 param iotHubServiceConnectionString string

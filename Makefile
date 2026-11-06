@@ -1,7 +1,7 @@
 # =========================================================================
 # 🛠️ Project-OmniGuard 统一控制总线
 # =========================================================================
-.PHONY: provision whatif start-backend start-frontend destroy deploy-aca patch-env trigger-ci help add-device research clean test test-all docs-init docs-inject docs-build docs-lint docs-test
+.PHONY: provision whatif start-backend start-frontend destroy deploy-aca patch-env trigger-ci help add-device clean test test-all
 
 help:
 	@echo "======================================================"
@@ -17,11 +17,6 @@ help:
 	@echo "make trigger-ci      - 触发 GitHub CI/CD 流水线"
 	@echo "make test            - 运行单元测试 (pytest)"
 	@echo "make test-all        - 运行所有测试 (含影子环境 E2E)"
-	@echo "make docs-init       - 初始化 OmniDocs 依赖"
-	@echo "make docs-inject     - 为存量文档注入 Frontmatter"
-	@echo "make docs-build      - 构建 manifest + relation graph (严格校验)"
-	@echo "make docs-lint       - Schema 契约测试 (Zod)"
-	@echo "make docs-test       - Schema + Indexer + Python 全链路校验"
 	@echo "======================================================"
 	@echo "💡 提示: 分别在两个终端中运行 make start-backend 和 make start-frontend"
 
@@ -60,10 +55,6 @@ trigger-ci:
 add-device:
 	@bash scripts/add-device.sh $(DEV)
 
-research:
-	@echo "🚀 [CLI] 正在启动增量推文数据采集、双语翻译与投研分析..."
-	@cd src/cloud-orchestrator && ./.venv/bin/python run_analysis.py
-
 clean:
 	docker builder prune -a -f
 
@@ -77,26 +68,3 @@ test-all:
 	@echo ""
 	@echo "📡 [CLI] 运行影子环境 E2E 测试..."
 	python3 tests/shadow-e2e-test.py
-
-# ------------------------------------------------------------------
-# 📚 OmniDocs 文档系统 (数据契约优先，详见 docs/plan/omnidocs-product-architecture.md)
-# ------------------------------------------------------------------
-docs-init:
-	@npm install
-	@echo "📚 [OmniDocs] 依赖安装完成"
-
-docs-inject:
-	@echo "📚 [OmniDocs] 为存量文档注入 Frontmatter (ADR/Blueprint/其余目录)..."
-	@npm run docs:inject
-
-docs-build:
-	@echo "📚 [OmniDocs] 构建 manifest + relation graph (严格校验)..."
-	@npm run docs:build
-
-docs-lint:
-	@echo "🔍 [OmniDocs] Schema 契约测试 (Zod)..."
-	@npm run test -w @omnidocs/schema
-
-docs-test:
-	@echo "🔬 [OmniDocs] Schema + Indexer + Python 全链路校验..."
-	@npm run docs:test

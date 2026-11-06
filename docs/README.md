@@ -1,7 +1,7 @@
 ---
 id: "DOC-HOME"
 title: "Project OmniGuard Documentation"
-summary: "Navigation for current architecture, operations, evidence, decisions, and historical archives."
+summary: "Navigation for current architecture, operations, evidence, decisions,."
 version: "2.0.2"
 updated_at: "2026-10-14"
 authors: ["Shengwei Liu"]
@@ -35,16 +35,10 @@ This page is the only navigation entry for Project OmniGuard documentation. Docu
 | Understand the AGV dashboard | [Dashboard reference](dashboard/00-overview.md) |
 | Review an architecture decision | [ADR index](adrs/INDEX.md) |
 | Learn the system | [Quickstart](tutorials/quickstart.md) and [user guide](tutorials/user-guide.md) |
-| Prepare the project for interviews or public writing | [Interview documentation](interview/README.md) |
 
 ## Reference material
 
 - reference/blueprints/ contains architecture patterns and implementation notes. A blueprint may describe a target state; verify it against code before treating it as deployed.
-- Historical environment observations and the original live-dashboard design are preserved under archive/.
-
-## Historical archive
-
-[The archive](archive/README.md) preserves plans, audits, interview scripts, prompts, and superseded system designs. Archive files remain searchable for context but are excluded from current-document validation and generated indexes.
 
 ## Source-of-truth rules
 

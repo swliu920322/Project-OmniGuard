@@ -91,7 +91,7 @@ The repository retains 34 numbered decisions (ADR-002 through ADR-035; ADR-001 i
 | 021 | [Dual-Mode Architecture — Sim vs Live](./ADR-021-%5Barchitecture%5D-Dual-Mode-Architecture.md) | ✅ |
 | 023 | [Dark Warehouse Survival State Machine](./ADR-023-%5Barchitecture%5D-Dark-Warehouse-Survival-State-Machine.md) | ✅ |
 | 028 | [Multi-Agent Orchestration Engine](./ADR-028-%5Barchitecture%5D-Multi-Agent-Orchestration-Engine.md) | ✅ |
-| 030 | [IaC Configurator — Enterprise Compliance, Key Vault Integration & GitOps Pipeline](./ADR-030-%5Barchitecture%5D-IaC-Configurator-Enterprise-Compliance.md) — also `[infra]`, `[frontend]` | ✅ |
+| 030 | IaC Configurator — Enterprise Compliance, Key Vault Integration & GitOps Pipeline — moved to the separate Bicep Studio project |
 | 032 | [Dual-Track Identity Decoupling, Bicep Parameter Filtering, and Preset Fallback Governance](./ADR-032-%5Barchitecture%5D-Dual-Track-Identity-Decoupling-and-Fallback-Governance.md) — also `[infra]`, `[backend]`, `[frontend]` | ✅ |
 | 034 | [Azure OpenAI Client Instantiation and Credential Loading Unification](./ADR-034-%5Barchitecture%5D-OpenAI-Credentials-Unification.md) — also `[backend]` | ✅ |
 | 035 | [Data-Contract-First Multi-System Productization for the AI-Native Doc System](./ADR-035-%5Barchitecture%5D-Data-Contract-First-Multi-System-Productization.md) — also `[backend]`, `[frontend]` | ✅ |

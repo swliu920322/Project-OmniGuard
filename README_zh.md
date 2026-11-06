@@ -14,7 +14,6 @@ OmniGuard 包含模拟 AGV 仪表盘、三级云端 Agent 流水线、Azure 基�
 | Embodied Brain | Router → Safety → Compiler，支持提前退出 | 核心研究实现 |
 | Azure IaC | Bicep 模板和部署脚本 | 工程参考 |
 | Benchmark Archive | 保存历史跑次、诊断跑次及局限 | 实验证据 |
-| Prediction、Interpreter、OmniDocs | 共用仓库的独立产品实验 | Labs，不作为 OmniGuard 核心结论 |
 
 本仓库明确区分已实现行为、模拟参数、实测结果和未来方案。引用数字前请先阅读[证据规则](docs/evidence/README.md)。
 
@@ -56,8 +55,6 @@ src/client-edge/                Next.js 前端和浏览器实验
 src/cloud-orchestrator/         FastAPI/Azure Functions 后端与 Agent 流水线
 src/cloud-orchestrator/
   embodied_brain/               AGV Agent、场景协议与 benchmark 证据
-packages/                       OmniDocs/Interpreter 实验包
-standalone/                     独立演示
 tests/                          单元、契约、benchmark 与影子环境测试
 docs/                           当前文档与历史归档
 ```
@@ -90,9 +87,6 @@ Azure 操作见 [docs/operations.md](docs/operations.md)。执行部署或销毁
 | `/dashboard/theorem` | 单 AGV 时延/安全距离沙盒 | 浏览器模拟 |
 | `/dashboard/compare` | 云端与边缘并排比较 | 浏览器模拟 |
 | `/dashboard/live` | 后端可用时发起真实请求 | 取决于运行环境 |
-| `/iac`、`/iac/configurator` | IaC 拓扑和配置工具 | 仓库模板 |
-| `/prediction` | KOL/供应链实验 | Labs 数据管线 |
-| `/interpreter` | 内容解释实验 | Labs 包 |
 
 ## 文档规则
 
@@ -100,7 +94,6 @@ Azure 操作见 [docs/operations.md](docs/operations.md)。执行部署或销毁
 - [ARCHITECTURE.md](ARCHITECTURE.md) 只描述当前系统和边界。
 - [docs/evidence/README.md](docs/evidence/README.md) 管理实测、模拟、配置和计划类结论。
 - [docs/adrs/INDEX.md](docs/adrs/INDEX.md) 记录架构决策。
-- `docs/archive/` 保存旧计划、审查、面试稿和 prompt；归档文件不是当前规范。
 
 ## 已知限制
 

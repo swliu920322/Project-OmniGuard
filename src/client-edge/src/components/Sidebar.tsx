@@ -5,17 +5,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useI18n } from '@/components/I18nProvider';
 import { 
-  User, 
-  Layers, 
-  Settings, 
   Activity, 
   Truck, 
-  TrendingUp, 
   ChevronLeft, 
   ChevronRight,
   Terminal,
-  Compass,
-  BookOpen
+  Compass
 } from 'lucide-react';
 
 interface NavItem {
@@ -54,29 +49,9 @@ export default function Sidebar() {
 
   const navGroups: NavGroup[] = [
     {
-      title: t('sidebar.title_profile'),
-      items: [
-        { label: t('sidebar.resume'), href: '/', icon: User },
-      ]
-    },
-    {
-      title: t('sidebar.title_interpreter'),
-      items: [
-        { label: t('sidebar.interpreterDemo'), href: '/interpreter', icon: BookOpen },
-      ]
-    },
-    {
-      title: t('sidebar.title_iac'),
-      items: [
-        { label: t('sidebar.iacDashboard'), href: '/iac', icon: Layers },
-        { label: t('sidebar.configurator'), href: '/iac/configurator', icon: Settings },
-      ]
-    },
-    {
       title: t('sidebar.title_simulation'),
       items: [
         { label: t('sidebar.fleet'), href: '/dashboard', icon: Truck },
-        { label: t('sidebar.prediction'), href: '/prediction', icon: TrendingUp },
       ]
     }
   ];

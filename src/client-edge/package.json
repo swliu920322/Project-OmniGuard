@@ -1,5 +1,5 @@
 {
-  "name": "omniguanrd-client-edge",
+  "name": "omniguard-client-edge",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,20 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
-    "@huggingface/transformers": "^4.2.0",
-    "@mlc-ai/web-llm": "^0.2.84",
-    "@xyflow/react": "^12.11.0",
-    "clsx": "^2.1.1",
     "lucide-react": "^0.378.0",
     "next": "^14.2.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-draggable": "^4.7.0",
-    "reactflow": "^11.11.2",
-    "tailwind-merge": "^2.3.0",
-    "zustand": "^4.5.2",
-    "@omnidocs/schema": "file:../../../packages/schema",
-    "@omnidocs/interpreter": "file:../../../packages/interpreter"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",

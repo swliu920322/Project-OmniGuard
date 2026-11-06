@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
-// 🟩 核心引入：空降数字人全局挂件
-import CognitiveAvatarWidget from "@/components/digital-human";
 import Sidebar from "@/components/Sidebar";
 import { I18nProvider } from "@/components/I18nProvider";
 
 export const metadata: Metadata = {
-  title: "LIU SHENGWEI // Solutions Architect Portfolio",
-  description: "Enterprise RAG & Agentic Workflow Sandbox",
+  title: "OmniGuard — Cloud-Edge AGV Safety Research",
+  description: "Simulated AGV dashboard, three-stage agent pipeline, and benchmark evidence",
 };
 
 export default function RootLayout({
@@ -28,9 +26,6 @@ export default function RootLayout({
               {children}
             </div>
           </div>
-
-          {/* 3. 🏁 【顶级合拢】：数字人全局挂件，跨页不断电 */}
-          <CognitiveAvatarWidget />
         </I18nProvider>
       </body>
     </html>

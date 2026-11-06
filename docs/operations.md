@@ -20,7 +20,6 @@ code_refs:
   - "scripts/provision.sh"
 test_refs:
   - "tests/test_brain.py"
-  - "tests/test_doc_system.py"
 ---
 # Operations Guide
 

@@ -65,8 +65,6 @@ Open http://localhost:3000. Backend startup normally uses port 7071.
 - /dashboard/theorem — latency/clearance sandbox
 - /dashboard/compare — cloud/edge comparison
 - /dashboard/live — backend-dependent flow
-- /iac — IaC tools
-- /prediction and /interpreter — Labs experiments
 
 Start with /dashboard when no Azure environment is available.
 

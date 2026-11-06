@@ -15,7 +15,6 @@ doc_type: tutorial
 status: accepted
 code_refs:
   - "src/client-edge/src/app/dashboard/page.tsx"
-  - "src/client-edge/src/app/iac/page.tsx"
 test_refs:
   - "tests/test_brain.py"
 ---
@@ -23,7 +22,7 @@ test_refs:
 
 ## Start with the project boundary
 
-OmniGuard is the AGV/cloud-edge safety demonstrator. Prediction, Interpreter, and OmniDocs are Labs housed in the same repository. Their presence does not mean their claims or data belong to the AGV benchmark.
+OmniGuard is the AGV/cloud-edge safety demonstrator.
 
 ## Dashboard
 
@@ -57,19 +56,9 @@ Before sharing a result:
 
 Use the [evidence index](../evidence/README.md) as the canonical summary.
 
-## IaC tools
+## Infrastructure
 
-The /iac routes visualize and configure repository infrastructure templates. Generated or previewed infrastructure is not deployed infrastructure until the Azure operation succeeds and validation passes.
-
-Use the [operations guide](../operations.md) before running provisioning, deployment, or destruction commands.
-
-## Labs
-
-- /prediction is a KOL and supply-chain analysis experiment.
-- /interpreter is a content-presentation experiment.
-- packages/ contains reusable experimental document tooling.
-
-Treat each Lab as a separate product surface. Do not add its claims to the OmniGuard architecture overview unless it becomes a required OmniGuard dependency.
+The Bicep files in `.azure/` are a frozen reference snapshot; see `.azure/README.md`. They are not deployed infrastructure until an Azure operation succeeds and validation passes. Use the [operations guide](../operations.md) before running provisioning, deployment, or destruction commands.
 
 ## Reporting language
 

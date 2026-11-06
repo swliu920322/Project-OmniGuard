@@ -30,15 +30,6 @@ The AGV is simulated. The project does not claim safety certification, physical-
 - Azure topology under .azure
 - Infrastructure and benchmark tests under tests
 
-### Labs sharing the repository
-
-- KOL and supply-chain analysis under /prediction and kol_analysis
-- Content Interpreter under /interpreter and packages/interpreter
-- OmniDocs schema and indexing packages under packages
-- Standalone demos under standalone
-
-Labs may reuse infrastructure and UI code, but they are not evidence for the OmniGuard safety claim.
-
 ## 3. Logical architecture
 
     Browser
@@ -51,8 +42,6 @@ Labs may reuse infrastructure and UI code, but they are not evidence for the Omn
        FastAPI / Azure Functions ASGI
               |
               +-- embodied_brain router
-              +-- digitalhuman router
-              +-- KOL analysis router
               |
               +-- configured LLM provider
               +-- optional Cosmos DB / Storage / IoT services

@@ -34,14 +34,6 @@ async def log_requests(request, call_next):
 
 
 # 3. 模块化：优雅加载各独立作用域下的子路由组件
-from digitalhuman import digital_human_router
-from kol_analysis import kol_analysis_router
-
-# 注册数字人子模块路由
-fastapi_app.include_router(digital_human_router)
-
-# 注册大 V 预测时序管线路由
-fastapi_app.include_router(kol_analysis_router)
 
 # 注册具身智能脑干大盘模拟器路由
 from embodied_brain import brain_router

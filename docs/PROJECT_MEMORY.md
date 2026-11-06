@@ -29,7 +29,7 @@ This file is a compact maintainer handoff. It intentionally avoids duplicating t
 
 ## Repository identity
 
-Project OmniGuard is the primary research story. Prediction, Interpreter, OmniDocs packages, and standalone apps are Labs that share the repository but have separate goals.
+Project OmniGuard is a cloud-edge AGV safety research demonstrator. Unrelated experiments (document tooling, KOL analysis, portfolio pages) are kept outside this repository.
 
 ## Main ownership map
 
@@ -42,7 +42,6 @@ Project OmniGuard is the primary research story. Prediction, Interpreter, OmniDo
 | AGV agent behavior | src/cloud-orchestrator/embodied_brain/ | Python implementation and tests |
 | Benchmark facts | embodied_brain/benchmark_results/ | Named immutable runs |
 | Architecture rationale | docs/adrs/ | Accepted ADRs |
-| Historical narratives | docs/archive/ | Context only |
 
 ## Common commands
 
@@ -51,8 +50,6 @@ Project OmniGuard is the primary research story. Prediction, Interpreter, OmniDo
 | Start backend | make start-backend |
 | Start frontend | make start-frontend |
 | Run project tests | make test |
-| Validate documentation | make docs-test |
-| Build document manifests | make docs-build |
 | Preview Azure deployment | make whatif |
 | Provision Azure resources | make provision |
 | Deploy containers | make deploy-aca |
@@ -64,9 +61,7 @@ Provision, deploy, and destroy commands affect external Azure state. Confirm sub
 1. Do not put a new product concept into the root README until it has a stable route, owner, and test.
 2. Do not quote a benchmark number outside the evidence index without naming its run.
 3. Do not overwrite benchmark output; create a new run directory.
-4. Move completed or abandoned plans into docs/archive/.
 5. Keep README files descriptive; record design decisions in ADRs.
-6. Regenerate document manifests after moving indexed files.
 
 ## Handoff checklist
 

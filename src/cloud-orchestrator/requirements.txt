@@ -4,8 +4,6 @@ openai>=1.56.0
 fastapi
 azure-identity
 azure-ai-projects
-fpdf2
-markdown
 requests
 python-dotenv
 azure-cosmos
