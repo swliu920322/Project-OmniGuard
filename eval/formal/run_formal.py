@@ -49,7 +49,8 @@ GATE = {"agreement_min": 0.98, "accuracy_diff_max_points": 2.0}
 SCORING_POLICY = ("an error, an unusable or truncated reply and an interrupted request stay in the denominator and count as wrong; nothing is retried or dropped; "
                   "primary route is the main metric, note_status is reported apart, a success-only accuracy may be shown next to the main figure and never instead of it")
 STRESS_MODEL_TYPES = (3, 4, 5, 6, 7, 8, 9)  # types whose cases may need a model request (type 9 only when its input is valid)
-CAPS = {"main_run": {"max_calls": 300, "max_tokens": 600_000, "usd": "0.25"}, "stress_run": {"max_calls": 40, "max_tokens": 100_000, "usd": "0.05"}}
+CAPS = {"health_canary": {"max_calls": 2, "max_tokens": 20_000, "usd": "0.02"}, "main_run": {"max_calls": 300, "max_tokens": 600_000, "usd": "0.25"},
+        "stress_run": {"max_calls": 40, "max_tokens": 100_000, "usd": "0.05"}}                          # the health canary runs on the PUBLIC dev file and is part of the total
 
 
 def sha(path: str) -> str:
@@ -72,9 +73,21 @@ def read_jsonl(path: str) -> list[dict]:
 
 # --- the external files: hash first, then validation and normalisation (messages never echo a record) ---------------------------------
 
+def ident(raw: dict, line: int) -> str:
+    """The record id: `id` or `case_id` (the private stress file uses `case_id`); both present must be equal. Internally always `id`."""
+    a, b = raw.get("id"), raw.get("case_id")
+    if a is not None and b is not None and a != b:
+        raise ValueError(f"line {line}: `id` and `case_id` are both present and differ")
+    v = a if a is not None else b
+    if not isinstance(v, str) or not v:
+        raise ValueError(f"line {line}: a record needs a string `id` (or `case_id`)")
+    return v
+
+
 def normalize_test(raw: dict, line: int) -> dict:
-    if not isinstance(raw, dict) or not isinstance(raw.get("id"), str) or not isinstance(raw.get("telemetry"), dict) or set(raw["telemetry"]) != set(TELE):
+    if not isinstance(raw, dict) or not isinstance(raw.get("telemetry"), dict) or set(raw["telemetry"]) != set(TELE):
         raise ValueError(f"line {line}: a record needs id, telemetry with exactly {list(TELE)}, note and note_status")
+    rid = ident(raw, line)
     note, status = raw.get("note"), raw.get("note_status")
     if (note is None) != (status is None) or (note is not None and (not isinstance(note, str) or not note.strip())):
         raise ValueError(f"line {line}: note and note_status must both be present (note non-blank text) or both null")
@@ -86,22 +99,23 @@ def normalize_test(raw: dict, line: int) -> dict:
     if isinstance(raw.get("gold"), dict) and raw["gold"].get("primary") != gold["primary"]:
         raise ValueError(f"line {line}: the file's gold primary differs from the one recomputed from telemetry and note_status")
     clean = note.strip() if note else None
-    return {"id": raw["id"], "family_id": raw.get("family_id"), "telemetry": raw["telemetry"], "note": clean, "note_status": status,
+    return {"id": rid, "family_id": raw.get("family_id"), "telemetry": raw["telemetry"], "note": clean, "note_status": status,
             "rendered_input": R.render_telemetry(raw["telemetry"], clean),
             "gold": {"primary": gold["primary"], "risk_set": gold["risk_set"], "telemetry_risks": gold["telemetry_risks"], "gate": gold["gate"], "action": gold["action"]}}
 
 
 def normalize_stress(raw: dict, line: int) -> dict:
     ty = raw.get("type") if isinstance(raw, dict) else None
-    if not isinstance(raw, dict) or not isinstance(raw.get("id"), str) or not isinstance(ty, int) or isinstance(ty, bool) or not 1 <= ty <= 11 or "telemetry" not in raw:
-        raise ValueError(f"line {line}: a stress case needs id, type 1..11 and telemetry")
+    if not isinstance(raw, dict) or not isinstance(ty, int) or isinstance(ty, bool) or not 1 <= ty <= 11 or "telemetry" not in raw:
+        raise ValueError(f"line {line}: a stress case needs id (or case_id), type 1..11 and telemetry")
+    rid = ident(raw, line)
     fault = raw.get("fault") or {10: "TIMEOUT", 11: "RATE_LIMIT"}.get(ty)
     if fault is not None and fault not in R.FAULTS:
         raise ValueError(f"line {line}: unknown fault")
     estop = raw.get("estop", False)
     if not isinstance(estop, bool):
         raise ValueError(f"line {line}: estop must be a boolean")
-    return {"id": raw["id"], "type": ty, "telemetry": raw["telemetry"], "note": raw.get("note"), "note_status": raw.get("note_status"), "estop": estop, "fault": fault}
+    return {"id": rid, "type": ty, "telemetry": raw["telemetry"], "note": raw.get("note"), "note_status": raw.get("note_status"), "estop": estop, "fault": fault}
 
 
 def resolve(args, manifest: dict, kind: str) -> tuple[str, str, bool]:
@@ -156,7 +170,12 @@ def load_data(args, manifest: dict, need: tuple = ("main", "stress")) -> tuple[l
 def check_code_freeze() -> dict:
     if not os.path.isfile(FREEZE):
         raise SystemExit("CODE_FREEZE.json is missing: run `freeze` and review it first")
-    frozen = json.load(open(FREEZE, encoding="utf-8"))["files"]
+    freeze = json.load(open(FREEZE, encoding="utf-8"))
+    frozen = freeze["files"]
+    if freeze.get("frozen_manifest_sha256") != sha(MANIFEST):
+        raise SystemExit("the frozen data manifest changed since the code freeze (a new freeze and review are needed)")
+    if freeze.get("baseline_B_prompt_sha256") != L.sha256_text(P.SYSTEM_PROMPT):
+        raise SystemExit("the baseline-B prompt differs from the one recorded in the code freeze")
     now = code_hashes()
     changed = sorted(f for f in FROZEN_FILES if frozen.get(f) != now[f])
     if changed:
@@ -232,6 +251,7 @@ def run_once(args, real, manifest, records, frozen_data, hashes) -> tuple[int, s
     guard = L.BudgetGuard(max_calls, max_tokens, usd_cap, pricing)
     calls: list[dict] = []
     status, stop_reason, interruption, inflight = "completed", "completed all planned calls", None, None
+    state: dict = {"inflight": None}                      # the stress path keeps its current case, request and reservation here
     f = open(os.path.join(run_dir, "calls.jsonl"), "w", encoding="utf-8")
 
     def write(c):
@@ -259,7 +279,7 @@ def run_once(args, real, manifest, records, frozen_data, hashes) -> tuple[int, s
                     status, stop_reason = "stopped_bound_violation", f"bound violated by call #{seq}: {exc.reason}"
                     break
         else:
-            status, stop_reason = run_stress(records, client, guard, write)
+            status, stop_reason = run_stress(records, client, guard, write, state)
     except BaseException as exc:  # noqa: BLE001 - seal what exists
         interruption = {"type": type(exc).__name__, "message": str(exc)[:500]}
         status = "interrupted" if isinstance(exc, KeyboardInterrupt) else "crashed"
@@ -269,6 +289,13 @@ def run_once(args, real, manifest, records, frozen_data, hashes) -> tuple[int, s
             c = RUN.build_call_record(seq, rec, getattr(client, "last", None), exc)
             c.update({"status": "in_flight_at_interruption", "reserved": {"input_bound": resv.input_bound, "output_bound": resv.output_bound, "usd": str(resv.usd)}})
             write(c)
+        if state["inflight"] is not None:                 # stress: a request was started and never returned
+            seq, case, resv = state["inflight"]
+            write({"seq": seq, "id": case["id"], "type": case["type"], "status": "in_flight_at_interruption", "model_called": True, "injected_fault": None,
+                   "executed": R.execute(case["telemetry"], None, case["note"], case["estop"], fault="API_ERROR"), "prediction": None, "parse_error": "interrupted",
+                   "invalid_reason": None, "request": (getattr(client, "last", None) or {}).get("request"), "response_full": None,
+                   "error": {"type": type(exc).__name__, "message": str(exc)[:500]}, "usage": None, "reply": None, "response_model": None,
+                   "reserved": {"input_bound": resv.input_bound, "output_bound": resv.output_bound, "usd": str(resv.usd)}})
     finally:
         f.close()
     usable = [c for c in calls if isinstance((c.get("usage") or {}).get("prompt_tokens"), int) and isinstance((c.get("usage") or {}).get("completion_tokens"), int)]
@@ -358,7 +385,7 @@ def run_rules(args, records, frozen_data, hashes, manifest) -> int:
     return 0
 
 
-def run_stress(cases, client, guard, write):
+def run_stress(cases, client, guard, write, state):
     """Stress cases go through the backend decision path (router_v2.decide). Input-check cases never reach a model; injected faults produce no API request."""
     from router_v2 import ModelReply, decide
 
@@ -369,6 +396,8 @@ def run_stress(cases, client, guard, write):
             if c["fault"]:
                 return ModelReply(fault=c["fault"])                      # injected: no request leaves the machine
             bound["resv"] = guard.reserve(L.input_token_upper_bound(system, user), RUN.MAX_TOKENS)
+            state["inflight"] = (seq, c, bound["resv"])      # from here until the record is written, an interruption leaves a started request
+            client.last = None
             cap = client.call(user)
             bound["cap"] = cap
             resp = cap.get("response") or {}
@@ -387,6 +416,7 @@ def run_stress(cases, client, guard, write):
                "parse_error": res.get("parse_error"), "invalid_reason": res.get("invalid_reason"), "request": cap_.get("request"), "response_full": cap_.get("response"),
                "error": cap_.get("error"), "usage": usage, "response_model": (cap_.get("response") or {}).get("model"),
                "reply": (((cap_.get("response") or {}).get("choices") or [{}])[0].get("message") or {}).get("content")})
+        state["inflight"] = None
         if bound["resv"] is not None:
             try:
                 guard.settle(bound["resv"], usage)
@@ -399,7 +429,7 @@ def stress_metrics(cases: list[dict], calls: list[dict]) -> dict:
     """Per type and in total, reported apart: input rejections, injected-fault halts, missed halts, needless halts, model errors, interface errors."""
     by_id = {c["id"]: c for c in calls}
     keys = ("cases", "started", "model_requests", "input_rejected_as_expected", "injected_fault_halts_as_expected", "missed_halt", "needless_halt",
-            "model_unusable_replies", "model_wrong_primary", "interface_errors", "scored")
+            "model_unusable_replies", "model_wrong_primary", "interface_errors", "interrupted", "scored")
     per_type: dict[str, dict] = {}
     for case in cases:
         t = per_type.setdefault(str(case["type"]), dict.fromkeys(keys, 0))
@@ -408,6 +438,10 @@ def stress_metrics(cases: list[dict], calls: list[dict]) -> dict:
         if call is None:
             continue
         t["started"] += 1
+        if call.get("status") == "in_flight_at_interruption":      # started, no result: a failure, never dropped
+            t["model_requests"] += 1
+            t["interrupted"] += 1
+            continue
         ex, requested = call["executed"], bool(call["request"])
         t["model_requests"] += requested
         invalid = R.check_input(case["telemetry"], case["note"]) is not None
@@ -484,15 +518,42 @@ def write_public(args, config, summary, run_dir, real):
 
 # --- the reproducibility gate ---------------------------------------------------------------------------------------------------------
 
+def _dig(d, path):
+    for k in path:
+        d = d[k]
+    return d
+
+
 def compare_runs(dir_a: str, dir_b: str, records: list[dict]) -> dict:
     def load(d):
         return {c["id"]: c for c in read_jsonl(os.path.join(d, "calls.jsonl"))}, json.load(open(os.path.join(d, "config.json"), encoding="utf-8"))
 
+    problems = []
+    for tag, d in (("A", dir_a), ("B", dir_b)):
+        v = L.verify_run_dir(d)
+        if v:
+            problems.append(f"run {tag}: the directory does not verify ({v[0]})")
+    if problems:
+        raise SystemExit("the two runs are not comparable: " + "; ".join(problems))
     a, ca = load(dir_a)
     b, cb = load(dir_b)
+    sa, sb = (json.load(open(os.path.join(d, "summary.json"), encoding="utf-8")) for d in (dir_a, dir_b))
     recs = {r["id"]: r for r in records}
-    if set(a) != set(b) or set(a) != set(recs) or ca["dataset_sha256"] != cb["dataset_sha256"] or ca["baseline"] != cb["baseline"] or ca["code_hashes"] != cb["code_hashes"]:
-        raise SystemExit("the two runs are not comparable: different records, data, prompt or code, or a run did not cover every record")
+    checks = {
+        "both runs must be completed main-suite runs": all(x["status"] == "completed" and x["suite"] == "main" and not x["is_canary"] for x in (sa, sb)),
+        "both runs must cover every record exactly once": set(a) == set(b) == set(recs) and len(a) == sa["calls_recorded"] == sb["calls_recorded"] == len(recs),
+        "same mode (a dry run cannot be compared with a real one)": ca["mode"] == cb["mode"],
+        "same data": ca["dataset_sha256"] == cb["dataset_sha256"] and ca["data_is_frozen_acceptance_file"] == cb["data_is_frozen_acceptance_file"],
+        "same prompt, spec version and code": ca["baseline"] == cb["baseline"] and ca["spec_version"] == cb["spec_version"] and ca["code_hashes"] == cb["code_hashes"],
+        "same model configuration and declared identity": ca["model"] == cb["model"],
+        "same request parameters, retries and timeout": ca["request_settings"] == cb["request_settings"],
+        "same scoring policy": ca["scoring_policy"] == cb["scoring_policy"],
+        "one and the same returned alias in both runs, no drift": sa["distinct_response_models"] == sb["distinct_response_models"] and len(sa["distinct_response_models"]) <= 1
+                                                                 and not sa["model_drift_flag"] and not sb["model_drift_flag"],
+    }
+    bad = [k for k, ok in checks.items() if not ok]
+    if bad:
+        raise SystemExit("the two runs are not comparable: " + "; ".join(bad))
     n = len(recs)
     out_a = {i: E.outcome(c, recs[i]) for i, c in a.items()}
     out_b = {i: E.outcome(c, recs[i]) for i, c in b.items()}
@@ -528,7 +589,7 @@ def plan(args) -> int:
     pricing = L.Pricing(L.parse_usd(args.price_input_per_mtok or "0.3333334"), L.parse_usd(args.price_output_per_mtok or "1.3333334"), "plan")
     prompt_bytes, out_bound = len(P.SYSTEM_PROMPT.encode()), RUN.MAX_TOKENS
     telemetry_bytes = len(R.render_telemetry({"distance_cm": 2000.0, "velocity_ms": 5.0, "hp": 100.0, "battery_pct": 100.0, "temperature_c": -40.0}, None).encode())
-    contract_user = telemetry_bytes + len(" Operator note: ") + R.MAX_NOTE_CHARS * 3          # 500 characters at up to 3 UTF-8 bytes each
+    contract_user = telemetry_bytes + len(" Operator note: ") + R.MAX_NOTE_CHARS * 4          # 500 characters at up to 4 UTF-8 bytes each
     contract_in = prompt_bytes + contract_user + L.CHAT_OVERHEAD_TOKENS
     dev_in = 3215                                                                           # the largest bound seen on the dev set
     per_call = lambda i: i * pricing.input_per_token + out_bound * pricing.output_per_token
@@ -544,7 +605,8 @@ def plan(args) -> int:
         exact = {"main_input_bound_min_max": [min(bm), max(bm)], "stress_model_requests": len(sent), "stress_no_request_cases": len(stress) - len(sent),
                  "worst_case_tokens": 2 * (sum(bm) + out_bound * len(bm)) + sum(bs) + out_bound * len(sent),
                  "worst_case_usd": f"{2 * sum(per_call(x) for x in bm) + sum(per_call(x) for x in bs):.4f}"}
-    requests = 2 * n_main + n_stress
+    n_canary = CAPS["health_canary"]["max_calls"]
+    requests = n_canary + 2 * n_main + n_stress
     worst_tokens = requests * (contract_in + out_bound)
     worst_usd = requests * per_call(contract_in)
     dev = json.load(open(DEV_RUN_SUMMARY, encoding="utf-8"))
@@ -553,18 +615,20 @@ def plan(args) -> int:
     usd_booked_per_call = Decimal(dev["budget"]["usd_committed"]) / dev["planned_calls"]
     out = {
         "note": "offline; nothing from private data is printed. R1/R2 and the input-rejection / injected-fault stress cases send no API request",
-        "programme": {"main_runs": 2, "records_per_main_run": n_main, "stress_cases": manifest["stress_records"], "stress_model_requests_upper_bound": n_stress,
+        "programme": {"health_canary_requests_on_the_public_dev_file": n_canary, "main_runs": 2, "records_per_main_run": n_main, "stress_cases": manifest["stress_records"], "stress_model_requests_upper_bound": n_stress,
                       "stress_no_request_cases_at_least": manifest["stress_records"] - n_stress, "total_model_requests_upper_bound": requests, "r1_r2_requests": 0},
         "per_call_bounds": {"prompt_bytes": prompt_bytes, "input_bound_contract_maximum": contract_in, "input_bound_dev_maximum": dev_in, "output_bound": out_bound,
                             "worst_usd_per_call_contract_maximum": f"{per_call(contract_in):.5f}", "worst_usd_per_call_dev_maximum": f"{per_call(dev_in):.5f}"},
         "theoretical_upper_bound": {"tokens": worst_tokens, "usd": f"{worst_usd:.2f}",
-                                    "meaning": "every request at the largest input the contract allows (a 500-character Chinese note) AND the full 2,048 output tokens; far above anything seen, shown only as the ceiling of the bound"},
+                                    "meaning": "every request at the largest input the contract allows (a 500-character note at 4 UTF-8 bytes per character, the maximum for any character) AND the full 2,048 output tokens; far above anything seen, shown only as the ceiling of the bound"},
         "expected_from_the_dev_run": {"basis": "baseline B dev run, 180 calls: 175 with usage, 5 provider errors",
                                       "tokens_per_call_booked": round(tok_per_call), "usd_per_call_from_reported_usage": f"{usd_reported_per_call:.6f}", "usd_per_call_booked_incl_failed": f"{usd_booked_per_call:.6f}",
                                       "usd_for_the_programme": f"{requests * usd_reported_per_call:.2f} to {requests * usd_booked_per_call:.2f}", "tokens_for_the_programme": round(requests * tok_per_call),
                                       "caveat": "an estimate from one run, not a guarantee; the test notes may be longer or shorter"},
-        "proposed_caps": {**CAPS, "combined": {"max_calls": 2 * CAPS["main_run"]["max_calls"] + CAPS["stress_run"]["max_calls"], "max_tokens": 2 * CAPS["main_run"]["max_tokens"] + CAPS["stress_run"]["max_tokens"],
-                                              "usd": f"{2 * Decimal(CAPS['main_run']['usd']) + Decimal(CAPS['stress_run']['usd'])}"},
+        "proposed_caps": {**CAPS, "combined": {"max_calls": n_canary + 2 * CAPS["main_run"]["max_calls"] + CAPS["stress_run"]["max_calls"],
+                                              "max_tokens": CAPS["health_canary"]["max_tokens"] + 2 * CAPS["main_run"]["max_tokens"] + CAPS["stress_run"]["max_tokens"],
+                                              "usd": f"{Decimal(CAPS['health_canary']['usd']) + 2 * Decimal(CAPS['main_run']['usd']) + Decimal(CAPS['stress_run']['usd'])}",
+                                              "note": "includes the 2-call health canary on the public dev file; nothing sits outside this total"},
                           "how_they_work": "the guard books the worst case before each call and settles to the reported usage; a run that would pass its cap stops BEFORE sending (stopped_early) and is reported, so the caps are what can be spent, not the theoretical bound"},
         "exact_from_the_given_files": exact}
     print(json.dumps(out, indent=1))

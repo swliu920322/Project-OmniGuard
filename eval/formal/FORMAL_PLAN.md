@@ -9,11 +9,11 @@ Baseline **B-1.0**, exactly as in the dev run (prompt hash `9247896719b66e13…`
 ## 2. Entry and guarantees (`eval/formal/run_formal.py`, built on the accepted evaluator; `run_dev_eval.py` is untouched, pinned by a test)
 
 - **External data by path and expected SHA-256**, or by `--acceptance-dir` with the hashes of `FROZEN_MANIFEST.json`. The hash is checked before anything is parsed for scoring; the frozen file's class and note-status counts must also match the manifest. The public dev set runs the same way and is then flagged "not the frozen file" and never counts as the measurement. Format: `ACCEPTANCE_FORMAT.md`.
-- **Frozen version.** `CODE_FREEZE.json` holds the hashes of every file that decides a result (prompt, scorer, runner, specification, rule controls, backend decision code). A real run refuses if any differs, if the tree is dirty, or if `--frozen-tag` does not point at the current commit. Recorded in every run: commit, tag, spec version, prompt version and hash, model parameters (temperature 0 sent, 2,048 output cap, SDK retries off, 60 s timeout; the provider ignores temperature in its default reasoning mode), the scoring policy, the owner's stated model identity (unverified), the budget.
+- **Frozen version.** `CODE_FREEZE.json` holds the hashes of every file that decides a result (prompt, scorer, runner, specification, rule controls, backend decision code). The freeze is also bound to the data commitment: it records the hash of `FROZEN_MANIFEST.json` and of the B-1.0 prompt and a real run refuses if either changed. A real run refuses if any file differs, if the tree is dirty, or if `--frozen-tag` does not point at the current commit. Recorded in every run: commit, tag, spec version, prompt version and hash, model parameters (temperature 0 sent, 2,048 output cap, SDK retries off, 60 s timeout; the provider ignores temperature in its default reasoning mode), the scoring policy, the owner's stated model identity (unverified), the budget.
 - **Gold is recomputed** from telemetry and annotated note status by the frozen specification; the file's gold is never trusted.
 - **Scoring policy, fixed in advance:** one request per record, no retry, no local result cache (the client is called directly), an error, an unusable or truncated reply and an interrupted request stay in the denominator and count as wrong. A success-only accuracy may be shown **next to** the main figure and never instead of it.
-- **Two independent runs** (`run --suite main --twice`): two private run directories, fresh client and budget guard each, then the gate: prediction agreement >= 98 % and accuracy difference <= 2 points, errors and invalid outputs compared like any other outcome. Not met means **NOT PASSED** (exit code 4), said as it is. If the first run does not complete, the second is not started.
-- **Stress suite** (`run --suite stress`): input-contract rejections and injected timeouts / rate limits are checked offline and send **no** API request; the valid cases go through the backend decision path (`router_v2.decide`) with one request each. Reported apart, never mixed into the accuracy: input rejections, injected-fault halts, missed halts, needless halts, model errors (unusable replies, wrong labels), interface errors (real API errors).
+- **Two independent runs** (`run --suite main --twice`): two private run directories, fresh client and budget guard each. **Each run is reported on its own; the better one is never picked.** Before the gate is applied the two directories must verify against their seals, both be completed main-suite runs (not canaries) covering every record exactly once, and agree on mode, data, prompt, spec version, code hashes, model configuration and declared identity, request parameters (temperature, output cap, retries, timeout), scoring policy and the single returned alias with no drift flag; otherwise they are **not comparable** and nothing is compared. Then the gate: prediction agreement >= 98 % and accuracy difference <= 2 points, errors and invalid outputs compared like any other outcome. Not met means **NOT PASSED** (exit code 4), said as it is. If the first run does not complete, the second is not started.
+- **Stress suite** (`run --suite stress`; the id may be `id` or `case_id`, and if both are present they must be equal; a request interrupted in flight is written down with its request body and reservation, counted as an interrupted failure and sealed like every other record): input-contract rejections and injected timeouts / rate limits are checked offline and send **no** API request; the valid cases go through the backend decision path (`router_v2.decide`) with one request each. Reported apart, never mixed into the accuracy: input rejections, injected-fault halts, missed halts, needless halts, model errors (unusable replies, wrong labels), interface errors (real API errors).
 - **Record-level results stay private** (`--private-out` must be outside the repository): the public side gets aggregates only (no ids, no inputs, no replies, no per-record error lists) plus the hashes of the private files. This is what lets the repository show the numbers without handing the tuning session sample-level feedback.
 
 ## 3. Order of work
@@ -42,22 +42,27 @@ If a run ends in `stopped_early`, `stopped_bound_violation`, `crashed` or `inter
 
 ## 5. Budget (from `run_formal.py plan`, offline)
 
+One total, with nothing outside it. The two-call health canary on the **public dev file** is part of it.
+
 | | Requests | Note |
 |---|---:|---|
+| Health canary (public dev file) | 2 | no private data |
 | Main run x 2 | 600 | 300 records each |
-| Stress, valid content cases | at most 35 | types 3 to 9; exact number from the file; the other 20 or more cases send nothing |
+| Stress, valid content cases | at most 35 | types 3 to 9; the exact number comes from the file; at least 20 cases send nothing |
 | R1 / R2 | 0 | |
-| **Total at most** | **635** | |
+| **Total at most** | **637** | |
 
-Cost: the theoretical upper bound (every request with the largest input the contract allows and all 2,048 output tokens) is about **US$2.7 and 4.25 M tokens**, which is a ceiling of the bound, not a forecast. The dev run measured US$0.000451 per answered call (US$0.000543 counting the full reservation of failed calls) and about 1,107 tokens per call booked, which projects to **about US$0.29 to 0.35 and 0.7 M tokens** for the whole programme: an estimate from one run, not a guarantee. What can actually be spent is limited by the caps, because the guard books the worst case before each call and stops before sending when a cap would be passed:
+Cost: the theoretical upper bound (every request with the largest input the contract allows, a 500-character note at 4 UTF-8 bytes per character, which is 5,146 tokens, and all 2,048 output tokens) is about **US$2.83 and 4.58 M tokens**. That is the ceiling of the bound, not a forecast. The dev run measured US$0.000451 per answered call (US$0.000543 counting the full reservation of failed calls) and about 1,107 tokens per call booked, which projects to **about US$0.29 to 0.35 and 0.7 M tokens** for the whole programme: an estimate from one run, not a guarantee. What can actually be spent is limited by the caps, because the guard books the worst case before each call and stops before sending when a cap would be passed:
 
 | Run | `--max-calls` | `--max-tokens` | `--usd-cap` |
 |---|---:|---:|---:|
-| main (each of the two) | 300 | 600,000 | 0.25 |
+| health canary (public dev file, `--limit 2`) | 2 | 20,000 | 0.02 |
+| main run, first | 300 | 600,000 | 0.25 |
+| main run, second | 300 | 600,000 | 0.25 |
 | stress | 40 | 100,000 | 0.05 |
-| combined ceiling | 640 | 1,300,000 | 0.55 |
+| **combined ceiling** | **642** | **1,320,000** | **0.57** |
 
-A mass of provider errors keeps a full reservation per failed call and can make a run stop early (`stopped_early`); that is reported, not repaired. Costs are estimates at the configured conservative rates, not bills.
+A mass of provider errors keeps a full reservation per failed call and can make a run stop early (`stopped_early`); that is reported, not repaired. Costs are estimates at the configured conservative rates, not bills. Spending already booked on the baseline-A and baseline-B work is listed in `eval/EVIDENCE_INDEX.md` and is not part of this total.
 
 ## 6. What this does not do
 

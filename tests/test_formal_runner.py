@@ -332,17 +332,163 @@ def test_plan_lists_requests_tokens_and_cost_bounds_without_any_private_data(cap
     assert F.main(["plan"]) == 0
     out = json.loads(capsys.readouterr().out)
     prog = out["programme"]
-    assert prog["main_runs"] == 2 and prog["records_per_main_run"] == 300 and prog["r1_r2_requests"] == 0
-    assert prog["stress_model_requests_upper_bound"] == 35 and prog["stress_no_request_cases_at_least"] == 20 and prog["total_model_requests_upper_bound"] == 635
+    assert prog["main_runs"] == 2 and prog["records_per_main_run"] == 300 and prog["r1_r2_requests"] == 0 and prog["health_canary_requests_on_the_public_dev_file"] == 2
+    assert prog["stress_model_requests_upper_bound"] == 35 and prog["stress_no_request_cases_at_least"] == 20 and prog["total_model_requests_upper_bound"] == 637
     th, ex = out["theoretical_upper_bound"], out["expected_from_the_dev_run"]
-    assert th["tokens"] > 635 * 2048 and float(th["usd"]) > float(out["proposed_caps"]["combined"]["usd"])        # the bound is above the caps: the caps are what is spent
+    assert th["tokens"] > 637 * 2048 and float(th["usd"]) > float(out["proposed_caps"]["combined"]["usd"])        # the bound is above the caps: the caps are what is spent
     lo, hi = (float(x) for x in ex["usd_for_the_programme"].split(" to "))
     assert 0.25 < lo < hi < float(out["proposed_caps"]["combined"]["usd"]) and "estimate" in ex["caveat"]
     caps = out["proposed_caps"]
-    assert caps["combined"] == {"max_calls": 640, "max_tokens": 1_300_000, "usd": "0.55"} and "stopped_early" in caps["how_they_work"]
+    assert caps["health_canary"] == {"max_calls": 2, "max_tokens": 20_000, "usd": "0.02"}
+    assert {k: caps["combined"][k] for k in ("max_calls", "max_tokens", "usd")} == {"max_calls": 642, "max_tokens": 1_320_000, "usd": "0.57"} and "stopped_early" in caps["how_they_work"]
+    assert "nothing sits outside" in caps["combined"]["note"]
+    # the combined caps are exactly the sum of the sub-allowances, and the expected cost is inside them
+    assert sum(v["max_calls"] for k, v in caps.items() if k in ("health_canary", "stress_run")) + 2 * caps["main_run"]["max_calls"] == caps["combined"]["max_calls"]
+
+
+def test_the_theoretical_input_bound_assumes_four_utf8_bytes_per_character(capsys):
+    assert F.main(["plan"]) == 0
+    out = json.loads(capsys.readouterr().out)
+    tele = len(F.R.render_telemetry({"distance_cm": 2000.0, "velocity_ms": 5.0, "hp": 100.0, "battery_pct": 100.0, "temperature_c": -40.0}, None).encode())
+    assert out["per_call_bounds"]["input_bound_contract_maximum"] == len(P.SYSTEM_PROMPT.encode()) + tele + len(" Operator note: ") + 500 * 4 + 64
+    assert "4 UTF-8 bytes" in out["theoretical_upper_bound"]["meaning"]
+    four = "\U0001f600" * 500                                                    # 500 characters of 4 bytes each: the worst a note can be
+    assert len(four.encode()) == 2000 and F.R.check_input(DEV[0]["telemetry"], four) is None
 
 
 def test_plan_with_files_gives_exact_numbers_and_prints_no_record(fx, capsys):
     assert F.main(["plan", "--acceptance-dir", fx.dir, "--manifest", fx.manifest]) == 0
     out = capsys.readouterr().out
     assert MARK not in out and json.loads(out)["exact_from_the_given_files"]["stress_model_requests"] == 38
+
+
+# --- review round: case_id, stress interruption, comparability, manifest binding ------------------------------------------------------------
+
+def _rewrite_stress(fx, mutate):
+    rows = [dict(r) for r in fx.stress]
+    mutate(rows)
+    _refreeze(fx, rows, "stress_cases.jsonl")
+
+
+def test_stress_cases_may_use_case_id_and_the_two_names_must_agree(fx):
+    def to_case_id(rows):
+        for r in rows:
+            r["case_id"] = r.pop("id")
+    _rewrite_stress(fx, to_case_id)
+    _, stress, _ = F.load_data(ns(fx), F.load_manifest(fx.manifest), need=("stress",))
+    assert stress[0]["id"].startswith(MARK) and "case_id" not in stress[0] and len(stress) == 66
+    _rewrite_stress(fx, lambda rows: [r.update(case_id=r["id"]) for r in rows])                       # both present and equal: fine
+    assert len(F.load_data(ns(fx), F.load_manifest(fx.manifest), need=("stress",))[1]) == 66
+    _rewrite_stress(fx, lambda rows: [r.update(case_id=r["id"]) for r in rows] and rows[3].update(case_id="somebody-else"))   # both present and different: refused
+    with pytest.raises(SystemExit, match="differ") as e:
+        F.load_data(ns(fx), F.load_manifest(fx.manifest), need=("stress",))
+    assert MARK not in str(e.value)
+    _rewrite_stress(fx, lambda rows: rows[0].pop("id"))                                                 # neither
+    with pytest.raises(SystemExit, match="id"):
+        F.load_data(ns(fx), F.load_manifest(fx.manifest), need=("stress",))
+
+
+def test_the_main_file_accepts_case_id_too(fx):
+    rows = [{**{k: v for k, v in r.items() if k != "id"}, "case_id": r["id"]} for r in fx.test]
+    _refreeze(fx, rows)
+    test, _, _ = F.load_data(ns(fx), F.load_manifest(fx.manifest), need=("main",))
+    assert test[0]["id"] == fx.test[0]["id"]
+
+
+def test_a_stress_request_interrupted_in_flight_is_recorded_counted_and_sealed(fx):
+    code, privs, _ = run_cli(fx, "stress", plan='{"3": "interrupt"}')
+    priv = privs[0]
+    assert code == 130 and F.L.verify_run_dir(str(priv)) == []
+    last = json.loads((priv / "calls.jsonl").read_text().splitlines()[-1])
+    assert last["status"] == "in_flight_at_interruption" and last["request"]["max_tokens"] == 2048 and last["reserved"]["output_bound"] == 2048
+    assert last["error"]["type"] == "KeyboardInterrupt" and last["executed"]["action"]["motion"] == "HALT" and last["model_called"] is True
+    s = json.loads((priv / "summary.json").read_text())
+    assert s["status"] == "interrupted" and s["budget"]["calls_started"] == 3 and s["stress"]["total"]["interrupted"] == 1
+    assert s["stress"]["total"]["model_requests"] == 3 and s["stress"]["total"]["started"] >= 3
+
+
+def test_stress_interrupted_before_any_model_request_leaves_no_phantom_record(fx):
+    code, privs, _ = run_cli(fx, "stress")
+    s = json.loads((privs[0] / "summary.json").read_text())
+    assert s["stress"]["total"]["interrupted"] == 0 and all("status" not in json.loads(x) for x in (privs[0] / "calls.jsonl").read_text().splitlines())
+
+
+def _two_runs(fx):
+    _, a, _ = run_cli(fx, "main")
+    _, b, _ = run_cli(fx, "main")
+    return a[0], b[0], fx
+
+
+def _edit(run_dir, file, mutate, reseal=True):
+    path = run_dir / file
+    data = json.loads(path.read_text())
+    mutate(data)
+    path.write_text(json.dumps(data))
+    if reseal:
+        F.L.write_sha256sums(str(run_dir))
+
+
+COMPARE = lambda fx, a, b: F.main(["compare", "--run-a", str(a), "--run-b", str(b), "--acceptance-dir", fx.dir, "--manifest", fx.manifest])
+
+
+@pytest.mark.parametrize("what,edit,needle", [
+    ("different model name", lambda b: _edit(b, "config.json", lambda c: c["model"].update(configured_model_name="other-model")), "model configuration"),
+    ("different declared identity", lambda b: _edit(b, "config.json", lambda c: c["model"].update(identity_stated_by_owner="someone else")), "model configuration"),
+    ("different temperature", lambda b: _edit(b, "config.json", lambda c: c["request_settings"].update(temperature=0.7)), "request parameters"),
+    ("different output cap", lambda b: _edit(b, "config.json", lambda c: c["request_settings"].update(max_tokens=1024)), "request parameters"),
+    ("different retries", lambda b: _edit(b, "config.json", lambda c: c["request_settings"].update(sdk_max_retries=2)), "request parameters"),
+    ("different returned alias", lambda b: _edit(b, "summary.json", lambda s: s.update(distinct_response_models=["another-alias"])), "returned alias"),
+    ("drift flag set", lambda b: _edit(b, "summary.json", lambda s: s.update(model_drift_flag=True)), "returned alias"),
+    ("second run not completed", lambda b: _edit(b, "summary.json", lambda s: s.update(status="stopped_early")), "completed"),
+    ("second run is a canary", lambda b: _edit(b, "summary.json", lambda s: s.update(is_canary=True)), "completed"),
+    ("different mode", lambda b: _edit(b, "config.json", lambda c: c.update(mode="real")), "same mode"),
+    ("different scoring policy", lambda b: _edit(b, "config.json", lambda c: c.update(scoring_policy="drop the failures")), "scoring policy"),
+    ("different data", lambda b: _edit(b, "config.json", lambda c: c["dataset_sha256"].update(main="0" * 64)), "same data"),
+    ("fewer calls recorded", lambda b: _edit(b, "summary.json", lambda s: s.update(calls_recorded=3)), "every record"),
+])
+def test_runs_with_different_configuration_or_state_are_not_comparable(fx, what, edit, needle):
+    a, b, _ = _two_runs(fx)
+    edit(b)
+    with pytest.raises(SystemExit, match="not comparable") as e:
+        COMPARE(fx, a, b)
+    assert needle in str(e.value), what
+
+
+def test_a_run_directory_that_does_not_verify_or_has_no_seal_is_refused(fx):
+    a, b, _ = _two_runs(fx)
+    (b / "summary.json").write_text((b / "summary.json").read_text() + " ")                           # tampered after sealing
+    with pytest.raises(SystemExit, match="does not verify"):
+        COMPARE(fx, a, b)
+    a2, b2, _ = _two_runs(fx)
+    (b2 / "SHA256SUMS").unlink()                                                                       # no seal at all
+    with pytest.raises(SystemExit, match="does not verify"):
+        COMPARE(fx, a2, b2)
+
+
+def test_two_identical_runs_still_compare_after_the_stricter_checks(fx, capsys):
+    a, b, _ = _two_runs(fx)
+    capsys.readouterr()
+    assert COMPARE(fx, a, b) == 0 and json.loads(capsys.readouterr().out)["verdict"] == "PASSED"
+
+
+def test_the_code_freeze_is_bound_to_the_frozen_data_manifest(tmp_path, monkeypatch):
+    monkeypatch.setattr(F, "FREEZE", str(tmp_path / "CODE_FREEZE.json"))
+    fake_manifest = tmp_path / "manifest.json"
+    fake_manifest.write_text(json.dumps({"version": "x"}))
+    monkeypatch.setattr(F, "MANIFEST", str(fake_manifest))
+    assert F.main(["freeze"]) == 0 and F.check_code_freeze() == F.code_hashes()
+    fake_manifest.write_text(json.dumps({"version": "y"}))                                             # the data commitment changes after the freeze
+    with pytest.raises(SystemExit, match="manifest changed since the code freeze"):
+        F.check_code_freeze()
+    monkeypatch.setattr(F, "MANIFEST", str(fake_manifest))
+    frz = json.loads((tmp_path / "CODE_FREEZE.json").read_text())
+    frz["baseline_B_prompt_sha256"] = "0" * 64
+    frz["frozen_manifest_sha256"] = F.sha(str(fake_manifest))
+    (tmp_path / "CODE_FREEZE.json").write_text(json.dumps(frz))
+    with pytest.raises(SystemExit, match="prompt differs"):
+        F.check_code_freeze()
+
+
+def test_the_committed_freeze_records_the_current_manifest_hash():
+    frz = json.loads((ROOT / "eval/formal/CODE_FREEZE.json").read_text())
+    assert frz["frozen_manifest_sha256"] == F.sha(str(ROOT / "eval/acceptance/FROZEN_MANIFEST.json"))
