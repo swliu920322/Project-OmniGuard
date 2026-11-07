@@ -1,0 +1,494 @@
+{
+ "controls": {
+  "R1": {
+   "dev_all": {
+    "missed_halt": 0,
+    "missed_halt_ids": [],
+    "n": 180,
+    "needless_halt": 2,
+    "note_accuracy": 0.9583,
+    "note_correct": 69,
+    "note_mistakes": [
+     {
+      "count": 2,
+      "gold": "HISTORICAL",
+      "got": "AFFIRMED_CURRENT"
+     },
+     {
+      "count": 1,
+      "gold": "NEGATED",
+      "got": "IRRELEVANT"
+     }
+    ],
+    "note_n": 72,
+    "primary_accuracy": 0.9889,
+    "primary_correct": 178
+   },
+   "dev_note_status_per_status_recall": {
+    "AFFIRMED_CURRENT": {
+     "recall": 1.0,
+     "support": 12
+    },
+    "HISTORICAL": {
+     "recall": 0.8333,
+     "support": 12
+    },
+    "HYPOTHETICAL": {
+     "recall": 1.0,
+     "support": 12
+    },
+    "IRRELEVANT": {
+     "recall": 1.0,
+     "support": 12
+    },
+    "NEGATED": {
+     "recall": 0.9167,
+     "support": 12
+    },
+    "UNCERTAIN": {
+     "recall": 1.0,
+     "support": 12
+    }
+   },
+   "dev_noted_primary": {
+    "correct": 70,
+    "n": 72
+   },
+   "dev_telemetry_only_primary": {
+    "correct": 108,
+    "n": 108
+   },
+   "stress_by_type": {
+    "3": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 6,
+     "needless_halt": 0,
+     "note_accuracy": null,
+     "note_correct": 0,
+     "note_mistakes": [],
+     "note_n": 0,
+     "primary_accuracy": 1.0,
+     "primary_correct": 6
+    },
+    "4": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 6,
+     "needless_halt": 0,
+     "note_accuracy": null,
+     "note_correct": 0,
+     "note_mistakes": [],
+     "note_n": 0,
+     "primary_accuracy": 1.0,
+     "primary_correct": 6
+    },
+    "5": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 6,
+     "needless_halt": 0,
+     "note_accuracy": 1.0,
+     "note_correct": 6,
+     "note_mistakes": [],
+     "note_n": 6,
+     "primary_accuracy": 1.0,
+     "primary_correct": 6
+    },
+    "6": {
+     "missed_halt": 1,
+     "missed_halt_ids": [
+      "STR-06-4"
+     ],
+     "n": 6,
+     "needless_halt": 0,
+     "note_accuracy": 0.3333,
+     "note_correct": 2,
+     "note_mistakes": [
+      {
+       "count": 1,
+       "gold": "AFFIRMED_CURRENT",
+       "got": "IRRELEVANT"
+      },
+      {
+       "count": 1,
+       "gold": "HISTORICAL",
+       "got": "IRRELEVANT"
+      },
+      {
+       "count": 1,
+       "gold": "NEGATED",
+       "got": "IRRELEVANT"
+      },
+      {
+       "count": 1,
+       "gold": "UNCERTAIN",
+       "got": "AFFIRMED_CURRENT"
+      }
+     ],
+     "note_n": 6,
+     "primary_accuracy": 0.8333,
+     "primary_correct": 5
+    },
+    "7": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 6,
+     "needless_halt": 0,
+     "note_accuracy": 1.0,
+     "note_correct": 6,
+     "note_mistakes": [],
+     "note_n": 6,
+     "primary_accuracy": 1.0,
+     "primary_correct": 6
+    },
+    "8": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 6,
+     "needless_halt": 0,
+     "note_accuracy": 0.8333,
+     "note_correct": 5,
+     "note_mistakes": [
+      {
+       "count": 1,
+       "gold": "NEGATED",
+       "got": "IRRELEVANT"
+      }
+     ],
+     "note_n": 6,
+     "primary_accuracy": 1.0,
+     "primary_correct": 6
+    },
+    "9": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 2,
+     "needless_halt": 0,
+     "note_accuracy": null,
+     "note_correct": 0,
+     "note_mistakes": [],
+     "note_n": 0,
+     "primary_accuracy": 1.0,
+     "primary_correct": 2
+    }
+   },
+   "stress_scored_types": {
+    "missed_halt": 1,
+    "missed_halt_ids": [
+     "STR-06-4"
+    ],
+    "n": 38,
+    "needless_halt": 0,
+    "note_accuracy": 0.7917,
+    "note_correct": 19,
+    "note_mistakes": [
+     {
+      "count": 1,
+      "gold": "AFFIRMED_CURRENT",
+      "got": "IRRELEVANT"
+     },
+     {
+      "count": 1,
+      "gold": "HISTORICAL",
+      "got": "IRRELEVANT"
+     },
+     {
+      "count": 2,
+      "gold": "NEGATED",
+      "got": "IRRELEVANT"
+     },
+     {
+      "count": 1,
+      "gold": "UNCERTAIN",
+      "got": "AFFIRMED_CURRENT"
+     }
+    ],
+    "note_n": 24,
+    "primary_accuracy": 0.9737,
+    "primary_correct": 37
+   }
+  },
+  "R2": {
+   "dev_all": {
+    "missed_halt": 0,
+    "missed_halt_ids": [],
+    "n": 180,
+    "needless_halt": 19,
+    "note_accuracy": 0.3333,
+    "note_correct": 24,
+    "note_mistakes": [
+     {
+      "count": 12,
+      "gold": "HISTORICAL",
+      "got": "AFFIRMED_CURRENT"
+     },
+     {
+      "count": 12,
+      "gold": "HYPOTHETICAL",
+      "got": "AFFIRMED_CURRENT"
+     },
+     {
+      "count": 11,
+      "gold": "NEGATED",
+      "got": "AFFIRMED_CURRENT"
+     },
+     {
+      "count": 1,
+      "gold": "NEGATED",
+      "got": "IRRELEVANT"
+     },
+     {
+      "count": 12,
+      "gold": "UNCERTAIN",
+      "got": "AFFIRMED_CURRENT"
+     }
+    ],
+    "note_n": 72,
+    "primary_accuracy": 0.8222,
+    "primary_correct": 148
+   },
+   "dev_note_status_per_status_recall": {
+    "AFFIRMED_CURRENT": {
+     "recall": 1.0,
+     "support": 12
+    },
+    "HISTORICAL": {
+     "recall": 0.0,
+     "support": 12
+    },
+    "HYPOTHETICAL": {
+     "recall": 0.0,
+     "support": 12
+    },
+    "IRRELEVANT": {
+     "recall": 1.0,
+     "support": 12
+    },
+    "NEGATED": {
+     "recall": 0.0,
+     "support": 12
+    },
+    "UNCERTAIN": {
+     "recall": 0.0,
+     "support": 12
+    }
+   },
+   "dev_noted_primary": {
+    "correct": 40,
+    "n": 72
+   },
+   "dev_telemetry_only_primary": {
+    "correct": 108,
+    "n": 108
+   },
+   "stress_by_type": {
+    "3": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 6,
+     "needless_halt": 0,
+     "note_accuracy": null,
+     "note_correct": 0,
+     "note_mistakes": [],
+     "note_n": 0,
+     "primary_accuracy": 1.0,
+     "primary_correct": 6
+    },
+    "4": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 6,
+     "needless_halt": 0,
+     "note_accuracy": null,
+     "note_correct": 0,
+     "note_mistakes": [],
+     "note_n": 0,
+     "primary_accuracy": 1.0,
+     "primary_correct": 6
+    },
+    "5": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 6,
+     "needless_halt": 1,
+     "note_accuracy": 0.5,
+     "note_correct": 3,
+     "note_mistakes": [
+      {
+       "count": 2,
+       "gold": "NEGATED",
+       "got": "AFFIRMED_CURRENT"
+      },
+      {
+       "count": 1,
+       "gold": "UNCERTAIN",
+       "got": "AFFIRMED_CURRENT"
+      }
+     ],
+     "note_n": 6,
+     "primary_accuracy": 0.8333,
+     "primary_correct": 5
+    },
+    "6": {
+     "missed_halt": 1,
+     "missed_halt_ids": [
+      "STR-06-4"
+     ],
+     "n": 6,
+     "needless_halt": 1,
+     "note_accuracy": 0.1667,
+     "note_correct": 1,
+     "note_mistakes": [
+      {
+       "count": 1,
+       "gold": "AFFIRMED_CURRENT",
+       "got": "IRRELEVANT"
+      },
+      {
+       "count": 1,
+       "gold": "HISTORICAL",
+       "got": "IRRELEVANT"
+      },
+      {
+       "count": 1,
+       "gold": "HYPOTHETICAL",
+       "got": "AFFIRMED_CURRENT"
+      },
+      {
+       "count": 1,
+       "gold": "NEGATED",
+       "got": "IRRELEVANT"
+      },
+      {
+       "count": 1,
+       "gold": "UNCERTAIN",
+       "got": "AFFIRMED_CURRENT"
+      }
+     ],
+     "note_n": 6,
+     "primary_accuracy": 0.6667,
+     "primary_correct": 4
+    },
+    "7": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 6,
+     "needless_halt": 4,
+     "note_accuracy": 0.1667,
+     "note_correct": 1,
+     "note_mistakes": [
+      {
+       "count": 1,
+       "gold": "HISTORICAL",
+       "got": "AFFIRMED_CURRENT"
+      },
+      {
+       "count": 1,
+       "gold": "HYPOTHETICAL",
+       "got": "AFFIRMED_CURRENT"
+      },
+      {
+       "count": 2,
+       "gold": "NEGATED",
+       "got": "AFFIRMED_CURRENT"
+      },
+      {
+       "count": 1,
+       "gold": "UNCERTAIN",
+       "got": "AFFIRMED_CURRENT"
+      }
+     ],
+     "note_n": 6,
+     "primary_accuracy": 0.3333,
+     "primary_correct": 2
+    },
+    "8": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 6,
+     "needless_halt": 0,
+     "note_accuracy": 0.8333,
+     "note_correct": 5,
+     "note_mistakes": [
+      {
+       "count": 1,
+       "gold": "NEGATED",
+       "got": "IRRELEVANT"
+      }
+     ],
+     "note_n": 6,
+     "primary_accuracy": 1.0,
+     "primary_correct": 6
+    },
+    "9": {
+     "missed_halt": 0,
+     "missed_halt_ids": [],
+     "n": 2,
+     "needless_halt": 0,
+     "note_accuracy": null,
+     "note_correct": 0,
+     "note_mistakes": [],
+     "note_n": 0,
+     "primary_accuracy": 1.0,
+     "primary_correct": 2
+    }
+   },
+   "stress_scored_types": {
+    "missed_halt": 1,
+    "missed_halt_ids": [
+     "STR-06-4"
+    ],
+    "n": 38,
+    "needless_halt": 6,
+    "note_accuracy": 0.4167,
+    "note_correct": 10,
+    "note_mistakes": [
+     {
+      "count": 1,
+      "gold": "AFFIRMED_CURRENT",
+      "got": "IRRELEVANT"
+     },
+     {
+      "count": 1,
+      "gold": "HISTORICAL",
+      "got": "AFFIRMED_CURRENT"
+     },
+     {
+      "count": 1,
+      "gold": "HISTORICAL",
+      "got": "IRRELEVANT"
+     },
+     {
+      "count": 2,
+      "gold": "HYPOTHETICAL",
+      "got": "AFFIRMED_CURRENT"
+     },
+     {
+      "count": 4,
+      "gold": "NEGATED",
+      "got": "AFFIRMED_CURRENT"
+     },
+     {
+      "count": 2,
+      "gold": "NEGATED",
+      "got": "IRRELEVANT"
+     },
+     {
+      "count": 3,
+      "gold": "UNCERTAIN",
+      "got": "AFFIRMED_CURRENT"
+     }
+    ],
+    "note_n": 24,
+    "primary_accuracy": 0.8158,
+    "primary_correct": 31
+   }
+  }
+ },
+ "dev_set_sha256": "bad376fce65d0b71b65dfd727843ccb6c70f2fed3a5b54fafe3515b5c6727d79",
+ "rule_control_sha256": "22e0456bdc41f0b60cffa9a47ce6023ebe44151b85d43fe0bb95e2aa81b689dc",
+ "spec_version": "1.0",
+ "stress_cases_not_classified": "types 1, 2 and the invalid type-9 cases are rejected by the input check in code before any classifier; types 10-11 are injected faults",
+ "stress_sha256": "459e5dcbe8e3728b863af9e1c235924a6da0ff63fe4eaaee4c92d13fcb630c29"
+}

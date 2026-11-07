@@ -1,0 +1,33 @@
+{"item_id": "A003", "input_text": "Telemetry: Distance: 200cm, Velocity: 2.55m/s, HP: 80, Battery: 60%, Temp: 59.5C. Operator note: 万一 worker 出现就减速。"}
+{"item_id": "A004", "input_text": "Telemetry: Distance: 200cm, Velocity: 0.8m/s, HP: 55, Battery: 25%, Temp: 45C. Operator note: Shift change is at 3 pm."}
+{"item_id": "A007", "input_text": "Telemetry: Distance: 400cm, Velocity: 1m/s, HP: 80, Battery: 60%, Temp: 35C. Operator note: Maybe someone is ahead, not sure."}
+{"item_id": "A008", "input_text": "Telemetry: Distance: 5cm, Velocity: 2.2m/s, HP: 90, Battery: 75%, Temp: 35C. Operator note: path 已经 clear，但货架后面 could be 个 person。"}
+{"item_id": "A009", "input_text": "Telemetry: Distance: 400cm, Velocity: 1m/s, HP: 80, Battery: 60%, Temp: 35C. Operator note: 没有人，但前方可能有箱子。"}
+{"item_id": "A011", "input_text": "Telemetry: Distance: 800cm, Velocity: 0.8m/s, HP: 10, Battery: 8%, Temp: 55C. Operator note: 刚刚路口有个 person，现在path 上没有 obstacle。"}
+{"item_id": "A013", "input_text": "Telemetry: Distance: 25cm, Velocity: 2.2m/s, HP: 100, Battery: 25%, Temp: 58.5C. Operator note: A pallet is blocking the path."}
+{"item_id": "A014", "input_text": "Telemetry: Distance: 40cm, Velocity: 2.4m/s, HP: 51, Battery: 60%, Temp: 25C. Operator note: If someone steps in front, stop the vehicle."}
+{"item_id": "A016", "input_text": "Telemetry: Distance: 75cm, Velocity: 0.5m/s, HP: 80, Battery: 20.5%, Temp: 60.1C. Operator note: 有一个货盘挡住了路。"}
+{"item_id": "A017", "input_text": "Telemetry: Distance: 30cm, Velocity: 0.2m/s, HP: 70, Battery: 60%, Temp: 60C. Operator note: A worker was in the aisle earlier."}
+{"item_id": "A018", "input_text": "Telemetry: Distance: 75cm, Velocity: 1.2m/s, HP: 90, Battery: 50%, Temp: 80C. Operator note: A box was in the lane previously; if a box falls, report it."}
+{"item_id": "A019", "input_text": "Telemetry: Distance: 200cm, Velocity: 0.8m/s, HP: 55, Battery: 25%, Temp: 45C. Operator note: 下午三点交班。"}
+{"item_id": "A020", "input_text": "Telemetry: Distance: 100cm, Velocity: 2m/s, HP: 51, Battery: 15%, Temp: 35C. Operator note: 一小时前 pallet 挡过路。"}
+{"item_id": "A023", "input_text": "Telemetry: Distance: 30.5cm, Velocity: 3.5m/s, HP: 51, Battery: 25%, Temp: 50C. Operator note: 万一有工人出现就减速。"}
+{"item_id": "A028", "input_text": "Telemetry: Distance: 40cm, Velocity: 2.4m/s, HP: 51, Battery: 60%, Temp: 25C. Operator note: 如果有人出现在前面就停车。"}
+{"item_id": "A030", "input_text": "Telemetry: Distance: 400cm, Velocity: 1m/s, HP: 80, Battery: 60%, Temp: 35C. Operator note: 刚才有人，如果再出现就停车。"}
+{"item_id": "A035", "input_text": "Telemetry: Distance: 400cm, Velocity: 4m/s, HP: 60, Battery: 95%, Temp: 30C. Operator note: 之前有 someone 穿过车道。"}
+{"item_id": "A038", "input_text": "Telemetry: Distance: 400cm, Velocity: 1m/s, HP: 80, Battery: 60%, Temp: 35C. Operator note: A worker was here earlier, but the aisle is clear now."}
+{"item_id": "A047", "input_text": "Telemetry: Distance: 0cm, Velocity: 2.5m/s, HP: 50, Battery: 25%, Temp: 50C. Operator note: There might be a box in the lane, not sure."}
+{"item_id": "A048", "input_text": "Telemetry: Distance: 10cm, Velocity: 0.5m/s, HP: 55, Battery: 75%, Temp: 100C. Operator note: 车道里 nobody 了。"}
+{"item_id": "A049", "input_text": "Telemetry: Distance: 10cm, Velocity: 1m/s, HP: 80, Battery: 60%, Temp: 35C. Operator note: No one is ahead."}
+{"item_id": "A050", "input_text": "Telemetry: Distance: 30.5cm, Velocity: 3.5m/s, HP: 80, Battery: 60%, Temp: 65.5C. Operator note: A person was at the junction earlier, and now there is no obstacle on the path."}
+{"item_id": "A054", "input_text": "Telemetry: Distance: 30cm, Velocity: 2.4m/s, HP: 90, Battery: 50%, Temp: 45C. Operator note: The path is clear, but it could be a person behind the shelf."}
+{"item_id": "A058", "input_text": "Telemetry: Distance: 40cm, Velocity: 0.2m/s, HP: 60, Battery: 40%, Temp: 20C. Operator note: 前方没有人。"}
+{"item_id": "A060", "input_text": "Telemetry: Distance: 150cm, Velocity: 2.75m/s, HP: 100, Battery: 20%, Temp: 30C. Operator note: In case a worker appears, slow down."}
+{"item_id": "A068", "input_text": "Telemetry: Distance: 100cm, Velocity: 2.6m/s, HP: 25, Battery: 9%, Temp: 30C. Operator note: Charging dock 2 is free."}
+{"item_id": "A069", "input_text": "Telemetry: Distance: 150cm, Velocity: 0.2m/s, HP: 50, Battery: 75%, Temp: 40C. Operator note: A worker is standing in the aisle ahead."}
+{"item_id": "A077", "input_text": "Telemetry: Distance: 30.5cm, Velocity: 4m/s, HP: 90, Battery: 95%, Temp: 20C. Operator note: The floor was cleaned yesterday."}
+{"item_id": "A079", "input_text": "Telemetry: Distance: 400cm, Velocity: 1m/s, HP: 80, Battery: 60%, Temp: 35C. Operator note: 前方有 wroker 站着。"}
+{"item_id": "A082", "input_text": "Telemetry: Distance: 150cm, Velocity: 0.2m/s, HP: 50, Battery: 75%, Temp: 40C. Operator note: 前面通道里有工人在站着。"}
+{"item_id": "A087", "input_text": "Telemetry: Distance: 100cm, Velocity: 3.5m/s, HP: 90, Battery: 60%, Temp: 58.5C. Operator note: 地面昨天 cleaned。"}
+{"item_id": "A089", "input_text": "Telemetry: Distance: 30cm, Velocity: 0.5m/s, HP: 50, Battery: 60%, Temp: 50C. Operator note: 路上没有障碍物，但前方车道上掉了一个箱子。"}
+{"item_id": "A096", "input_text": "Telemetry: Distance: 50cm, Velocity: 1m/s, HP: 55, Battery: 19%, Temp: 25C. Operator note: 二号充电桩空闲。"}

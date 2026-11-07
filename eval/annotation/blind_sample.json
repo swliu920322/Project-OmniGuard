@@ -1,0 +1,69 @@
+{
+ "actual_fraction": 0.34375,
+ "id_shuffle_seed": 20261110,
+ "ids": [
+  "A003",
+  "A004",
+  "A007",
+  "A008",
+  "A009",
+  "A011",
+  "A013",
+  "A014",
+  "A016",
+  "A017",
+  "A018",
+  "A019",
+  "A020",
+  "A023",
+  "A028",
+  "A030",
+  "A035",
+  "A038",
+  "A047",
+  "A048",
+  "A049",
+  "A050",
+  "A054",
+  "A058",
+  "A060",
+  "A068",
+  "A069",
+  "A077",
+  "A079",
+  "A082",
+  "A087",
+  "A089",
+  "A096"
+ ],
+ "ids_sha256": "f718548fa40e2ac2a9a4f2a76aad0d37186c5276fa8c53bdd14f5e5dd950895d",
+ "items": 96,
+ "per_status": {
+  "AFFIRMED_CURRENT": {
+   "sampled": 6,
+   "total": 18
+  },
+  "HISTORICAL": {
+   "sampled": 5,
+   "total": 14
+  },
+  "HYPOTHETICAL": {
+   "sampled": 5,
+   "total": 14
+  },
+  "IRRELEVANT": {
+   "sampled": 6,
+   "total": 17
+  },
+  "NEGATED": {
+   "sampled": 6,
+   "total": 18
+  },
+  "UNCERTAIN": {
+   "sampled": 5,
+   "total": 15
+  }
+ },
+ "seed": 20261107,
+ "short_statuses": []
+}
