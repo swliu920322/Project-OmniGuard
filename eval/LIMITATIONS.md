@@ -1,6 +1,6 @@
-# Known limitations (draft, status of 2026-11-07)
+# Known limitations (status of 2026-11-07, after the formal run)
 
-Written now so that nothing is discovered later and quietly left out. It lists what is already known; the limitations of the formal test will be added when it exists.
+Written so that nothing is discovered later and quietly left out. Items 1 to 16 were known before or during the formal run; items 17 to 19 were added at wrap-up.
 
 ## About the task and the data
 1. **A simulation.** All thresholds, priorities, actions and the turn range are experimental conventions of a cloud-edge AGV simulation. None comes from real equipment, a standard or field data.
@@ -27,7 +27,11 @@ Written now so that nothing is discovered later and quietly left out. It lists w
 15. **Observed formal results are bounded by the synthetic set.** Both main runs returned 300/300 correct primary labels and 72/72 note statuses; the 55-case stress set had no observed missed halt, needless halt or model error. This is consistency with spec 1.0 on these samples, not industrial safety or general language robustness. The reported Wilson intervals are record-level, not adjusted for 34 families.
 16. **One raw stress counter includes offline cases.** `calls_without_usable_usage=23` counts the 23 stress rows that never called the API. All 32 real stress requests reported usage. The original result is preserved and `formal/results/VERIFICATION.json` supplies the interpretation; costs and scores are unaffected.
 
+17. **The formal numbers cannot be reproduced from the public repository alone.** The frozen test and stress files are private (hashes and counts are public). A stranger can verify integrity and rerun everything offline, and can rerun the pipeline on the public dev set with their own key, but needs the files from their custodian for the formal numbers. Whether to publish them is an open decision for the owner; publishing would turn the set into an exposed set. See [REPRODUCE.md](REPRODUCE.md).
+18. **The test set barely separates good systems.** B-1.0 is at the ceiling on the dev set and on the frozen set, so these data cannot rank prompts or models that are all close to correct; they do separate the keyword rules (281/300 and 280/300, with 14 and 10 missed halts). Comparing models or prompts needs harder, independently written data, and a new untouched test set once this one has been used.
+19. **Verification by the tuning side is limited to what is public.** Records, replies and per-record errors stay in the private package; the tuning side checked aggregates, hashes and the independent recount in `formal/results/VERIFICATION.json`, not the private files themselves.
+
 ## Not yet known
 - behaviour on production or expert-labelled data, other model versions and broader adversarial inputs;
 - an optimised version's result: none was invented, so Y is unmeasured;
-- reproduction by a stranger and oral acceptance. Formal results and rule-control comparisons are in [report.md](report.md).
+- reproduction by a stranger and the owner's oral acceptance (materials: [REPRODUCE.md](REPRODUCE.md), [ORAL_CARDS_zh.md](ORAL_CARDS_zh.md)). Formal results and rule-control comparisons are in [report.md](report.md).

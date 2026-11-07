@@ -77,6 +77,21 @@ The archived report calls the five disagreements “false negative passes,” bu
 
 Dashboard brake, network, edge, token, and cloud latency values are simulated/configured unless a named runtime result is linked. The 15 ms brake value is a simulation parameter, not a measured WebGPU inference result.
 
+### Six-route state-routing evaluation (acceptance-v1, tag `eval-formal-v1`)
+
+Evidence class: **measured, synthetic data**. Source of truth: [eval/report.md](../../eval/report.md), [eval/formal/results/](../../eval/formal/results/) (hashes in `SHA256SUMS`, independent recount in `VERIFICATION.json`), [eval/acceptance/FROZEN_MANIFEST.json](../../eval/acceptance/FROZEN_MANIFEST.json).
+
+Approved statements:
+
+- Baseline prompt B-1.0 scored 300/300 in each of two independent runs on the frozen independent synthetic test set (300 records, 50 per class, 34 families), macro-F1 1.0, note status 72/72 in each run, 100 % agreement between the runs.
+- The same records scored R1 281/300 and R2 280/300 (fixed keyword rules; note status 23/72 and 15/72).
+- The stress set of 55 cases produced no observed missed halt, needless halt or model error: 32 requests went to the model, 13 invalid inputs were rejected in code and 10 injected faults were checked offline.
+- The formal programme made 634 API requests and 630,792 tokens, about US$0.285 at the configured rates. This is an estimate, not a bill.
+
+Required qualifiers whenever a figure is quoted: synthetic data written under the project's own specification; 34 families, not 300 independent scenarios; AI annotation with AI review, not expert truth; model version unverified (owner-stated, the API returns an alias); `temperature=0` is sent but the provider's default reasoning mode ignores it; the evaluation covers the Router and the decision function, not a robot and not the HTTP endpoint against a real model.
+
+Not allowed: production accuracy or "100 % accurate" without the qualifiers above; safety certification, "zero risk" or "industrial grade"; any "from X to Y" improvement (there is no optimised version and Y is unmeasured); comparing these results with the historical 94.19 % / 90.38 % or with the 2026-11-07 baseline-A measurement of the original implementation (different labels, data, task and date); describing the 23 offline rows of the stress summary as API failures (see `VERIFICATION.json`).
+
 ## Required reporting dimensions
 
 Router evaluation:

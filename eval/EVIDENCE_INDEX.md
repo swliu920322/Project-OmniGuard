@@ -11,7 +11,7 @@ Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Ea
 | 覆盖【N】类意图 | 6 state-routing classes, spec 1.0 | data frozen in `acceptance/FROZEN_MANIFEST.json`; this is not a claim that model quality has passed |
 | 【M】条评测集 | 300 frozen independent test records, 50 per class | 34 conservative families, not 300 independent scenarios; 55 independent stress cases are separate from M. Dev records, dev stress and public examples are also separate |
 | 识别准确率从【X%】 | baseline B: 300/300 (100%) in each of two runs | measured on the frozen synthetic test set; use as a final accuracy, not as the start of an invented improvement |
-| 提升至【Y%】 | not measured | the optimised version on the same frozen test set; written only if the improvement is reliable. The dev set is already at 97.2 % for B (5 provider errors, every returned reply correct), so there may be little to improve on this kind of data |
+| 提升至【Y%】 | not measured, and no optimised version exists | none was made: the dev run had no classification error to learn from (97.2 %, five provider errors, every returned reply correct) and the frozen set is at 300/300. Write a final accuracy, never "from X to Y" |
 
 ## Gate 1: the evaluation can be trusted
 
@@ -41,15 +41,16 @@ Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Ea
 |---|---|---|
 | One-command evaluation, caps and sealed run directories | done for the dev set | `eval/baseline_b/README.md` |
 | Two independent runs on the frozen test set: agreement >= 98 %, accuracy difference <= 2 points | passed | primary and note agreement both 100%, accuracy difference 0 points; comparison JSON in `formal/results/` |
-| A stranger reproduces it from the README with real credentials in 10 minutes | **not done** | |
+| A stranger reproduces it from the README with real credentials in 10 minutes | **not done** (materials prepared) | [REPRODUCE.md](REPRODUCE.md); the formal numbers also need the private files, so a clone alone cannot reproduce them |
 
 ## Gate 4: it can be explained
 
 | Item | Status | Evidence |
 |---|---|---|
 | Real errors with counts and raw examples | no model errors observed in this formal set | no five model-error categories can be invented; actual rule-control error directions are in `report.md`, examples stay private. Dev provider failures remain preserved separately |
-| Limitations | draft | `eval/LIMITATIONS.md` |
-| Four-line cards, oral check | **not done** | |
+| Limitations | written | [LIMITATIONS.md](LIMITATIONS.md) (19 items) |
+| Four-line cards | written | [ORAL_CARDS_zh.md](ORAL_CARDS_zh.md) (12 cards) |
+| Oral check, three random questions | **not done** | to be done by the owner; no session can stand in |
 
 ## Real model runs and their cost
 
@@ -70,9 +71,22 @@ Baseline B calls: 192 (the 2 + 2 failed canary calls, 6 diagnostic calls, 2 cana
 
 Formal programme (separate authorization, US$0.57): health canary 2 calls, two main runs of 300, stress 32 API calls plus 23 offline checks. Total 634 API calls and 630,792 reported tokens; computed at the configured conservative rates US$0.284948, not a bill. Every actual API call reported usage. `formal/results/VERIFICATION.json` lists each run, hashes and budgets. The stress runner's raw `calls_without_usable_usage=23` includes the offline checks, not unknown-usage API requests; the raw artifact is retained and the distinction is documented.
 
-## Formal evaluation entry
+## Formal evaluation entry and results
 
-Prepared offline: `eval/formal/` (`FORMAL_PLAN.md`, `ACCEPTANCE_FORMAT.md`, `run_formal.py`, `CODE_FREEZE.json`). Baseline B-1.0 and R1/R2 on the frozen test set, two independent runs and the stress suite; budget listed offline. **No real run exists yet**; the freeze tag, the owner's authorisation of the caps and the custodian's runs are pending.
+`eval/formal/` (`FORMAL_PLAN.md`, `ACCEPTANCE_FORMAT.md`, `run_formal.py`, `CODE_FREEZE.json`), tag `eval-formal-v1` at `fec6acf`. Results, hashes and the independent recount: `eval/formal/results/` and `report.md`. Rule controls R1/R2 are scored on the same records.
+
+## Closing the gates at the deadline (2026-11-14 11:58:03 +0800)
+
+Each item is written as passed / not passed / waived with a reason at the deadline; a waiver is not a pass. Items the tuning side cannot close are listed with who closes them.
+
+| Gate | State on 2026-11-07 | Who closes the rest |
+|---|---|---|
+| 1. The evaluation can be trusted | evidence complete: spec, frozen data, annotation, report | nobody; ready to be marked passed |
+| 2. Stress and limits | evidence complete for the decision function; no HTTP-endpoint run against a real model | nobody; ready to be marked passed with that scope |
+| 3. Reproducibility | two-run gate passed; the stranger's 10-minute reproduction is **not done** | the owner finds the stranger; needs the private files or an owner decision on publication |
+| 4. It can be explained | limitations and cards written; the random three-question oral check is **not done** | the owner, in person |
+
+If an item is still open at the deadline it is marked "not passed" or "waived" with the reason; it is not carried over silently.
 
 ## Code and tests
 

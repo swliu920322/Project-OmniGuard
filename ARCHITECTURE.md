@@ -60,6 +60,10 @@ Hard conditions such as depleted health or critically low battery are handled be
 
 The router classifies telemetry into the configured intent vocabulary, including critical obstacle, normal navigation, and sensor error. A sensor-error decision can stop the pipeline early.
 
+### 4.2.1 Extended router (opt-in)
+
+A tenant configured with `router_mode: extended` (`Tenant-Alpha-Extended`) replaces the router stage of the HTTP simulator endpoint with a six-route state decision (`CRITICAL_OBSTACLE`, `OVERHEAT`, `LOW_HEALTH`, `LOW_BATTERY`, `OVERSPEED`, `NORMAL_NAV`) and an optional operator note. The flow is in `src/cloud-orchestrator/embodied_brain/extended.py` and `router_v2/`: an emergency-stop flag and the input check run in code before any external call; the model returns one strict JSON object; code adds every telemetry risk the model did not name, applies the physical gate and resolves one action; Safety can only make it stricter; the Compiler's actions are validated against a fixed action contract before they leave. Unusable input or replies halt. The original tenants, their prompts and the IoT Hub path are unchanged. The rules and their evaluation are in `eval/` ([specification](eval/spec/LABEL_SPEC.md), [report](eval/report.md)); thresholds and priorities are simulation conventions, and `goal: CHARGER` is a structured goal that nothing verifies.
+
 ### 4.3 Safety Agent
 
 The safety stage evaluates the routed scenario against prompt-based policy. A block result produces a safety override and skips the compiler.
@@ -185,5 +189,6 @@ ADRs under docs/adrs record why specific architecture choices were made. An acce
 - Operations: docs/operations.md
 - Evidence policy: docs/evidence/README.md
 - Benchmark archive: src/cloud-orchestrator/embodied_brain/benchmark_results/README.md
+- State-routing evaluation: eval/report.md, eval/EVIDENCE_INDEX.md, eval/LIMITATIONS.md
 - Architecture decisions: docs/adrs/INDEX.md
 - Dashboard behavior: docs/dashboard/00-overview.md
