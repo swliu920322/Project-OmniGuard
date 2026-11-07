@@ -228,3 +228,100 @@ def test_r2_only_ever_adds_risk_relative_to_r1():
         if e["note"]:
             r1, r2 = C.note_status_r1(e["note"]), C.note_status_r2(e["note"])
             assert not (r1 in R.NOTE_RISK_STATUSES and r2 not in R.NOTE_RISK_STATUSES), e["id"]
+
+
+# --- review round 3: missing note status, floor_override, faults, note contract ---------------------------------------
+
+def test_a_noted_record_needs_a_note_status_missing_or_null_halts():
+    for reply in ({"primary": "NORMAL_NAV"}, {"primary": "NORMAL_NAV", "note_status": None}):
+        out = R.execute(OK, reply, note="前方有人")
+        assert out["valid"] is False and out["action"]["motion"] == "HALT" and out["action"]["halt_reasons"] == ["PARSE_FAILURE"]
+        assert out["floor_override"] is None  # a failure, not an override
+    ok = R.execute(OK, {"primary": "NORMAL_NAV", "note_status": "NEGATED"}, note="前方没有人")
+    assert ok["valid"] and ok["action"]["motion"] == "MOVE"
+    assert R.execute(OK, {"primary": "NORMAL_NAV", "note_status": None}, note="   ")["valid"]  # blank note = no note
+
+
+def test_floor_override_counts_every_risk_or_constraint_the_code_added():
+    both = R.execute(_record(["CRITICAL_OBSTACLE", "OVERHEAT"]), {"primary": "CRITICAL_OBSTACLE", "note_status": None})
+    assert both["added_risks"] == ["OVERHEAT"] and both["floor_override"] is True and both["primary_changed"] is False
+    assert both["action"]["holds"] == ["COOL"]                      # the cool-down the model did not mention
+    speed = R.execute(_record(["OVERSPEED"]), {"primary": "NORMAL_NAV", "note_status": None})
+    assert speed["added_risks"] == ["OVERSPEED"] and speed["floor_override"] is True and speed["action"]["motion"] == "MOVE_LIMITED"
+    full = R.execute(_record(["CRITICAL_OBSTACLE", "OVERHEAT"]), {"primary": "OVERHEAT", "note_status": None})
+    assert full["added_risks"] == ["CRITICAL_OBSTACLE"]            # the model named the lower-priority one only
+    clean = R.execute(OK, {"primary": "NORMAL_NAV", "note_status": None})
+    assert clean["floor_override"] is False and clean["added_risks"] == [] and clean["forced_by"] == []
+
+
+def test_floor_override_counts_the_stop_flag_and_the_gate_when_they_change_the_action():
+    stop = R.execute(OK, {"primary": "NORMAL_NAV", "note_status": None}, estop=True)
+    assert stop["floor_override"] is True and stop["forced_by"] == ["ESTOP"]
+    gated = R.execute(_record([]) | {"hp": 0}, {"primary": "NORMAL_NAV", "note_status": None})
+    assert gated["floor_override"] is True and "GATE" in gated["action"]["halt_reasons"]
+    already = R.execute(_record(["CRITICAL_OBSTACLE"]), {"primary": "CRITICAL_OBSTACLE", "note_status": None}, estop=True)
+    assert already["floor_override"] is False and already["forced_by"] == []  # the model had already halted
+
+
+def test_floor_override_is_never_weaker_than_the_old_primary_comparison_when_the_model_gives_no_note_status():
+    for risks in itertools.chain.from_iterable(itertools.combinations(TRIGGER, n) for n in range(6)):
+        for primary in R.CLASSES:
+            out = R.execute(_record(risks), {"primary": primary, "note_status": None})
+            if out["primary_changed"]:
+                assert out["floor_override"] is True, (risks, primary)
+
+
+def test_interface_faults_halt_and_are_not_replies():
+    for fault in R.FAULTS:
+        out = R.execute(OK, {"primary": "NORMAL_NAV", "note_status": None}, fault=fault)
+        assert out["action"]["halt_reasons"] == [fault] and out["floor_override"] is None
+    try:
+        R.execute(OK, None, fault="BOOM")
+    except ValueError:
+        return
+    raise AssertionError("unknown fault accepted")
+
+
+def test_note_contract_empty_is_no_note_overlong_and_non_text_are_invalid():
+    assert R.execute(OK, {"primary": "NORMAL_NAV", "note_status": None}, note="")["valid"]
+    assert R.execute(OK, {"primary": "NORMAL_NAV", "note_status": "IRRELEVANT"}, note="x" * R.MAX_NOTE_CHARS)["valid"]
+    for bad in ("x" * (R.MAX_NOTE_CHARS + 1), 123, ["a"]):
+        out = R.execute(OK, {"primary": "NORMAL_NAV", "note_status": "IRRELEVANT"}, note=bad)
+        assert out["valid"] is False and out["action"]["halt_reasons"] == ["INVALID_INPUT"]
+    assert R.execute({}, {"primary": "NORMAL_NAV", "note_status": None})["action"]["halt_reasons"] == ["INVALID_INPUT"]  # empty input
+
+
+# --- families, split and duplicates ----------------------------------------------------------------------------------
+
+_f = importlib.util.spec_from_file_location("family", SPEC / "family.py")
+F = importlib.util.module_from_spec(_f)
+_f.loader.exec_module(F)
+
+
+def test_split_assignment_is_pinned_and_deterministic():
+    assert [F.assign_split(F.family_id(n)) for n in (1, 2, 3, 4, 5, 1200)] == ["test", "test", "test", "dev", "dev", "test"]
+    assert F.pool_by_split() == F.pool_by_split()
+
+
+def test_pool_proportions_are_near_the_cut_points():
+    pool = F.pool_by_split()
+    total = sum(len(v) for v in pool.values())
+    assert total == F.POOL_SIZE and set(pool) == {"dev", "test", "reserve"}
+    assert abs(len(pool["dev"]) / total - 0.30) < 0.05 and abs(len(pool["test"]) / total - 0.60) < 0.05
+    assert not set(pool["dev"]) & set(pool["test"])
+
+
+def test_a_family_in_the_wrong_split_or_a_duplicate_text_is_reported():
+    dev_id, test_id = F.pool_by_split()["dev"][0], F.pool_by_split()["test"][0]
+    recs = [{"family_id": dev_id, "text": "Telemetry: Distance: 10cm."}, {"family_id": test_id, "text": "other"},
+            {"family_id": dev_id, "text": "TELEMETRY:  distance: 10CM."}]
+    problems = F.check_records(recs, "dev")
+    assert any("belongs to 'test'" in p for p in problems) and any("same text as record 0" in p for p in problems)
+    assert F.check_records(recs[:1], "dev") == []
+    assert F.check_records([{"family_id": "X-1", "text": "t"}], "dev")
+
+
+def test_public_examples_are_checked_against_a_set_by_normalised_text():
+    texts = [{"text": R.render_telemetry(e["input"], e["note"])} for e in EXAMPLES]
+    assert F.cross_duplicates(texts[:3], [{"text": texts[1]["text"].upper()}]) == [(1, 0)]
+    assert F.cross_duplicates(texts, [{"text": "something else entirely"}]) == []

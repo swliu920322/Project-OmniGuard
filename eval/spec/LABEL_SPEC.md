@@ -1,8 +1,8 @@
 # Label specification — AGV telemetry state recognition and routing
 
-**Version 0.3-candidate (freeze candidate after the GPT directional review of 0.2). Not frozen. Nothing here has been measured; no model was called.**
+**Version 0.4-candidate (freeze candidate after the second GPT review). Not frozen. Nothing here has been measured; no model was called.**
 Executable form: `reference_labeler.py`. Public boundary examples: `ambiguous_examples.json` (all shown in section 11).
-Changes from 0.2: the nine open questions are decided (section 12); the model-reply-to-action rule is now one deterministic algorithm (`execute()`, section 4); multi-clause note annotation (section 8); `UNCERTAIN` notes halt; the note/telemetry mismatch is called a *source disagreement*; Chinese and mixed-language notes are in scope; rule controls R1/R2 are implemented with complete word lists (`rule_control.py`, section 10).
+Changes from 0.3: a noted record whose reply has a missing or null `note_status` now HALTs (no judgement is never read as no risk); `floor_override` is defined exactly; interface faults and note-length limits are part of the contract; stress and coverage requirements corrected in `DATA_PLAN.md`; family split algorithm (`family.py`) and `ANNOTATION_PROTOCOL.md` added.
 
 ## 0. Positioning
 
@@ -32,7 +32,7 @@ One record = one reading. Units are fixed; a value outside the domain, missing, 
 | `hp` | simulated health value | 0 to 100 |
 | `battery_pct` | % | 0 to 100 |
 | `temperature_c` | °C | -40 to 150 |
-| `note` (optional, section 8) | text | restricted B only |
+| `note` (optional, section 8) | text | restricted B only; at most 500 characters, longer or non-text is INVALID_INPUT (HALT), never truncated; empty or whitespace-only means no note |
 | `estop` (optional flag) | boolean | set by a separate entry, never derived from text |
 
 **Numeric precision.** The model is shown exactly the numbers the label is computed from. Generated values have at most 2 decimals and are rendered with no rounding or cast (`render_telemetry`; `parse_rendered` reads them back identically, tested). The baseline-A business path casts HP, battery and temperature with `int()` (39.6 becomes 39); that stays a **known difference of baseline A** and is not carried into the new task, where it would create samples whose label cannot be decided from the input.
@@ -68,7 +68,14 @@ The model replies **once** with a fixed JSON object `{"primary": ..., "note_stat
 3. the predicted `primary`, if it is not `NORMAL_NAV`, is added as one more risk;
 4. the action resolver of section 5 runs once on the merged risks.
 
-No model output can remove a risk. A reply that is unparseable, has a label or status outside the enums, or carries a `note_status` for a record without a note, **HALTs** (`PARSE_FAILURE`); invalid telemetry HALTs (`INVALID_INPUT`); the emergency-stop flag HALTs above all. `floor_override` is true when the executed primary differs from the model's (the code corrected it). The one way a model can still fail unsafe is a wrong `note_status` that misses a current report; that is exactly what `missed_halt` measures.
+No model output can remove a risk. HALT, with no model risk counted, in each of these cases:
+
+- the input is out of contract (`INVALID_INPUT`), including a note over 500 characters;
+- the interface failed (`TIMEOUT`, `RATE_LIMIT`, `API_ERROR`): no reply exists; the call stays in the denominator as a failure;
+- the reply is unparseable, has a label or status outside the enums, **has no `note_status` (missing or null) although the record has a note**, or has a `note_status` although the record has none (`PARSE_FAILURE`). "No judgement given" is never read as "no risk" (tested);
+- the emergency-stop flag is set (above everything else).
+
+**`floor_override`** answers one question: did the code add anything the model's reply did not already cover? It is true when `added_risks` is not empty (a telemetry risk the reply did not name, even if the motion would have been the same, for example an obstacle reported with the cool-down for an overheat missing) or `forced_by` is not empty (the stop flag or the physical gate halted a vehicle the reply would have let move). A gate or stop flag that only repeats a halt the reply already asked for is not counted. It is `None`, not false, when there was no usable reply (a failure, counted separately). `primary_changed` (executed primary differs from the predicted one) is the older, weaker comparison, kept only for information. The one way a model can still fail unsafe is a wrong `note_status` that misses a current report; that is exactly what `missed_halt` measures.
 
 `legacy3` (`LOW_BATTERY`, `OVERHEAT`, `LOW_HEALTH` → `SENSOR_ERROR`; `OVERSPEED` → none) is **only an extra compatibility view** of telemetry-only records, used to check the old three-class ability did not regress. It is not the main route, not the main metric and is empty for noted records.
 
@@ -206,6 +213,6 @@ Checked by `tests/test_label_spec.py` against `reference_labeler.py`. E = teleme
 
 ## 13. Still open before the freeze
 
-- Review of the R1 word and cue lists by the acceptance session.
-- The dev/test split and quantities: see `DATA_PLAN.md` (a plan, nothing generated).
-- Annotation protocol for the human-annotated gold note statuses: who annotates, how disagreements are resolved, agreement measured on a sample (to be written with the test-set procedure).
+- Review of the R1 word and cue lists by the acceptance session (accepted as a simple baseline with its disclosed limits; not to be extended just to remove public errors).
+- Family split and quantities: `DATA_PLAN.md` and `family.py` (algorithm and checks written, nothing generated).
+- Annotation of the gold note statuses: `ANNOTATION_PROTOCOL.md` (AI annotation and AI review; the owner only rules on disputes).

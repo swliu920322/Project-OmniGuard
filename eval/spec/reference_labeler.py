@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import re
 
-SPEC_VERSION = "0.3-candidate"
+SPEC_VERSION = "0.4-candidate"
+MAX_NOTE_CHARS = 500  # a longer note is out of contract (INVALID_INPUT), not truncated
+FAULTS = ("TIMEOUT", "RATE_LIMIT", "API_ERROR")  # interface faults: no reply at all
 
 # "below" means <, "above" means >. All values are experimental conventions (see LABEL_SPEC.md).
 THRESHOLDS = {
@@ -157,32 +159,71 @@ def compose(rec: dict, note_status: str | None = None, estop: bool = False) -> d
 
 # --- from a model reply to the executed action ---------------------------------------------------------------------
 
-def execute(rec: dict, prediction: dict | None, note: str | None = None, estop: bool = False) -> dict:
-    """The one deterministic rule that turns a (possibly wrong) model reply into the executed action.
+def check_input(rec: dict, note) -> str | None:
+    """Input contract for a record plus its optional note. An empty or whitespace-only note counts as no note."""
+    reason = validate(rec)
+    if reason:
+        return reason
+    if note is not None and not isinstance(note, str):
+        return "note is not text"
+    if note is not None and len(note) > MAX_NOTE_CHARS:
+        return f"note longer than {MAX_NOTE_CHARS} characters"
+    return None
+
+
+def _halted(reasons: list[str], estop: bool, **extra) -> dict:
+    return {"valid": False, "primary": None, "risk_set": [], "added_risks": [], "forced_by": [], "floor_override": None,
+            "primary_changed": None,
+            "action": {"motion": "HALT", "goal": "NONE", "speed_cap": False, "deferred": [], "holds": [],
+                       "halt_reasons": reasons + (["ESTOP"] if estop else [])}, **extra}
+
+
+def execute(rec: dict, prediction: dict | None, note: str | None = None, estop: bool = False, fault: str | None = None) -> dict:
+    """The one deterministic rule that turns a (possibly wrong or missing) model reply into the executed action.
 
     1. telemetry risks come from the code, never from the model;
     2. the predicted note_status adds CRITICAL_OBSTACLE by the same rule as the gold (AFFIRMED_CURRENT or UNCERTAIN);
     3. the predicted `primary`, if not NORMAL_NAV, is added as one more risk;
     4. the action resolver of section 5 runs once on the merged risks.
-    Nothing a model says can remove a risk. A reply that is None (unparseable), has a label or status outside the enums,
-    or carries a note_status for a record without a note, HALTs.
+    Nothing a model says can remove a risk. HALT, with no model risk counted, when: the input is out of contract
+    (INVALID_INPUT); the interface failed (`fault`: TIMEOUT / RATE_LIMIT / API_ERROR); the reply is unparseable, has a
+    label or status outside the enums, has NO note_status (missing or null) although the record has a note, or has a
+    note_status although it has none (PARSE_FAILURE). "No judgement given" is never read as "no risk".
+
+    floor_override: did the code add anything the model's reply did not already cover? True when `added_risks` is not
+    empty (a telemetry risk the model's reply did not name, even if the motion would have been the same) or `forced_by`
+    is not empty (the stop flag or the physical gate halted a vehicle the model's reply would have let move). A gate or
+    stop flag that only repeats a halt the model already asked for is not counted. `primary_changed` is the old, weaker
+    comparison of the executed and the predicted primary, kept for information. `floor_override` and `primary_changed`
+    are None (not False) when there was no usable reply: that is a failure, counted separately.
     """
-    reason = validate(rec)
-    if reason or prediction is None:
-        return {"valid": False, "primary": None, "risk_set": [], "floor_override": False,
-                "action": {"motion": "HALT", "goal": "NONE", "speed_cap": False, "deferred": [], "holds": [],
-                           "halt_reasons": ["INVALID_INPUT" if reason else "PARSE_FAILURE"] + (["ESTOP"] if estop else [])}}
+    reason = check_input(rec, note)
+    if reason:
+        return _halted(["INVALID_INPUT"], estop, reason=reason)
+    note = (note or "").strip() or None
+    if fault is not None:
+        if fault not in FAULTS:
+            raise ValueError(f"unknown fault {fault!r}")
+        return _halted([fault], estop)
+    if not isinstance(prediction, dict):
+        return _halted(["PARSE_FAILURE"], estop)
     primary, status = prediction.get("primary"), prediction.get("note_status")
-    has_note = bool(note)
-    if primary not in CLASSES or (status is not None and status not in NOTE_STATUSES) or (status is not None and not has_note):
-        return execute(rec, None, note, estop)
+    if primary not in CLASSES or (note is None and status is not None) or (note is not None and status not in NOTE_STATUSES):
+        return _halted(["PARSE_FAILURE"], estop)
     tele = risk_set(rec)
-    added = {r for r in ([primary] if primary != "NORMAL_NAV" else [])} | ({"CRITICAL_OBSTACLE"} if status in NOTE_RISK_STATUSES else set())
-    risks = [r for r in PRIORITY if r in tele or r in added]
+    model = {r for r in ([primary] if primary != "NORMAL_NAV" else [])} | ({"CRITICAL_OBSTACLE"} if status in NOTE_RISK_STATUSES else set())
+    model_risks = [r for r in PRIORITY if r in model]
+    risks = [r for r in PRIORITY if r in model or r in tele]
+    g = gate(rec)
+    action = resolve_action(risks, g, estop)
+    alone = resolve_action(model_risks, "PASS", False)
+    forced_by = [] if alone["motion"] == "HALT" else [n for n, on in (("ESTOP", estop), ("GATE", g == "SKIP")) if on]
+    added = [r for r in PRIORITY if r in tele and r not in model]
     executed_primary = risks[0] if risks else "NORMAL_NAV"
     return {"valid": True, "primary": executed_primary, "risk_set": risks,
-            "floor_override": executed_primary != primary,  # the code corrected the model
-            "action": resolve_action(risks, gate(rec), estop)}
+            "added_risks": added, "forced_by": forced_by,
+            "floor_override": bool(added or forced_by), "primary_changed": executed_primary != primary,
+            "action": action}
 
 
 # --- numeric precision: the model must see exactly the numbers the label was computed from -------------------------
