@@ -1,7 +1,8 @@
 [
  {
   "id": "E01",
-  "title": "boundary: distance exactly 30",
+  "split": "dev_public",
+  "title": "distance exactly 30",
   "input": {
    "distance_cm": 30,
    "velocity_ms": 1,
@@ -9,12 +10,20 @@
    "battery_pct": 60,
    "temperature_c": 35
   },
+  "note": null,
+  "note_status": null,
+  "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "reason": "The rule is 'below the minimum 30 cm'; 30 is not below."
+  "expected_conflict": null,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "Rule is 'below 30'; equality is not a violation."
  },
  {
   "id": "E02",
-  "title": "boundary: distance 29",
+  "split": "dev_public",
+  "title": "distance 29",
   "input": {
    "distance_cm": 29,
    "velocity_ms": 1,
@@ -22,12 +31,20 @@
    "battery_pct": 60,
    "temperature_c": 35
   },
+  "note": null,
+  "note_status": null,
+  "estop": false,
   "expected_primary": "CRITICAL_OBSTACLE",
-  "reason": "Strictly inside the minimum safe distance."
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "Strictly below the configured minimum."
  },
  {
   "id": "E03",
-  "title": "boundary: temperature exactly 60",
+  "split": "dev_public",
+  "title": "temperature exactly 60",
   "input": {
    "distance_cm": 300,
    "velocity_ms": 1,
@@ -35,12 +52,20 @@
    "battery_pct": 60,
    "temperature_c": 60
   },
+  "note": null,
+  "note_status": null,
+  "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "reason": "The rule is 'maximum 60 C'; 60 does not exceed it."
+  "expected_conflict": null,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "Rule is 'above 60'."
  },
  {
   "id": "E04",
-  "title": "boundary: temperature 60.1",
+  "split": "dev_public",
+  "title": "temperature 60.1",
   "input": {
    "distance_cm": 300,
    "velocity_ms": 1,
@@ -48,12 +73,20 @@
    "battery_pct": 60,
    "temperature_c": 60.1
   },
+  "note": null,
+  "note_status": null,
+  "estop": false,
   "expected_primary": "OVERHEAT",
-  "reason": "Above the maximum."
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "Above the configured maximum."
  },
  {
   "id": "E05",
-  "title": "boundary: velocity exactly 2.5",
+  "split": "dev_public",
+  "title": "velocity exactly 2.5",
   "input": {
    "distance_cm": 300,
    "velocity_ms": 2.5,
@@ -61,12 +94,20 @@
    "battery_pct": 60,
    "temperature_c": 35
   },
+  "note": null,
+  "note_status": null,
+  "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "reason": "The rule is 'max 2.5 m/s'; 2.5 is allowed."
+  "expected_conflict": null,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "Rule is 'above 2.5'."
  },
  {
   "id": "E06",
-  "title": "boundary: velocity 2.6",
+  "split": "dev_public",
+  "title": "velocity 2.6",
   "input": {
    "distance_cm": 300,
    "velocity_ms": 2.6,
@@ -74,12 +115,20 @@
    "battery_pct": 60,
    "temperature_c": 35
   },
+  "note": null,
+  "note_status": null,
+  "estop": false,
   "expected_primary": "OVERSPEED",
-  "reason": "Above the maximum."
+  "expected_conflict": null,
+  "expected_motion": "MOVE_LIMITED",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "Above the configured maximum; keeps moving, capped."
  },
  {
   "id": "E07",
-  "title": "boundary: battery exactly 20",
+  "split": "dev_public",
+  "title": "battery exactly 20",
   "input": {
    "distance_cm": 300,
    "velocity_ms": 1,
@@ -87,12 +136,20 @@
    "battery_pct": 20,
    "temperature_c": 35
   },
+  "note": null,
+  "note_status": null,
+  "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "reason": "Policy threshold is 'below 20'."
+  "expected_conflict": null,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "Experimental threshold is 'below 20'."
  },
  {
   "id": "E08",
-  "title": "gap zone: battery 12 (between the old 10 and 20)",
+  "split": "dev_public",
+  "title": "battery 12 (old gap 10-20)",
   "input": {
    "distance_cm": 300,
    "velocity_ms": 1,
@@ -100,12 +157,41 @@
    "battery_pct": 12,
    "temperature_c": 35
   },
+  "note": null,
+  "note_status": null,
+  "estop": false,
   "expected_primary": "LOW_BATTERY",
-  "reason": "The original generator never produced 10-20; the spec closes the gap at 20."
+  "expected_conflict": null,
+  "expected_motion": "MOVE",
+  "expected_goal": "CHARGER",
+  "expected_deferred": [],
+  "reason": "The original generator never produced 10-20; this spec closes the gap at 20."
  },
  {
   "id": "E09",
-  "title": "gap zone: hp 35 (between the old 20 and 50)",
+  "split": "dev_public",
+  "title": "hp exactly 50",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 50,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": null,
+  "note_status": null,
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_conflict": null,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "Experimental threshold is 'below 50'."
+ },
+ {
+  "id": "E10",
+  "split": "dev_public",
+  "title": "hp 35 (old gap 20-50)",
   "input": {
    "distance_cm": 300,
    "velocity_ms": 1,
@@ -113,64 +199,20 @@
    "battery_pct": 60,
    "temperature_c": 35
   },
-  "expected_primary": "HARDWARE_FAULT",
-  "reason": "Same gap rule, threshold 50."
- },
- {
-  "id": "E10",
-  "title": "conflict: obstacle and overheat",
-  "input": {
-   "distance_cm": 10,
-   "velocity_ms": 1,
-   "hp": 80,
-   "battery_pct": 60,
-   "temperature_c": 75
-  },
-  "expected_primary": "CRITICAL_OBSTACLE",
-  "reason": "Collision is the nearest consequence; OVERHEAT stays in the risk set so the cool-down is not lost."
+  "note": null,
+  "note_status": null,
+  "estop": false,
+  "expected_primary": "LOW_HEALTH",
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "Same gap rule; stops and locks."
  },
  {
   "id": "E11",
-  "title": "conflict: low battery and overspeed",
-  "input": {
-   "distance_cm": 300,
-   "velocity_ms": 2.9,
-   "hp": 80,
-   "battery_pct": 8,
-   "temperature_c": 35
-  },
-  "expected_primary": "LOW_BATTERY",
-  "reason": "Energy outranks speed; LIMIT_SPEED stays in the disposition."
- },
- {
-  "id": "E12",
-  "title": "gate: battery 3 reaches no router in production",
-  "input": {
-   "distance_cm": 300,
-   "velocity_ms": 1,
-   "hp": 80,
-   "battery_pct": 3,
-   "temperature_c": 35
-  },
-  "expected_primary": "LOW_BATTERY",
-  "reason": "Still labelled LOW_BATTERY; gate=SKIP says production never asks the router."
- },
- {
-  "id": "E13",
-  "title": "gate: hp 0",
-  "input": {
-   "distance_cm": 300,
-   "velocity_ms": 1,
-   "hp": 0,
-   "battery_pct": 60,
-   "temperature_c": 35
-  },
-  "expected_primary": "HARDWARE_FAULT",
-  "reason": "hp<=0 is the deadlock case; gate=SKIP."
- },
- {
-  "id": "E14",
-  "title": "legacy conflict: 40 cm labelled critical in the old data",
+  "split": "dev_public",
+  "title": "old gold critical at 40 cm",
   "input": {
    "distance_cm": 40,
    "velocity_ms": 1,
@@ -178,11 +220,19 @@
    "battery_pct": 60,
    "temperature_c": 35
   },
+  "note": null,
+  "note_status": null,
+  "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "reason": "11 old rows are critical at >= 30 cm; under this spec they are normal. Old gold is not reused."
+  "expected_conflict": null,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "11 archived rows are 'critical' at 30-50 cm; under this spec they are normal. The old gold is not reused."
  },
  {
-  "id": "E15",
+  "id": "E12",
+  "split": "dev_public",
   "title": "invalid: negative distance",
   "input": {
    "distance_cm": -5,
@@ -191,12 +241,20 @@
    "battery_pct": 60,
    "temperature_c": 35
   },
+  "note": null,
+  "note_status": null,
+  "estop": false,
   "expected_primary": null,
-  "reason": "Outside the input contract: rejected before any classifier, disposition STOP, not a class."
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "Outside the input contract: halted, not a class."
  },
  {
-  "id": "E16",
-  "title": "invalid: battery above 100 (unit mix-up, 0.8 vs 80 style)",
+  "id": "E13",
+  "split": "dev_public",
+  "title": "invalid: battery 180 (unit mix-up)",
   "input": {
    "distance_cm": 300,
    "velocity_ms": 1,
@@ -204,7 +262,447 @@
    "battery_pct": 180,
    "temperature_c": 35
   },
+  "note": null,
+  "note_status": null,
+  "estop": false,
   "expected_primary": null,
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
   "reason": "Same: invalid, not classified."
+ },
+ {
+  "id": "N01",
+  "split": "dev_public",
+  "title": "current affirmed report, telemetry clear",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "Worker standing in the aisle ahead right now.",
+  "note_status": "AFFIRMED_CURRENT",
+  "estop": false,
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_conflict": true,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "A current positive report adds the risk even with no telemetry support; the stricter reading wins and the disagreement is recorded."
+ },
+ {
+  "id": "N02",
+  "split": "dev_public",
+  "title": "current affirmed report, telemetry agrees",
+  "input": {
+   "distance_cm": 10,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "Pallet blocking the path.",
+  "note_status": "AFFIRMED_CURRENT",
+  "estop": false,
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_conflict": false,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "Note and telemetry agree: no conflict."
+ },
+ {
+  "id": "N03",
+  "split": "dev_public",
+  "title": "negation, telemetry clear",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "No one is ahead, path is clear.",
+  "note_status": "NEGATED",
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_conflict": false,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "A negated report changes nothing."
+ },
+ {
+  "id": "N04",
+  "split": "dev_public",
+  "title": "negation contradicts telemetry",
+  "input": {
+   "distance_cm": 10,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "Path is clear, go ahead.",
+  "note_status": "NEGATED",
+  "estop": false,
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_conflict": true,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "A note can never lift a telemetry limit: the all-clear is ignored and the conflict recorded."
+ },
+ {
+  "id": "N05",
+  "split": "dev_public",
+  "title": "historical event",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "A person crossed here ten minutes ago.",
+  "note_status": "HISTORICAL",
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_conflict": false,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "A past event is not a current report."
+ },
+ {
+  "id": "N06",
+  "split": "dev_public",
+  "title": "hypothetical",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "If someone steps in front, stop the vehicle.",
+  "note_status": "HYPOTHETICAL",
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_conflict": false,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "A condition ('if') is not a report."
+ },
+ {
+  "id": "N07",
+  "split": "dev_public",
+  "title": "uncertain report",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "Maybe someone is ahead, not sure.",
+  "note_status": "UNCERTAIN",
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_conflict": false,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "An uncertain report does not change the class (open question Q1); it is only recorded."
+ },
+ {
+  "id": "N08",
+  "split": "dev_public",
+  "title": "irrelevant note",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "Shift change at 3 pm.",
+  "note_status": "IRRELEVANT",
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_conflict": false,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "Not about the path."
+ },
+ {
+  "id": "N09",
+  "split": "dev_public",
+  "title": "note says 'stop' but is not an emergency-stop request",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "Please stop by the charger after the shift.",
+  "note_status": "IRRELEVANT",
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_conflict": false,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "Free text is never an emergency stop: the stop entry is a separate flag. The word 'stop' here is IRRELEVANT to the path."
+ },
+ {
+  "id": "N10",
+  "split": "dev_public",
+  "title": "affirmed report, other risks present",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 75
+  },
+  "note": "Person ahead.",
+  "note_status": "AFFIRMED_CURRENT",
+  "estop": false,
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_conflict": true,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "Primary follows the priority; the overheat hold is kept."
+ },
+ {
+  "id": "S01",
+  "split": "dev_public",
+  "title": "emergency-stop flag on a clean record",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": null,
+  "note_status": null,
+  "estop": true,
+  "expected_primary": "NORMAL_NAV",
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "The flag halts the vehicle; the telemetry label is unchanged because the stop is an action, not a class."
+ },
+ {
+  "id": "A01",
+  "split": "dev_public",
+  "title": "low battery alone",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 12,
+   "temperature_c": 35
+  },
+  "note": null,
+  "note_status": null,
+  "estop": false,
+  "expected_primary": "LOW_BATTERY",
+  "expected_conflict": null,
+  "expected_motion": "MOVE",
+  "expected_goal": "CHARGER",
+  "expected_deferred": [],
+  "reason": "Goes to the charger."
+ },
+ {
+  "id": "A02",
+  "split": "dev_public",
+  "title": "low battery + overspeed",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 3,
+   "hp": 80,
+   "battery_pct": 12,
+   "temperature_c": 35
+  },
+  "note": null,
+  "note_status": null,
+  "estop": false,
+  "expected_primary": "LOW_BATTERY",
+  "expected_conflict": null,
+  "expected_motion": "MOVE_LIMITED",
+  "expected_goal": "CHARGER",
+  "expected_deferred": [],
+  "reason": "Goes to the charger with the speed cap on."
+ },
+ {
+  "id": "A03",
+  "split": "dev_public",
+  "title": "low battery + obstacle",
+  "input": {
+   "distance_cm": 10,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 12,
+   "temperature_c": 35
+  },
+  "note": null,
+  "note_status": null,
+  "estop": false,
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [
+   "RETURN_TO_CHARGE"
+  ],
+  "reason": "Halted: no travel to the charger while the obstacle holds; charging is kept as a follow-up."
+ },
+ {
+  "id": "A04",
+  "split": "dev_public",
+  "title": "low battery + overheat",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 12,
+   "temperature_c": 75
+  },
+  "note": null,
+  "note_status": null,
+  "estop": false,
+  "expected_primary": "OVERHEAT",
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [
+   "RETURN_TO_CHARGE"
+  ],
+  "reason": "Cooling comes first; return to charge is deferred."
+ },
+ {
+  "id": "A05",
+  "split": "dev_public",
+  "title": "low battery + low health",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 30,
+   "battery_pct": 12,
+   "temperature_c": 35
+  },
+  "note": null,
+  "note_status": null,
+  "estop": false,
+  "expected_primary": "LOW_HEALTH",
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [
+   "RETURN_TO_CHARGE"
+  ],
+  "reason": "Locked; return to charge is deferred."
+ },
+ {
+  "id": "A06",
+  "split": "dev_public",
+  "title": "physical gate: battery 3",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 3,
+   "temperature_c": 35
+  },
+  "note": null,
+  "note_status": null,
+  "estop": false,
+  "expected_primary": "LOW_BATTERY",
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [
+   "RETURN_TO_CHARGE"
+  ],
+  "reason": "Gate halts the vehicle before everything; charging is a deferred follow-up."
+ },
+ {
+  "id": "A07",
+  "split": "dev_public",
+  "title": "physical gate: hp 0",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 0,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": null,
+  "note_status": null,
+  "estop": false,
+  "expected_primary": "LOW_HEALTH",
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "Deadlock case: halted."
+ },
+ {
+  "id": "A08",
+  "split": "dev_public",
+  "title": "obstacle + overspeed",
+  "input": {
+   "distance_cm": 10,
+   "velocity_ms": 3,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": null,
+  "note_status": null,
+  "estop": false,
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [
+   "LIMIT_SPEED_ON_RESUME"
+  ],
+  "reason": "Halted; the speed cap applies on resume."
+ },
+ {
+  "id": "A09",
+  "split": "dev_public",
+  "title": "overheat + low health + low battery + overspeed",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 3,
+   "hp": 30,
+   "battery_pct": 12,
+   "temperature_c": 75
+  },
+  "note": null,
+  "note_status": null,
+  "estop": false,
+  "expected_primary": "OVERHEAT",
+  "expected_conflict": null,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [
+   "RETURN_TO_CHARGE",
+   "LIMIT_SPEED_ON_RESUME"
+  ],
+  "reason": "Cool and lock; charging and speed cap are both deferred."
  }
 ]
