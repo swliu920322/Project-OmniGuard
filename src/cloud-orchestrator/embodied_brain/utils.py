@@ -92,6 +92,13 @@ def get_llm_client():
         _llm_client = get_azure_openai_client()
     return _llm_client
 
+def get_llm_client_and_model():
+    """Client and model name for callers that need the full reply (finish reason), not just the text of ask_agent()."""
+    client = get_llm_client()
+    config = _llm_config if _llm_config is not None else get_llm_config("BRAIN")
+    return client, config.model_name
+
+
 _ask_agent_cache = OrderedDict()
 _ask_agent_cache_lock = threading.Lock()
 ASK_AGENT_CACHE_TTL = 5

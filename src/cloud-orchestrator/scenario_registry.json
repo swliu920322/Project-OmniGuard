@@ -10,5 +10,13 @@
     "agent_router_prompt": "Classify telemetry into: [HUMAN_DETECTED, STATIC_OBSTACLE, EMERGENCY]. Return ONLY the classification string.",
     "agent_safety_rules": "Strict Rule: If HUMAN_DETECTED, the only allowed action is 'stop'. No bypassing.",
     "agent_execution_schema": "[{'action': 'stop'|'backward'|'voice_alert', 'speed': int}]"
+  },
+  "Tenant-Alpha-Extended": {
+    "_comment": "Opt-in tenant for the spec-1.0 router (router_v2). router_mode=extended swaps only the Router stage; Safety and Compiler are unchanged and legacy tenants are not affected.",
+    "scenario": "Data Center Patrol (extended router: six classes + operator note)",
+    "router_mode": "extended",
+    "agent_router_prompt": "(unused in extended mode: the router prompt B-1.0 lives in router_v2/prompt.py)",
+    "agent_safety_rules": "Strict Rule: Actions MUST NOT include 'spray_water' or 'fast_forward'. Maintain 30cm minimum distance.",
+    "agent_execution_schema": "[{'action': 'stop'|'turn'|'move', 'degree': int, 'speed': int}]"
   }
 }
