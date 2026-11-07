@@ -1,0 +1,1007 @@
+{
+ "families": {
+  "F-0026": {
+   "kind": "single",
+   "records": [
+    "DEV-027"
+   ]
+  },
+  "F-0031": {
+   "kind": "single",
+   "records": [
+    "DEV-058"
+   ]
+  },
+  "F-0035": {
+   "kind": "single",
+   "records": [
+    "DEV-064"
+   ]
+  },
+  "F-0036": {
+   "kind": "boundary",
+   "records": [
+    "DEV-102",
+    "DEV-136",
+    "DEV-155"
+   ]
+  },
+  "F-0051": {
+   "kind": "single",
+   "records": [
+    "DEV-114"
+   ]
+  },
+  "F-0064": {
+   "kind": "single",
+   "records": [
+    "DEV-110"
+   ]
+  },
+  "F-0069": {
+   "kind": "single",
+   "records": [
+    "DEV-122"
+   ]
+  },
+  "F-0076": {
+   "kind": "single",
+   "records": [
+    "DEV-044"
+   ]
+  },
+  "F-0078": {
+   "kind": "single",
+   "records": [
+    "DEV-060"
+   ]
+  },
+  "F-0081": {
+   "kind": "single",
+   "records": [
+    "DEV-002"
+   ]
+  },
+  "F-0082": {
+   "kind": "single",
+   "records": [
+    "DEV-019"
+   ]
+  },
+  "F-0087": {
+   "kind": "single",
+   "records": [
+    "DEV-012"
+   ]
+  },
+  "F-0097": {
+   "kind": "single",
+   "records": [
+    "DEV-128"
+   ]
+  },
+  "F-0113": {
+   "kind": "single",
+   "records": [
+    "DEV-169"
+   ]
+  },
+  "F-0118": {
+   "kind": "single",
+   "records": [
+    "DEV-015"
+   ]
+  },
+  "F-0119": {
+   "kind": "single",
+   "records": [
+    "DEV-174"
+   ]
+  },
+  "F-0140": {
+   "kind": "single",
+   "records": [
+    "DEV-173"
+   ]
+  },
+  "F-0142": {
+   "kind": "pair",
+   "records": [
+    "DEV-109",
+    "DEV-115"
+   ]
+  },
+  "F-0144": {
+   "kind": "pair",
+   "records": [
+    "DEV-084",
+    "DEV-143"
+   ]
+  },
+  "F-0146": {
+   "kind": "single",
+   "records": [
+    "DEV-172"
+   ]
+  },
+  "F-0147": {
+   "kind": "single",
+   "records": [
+    "DEV-093"
+   ]
+  },
+  "F-0150": {
+   "kind": "single",
+   "records": [
+    "DEV-097"
+   ]
+  },
+  "F-0170": {
+   "kind": "single",
+   "records": [
+    "DEV-161"
+   ]
+  },
+  "F-0173": {
+   "kind": "single",
+   "records": [
+    "DEV-167"
+   ]
+  },
+  "F-0177": {
+   "kind": "single",
+   "records": [
+    "DEV-083"
+   ]
+  },
+  "F-0185": {
+   "kind": "single",
+   "records": [
+    "DEV-131"
+   ]
+  },
+  "F-0187": {
+   "kind": "single",
+   "records": [
+    "DEV-023"
+   ]
+  },
+  "F-0194": {
+   "kind": "single",
+   "records": [
+    "DEV-067"
+   ]
+  },
+  "F-0197": {
+   "kind": "single",
+   "records": [
+    "DEV-158"
+   ]
+  },
+  "F-0206": {
+   "kind": "single",
+   "records": [
+    "DEV-079"
+   ]
+  },
+  "F-0209": {
+   "kind": "single",
+   "records": [
+    "DEV-164"
+   ]
+  },
+  "F-0223": {
+   "kind": "single",
+   "records": [
+    "DEV-156"
+   ]
+  },
+  "F-0252": {
+   "kind": "single",
+   "records": [
+    "DEV-076"
+   ]
+  },
+  "F-0256": {
+   "kind": "single",
+   "records": [
+    "DEV-041"
+   ]
+  },
+  "F-0257": {
+   "kind": "single",
+   "records": [
+    "DEV-125"
+   ]
+  },
+  "F-0277": {
+   "kind": "single",
+   "records": [
+    "DEV-133"
+   ]
+  },
+  "F-0285": {
+   "kind": "single",
+   "records": [
+    "DEV-163"
+   ]
+  },
+  "F-0292": {
+   "kind": "single",
+   "records": [
+    "DEV-034"
+   ]
+  },
+  "F-0295": {
+   "kind": "single",
+   "records": [
+    "DEV-042"
+   ]
+  },
+  "F-0308": {
+   "kind": "single",
+   "records": [
+    "DEV-081"
+   ]
+  },
+  "F-0314": {
+   "kind": "single",
+   "records": [
+    "DEV-043"
+   ]
+  },
+  "F-0316": {
+   "kind": "single",
+   "records": [
+    "DEV-129"
+   ]
+  },
+  "F-0334": {
+   "kind": "single",
+   "records": [
+    "DEV-096"
+   ]
+  },
+  "F-0339": {
+   "kind": "single",
+   "records": [
+    "DEV-038"
+   ]
+  },
+  "F-0353": {
+   "kind": "single",
+   "records": [
+    "DEV-048"
+   ]
+  },
+  "F-0357": {
+   "kind": "single",
+   "records": [
+    "DEV-099"
+   ]
+  },
+  "F-0361": {
+   "kind": "pair",
+   "records": [
+    "DEV-005",
+    "DEV-055"
+   ]
+  },
+  "F-0362": {
+   "kind": "single",
+   "records": [
+    "DEV-148"
+   ]
+  },
+  "F-0369": {
+   "kind": "single",
+   "records": [
+    "DEV-030"
+   ]
+  },
+  "F-0373": {
+   "kind": "single",
+   "records": [
+    "DEV-091"
+   ]
+  },
+  "F-0392": {
+   "kind": "boundary",
+   "records": [
+    "DEV-036",
+    "DEV-051",
+    "DEV-068"
+   ]
+  },
+  "F-0401": {
+   "kind": "single",
+   "records": [
+    "DEV-062"
+   ]
+  },
+  "F-0420": {
+   "kind": "single",
+   "records": [
+    "DEV-008"
+   ]
+  },
+  "F-0431": {
+   "kind": "single",
+   "records": [
+    "DEV-029"
+   ]
+  },
+  "F-0444": {
+   "kind": "pair",
+   "records": [
+    "DEV-063",
+    "DEV-166"
+   ]
+  },
+  "F-0455": {
+   "kind": "single",
+   "records": [
+    "DEV-132"
+   ]
+  },
+  "F-0456": {
+   "kind": "single",
+   "records": [
+    "DEV-087"
+   ]
+  },
+  "F-0459": {
+   "kind": "single",
+   "records": [
+    "DEV-113"
+   ]
+  },
+  "F-0465": {
+   "kind": "boundary",
+   "records": [
+    "DEV-035",
+    "DEV-108",
+    "DEV-124"
+   ]
+  },
+  "F-0478": {
+   "kind": "single",
+   "records": [
+    "DEV-010"
+   ]
+  },
+  "F-0491": {
+   "kind": "single",
+   "records": [
+    "DEV-168"
+   ]
+  },
+  "F-0495": {
+   "kind": "single",
+   "records": [
+    "DEV-121"
+   ]
+  },
+  "F-0497": {
+   "kind": "single",
+   "records": [
+    "DEV-050"
+   ]
+  },
+  "F-0505": {
+   "kind": "single",
+   "records": [
+    "DEV-094"
+   ]
+  },
+  "F-0520": {
+   "kind": "boundary",
+   "records": [
+    "DEV-080",
+    "DEV-126",
+    "DEV-160"
+   ]
+  },
+  "F-0527": {
+   "kind": "single",
+   "records": [
+    "DEV-021"
+   ]
+  },
+  "F-0533": {
+   "kind": "single",
+   "records": [
+    "DEV-178"
+   ]
+  },
+  "F-0534": {
+   "kind": "pair",
+   "records": [
+    "DEV-092",
+    "DEV-127"
+   ]
+  },
+  "F-0542": {
+   "kind": "single",
+   "records": [
+    "DEV-103"
+   ]
+  },
+  "F-0545": {
+   "kind": "single",
+   "records": [
+    "DEV-123"
+   ]
+  },
+  "F-0550": {
+   "kind": "single",
+   "records": [
+    "DEV-151"
+   ]
+  },
+  "F-0571": {
+   "kind": "single",
+   "records": [
+    "DEV-071"
+   ]
+  },
+  "F-0586": {
+   "kind": "single",
+   "records": [
+    "DEV-016"
+   ]
+  },
+  "F-0598": {
+   "kind": "single",
+   "records": [
+    "DEV-180"
+   ]
+  },
+  "F-0600": {
+   "kind": "single",
+   "records": [
+    "DEV-061"
+   ]
+  },
+  "F-0612": {
+   "kind": "single",
+   "records": [
+    "DEV-098"
+   ]
+  },
+  "F-0618": {
+   "kind": "single",
+   "records": [
+    "DEV-026"
+   ]
+  },
+  "F-0627": {
+   "kind": "single",
+   "records": [
+    "DEV-066"
+   ]
+  },
+  "F-0635": {
+   "kind": "single",
+   "records": [
+    "DEV-089"
+   ]
+  },
+  "F-0636": {
+   "kind": "single",
+   "records": [
+    "DEV-088"
+   ]
+  },
+  "F-0638": {
+   "kind": "boundary",
+   "records": [
+    "DEV-022",
+    "DEV-086",
+    "DEV-117"
+   ]
+  },
+  "F-0640": {
+   "kind": "single",
+   "records": [
+    "DEV-111"
+   ]
+  },
+  "F-0657": {
+   "kind": "single",
+   "records": [
+    "DEV-017"
+   ]
+  },
+  "F-0663": {
+   "kind": "single",
+   "records": [
+    "DEV-046"
+   ]
+  },
+  "F-0676": {
+   "kind": "single",
+   "records": [
+    "DEV-001"
+   ]
+  },
+  "F-0685": {
+   "kind": "single",
+   "records": [
+    "DEV-157"
+   ]
+  },
+  "F-0689": {
+   "kind": "single",
+   "records": [
+    "DEV-028"
+   ]
+  },
+  "F-0693": {
+   "kind": "single",
+   "records": [
+    "DEV-011"
+   ]
+  },
+  "F-0695": {
+   "kind": "single",
+   "records": [
+    "DEV-004"
+   ]
+  },
+  "F-0701": {
+   "kind": "single",
+   "records": [
+    "DEV-165"
+   ]
+  },
+  "F-0713": {
+   "kind": "single",
+   "records": [
+    "DEV-045"
+   ]
+  },
+  "F-0726": {
+   "kind": "single",
+   "records": [
+    "DEV-039"
+   ]
+  },
+  "F-0728": {
+   "kind": "single",
+   "records": [
+    "DEV-101"
+   ]
+  },
+  "F-0731": {
+   "kind": "single",
+   "records": [
+    "DEV-145"
+   ]
+  },
+  "F-0737": {
+   "kind": "single",
+   "records": [
+    "DEV-138"
+   ]
+  },
+  "F-0747": {
+   "kind": "single",
+   "records": [
+    "DEV-171"
+   ]
+  },
+  "F-0757": {
+   "kind": "single",
+   "records": [
+    "DEV-007"
+   ]
+  },
+  "F-0765": {
+   "kind": "single",
+   "records": [
+    "DEV-112"
+   ]
+  },
+  "F-0766": {
+   "kind": "single",
+   "records": [
+    "DEV-140"
+   ]
+  },
+  "F-0770": {
+   "kind": "single",
+   "records": [
+    "DEV-018"
+   ]
+  },
+  "F-0776": {
+   "kind": "single",
+   "records": [
+    "DEV-031"
+   ]
+  },
+  "F-0782": {
+   "kind": "single",
+   "records": [
+    "DEV-069"
+   ]
+  },
+  "F-0784": {
+   "kind": "single",
+   "records": [
+    "DEV-152"
+   ]
+  },
+  "F-0798": {
+   "kind": "single",
+   "records": [
+    "DEV-107"
+   ]
+  },
+  "F-0802": {
+   "kind": "single",
+   "records": [
+    "DEV-040"
+   ]
+  },
+  "F-0813": {
+   "kind": "single",
+   "records": [
+    "DEV-175"
+   ]
+  },
+  "F-0817": {
+   "kind": "single",
+   "records": [
+    "DEV-085"
+   ]
+  },
+  "F-0819": {
+   "kind": "single",
+   "records": [
+    "DEV-150"
+   ]
+  },
+  "F-0823": {
+   "kind": "single",
+   "records": [
+    "DEV-006"
+   ]
+  },
+  "F-0830": {
+   "kind": "single",
+   "records": [
+    "DEV-159"
+   ]
+  },
+  "F-0858": {
+   "kind": "single",
+   "records": [
+    "DEV-177"
+   ]
+  },
+  "F-0859": {
+   "kind": "single",
+   "records": [
+    "DEV-106"
+   ]
+  },
+  "F-0868": {
+   "kind": "single",
+   "records": [
+    "DEV-139"
+   ]
+  },
+  "F-0876": {
+   "kind": "single",
+   "records": [
+    "DEV-033"
+   ]
+  },
+  "F-0887": {
+   "kind": "single",
+   "records": [
+    "DEV-025"
+   ]
+  },
+  "F-0893": {
+   "kind": "single",
+   "records": [
+    "DEV-053"
+   ]
+  },
+  "F-0898": {
+   "kind": "single",
+   "records": [
+    "DEV-154"
+   ]
+  },
+  "F-0921": {
+   "kind": "single",
+   "records": [
+    "DEV-142"
+   ]
+  },
+  "F-0925": {
+   "kind": "single",
+   "records": [
+    "DEV-135"
+   ]
+  },
+  "F-0926": {
+   "kind": "single",
+   "records": [
+    "DEV-065"
+   ]
+  },
+  "F-0927": {
+   "kind": "single",
+   "records": [
+    "DEV-054"
+   ]
+  },
+  "F-0930": {
+   "kind": "single",
+   "records": [
+    "DEV-120"
+   ]
+  },
+  "F-0934": {
+   "kind": "single",
+   "records": [
+    "DEV-179"
+   ]
+  },
+  "F-0943": {
+   "kind": "single",
+   "records": [
+    "DEV-074"
+   ]
+  },
+  "F-0945": {
+   "kind": "single",
+   "records": [
+    "DEV-072"
+   ]
+  },
+  "F-0946": {
+   "kind": "single",
+   "records": [
+    "DEV-144"
+   ]
+  },
+  "F-0950": {
+   "kind": "single",
+   "records": [
+    "DEV-134"
+   ]
+  },
+  "F-0951": {
+   "kind": "single",
+   "records": [
+    "DEV-024"
+   ]
+  },
+  "F-0954": {
+   "kind": "single",
+   "records": [
+    "DEV-003"
+   ]
+  },
+  "F-0973": {
+   "kind": "single",
+   "records": [
+    "DEV-130"
+   ]
+  },
+  "F-0978": {
+   "kind": "single",
+   "records": [
+    "DEV-049"
+   ]
+  },
+  "F-0979": {
+   "kind": "single",
+   "records": [
+    "DEV-077"
+   ]
+  },
+  "F-0980": {
+   "kind": "single",
+   "records": [
+    "DEV-059"
+   ]
+  },
+  "F-0981": {
+   "kind": "single",
+   "records": [
+    "DEV-057"
+   ]
+  },
+  "F-0982": {
+   "kind": "single",
+   "records": [
+    "DEV-075"
+   ]
+  },
+  "F-0983": {
+   "kind": "single",
+   "records": [
+    "DEV-141"
+   ]
+  },
+  "F-0984": {
+   "kind": "single",
+   "records": [
+    "DEV-073"
+   ]
+  },
+  "F-0997": {
+   "kind": "single",
+   "records": [
+    "DEV-037"
+   ]
+  },
+  "F-1010": {
+   "kind": "single",
+   "records": [
+    "DEV-170"
+   ]
+  },
+  "F-1011": {
+   "kind": "single",
+   "records": [
+    "DEV-146"
+   ]
+  },
+  "F-1012": {
+   "kind": "single",
+   "records": [
+    "DEV-176"
+   ]
+  },
+  "F-1020": {
+   "kind": "pair",
+   "records": [
+    "DEV-009",
+    "DEV-119"
+   ]
+  },
+  "F-1022": {
+   "kind": "single",
+   "records": [
+    "DEV-105"
+   ]
+  },
+  "F-1029": {
+   "kind": "single",
+   "records": [
+    "DEV-032"
+   ]
+  },
+  "F-1052": {
+   "kind": "single",
+   "records": [
+    "DEV-104"
+   ]
+  },
+  "F-1053": {
+   "kind": "single",
+   "records": [
+    "DEV-147"
+   ]
+  },
+  "F-1066": {
+   "kind": "single",
+   "records": [
+    "DEV-162"
+   ]
+  },
+  "F-1067": {
+   "kind": "single",
+   "records": [
+    "DEV-149"
+   ]
+  },
+  "F-1072": {
+   "kind": "single",
+   "records": [
+    "DEV-052"
+   ]
+  },
+  "F-1077": {
+   "kind": "single",
+   "records": [
+    "DEV-090"
+   ]
+  },
+  "F-1087": {
+   "kind": "single",
+   "records": [
+    "DEV-116"
+   ]
+  },
+  "F-1100": {
+   "kind": "single",
+   "records": [
+    "DEV-056"
+   ]
+  },
+  "F-1101": {
+   "kind": "single",
+   "records": [
+    "DEV-078"
+   ]
+  },
+  "F-1103": {
+   "kind": "single",
+   "records": [
+    "DEV-137"
+   ]
+  },
+  "F-1112": {
+   "kind": "single",
+   "records": [
+    "DEV-047"
+   ]
+  },
+  "F-1128": {
+   "kind": "single",
+   "records": [
+    "DEV-013"
+   ]
+  },
+  "F-1139": {
+   "kind": "single",
+   "records": [
+    "DEV-100"
+   ]
+  },
+  "F-1150": {
+   "kind": "single",
+   "records": [
+    "DEV-020"
+   ]
+  },
+  "F-1152": {
+   "kind": "single",
+   "records": [
+    "DEV-095"
+   ]
+  },
+  "F-1159": {
+   "kind": "single",
+   "records": [
+    "DEV-118"
+   ]
+  },
+  "F-1166": {
+   "kind": "single",
+   "records": [
+    "DEV-014"
+   ]
+  },
+  "F-1175": {
+   "kind": "single",
+   "records": [
+    "DEV-082"
+   ]
+  },
+  "F-1177": {
+   "kind": "single",
+   "records": [
+    "DEV-153"
+   ]
+  },
+  "F-1182": {
+   "kind": "single",
+   "records": [
+    "DEV-070"
+   ]
+  }
+ },
+ "salt": "omniguard-eval-split-v1",
+ "seed": 20261108,
+ "spec_version": "1.0"
+}

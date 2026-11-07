@@ -1,0 +1,221 @@
+{
+ "all_checks_pass": true,
+ "checks": {
+  "180 records": true,
+  "30 per class": true,
+  ">= 6 records with three or more risks": true,
+  "all 10 risk pairs >= 2 (gold risk sets)": true,
+  "clause statuses combine to the note status": true,
+  "every decimal boundary present": true,
+  "every family id is assigned to dev": true,
+  "every status >= 10": true,
+  "every status has en, zh and mixed >= 4": true,
+  "every threshold: safe side, exactly at, violating": true,
+  "gold primary recomputed from telemetry and status": true,
+  "no duplicate text inside the set, no family in another split": true,
+  "no rendered text equals a public example": true,
+  "notes >= 60": true,
+  "notes within the 500-character contract": true,
+  "physical-gate records present (hp <= 0 and battery < 5)": true,
+  "rendered text parses back to the exact numbers": true
+ },
+ "duplicates_with_public_examples": [],
+ "duplicates_within": [],
+ "families": {
+  "count": 164,
+  "kinds": {
+   "boundary": 5,
+   "pair": 6,
+   "single": 153
+  },
+  "size_distribution": {
+   "1": 153,
+   "2": 6,
+   "3": 5
+  }
+ },
+ "gate": {
+  "PASS": 171,
+  "SKIP": 9
+ },
+ "multi_clause_per_status": {
+  "AFFIRMED_CURRENT": 3,
+  "HISTORICAL": 3,
+  "HYPOTHETICAL": 3,
+  "IRRELEVANT": 3,
+  "NEGATED": 3,
+  "UNCERTAIN": 3
+ },
+ "notes": 72,
+ "patterns_per_class": {
+  "CRITICAL_OBSTACLE": {
+   "CRITICAL_OBSTACLE": 16,
+   "CRITICAL_OBSTACLE+LOW_BATTERY": 2,
+   "CRITICAL_OBSTACLE+LOW_BATTERY+OVERSPEED": 1,
+   "CRITICAL_OBSTACLE+LOW_HEALTH": 2,
+   "CRITICAL_OBSTACLE+LOW_HEALTH+LOW_BATTERY": 1,
+   "CRITICAL_OBSTACLE+OVERHEAT": 3,
+   "CRITICAL_OBSTACLE+OVERHEAT+LOW_HEALTH+LOW_BATTERY": 1,
+   "CRITICAL_OBSTACLE+OVERHEAT+OVERSPEED": 1,
+   "CRITICAL_OBSTACLE+OVERSPEED": 3
+  },
+  "LOW_BATTERY": {
+   "LOW_BATTERY": 24,
+   "LOW_BATTERY+OVERSPEED": 6
+  },
+  "LOW_HEALTH": {
+   "LOW_HEALTH": 19,
+   "LOW_HEALTH+LOW_BATTERY": 4,
+   "LOW_HEALTH+LOW_BATTERY+OVERSPEED": 3,
+   "LOW_HEALTH+OVERSPEED": 4
+  },
+  "NORMAL_NAV": {
+   "none": 30
+  },
+  "OVERHEAT": {
+   "OVERHEAT": 17,
+   "OVERHEAT+LOW_BATTERY": 3,
+   "OVERHEAT+LOW_BATTERY+OVERSPEED": 2,
+   "OVERHEAT+LOW_HEALTH": 3,
+   "OVERHEAT+LOW_HEALTH+LOW_BATTERY": 1,
+   "OVERHEAT+LOW_HEALTH+LOW_BATTERY+OVERSPEED": 1,
+   "OVERHEAT+OVERSPEED": 3
+  },
+  "OVERSPEED": {
+   "OVERSPEED": 30
+  }
+ },
+ "per_class": {
+  "CRITICAL_OBSTACLE": 30,
+  "LOW_BATTERY": 30,
+  "LOW_HEALTH": 30,
+  "NORMAL_NAV": 30,
+  "OVERHEAT": 30,
+  "OVERSPEED": 30
+ },
+ "per_language": {
+  "en": 24,
+  "mixed": 24,
+  "zh": 24
+ },
+ "per_status": {
+  "AFFIRMED_CURRENT": 12,
+  "HISTORICAL": 12,
+  "HYPOTHETICAL": 12,
+  "IRRELEVANT": 12,
+  "NEGATED": 12,
+  "UNCERTAIN": 12
+ },
+ "per_status_language": {
+  "AFFIRMED_CURRENT": {
+   "en": 4,
+   "mixed": 4,
+   "zh": 4
+  },
+  "HISTORICAL": {
+   "en": 4,
+   "mixed": 4,
+   "zh": 4
+  },
+  "HYPOTHETICAL": {
+   "en": 4,
+   "mixed": 4,
+   "zh": 4
+  },
+  "IRRELEVANT": {
+   "en": 4,
+   "mixed": 4,
+   "zh": 4
+  },
+  "NEGATED": {
+   "en": 4,
+   "mixed": 4,
+   "zh": 4
+  },
+  "UNCERTAIN": {
+   "en": 4,
+   "mixed": 4,
+   "zh": 4
+  }
+ },
+ "records": 180,
+ "risk_pairs": {
+  "CRITICAL_OBSTACLE + LOW_BATTERY": 5,
+  "CRITICAL_OBSTACLE + LOW_HEALTH": 4,
+  "CRITICAL_OBSTACLE + OVERHEAT": 5,
+  "CRITICAL_OBSTACLE + OVERSPEED": 5,
+  "LOW_BATTERY + LOW_HEALTH": 11,
+  "LOW_BATTERY + OVERHEAT": 8,
+  "LOW_BATTERY + OVERSPEED": 13,
+  "LOW_HEALTH + OVERHEAT": 6,
+  "LOW_HEALTH + OVERSPEED": 8,
+  "OVERHEAT + OVERSPEED": 7
+ },
+ "risks_per_record": {
+  "0": 30,
+  "1": 106,
+  "2": 33,
+  "3": 9,
+  "4": 2
+ },
+ "rule_controls_note_status_agreement_informational": {
+  "R1": "69/72",
+  "R2": "24/72"
+ },
+ "salt": "omniguard-eval-split-v1",
+ "seed": 20261108,
+ "source_disagreement": 20,
+ "spec_version": "1.0",
+ "thresholds": {
+  "battery_pct": {
+   "decimal_boundaries_present": [
+    19.99,
+    20.01
+   ],
+   "exactly_at": 16,
+   "safe_side": 115,
+   "threshold": 20,
+   "violating": 49
+  },
+  "distance_cm": {
+   "decimal_boundaries_present": [
+    29.99,
+    30.01
+   ],
+   "exactly_at": 22,
+   "safe_side": 145,
+   "threshold": 30,
+   "violating": 13
+  },
+  "hp": {
+   "decimal_boundaries_present": [
+    49.99,
+    50.01
+   ],
+   "exactly_at": 13,
+   "safe_side": 128,
+   "threshold": 50,
+   "violating": 39
+  },
+  "temperature_c": {
+   "decimal_boundaries_present": [
+    59.99,
+    60.01
+   ],
+   "exactly_at": 17,
+   "safe_side": 128,
+   "threshold": 60,
+   "violating": 35
+  },
+  "velocity_ms": {
+   "decimal_boundaries_present": [
+    2.49,
+    2.51
+   ],
+   "exactly_at": 13,
+   "safe_side": 113,
+   "threshold": 2.5,
+   "violating": 54
+  }
+ }
+}
