@@ -5,7 +5,7 @@
 The controls read the SAME rendered text a model reads (eval/spec/rule_control.py, word lists fixed there) and are scored with the same
 evaluator as baseline B (eval/baseline_b/evaluate.py): `primary` against the gold route, `note_status` apart from it, the executed action
 through reference_labeler.execute(). Informational: both controls and the dev notes came from the same author, and the word lists were
-extended once on the public examples, so the numbers describe the controls on dev material and are not a result or a competitor score.
+extended once on the public examples. The numbers are offline results of the rule controls on dev material: they are not formal independent-test results and say nothing about generalisation.
 """
 from __future__ import annotations
 
@@ -76,9 +76,10 @@ def build() -> dict:
 def markdown(rep: dict) -> str:
     L = ["# R1 / R2 rule controls on the dev material", "",
          f"Spec `{rep['spec_version']}`; `rule_control.py` sha256 `{rep['rule_control_sha256'][:16]}…`; dev set `{rep['dev_set_sha256'][:16]}…`; stress cases `{rep['stress_sha256'][:16]}…`. Offline, no model.", "",
-         "**Read this first.** Informational only. The dev notes and both controls come from the same author, the word lists were extended once on the public examples, "
-         "and nothing here was tuned on any test material. These numbers describe what a keyword rule does on dev material. They are not a result and not a competitor score. "
-         "On telemetry-only records the controls reproduce the gold by construction (a sanity ceiling); the comparison that means something is the noted records.", ""]
+         "**Read this first.** These are offline results of the rule controls on dev material, not formal independent-test results, and they do not show generalisation. "
+         "The dev notes and both controls come from the same author, the word lists were extended once on the public examples, and nothing here was tuned on any test material. "
+         "On telemetry-only records the controls reproduce the gold by construction (a sanity ceiling); the comparison that means something is the noted records. "
+         "R2 stops conservatively whenever a keyword matches, but it can still miss a stop when no keyword matches (the stress cases contain one such missed halt, a typo).", ""]
     for v, c in rep["controls"].items():
         d = c["dev_all"]
         L += [f"## {v}", "", f"- Dev set (180): primary {d['primary_correct']}/{d['n']} = {d['primary_accuracy']}; telemetry-only {c['dev_telemetry_only_primary']['correct']}/{c['dev_telemetry_only_primary']['n']}; "

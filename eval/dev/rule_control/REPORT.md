@@ -2,7 +2,7 @@
 
 Spec `1.0`; `rule_control.py` sha256 `22e0456bdc41f0b6…`; dev set `bad376fce65d0b71…`; stress cases `459e5dcbe8e3728b…`. Offline, no model.
 
-**Read this first.** Informational only. The dev notes and both controls come from the same author, the word lists were extended once on the public examples, and nothing here was tuned on any test material. These numbers describe what a keyword rule does on dev material. They are not a result and not a competitor score. On telemetry-only records the controls reproduce the gold by construction (a sanity ceiling); the comparison that means something is the noted records.
+**Read this first.** These are offline results of the rule controls on dev material, not formal independent-test results, and they do not show generalisation. The dev notes and both controls come from the same author, the word lists were extended once on the public examples, and nothing here was tuned on any test material. On telemetry-only records the controls reproduce the gold by construction (a sanity ceiling); the comparison that means something is the noted records. R2 stops conservatively whenever a keyword matches, but it can still miss a stop when no keyword matches (the stress cases contain one such missed halt, a typo).
 
 ## R1
 

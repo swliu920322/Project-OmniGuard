@@ -35,5 +35,8 @@ def test_the_controls_reproduce_the_gold_on_telemetry_only_records_and_the_repor
     for v in ("R1", "R2"):
         t = REPORT["controls"][v]["dev_telemetry_only_primary"]
         assert t["correct"] == t["n"] == 108
-    assert "Informational only" in (RC / "REPORT.md").read_text() and "not a competitor score" in (RC / "REPORT.md").read_text()
+    text = (RC / "REPORT.md").read_text()
+    assert "offline results of the rule controls on dev material" in text and "not formal independent-test results" in text and "do not show generalisation" in text
+    assert "not a result" not in text and "does not miss" not in text
+    assert "can still miss a stop when no keyword matches" in text and REPORT["controls"]["R2"]["stress_scored_types"]["missed_halt"] == 1
     assert REPORT["rule_control_sha256"] and REPORT["controls"]["R2"]["dev_all"]["needless_halt"] > REPORT["controls"]["R1"]["dev_all"]["needless_halt"]
