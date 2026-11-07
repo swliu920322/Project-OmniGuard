@@ -4,7 +4,7 @@ Each directory is a separate run, never overwritten. A run counts as a measureme
 
 | Directory | Arguments | Outcome |
 |---|---|---|
-| `20261107T043259Z_real_401c9ff8` | `--limit 1` (2 calls planned): a canary before the full run | `stopped_bound_violation` after call #0. **Not a measurement.** The API reported 67 completion tokens for a reply of 9 tokens of text: the served model is a reasoning model and spent 58 reasoning tokens that the original `max_completion_tokens=20` does not limit. The harness's output bound of 20 is therefore wrong for this model. Spend: US$0.00014 at the conservative rates. Kept as evidence; nothing was retried or changed in this run. |
+| `20261107T043259Z_real_401c9ff8` | `--limit 1`: a canary before the full run, **2 calls planned, 1 executed** | `stopped_bound_violation` after call #0 (the second call was never sent). **Not a measurement.** The API reported 67 completion tokens for a reply of 9 tokens of text: the served model is a reasoning model and spent 58 reasoning tokens that the original `max_completion_tokens=20` does not limit. The harness's output bound of 20 is therefore wrong for this model. Spend: US$0.00014 at the conservative rates. Kept as evidence; nothing was retried or changed in this run. |
 
 Findings from the canary (see `calls.jsonl` of that run):
 - `response.model` is `deepseek-flash` while the configuration says `deepseek-v4-flash`: the configured name is an alias.

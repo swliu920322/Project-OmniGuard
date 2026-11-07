@@ -27,12 +27,12 @@ Read this before quoting any number from a run. It is copied into every run dire
 A real canary (`measured/20261107T043259Z_real_401c9ff8`) showed that the model behind the configured name thinks before it answers: 58 of 67 completion tokens were `reasoning_tokens`, and the original `max_completion_tokens=20` did not limit them. Consequences, all recorded in every run:
 
 - Cost and latency include the hidden reasoning. The report gives reasoning tokens separately.
-- The harness adds `max_tokens=1024` to every request so the output (reasoning plus text) is capped and the budget bound is real. Each call record carries `request_deviation`. If the reasoning ever exceeds the cap, the reply is cut off (`finish_reason: length`), counted as an invalid reply, and the number of such replies is reported; nothing is dropped.
+- The harness adds `max_tokens=1024` to every request so the output (reasoning plus text) is capped and the budget bound is real. Each call record carries `request_deviation`. If the reasoning ever exceeds the cap, the reply is cut off (`finish_reason: length`). **Any reply that did not end normally is scored invalid, even if the text it produced is a valid label**; the raw reply, parsed label and usage stay in the record and the number of such replies is reported; nothing is dropped.
 - This request is therefore **not byte-identical to what the original code sends**; the difference is one added spending guard.
 
 ## Model identity
 
-The configured name (`deepseek-v4-flash`) is a retired alias, and the API answers with another alias (`deepseek-flash`): **`response.model` cannot prove which version served a call.** The version of a run is the one the owner states when starting it (`--model-identity`, for example `DeepSeek-V4.1-Flash-1017`) and is recorded as such. A provider-side change during a run would not be visible, so runs must be short, their start and end times are recorded, and a before/after comparison is valid only between runs of the same stated version made close together in time. If `response.model` changes inside a run, `model_drift_flag` is set and the run must not be used for a comparison.
+The configured name (`deepseek-v4-flash`) is a retired alias, and the API answers with another alias (`deepseek-flash`): **`response.model` cannot prove which version served a call.** The version of a run is the one the owner states when starting it (`--model-identity`, for example `DeepSeek-V4.1-Flash-1017`) and is recorded as such. A provider-side change during a run would not be visible, so runs must be short, their start and end times are recorded, and comparing runs of the same stated version made close together in time only lowers the risk of mixing different models; **the actual version stays unverified**. If `response.model` changes inside a run, `model_drift_flag` is set and the run must not be used for a comparison.
 
 ## Files in a run directory
 

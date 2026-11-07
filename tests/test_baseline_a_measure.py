@@ -203,6 +203,43 @@ def test_summary_counts_failures_and_invalid_replies_as_wrong():
     assert L.summarize(records, rows)["legacy_label_rows_critical_at_or_above_30cm"] == 1
 
 
+def _truncated_record(row_index=0, finish="length", reply="NORMAL_NAV", truncated=True, error=None):
+    return {"row_index": row_index, "condition": "B", "reply": reply, "parsed_label": L.parse_label(reply),
+            "finish_reason": finish, "truncated": truncated, "error": error, "response_model": "m",
+            "usage": {"prompt_tokens": 10, "completion_tokens": 1024, "total_tokens": 1034}}
+
+
+def test_a_truncated_reply_with_a_valid_label_scores_invalid():
+    """The reviewer's counter-example: the text is the right label, but the reply was cut off."""
+    rows = [{**ROW, "expected_label": "NORMAL_NAV", "obstacle": "300", "gate_decision": "PASS"}]
+    record = _truncated_record()
+    s = L.summarize([record], rows)["conditions"]["B"]
+    part = s["all_rows_started"]
+    assert (part["correct"], part["invalid_replies"], part["accuracy"]) == (0, 1, 0.0)
+    assert s["confusion_legacy_gold_x_outcome"] == {"NORMAL_NAV": {"INVALID": 1}}
+    assert s["truncated_replies"] == 1 and s["finish_reasons"] == {"length": 1}
+    assert s["rows_reaching_router"]["correct"] == 0
+    # the raw evidence is untouched by scoring
+    assert record["reply"] == "NORMAL_NAV" and record["parsed_label"] == "NORMAL_NAV" and record["usage"]["completion_tokens"] == 1024
+
+
+@pytest.mark.parametrize("finish", ["length", "content_filter", "tool_calls"])
+def test_only_a_normal_finish_can_score_correct(finish):
+    rows = [{**ROW, "expected_label": "NORMAL_NAV", "obstacle": "300", "gate_decision": "PASS"}]
+    normal = L.summarize([_truncated_record(finish="stop", truncated=False)], rows)["conditions"]["B"]["all_rows_started"]
+    cut = L.summarize([_truncated_record(finish=finish, truncated=False)], rows)["conditions"]["B"]["all_rows_started"]
+    assert normal["correct"] == 1 and normal["invalid_replies"] == 0
+    assert cut["correct"] == 0 and cut["invalid_replies"] == 1
+
+
+def test_a_failed_call_is_still_an_error_not_invalid():
+    rows = [{**ROW, "expected_label": "NORMAL_NAV", "obstacle": "300", "gate_decision": "PASS"}]
+    record = _truncated_record(reply=None, finish=None, truncated=False, error={"type": "RateLimitError"})
+    s = L.summarize([record], rows)["conditions"]["B"]
+    assert s["all_rows_started"]["failed_calls"] == 1 and s["all_rows_started"]["invalid_replies"] == 0
+    assert s["confusion_legacy_gold_x_outcome"] == {"NORMAL_NAV": {"ERROR": 1}}
+
+
 def test_model_drift_is_flagged():
     rows = [{**ROW, "gate_decision": "PASS"}]
     records = [
@@ -435,6 +472,16 @@ def test_a_reply_cut_off_by_the_guard_is_kept_and_counted_wrong(tmp_path):
     assert summary["truncated_replies"] == 1
     cond = summary["conditions"][cut[0]["condition"]]
     assert cond["truncated_replies"] == 1 and cond["all_rows_started"]["invalid_replies"] >= 1  # in the denominator, wrong
+
+
+def test_a_cut_off_reply_that_still_names_a_label_is_invalid_end_to_end(tmp_path):
+    proc, runs = run_cli(tmp_path, "--limit", "10", "--fault-plan", json.dumps({"3": "truncate_label"}))
+    records, summary, _ = read_run(runs[0])
+    cut = [r for r in records if r["truncated"]]
+    assert proc.returncode == 0 and len(cut) == 1
+    assert cut[0]["finish_reason"] == "length" and cut[0]["parsed_label"] in L.ALLOWED_LABELS  # a valid label, but cut off
+    entry = summary["conditions"][cut[0]["condition"]]
+    assert entry["truncated_replies"] == 1 and entry["all_rows_started"]["invalid_replies"] >= 1
 
 
 def test_the_model_version_is_the_owners_statement_not_the_alias(tmp_path):

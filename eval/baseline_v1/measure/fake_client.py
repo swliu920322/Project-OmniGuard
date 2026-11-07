@@ -29,6 +29,7 @@ class APITimeoutError(Exception):
 #   malformed / empty      the reply is not a label
 #   no_usage               the response carries no usage field
 #   truncate               the reasoning is longer than max_tokens: finish_reason "length", empty reply
+#   truncate_label         cut off at max_tokens but the text so far IS a valid label (must still score invalid)
 #   usage_over             the reported prompt tokens are far above any sane bound
 #   long_reply             the provider ignores every cap: completion tokens far above max_tokens
 #   interrupt              Ctrl+C arrives while the request is in flight (KeyboardInterrupt)
@@ -40,6 +41,7 @@ DEFAULT_FAULTS = {
     29: "empty",
     40: "no_usage",
     50: "truncate",
+    55: "truncate_label",
 }
 REASONING_TOKENS = 60  # what the fake "thinks" before every reply (the real canary: 58)
 MODEL_SWITCH_AT = 330  # from this request on the fake reports a different model string
@@ -162,6 +164,8 @@ class FakeClient:
         cap = kwargs.get("max_tokens")  # max_completion_tokens is ignored, like the real model
         if cap is not None and completion > cap:
             completion, finish, content = cap, "length", ""  # cut off before the reply: reasoning ate the budget
+        if fault == "truncate_label":
+            completion, finish = kwargs.get("max_tokens", 1024), "length"  # keeps the valid label it had produced
         if fault == "long_reply":
             completion = 5000  # a provider that ignores every cap
         usage = {

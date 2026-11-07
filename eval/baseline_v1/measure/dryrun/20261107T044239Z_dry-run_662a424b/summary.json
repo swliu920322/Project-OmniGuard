@@ -1,7 +1,7 @@
 {
   "accuracy_withheld": "dry run with a fake client: accuracy is deliberately not reported",
   "budget": {
-    "calls_started": 3,
+    "calls_started": 5,
     "max_calls": 400,
     "max_tokens": 150000,
     "max_usd": "1.00",
@@ -11,44 +11,50 @@
       "output_usd_per_mtok": "1.20",
       "source": "REHEARSAL PLACEHOLDER: not a real price"
     },
-    "tokens_committed": 5448,
-    "usd_committed": "0.006251"
+    "tokens_committed": 2263,
+    "usd_committed": "0.001833"
   },
-  "calls_recorded": 3,
-  "calls_without_usable_usage": 0,
+  "calls_recorded": 5,
+  "calls_without_usable_usage": 1,
   "conditions": {
     "B": {
       "all_rows_started": {
         "accuracy": null,
-        "correct": 1,
-        "failed_calls": 0,
+        "correct": 2,
+        "failed_calls": 1,
         "invalid_replies": 0,
-        "n": 1
+        "n": 3
       },
-      "calls_started": 1,
-      "calls_without_usage": 0,
-      "completion_tokens_reported": 65,
+      "calls_started": 3,
+      "calls_without_usage": 1,
+      "completion_tokens_reported": 129,
       "confusion_legacy_gold_x_outcome": {
         "CRITICAL_OBSTACLE": {
           "CRITICAL_OBSTACLE": 1
+        },
+        "NORMAL_NAV": {
+          "ERROR": 1
+        },
+        "SENSOR_ERROR": {
+          "SENSOR_ERROR": 1
         }
       },
       "finish_reasons": {
-        "stop": 1
+        "stop": 2
       },
       "models_seen": [
         "fake-model-1"
       ],
-      "reasoning_tokens_reported": 60,
+      "reasoning_tokens_reported": 120,
       "rows_reaching_router": {
         "accuracy": null,
         "correct": 1,
-        "failed_calls": 0,
+        "failed_calls": 1,
         "invalid_replies": 0,
-        "n": 1
+        "n": 2
       },
-      "substring_sensor_error_replies": 0,
-      "tokens_reported": 220,
+      "substring_sensor_error_replies": 1,
+      "tokens_reported": 439,
       "truncated_replies": 0
     },
     "P": {
@@ -61,7 +67,7 @@
       },
       "calls_started": 2,
       "calls_without_usage": 0,
-      "completion_tokens_reported": 5065,
+      "completion_tokens_reported": 129,
       "confusion_legacy_gold_x_outcome": {
         "CRITICAL_OBSTACLE": {
           "CRITICAL_OBSTACLE": 1
@@ -85,27 +91,30 @@
         "n": 1
       },
       "substring_sensor_error_replies": 1,
-      "tokens_reported": 5228,
+      "tokens_reported": 292,
       "truncated_replies": 0
     }
   },
   "distinct_response_models": [
     "fake-model-1"
   ],
-  "ended_at": "2026-11-07T04:38:39.821697Z",
-  "in_flight_at_interruption": null,
-  "interruption": null,
+  "ended_at": "2026-11-07T04:42:40.021615Z",
+  "in_flight_at_interruption": 4,
+  "interruption": {
+    "message": "scripted Ctrl+C",
+    "type": "KeyboardInterrupt"
+  },
   "is_measurement": false,
   "legacy_label_rows_critical_at_or_above_30cm": 0,
   "mode": "dry-run",
   "model_drift_flag": false,
   "model_identity_stated_by_owner": "REHEARSAL: fake model",
   "planned_calls": 20,
-  "reasoning_tokens_reported": 180,
-  "requests_that_reached_the_client": 3,
-  "run_id": "20261107T043839Z_dry-run_dffd5407",
-  "status": "stopped_bound_violation",
-  "stop_reason": "bound violated by call #2: reported usage (81 prompt + 5000 completion tokens) is above the reserved bound (285 + 1024)",
+  "reasoning_tokens_reported": 240,
+  "requests_that_reached_the_client": 5,
+  "run_id": "20261107T044239Z_dry-run_662a424b",
+  "status": "interrupted",
+  "stop_reason": "interrupted: KeyboardInterrupt: scripted Ctrl+C",
   "truncated_replies": 0,
-  "usd_from_reported_usage": "0.006251"
+  "usd_from_reported_usage": "0.000452"
 }

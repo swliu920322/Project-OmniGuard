@@ -27,7 +27,7 @@ The rehearsal blocks sockets, so a stray real call fails loudly. Its fake model 
 | SDK retries off | the client is wrapped with `with_options(max_retries=0, timeout=60)` and the run aborts if that cannot be confirmed; recorded as `sdk_max_retries` |
 | Full response kept | `calls.jsonl` stores the whole `model_dump()` of every response, the kept headers, usage, finish reason and latency |
 | Calls, tokens and dollars capped **before** sending | `BudgetGuard.reserve()` books the worst case ahead of each call and refuses if any of the three caps would break. The dollar cap needs prices (`--price-input-per-mtok`, `--price-output-per-mtok`, `--price-source`), recorded in `config.json`; the input price is applied to every prompt token |
-| Token bound with a stated basis | prompt tokens <= UTF-8 bytes of the text + 64 (a token covers at least one byte); completion <= 20. The API's reported usage is checked against it after every call |
+| Token bound with a stated basis | prompt tokens <= UTF-8 bytes of the text + 64 (a token covers at least one byte); completion <= 1024 (reasoning plus text, the `max_tokens` guard). The API's reported usage is checked against it after every call |
 | A wrong bound stops the run | if reported usage exceeds the reservation the overrun is booked as it was and the run stops with `stopped_bound_violation` (exit code 3) |
 | Reasoning model | the real canary showed hidden reasoning tokens that `max_completion_tokens=20` does not limit; the runner adds `max_tokens=1024` to every request (the one deviation, recorded as `request_deviation`) and reserves 1024 output tokens |
 | Model version | `--model-identity` is required for a real run and recorded; the API only reports an alias (`response.model`) |
@@ -35,7 +35,7 @@ The rehearsal blocks sockets, so a stray real call fails loudly. Its fake model 
 | Interruption keeps the evidence | Ctrl+C, SIGTERM or a crash seal the run as `interrupted` / `crashed`: the in-flight request is recorded with its reservation, the summary and `SHA256SUMS` are written, the temporary worktree is removed |
 | Interleaved conditions | `plan_order()`: B and P alternate per row, and who goes first alternates by row |
 | Scope stated | `SCOPE.md` is copied into every run and hashed in `config.json` |
-| Failures stay in the record | an error becomes a line with `error` set; it counts as wrong in the denominator; no harness retry |
+| Failures stay in the record | an error becomes a line with `error` set; it counts as wrong in the denominator; no harness retry. A reply that did not end normally (`finish_reason` other than `stop`, e.g. cut off by the guard) scores INVALID even if its text is a valid label; the raw reply and usage are kept |
 | Exactly one request per call | the runner aborts if `ask_agent` ever sends zero or several requests |
 | No device downlink | `send_c2d_message` is replaced by a function that raises; the run refuses to start if any IoT or Cosmos variable is set |
 | Unique, verified output | each run gets a new directory (`exist_ok=False`); `SHA256SUMS` is written and checked at the end; `--verify` re-checks later |
