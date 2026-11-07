@@ -146,6 +146,18 @@ def test_validate_actions_never_loosens_a_halt_or_a_speed_cap():
         assert V.validate_actions(bad, move, 50), bad
 
 
+def test_the_action_contract_per_action():
+    move = {"motion": "MOVE", "speed_cap": False}
+    v = lambda a: V.validate_actions(a, move, 100)
+    assert v([{"action": "move"}]) and v([{"action": "stop", "speed": 30}]) and v([{"action": "turn", "degree": "fast", "speed": 20}])        # the three review counter-examples
+    assert v([{"action": "turn", "degree": 90}]) and v([{"action": "turn", "speed": 5}]) and v([{"action": "turn", "degree": 181, "speed": 5}])
+    assert v([{"action": "turn", "degree": -181, "speed": 5}]) and v([{"action": "turn", "degree": True, "speed": 5}]) and v([{"action": "turn", "degree": 1.5, "speed": 5}])
+    assert v([{"action": "move", "speed": float("nan")}]) and v([{"action": "move", "speed": float("inf")}]) and v([{"action": "stop", "speed": float("nan")}])
+    assert v([{"action": "stop"}]) == [] and v([{"action": "stop", "speed": 0}]) == [] and v([{"action": "move", "speed": 0}]) == []
+    assert v([{"action": "turn", "degree": -180, "speed": 100}, {"action": "turn", "degree": 180, "speed": 0}]) == []
+    assert V.validate_actions([{"action": "backward", "speed": 1}], move, 100, allowed=("stop", "backward"))      # no contract for it, even if a tenant lists it
+
+
 def test_no_retry_client_checks_that_the_settings_took_effect():
     class Ok:
         max_retries, timeout = 2, 600.0

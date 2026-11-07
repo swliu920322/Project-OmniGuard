@@ -107,7 +107,7 @@ def test_emergency_stop_works_even_if_everything_else_is_garbage(world):
     assert stop_of(r)["halt_reasons"] == ["ESTOP"] and untouched(world)
 
 
-@pytest.mark.parametrize("flag", ["false", "true", "False", 0, 1, "", [], {}])
+@pytest.mark.parametrize("flag", ["false", "true", "False", 0, 1, "", [], {}, None])
 def test_emergency_stop_must_be_a_json_boolean(world, flag):
     r = post(world, emergency_stop=flag)
     assert stop_of(r)["halt_reasons"] == ["INVALID_INPUT"] and "boolean" in r.json()["router_decision"]["invalid_reason"] and untouched(world)
@@ -116,6 +116,12 @@ def test_emergency_stop_must_be_a_json_boolean(world, flag):
 def test_a_false_flag_or_no_flag_runs_normally(world):
     r = post(world, emergency_stop=False)
     assert r.json()["final_action"] == [{"action": "move", "speed": 30}] and world.sdk.requests == 1
+
+
+def test_an_explicit_null_flag_is_not_false_and_calls_nothing(world):
+    r = post(world, emergency_stop=None)
+    assert r.status_code == 200 and stop_of(r)["halt_reasons"] == ["INVALID_INPUT"] and "boolean" in r.json()["router_decision"]["invalid_reason"]
+    assert untouched(world)
 
 
 # --- 3. SDK retries off, timeout fixed, one request -----------------------------------------------------------------------------
@@ -161,7 +167,7 @@ def test_the_physical_gate_halts_before_a_charging_trip(world):
     assert "GATE" in fa["halt_reasons"] and fa["deferred"] == ["RETURN_TO_CHARGE"]
 
 
-def test_low_battery_keeps_its_goal_and_the_compiler_is_told_the_constraints(world):
+def test_low_battery_keeps_its_goal_as_a_structured_goal_only_and_the_compiler_is_told_the_constraints(world):
     world.sdk = FakeSDK(content=json.dumps({"primary": "LOW_BATTERY", "note_status": None}))
     world.model_lookup.side_effect = lambda: (world.sdk, "m")
     r = post(world, battery=12)
@@ -192,6 +198,36 @@ def test_a_speed_inside_the_cap_is_accepted_under_overspeed(world):
     _with_compiler(world, '[{"action":"move","speed":200}]')
     r = post(world, velocity=3.0, target_speed=1000)
     assert r.json()["final_action"] == [{"action": "move", "speed": 200}] and r.json()["constraint_violations"] == []
+
+
+CONTRACT_BREAKERS = ['[{"action":"move"}]', '[{"action":"stop","speed":30}]', '[{"action":"turn","degree":"fast","speed":20}]', '[{"action":"turn","degree":90}]',
+                     '[{"action":"turn","speed":20}]', '[{"action":"turn","degree":200,"speed":20}]', '[{"action":"turn","degree":true,"speed":20}]',
+                     '[{"action":"turn","degree":90.5,"speed":20}]', '[{"action":"move","speed":NaN}]', '[{"action":"move","speed":Infinity}]',
+                     '[{"action":"stop","speed":-1}]', '[{"action":"stop","speed":"0"}]']
+
+
+@pytest.mark.parametrize("output", CONTRACT_BREAKERS)
+def test_the_four_review_counter_examples_and_their_relatives_are_stopped_by_the_action_contract(world, output):
+    _with_compiler(world, output)
+    r = post(world)
+    assert r.status_code == 200 and stop_of(r)["reason"] == "constraint_violation" and r.json()["constraint_violations"], output
+
+
+def test_a_move_without_a_speed_is_stopped_under_overspeed_too(world):
+    world.sdk = FakeSDK(content=json.dumps({"primary": "OVERSPEED", "note_status": None}))
+    world.model_lookup.side_effect = lambda: (world.sdk, "m")
+    _with_compiler(world, '[{"action":"move"}]')
+    r = post(world, velocity=3.0, target_speed=1000)
+    assert r.json()["router_decision"]["action"]["speed_cap"] is True and stop_of(r)["reason"] == "constraint_violation"
+    assert any("needs a numeric speed" in v for v in r.json()["constraint_violations"])
+
+
+@pytest.mark.parametrize("output", ['[{"action":"stop"}]', '[{"action":"stop","speed":0}]', '[{"action":"move","speed":0}]',
+                                    '[{"action":"turn","degree":-90,"speed":10},{"action":"stop"}]', '[{"action":"turn","degree":180,"speed":0}]'])
+def test_contract_conforming_outputs_are_accepted(world, output):
+    _with_compiler(world, output)
+    r = post(world)
+    assert r.json()["final_action"] == json.loads(output) and r.json()["constraint_violations"] == []
 
 
 @pytest.mark.parametrize("output", ['[{"action":"move","speed":999}]', '[{"action":"fast_forward","speed":10}]', 'not json', '[]', '{"action":"move"}',
@@ -264,3 +300,8 @@ def test_legacy_tenants_keep_their_flow_defaults_and_errors(legacy):
     ask.side_effect = ["SENSOR_ERROR"]
     r = world.http.post("/api/simulate_agent", json={"tenant_id": "Tenant-Alpha", "obstacle_distance_cm": 400, "emergency_stop": True})
     assert r.json()["final_action"] == [{"action": "stop"}] and ask.call_count == 1       # a legacy tenant ignores the flag exactly as before
+
+
+def test_the_docs_say_the_goal_is_a_structured_goal_and_not_proof_of_arrival():
+    text = (ROOT / "src/cloud-orchestrator/router_v2/README.md").read_text()
+    assert "structured goal" in text and "must not be claimed" in text

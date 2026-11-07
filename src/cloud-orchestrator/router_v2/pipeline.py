@@ -7,6 +7,7 @@ path give identical results for the same replies.
 """
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from . import prompt as P
@@ -71,31 +72,50 @@ def precheck(rec: dict, note) -> str | None:
 
 MAX_SPEED_CM_S = 250  # 2.5 m/s, the OVERSPEED threshold, in the cm/s unit of the action schema
 DEFAULT_ALLOWED_ACTIONS = ("stop", "turn", "move")
+MAX_TURN_DEGREE = 180  # simulation convention for the schema's `degree: int`: a turn is -180..180 degrees; nothing here is a real vehicle's limit
+
+
+def _finite_number(v) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
 
 
 def validate_actions(actions, decision_action: dict, target_speed, allowed=DEFAULT_ALLOWED_ACTIONS) -> list[str]:
-    """Violations of the code constraints by an action list (empty = acceptable). The router's decision is never loosened:
+    """Violations of the fixed action contract by an action list (empty = acceptable). The router's decision is never loosened.
 
+    The contract (a simulation convention matching the tenant schema `[{'action': 'stop'|'turn'|'move', 'degree': int, 'speed': int}]`):
+    - `stop`: no speed, or a speed of exactly 0 (a stop with a positive speed contradicts itself);
+    - `move`: a finite numeric `speed` is REQUIRED (without it the code cannot check the cap);
+    - `turn`: an integer `degree` in -180..180 and a finite numeric `speed` are both REQUIRED;
+    - every speed is between 0 and the cap: the request's `target_speed`, and at most 250 cm/s (2.5 m/s) while the decision has a speed cap;
     - a halting decision allows only `stop`;
-    - every action must be a dict whose `action` is in the allowed set; an unparseable or empty list cannot be verified, so it is a violation;
-    - `speed` must be a number between 0 and the cap: the request's target speed, and at most 250 cm/s (2.5 m/s) when the decision has a speed cap.
+    - the list must be non-empty, every item a dict with an allowed, known action; anything missing, malformed or contradictory is a violation.
     """
-    problems = []
     if not isinstance(actions, list) or not actions:
         return ["the action list is missing, empty or not a list"]
-    cap = target_speed if isinstance(target_speed, (int, float)) and not isinstance(target_speed, bool) else MAX_SPEED_CM_S
+    cap = target_speed if _finite_number(target_speed) else MAX_SPEED_CM_S
     if decision_action.get("speed_cap"):
         cap = min(cap, MAX_SPEED_CM_S)
+    problems = []
     for i, a in enumerate(actions):
-        if not isinstance(a, dict) or a.get("action") not in allowed:
+        if not isinstance(a, dict) or a.get("action") not in allowed or a.get("action") not in DEFAULT_ALLOWED_ACTIONS:
             problems.append(f"action {i}: {a!r} is not an allowed action {list(allowed)}")
             continue
-        if decision_action.get("motion") == "HALT" and a["action"] != "stop":
-            problems.append(f"action {i}: {a['action']!r} while the decision is HALT")
-        if "speed" in a:
-            sp = a["speed"]
-            if isinstance(sp, bool) or not isinstance(sp, (int, float)) or sp != sp or sp < 0 or sp > cap:
-                problems.append(f"action {i}: speed {sp!r} outside 0..{cap}")
+        kind = a["action"]
+        if decision_action.get("motion") == "HALT" and kind != "stop":
+            problems.append(f"action {i}: {kind!r} while the decision is HALT")
+        speed = a.get("speed", None)
+        if kind == "stop":
+            if "speed" in a and not (_finite_number(speed) and speed == 0):
+                problems.append(f"action {i}: stop with speed {speed!r} (must have none or 0)")
+            continue
+        if kind == "turn":
+            deg = a.get("degree")
+            if isinstance(deg, bool) or not isinstance(deg, int) or not -MAX_TURN_DEGREE <= deg <= MAX_TURN_DEGREE:
+                problems.append(f"action {i}: turn needs an integer degree in -{MAX_TURN_DEGREE}..{MAX_TURN_DEGREE}, got {deg!r}")
+        if "speed" not in a:
+            problems.append(f"action {i}: {kind} needs a numeric speed")
+        elif not _finite_number(speed) or speed < 0 or speed > cap:
+            problems.append(f"action {i}: speed {speed!r} outside 0..{cap}")
     return problems
 
 

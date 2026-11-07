@@ -8,6 +8,9 @@ Order, so that nothing external is touched before it has to be:
  4. the Router's whole decision (motion, goal, speed cap, COOL/LOCK holds, deferred follow-ups) is kept and returned; Safety and Compiler may
     only make the result stricter: the Compiler's actions are validated against the decision in code before they leave.
 Legacy tenants never come through here.
+
+`goal` (for example CHARGER) is a structured goal carried through the decision. Nothing here checks a path or a destination, so it is not
+evidence that the vehicle reaches the charger.
 """
 import json
 import logging
@@ -74,8 +77,7 @@ async def simulate_extended(req_body: dict, tenant_id: str, config: dict, start_
 
     trace = []
     try:
-        flag = req_body.get("emergency_stop", False)
-        flag = False if flag is None else flag
+        flag = req_body.get("emergency_stop", False)          # absent means false; an explicit null or any non-boolean is an input error
         if flag is True:
             return estop_response(start_time)
         if not isinstance(flag, bool):
