@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useI18n } from "@/components/I18nProvider";
 import { Scenario, SCENARIOS, ScenarioId } from "../config/scenarios";
 import { LLMBreakdownParams, computeCloudLatencyMs } from "../../shared/physics";
 
@@ -46,6 +47,7 @@ export default function FleetControlPanel({
   globalSpeedMps, globalClearanceM, onUpdateSpeed, onUpdateClearance,
   tokenLLM, onUpdateTokenParam, simPhase, fleetStatus,
 }: FleetControlPanelProps) {
+  const { t } = useI18n();
   const [showToken, setShowToken] = useState(false);
   const isRunning = simPhase === "running";
   const isPaused = simPhase === "paused";
@@ -74,10 +76,10 @@ export default function FleetControlPanel({
               }`}
             >
               <div className={`text-xs font-mono font-bold uppercase ${isActive ? (isDanger ? "text-red-400" : "text-cyan-400") : "text-slate-300"}`}>
-                {s.label}
+                {t(`fleet.scenarios.${s.id}.label`)}
               </div>
               <div className={`text-[11px] font-mono mt-0.5 leading-snug ${isActive ? "text-slate-400" : "text-slate-500"}`}>
-                {s.oneLiner}
+                {t(`fleet.scenarios.${s.id}.oneLiner`)}
               </div>
             </button>
           );
@@ -91,27 +93,27 @@ export default function FleetControlPanel({
           disabled={isRunning}
           className="text-xs font-mono font-bold uppercase px-3 py-1.5 rounded border bg-emerald-950/60 border-emerald-700/50 text-emerald-400 hover:bg-emerald-900/60 disabled:opacity-30 disabled:cursor-not-allowed transition"
         >
-          {isCompleted ? "▶ Play" : isPaused ? "▶ Resume" : "▶ Play"}
+          {isCompleted ? `▶ ${t("fleet.control.play")}` : isPaused ? `▶ ${t("fleet.control.resume")}` : `▶ ${t("fleet.control.play")}`}
         </button>
         <button
           onClick={onPause}
           disabled={!isRunning}
           className="text-xs font-mono font-bold uppercase px-3 py-1.5 rounded border bg-amber-950/60 border-amber-700/50 text-amber-400 hover:bg-amber-900/60 disabled:opacity-30 disabled:cursor-not-allowed transition"
         >
-          ⏸ Pause
+          ⏸ {t("fleet.control.pause")}
         </button>
         <button
           onClick={onReset}
           className="text-xs font-mono font-bold uppercase px-3 py-1.5 rounded border bg-slate-900/60 border-slate-700/50 text-slate-400 hover:bg-slate-800/60 transition"
         >
-          ↺ Reset
+          ↺ {t("fleet.control.reset")}
         </button>
       </div>
 
       {/* Global sliders */}
       <div className="space-y-2 pt-2 border-t border-slate-900">
-        <SliderRow label="Speed" unit="m/s" min={0.1} max={3.0} step={0.1} value={globalSpeedMps} onChange={onUpdateSpeed} />
-        <SliderRow label="Clearance" unit="m" min={0.1} max={10.0} step={0.1} value={globalClearanceM} onChange={onUpdateClearance} />
+        <SliderRow label={t("fleet.control.speed")} unit="m/s" min={0.1} max={3.0} step={0.1} value={globalSpeedMps} onChange={onUpdateSpeed} />
+        <SliderRow label={t("fleet.control.clearance")} unit="m" min={0.1} max={10.0} step={0.1} value={globalClearanceM} onChange={onUpdateClearance} />
       </div>
 
       {/* Token breakdown drawer — live controls for AGV-03 */}
@@ -121,23 +123,21 @@ export default function FleetControlPanel({
           className="text-xs font-mono font-bold text-slate-500 hover:text-slate-400 transition flex items-center space-x-1"
         >
           <span>{showToken ? "▼" : "▶"}</span>
-          <span>Token Breakdown {hasTokenTrack ? "(AGV-03 Cloud)" : ""}</span>
+          <span>{t("fleet.control.tokenBreakdown")} {hasTokenTrack ? t("fleet.control.agv03") : ""}</span>
         </button>
 
         {showToken && (
           <div className="mt-3 space-y-2 pl-3 border-l border-slate-800">
             <div className="text-[11px] font-mono text-slate-400 mb-1 leading-snug">
-              These sliders <span className="text-amber-400">control AGV-03's cloud latency in real-time</span>.
-              Scenario presets set initial values; adjust here to find the crash boundary.
+              {t("fleet.control.tokenHint")}
             </div>
-            <SliderRow label="Network RTT" unit="ms" min={5} max={2000} step={10} value={tokenLLM.networkRttMs} onChange={(v) => onUpdateTokenParam("networkRttMs", v)} />
-            <SliderRow label="Prompt" unit="tok" min={100} max={4000} step={100} value={tokenLLM.promptTokens} onChange={(v) => onUpdateTokenParam("promptTokens", v)} />
-            <SliderRow label="Completion" unit="tok" min={100} max={8000} step={100} value={tokenLLM.completionTokens} onChange={(v) => onUpdateTokenParam("completionTokens", v)} />
-            <SliderRow label="Token Rate" unit="tok/s" min={10} max={500} step={5} value={tokenLLM.tokenRateTokS} onChange={(v) => onUpdateTokenParam("tokenRateTokS", v)} />
+            <SliderRow label={t("fleet.control.networkRtt")} unit="ms" min={5} max={2000} step={10} value={tokenLLM.networkRttMs} onChange={(v) => onUpdateTokenParam("networkRttMs", v)} />
+            <SliderRow label={t("fleet.control.prompt")} unit="tok" min={100} max={4000} step={100} value={tokenLLM.promptTokens} onChange={(v) => onUpdateTokenParam("promptTokens", v)} />
+            <SliderRow label={t("fleet.control.completion")} unit="tok" min={100} max={8000} step={100} value={tokenLLM.completionTokens} onChange={(v) => onUpdateTokenParam("completionTokens", v)} />
+            <SliderRow label={t("fleet.control.tokenRate")} unit="tok/s" min={10} max={500} step={5} value={tokenLLM.tokenRateTokS} onChange={(v) => onUpdateTokenParam("tokenRateTokS", v)} />
             {hasTokenTrack && (
               <div className="text-[11px] font-mono text-slate-400 pt-1">
-                Computed cloudLatencyMs: <span className="text-cyan-400 font-bold">{computedCloudMs.toFixed(0)} ms</span>
-                {" "}(= {(computedCloudMs / 1000).toFixed(1)} s)
+                {t("fleet.control.computed", { ms: computedCloudMs.toFixed(0), s: (computedCloudMs / 1000).toFixed(1) })}
               </div>
             )}
           </div>

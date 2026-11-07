@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useI18n } from "@/components/I18nProvider";
 
 type Mode = "cloud" | "edge";
 
@@ -11,18 +12,18 @@ interface KinematicHeaderProps {
 }
 
 export default function KinematicHeader({ mode, onModeChange, onReset }: KinematicHeaderProps) {
+  const { t } = useI18n();
   return (
     <header className="border-b border-slate-900 bg-slate-900/30 backdrop-blur-md py-5 px-6 md:px-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div className="space-y-1">
         <div className="flex items-center space-x-3">
           <div className="w-3 h-3 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.8)]" />
           <h1 className="text-xl md:text-2xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">
-            Kinematic Theorem Sandbox
+            {t("kin.header.title")}
           </h1>
         </div>
         <p className="text-xs md:text-sm text-slate-500 font-mono max-w-2xl">
-          Quantifies why cloud-only control loops cannot control fast-moving hardware: physical braking distance
-          is bounded by end-to-end cloud latency vs. instantaneous edge reaction.
+          {t("kin.header.desc")}
         </p>
       </div>
 
@@ -36,7 +37,7 @@ export default function KinematicHeader({ mode, onModeChange, onReset }: Kinemat
                 : "text-slate-500 hover:text-slate-300"
             }`}
           >
-            ☁️ Cloud-Only
+            ☁️ {t("kin.header.cloud")}
           </button>
           <button
             onClick={() => onModeChange("edge")}
@@ -46,7 +47,7 @@ export default function KinematicHeader({ mode, onModeChange, onReset }: Kinemat
                 : "text-slate-500 hover:text-slate-300"
             }`}
           >
-            ⚡ Edge Fallback
+            ⚡ {t("kin.header.edge")}
           </button>
         </div>
 
@@ -54,7 +55,7 @@ export default function KinematicHeader({ mode, onModeChange, onReset }: Kinemat
           onClick={onReset}
           className="px-4 py-1.5 rounded-lg font-bold text-xs tracking-wide uppercase bg-slate-900 border border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition"
         >
-          ↺ Reset
+          ↺ {t("kin.header.reset")}
         </button>
       </div>
     </header>

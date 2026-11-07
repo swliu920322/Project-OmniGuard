@@ -31,6 +31,19 @@ export interface Scenario {
 const LEAN_LLM: LLMBreakdownParams = { networkRttMs: 100, promptTokens: 200, completionTokens: 200, tokenRateTokS: 200 };
 const VERBOSE_LLM: LLMBreakdownParams = { networkRttMs: 100, promptTokens: 500, completionTokens: 2000, tokenRateTokS: 150 };
 
+/** Track labels are English in this file; this maps them to keys in the i18n tables. */
+const TRACK_LABEL_KEYS: Record<string, string> = {
+  "Cloud-Only (Lean)": "cloudLean",
+  "Cloud + Edge": "cloudEdge",
+  "Cloud (Verbose)": "cloudVerbose",
+  "Cloud-Only (Spike)": "cloudSpike",
+  "Cloud + Edge (Dead)": "cloudEdgeDead",
+};
+
+export function trackLabelKey(label: string): string {
+  return `fleet.trackLabels.${TRACK_LABEL_KEYS[label] ?? "cloudEdge"}`;
+}
+
 export const SCENARIOS: Scenario[] = [
   {
     id: "normal",

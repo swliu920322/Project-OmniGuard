@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useI18n } from "@/components/I18nProvider";
 import { useFleetSimulation2 } from "./hooks/useFleetSimulation2";
 import FleetHeader from "./components/FleetHeader";
 import FleetControlPanel from "./components/FleetControlPanel";
@@ -11,13 +12,14 @@ export default function FleetDashboard() {
   useEffect(() => { setMounted(true); }, []);
 
   const fleet = useFleetSimulation2();
+  const { t } = useI18n();
 
   if (!mounted) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center font-mono">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-cyan-400">Loading Fleet Control Plane...</span>
+          <span className="text-cyan-400">{t("fleet.loading")}</span>
         </div>
       </div>
     );

@@ -54,6 +54,7 @@ export function formatLatency(seconds: number): string {
 }
 
 export interface Preset {
+  id: "warehouse" | "hospital" | "drone" | "default"; // stable key for the i18n tables
   label: string;
   desc: string;
   params: KinematicParams;
@@ -62,24 +63,28 @@ export interface Preset {
 
 export const PRESETS: Preset[] = [
   {
+    id: "warehouse",
     label: "Warehouse AGV",
     desc: "1.5m/s, 3s cloud, 1m clearance — collides within 2 cycles",
     params: { agvSpeedMps: 1.5, clearanceM: 1.0, totalDistanceM: 10, cloudLatencyMs: 3000, edgeLatencyMs: 20, brakeLatencyMs: 15 },
     mode: "cloud",
   },
   {
+    id: "hospital",
     label: "Hospital Delivery",
     desc: "0.8m/s, 2s cloud, 0.5m clearance — tight corridor, immediate danger",
     params: { agvSpeedMps: 0.8, clearanceM: 0.5, totalDistanceM: 8, cloudLatencyMs: 2000, edgeLatencyMs: 15, brakeLatencyMs: 10 },
     mode: "cloud",
   },
   {
+    id: "drone",
     label: "Highway Drone",
     desc: "5m/s, 5s cloud, 10m clearance — high speed, long braking",
     params: { agvSpeedMps: 5.0, clearanceM: 10.0, totalDistanceM: 50, cloudLatencyMs: 5000, edgeLatencyMs: 10, brakeLatencyMs: 5 },
     mode: "cloud",
   },
   {
+    id: "default",
     label: "Default (Demo)",
     desc: "1m/s, 3s cloud, 2m clearance — standard classroom demo",
     params: DEFAULT_PARAMS,

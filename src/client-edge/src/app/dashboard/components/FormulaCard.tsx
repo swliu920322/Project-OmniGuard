@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useI18n } from "@/components/I18nProvider";
 import { KinematicParams, Mode, formatLatency, computeBrakingDistanceM } from "../lib/kinematic";
 
 interface FormulaCardProps {
@@ -9,6 +10,7 @@ interface FormulaCardProps {
 }
 
 export default function FormulaCard({ params, mode }: FormulaCardProps) {
+  const { t } = useI18n();
   const { agvSpeedMps, clearanceM, totalDistanceM, cloudLatencyMs, edgeLatencyMs, brakeLatencyMs } = params;
   const isCloud = mode === "cloud";
 
@@ -27,7 +29,7 @@ export default function FormulaCard({ params, mode }: FormulaCardProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
         <div className="space-y-3">
           <div className="text-slate-500 uppercase text-xs font-mono font-bold">
-            {isCloud ? "Cloud-Only Theorem" : "Edge Fallback Theorem"}
+            {isCloud ? t("kin.formula.cloudTheorem") : t("kin.formula.edgeTheorem")}
           </div>
 
           {/* Formula */}
@@ -37,16 +39,16 @@ export default function FormulaCard({ params, mode }: FormulaCardProps) {
             </div>
             <div className="text-[11px] text-slate-400">
               {isCloud
-                ? `Detection ${formatLatency(detectionS)} + braking ${formatLatency(reactionS)} = ${formatLatency(totalReactionS)} total`
-                : `Edge latency ${edgeLatencyMs}ms + brake ${brakeLatencyMs}ms`}
+                ? t("kin.formula.cloudBreakdown", { detect: formatLatency(detectionS), brake: formatLatency(reactionS), total: formatLatency(totalReactionS) })
+                : t("kin.formula.edgeBreakdown", { edge: edgeLatencyMs, brake: brakeLatencyMs })}
             </div>
           </div>
 
           <div className="text-[11px] text-slate-400 font-mono leading-relaxed">
             {isCloud
-              ? `Cloud: AGV travels ~${detectionDistanceM.toFixed(1)}m before response.`
-              : `Edge: AGV travels ~${detectionDistanceM.toFixed(3)}m during processing.`}
-            {` Brake latency ${brakeLatencyMs}ms → ${brakingM.toFixed(2)}m (same hardware).`}
+              ? t("kin.formula.cloudTravel", { d: detectionDistanceM.toFixed(1) })
+              : t("kin.formula.edgeTravel", { d: detectionDistanceM.toFixed(3) })}
+            {" "}{t("kin.formula.brakeNote", { ms: brakeLatencyMs, m: brakingM.toFixed(2) })}
           </div>
 
           <div
@@ -57,19 +59,19 @@ export default function FormulaCard({ params, mode }: FormulaCardProps) {
             }`}
           >
             {isSafe
-              ? `Safe: V_agv (${agvSpeedMps.toFixed(1)} m/s) ≤ V_max (${vMaxMps.toFixed(2)} m/s)`
-              : `Unsafe: V_agv (${agvSpeedMps.toFixed(1)} m/s) > V_max (${vMaxMps.toFixed(2)} m/s)`}
+              ? t("kin.formula.safe", { v: agvSpeedMps.toFixed(1), vmax: vMaxMps.toFixed(2) })
+              : t("kin.formula.unsafe", { v: agvSpeedMps.toFixed(1), vmax: vMaxMps.toFixed(2) })}
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs font-mono text-slate-400">
-          <Metric label="Detection delay" value={formatLatency(detectionS)} />
-          <Metric label="Detection travel" value={`${detectionDistanceM.toFixed(isCloud ? 1 : 3)} m`} />
-          <Metric label="Braking distance" value={`${brakingM.toFixed(2)} m`} />
-          <Metric label="V_max (worst-case)" value={`${vMaxMps.toFixed(2)} m/s`} highlight={isSafe ? "emerald" : "red"} />
-          <Metric label="Clearance zone" value={`${clearanceM.toFixed(1)} m`} />
-          <Metric label={isCloud ? "Cloud RTT" : "Edge latency"} value={isCloud ? `${cloudLatencyMs} ms` : `${edgeLatencyMs} ms`} />
-          <Metric label="Brake latency" value={`${brakeLatencyMs} ms`} />
+          <Metric label={t("kin.formula.detectionDelay")} value={formatLatency(detectionS)} />
+          <Metric label={t("kin.formula.detectionTravel")} value={`${detectionDistanceM.toFixed(isCloud ? 1 : 3)} m`} />
+          <Metric label={t("kin.formula.brakingDistance")} value={`${brakingM.toFixed(2)} m`} />
+          <Metric label={t("kin.formula.vmax")} value={`${vMaxMps.toFixed(2)} m/s`} highlight={isSafe ? "emerald" : "red"} />
+          <Metric label={t("kin.formula.clearance")} value={`${clearanceM.toFixed(1)} m`} />
+          <Metric label={isCloud ? t("kin.formula.cloudRtt") : t("kin.formula.edgeLatency")} value={isCloud ? `${cloudLatencyMs} ms` : `${edgeLatencyMs} ms`} />
+          <Metric label={t("kin.formula.brakeLatency")} value={`${brakeLatencyMs} ms`} />
         </div>
       </div>
     </div>

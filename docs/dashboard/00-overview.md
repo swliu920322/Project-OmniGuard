@@ -87,7 +87,7 @@ The pipeline-timing panel shows only what the backend reports: per-agent latency
 
 ### Languages
 
-UI text lives in `src/client-edge/src/locales/translations.ts` (English and Chinese, switch in the sidebar). Add every key to both languages. Audit log lines produced by `lib/physics.ts` stay in English. The Fleet, Theorem and Compare pages are not translated yet.
+UI text on all four dashboard pages (Fleet, Theorem, Compare, Live) lives in `src/client-edge/src/locales/translations.ts` (English and Chinese, switch in the sidebar). Add every key to both languages; a missing key falls back to English. Audit and simulation log lines (`[DECISION]`, `[PRESET]`, `[EDGE]` and similar) stay in English, because the log views colour and filter by those tags.
 
 Current behavior is defined by `src/client-edge/src/app/dashboard/live/page.tsx`.
 

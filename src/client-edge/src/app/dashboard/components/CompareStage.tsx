@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useI18n } from "@/components/I18nProvider";
 import { KinematicParams, computeBrakingDistanceM } from "../lib/kinematic";
 
 interface TrackState {
@@ -34,6 +35,7 @@ function Track({
   stepCount?: number;
   isEdge: boolean;
 }) {
+  const { t } = useI18n();
   const { agvSpeedMps, totalDistanceM, clearanceM, cloudLatencyMs, brakeLatencyMs } = params;
   const clearanceBoundaryM = Math.max(0, totalDistanceM - clearanceM);
   const brakingM = computeBrakingDistanceM(agvSpeedMps, brakeLatencyMs / 1000);
@@ -48,12 +50,12 @@ function Track({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
             <span className="text-xs font-bold uppercase font-mono" style={{ color }}>{label}</span>
-            {isRunning && <span className="text-xs text-cyan-400 animate-pulse font-mono">Running...</span>}
-            {isCrashed && <span className="text-xs text-red-400 font-bold font-mono">💥 CRASHED</span>}
-            {isSafeStop && <span className="text-xs text-cyan-400 font-bold font-mono">🛡️ SAFE STOP</span>}
+            {isRunning && <span className="text-xs text-cyan-400 animate-pulse font-mono">{t("kin.compare.running")}</span>}
+            {isCrashed && <span className="text-xs text-red-400 font-bold font-mono">💥 {t("kin.compare.crashed")}</span>}
+            {isSafeStop && <span className="text-xs text-cyan-400 font-bold font-mono">🛡️ {t("kin.compare.safeStop")}</span>}
           </div>
           {!isEdge && stepCount !== undefined && (
-            <span className="text-[11px] font-mono text-slate-400">Step {stepCount}</span>
+            <span className="text-[11px] font-mono text-slate-400">{t("kin.compare.step", { n: stepCount })}</span>
           )}
         </div>
 
@@ -94,13 +96,14 @@ function Track({
 }
 
 export default function CompareStage({ params, cloud, edge, onStart }: CompareStageProps) {
+  const { t } = useI18n();
   const isRunning = cloud.status === "running" || edge.status === "running";
 
   return (
     <div className="border border-slate-900 bg-slate-900/10 rounded-2xl p-5 shadow-lg backdrop-blur-sm flex flex-col space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">
-          Cloud vs Edge — Side by Side
+          {t("kin.compare.title")}
         </h2>
         <button
           onClick={onStart}
@@ -111,14 +114,14 @@ export default function CompareStage({ params, cloud, edge, onStart }: CompareSt
               : "bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)]"
           }`}
         >
-          {isRunning ? "Running..." : "▶ Run Both"}
+          {isRunning ? t("kin.compare.running") : `▶ ${t("kin.compare.runBoth")}`}
         </button>
       </div>
 
       <div className="flex space-x-3">
         <Track
-          label="☁️ Cloud Only"
-          sub={`RTT ${params.cloudLatencyMs}ms + brake ${params.brakeLatencyMs}ms`}
+          label={`☁️ ${t("kin.compare.cloudLabel")}`}
+          sub={t("kin.compare.cloudSub", { rtt: params.cloudLatencyMs, brake: params.brakeLatencyMs })}
           color="#818cf8"
           params={params}
           status={cloud.status}
@@ -127,8 +130,8 @@ export default function CompareStage({ params, cloud, edge, onStart }: CompareSt
           isEdge={false}
         />
         <Track
-          label="⚡ Edge Fallback"
-          sub={`Latency ${params.edgeLatencyMs}ms + brake ${params.brakeLatencyMs}ms`}
+          label={`⚡ ${t("kin.compare.edgeLabel")}`}
+          sub={t("kin.compare.edgeSub", { edge: params.edgeLatencyMs, brake: params.brakeLatencyMs })}
           color="#06b6d4"
           params={params}
           status={edge.status}

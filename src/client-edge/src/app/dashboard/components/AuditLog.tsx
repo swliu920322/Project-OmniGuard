@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useI18n } from "@/components/I18nProvider";
 import { LogEntry } from "../lib/kinematic";
 
 interface AuditLogProps {
@@ -10,6 +11,7 @@ interface AuditLogProps {
 }
 
 export default function AuditLog({ logs, showEdgeProgress, onToggleEdgeProgress }: AuditLogProps) {
+  const { t } = useI18n();
   const filtered = showEdgeProgress
     ? logs
     : logs.filter((l) => !l.message.startsWith("[EDGE] ⚡"));
@@ -18,7 +20,7 @@ export default function AuditLog({ logs, showEdgeProgress, onToggleEdgeProgress 
     <div className="border border-slate-900 bg-slate-900/10 rounded-2xl p-5 md:p-6 shadow-lg backdrop-blur-sm flex flex-col h-64 md:h-80">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">
-          Audit Log
+          {t("kin.audit.title")}
         </h2>
         {onToggleEdgeProgress && (
           <button
@@ -29,13 +31,13 @@ export default function AuditLog({ logs, showEdgeProgress, onToggleEdgeProgress 
                 : "bg-slate-900/60 border-slate-700/50 text-slate-500 hover:bg-slate-800/60 hover:text-slate-400"
             }`}
           >
-            ⚡ edge checks
+            ⚡ {t("kin.audit.edgeChecks")}
           </button>
         )}
       </div>
       <div className="flex-1 bg-slate-950 border border-slate-900 rounded-xl p-4 overflow-y-auto font-mono text-xs space-y-2">
         {logs.length === 0 ? (
-          <div className="text-slate-600 italic text-center py-8">Awaiting simulation events...</div>
+          <div className="text-slate-600 italic text-center py-8">{t("kin.audit.empty")}</div>
         ) : (
           filtered.map((log, idx) => (
             <div key={idx} className="text-slate-300 leading-relaxed break-words">

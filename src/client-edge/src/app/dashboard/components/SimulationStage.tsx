@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useI18n } from "@/components/I18nProvider";
 import { KinematicParams, Mode, formatLatency, computeBrakingDistanceM } from "../lib/kinematic";
 
 interface SimulationStageProps {
@@ -20,6 +21,7 @@ export default function SimulationStage({
   stepCount,
   onStart,
 }: SimulationStageProps) {
+  const { t } = useI18n();
   const { agvSpeedMps, clearanceM, totalDistanceM, cloudLatencyMs, brakeLatencyMs } = params;
   const isRunning = status === "running";
   const isCrashed = status === "crashed";
@@ -39,14 +41,14 @@ export default function SimulationStage({
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <h2 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">
-            Simulation Stage
+            {t("kin.stage.title")}
           </h2>
           <span className="text-xs font-mono text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
-            Step {stepCount}
+            {t("kin.stage.step", { n: stepCount })}
           </span>
           {isRunning && (
             <span className="text-xs font-mono text-cyan-400 animate-pulse">
-              {mode === "cloud" ? "☁️ Awaiting cloud response..." : "⚡ Moving..."}
+              {mode === "cloud" ? `☁️ ${t("kin.stage.awaitingCloud")}` : `⚡ ${t("kin.stage.moving")}`}
             </span>
           )}
         </div>
@@ -59,7 +61,7 @@ export default function SimulationStage({
               : "bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] active:scale-[0.98] border border-cyan-400/20"
           }`}
         >
-          {isRunning ? "Running..." : "▶ Run Simulation"}
+          {isRunning ? t("kin.stage.running") : `▶ ${t("kin.stage.run")}`}
         </button>
       </div>
 
@@ -162,11 +164,11 @@ export default function SimulationStage({
         {isCrashed && (
           <div className="absolute inset-0 bg-red-950/30 backdrop-blur-[1px] flex items-center justify-center pointer-events-none z-30 animate-pulse">
             <div className="bg-red-950/90 border border-red-500/50 rounded-xl px-6 py-4 text-center shadow-2xl text-red-400 text-base font-extrabold uppercase tracking-widest flex flex-col items-center space-y-2">
-              <span>💥 Collision</span>
+              <span>💥 {t("kin.stage.collision")}</span>
               <span className="text-xs text-red-400/80 font-normal normal-case font-mono max-w-xs">
                 {mode === "cloud"
-                  ? `Cloud RTT ${cloudLatencyMs}ms too slow.`
-                  : `Edge latency ${brakeLatencyMs}ms too slow.`}
+                  ? t("kin.stage.cloudTooSlow", { ms: cloudLatencyMs })
+                  : t("kin.stage.edgeTooSlow", { ms: brakeLatencyMs })}
               </span>
             </div>
           </div>
@@ -176,11 +178,11 @@ export default function SimulationStage({
         {isSafeStop && (
           <div className="absolute inset-0 bg-cyan-950/20 backdrop-blur-[0.5px] flex items-center justify-center pointer-events-none z-30">
             <div className="bg-cyan-950/90 border border-cyan-500/50 rounded-xl px-6 py-4 text-center shadow-2xl text-cyan-400 text-base font-extrabold uppercase tracking-widest flex flex-col items-center space-y-2">
-              <span>🛡️ Safe Stop</span>
+              <span>🛡️ {t("kin.stage.safeStop")}</span>
               <span className="text-xs text-cyan-400/80 font-normal normal-case font-mono max-w-xs">
                 {mode === "edge"
-                  ? `Brake latency ${brakeLatencyMs}ms.`
-                  : `Cloud detection ${cloudLatencyMs}ms + brake ${brakeLatencyMs}ms.`}
+                  ? t("kin.stage.edgeBrake", { ms: brakeLatencyMs })
+                  : t("kin.stage.cloudDetect", { cloud: cloudLatencyMs, brake: brakeLatencyMs })}
               </span>
             </div>
           </div>
@@ -188,17 +190,17 @@ export default function SimulationStage({
 
         {/* Distance readouts */}
         <div className="absolute bottom-2 left-4 right-4 flex justify-between text-xs font-mono text-slate-400">
-          <span>Position: {positionM.toFixed(2)}m / {totalDistanceM.toFixed(0)}m</span>
-          {isRunning && <span>Remaining: {remainingM.toFixed(1)}m</span>}
-          <span>Clearance: {clearanceM.toFixed(1)}m</span>
+          <span>{t("kin.stage.position")}: {positionM.toFixed(2)}m / {totalDistanceM.toFixed(0)}m</span>
+          {isRunning && <span>{t("kin.stage.remaining")}: {remainingM.toFixed(1)}m</span>}
+          <span>{t("kin.stage.clearance")}: {clearanceM.toFixed(1)}m</span>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono text-slate-400">
-        <Readout label="Mode" value={mode === "cloud" ? "Cloud-Only" : "Edge Fallback"} />
-        <Readout label="Detection delay" value={formatLatency(detectionS)} />
-        <Readout label="Braking distance" value={`${brakingM.toFixed(2)} m`} />
-        <Readout label="Status" value={status === "running" ? "Running" : status === "idle" ? "Idle" : status === "crashed" ? "Crashed" : "Safe Stop"} danger={status === "crashed"} success={status === "safe_stop"} />
+        <Readout label={t("kin.stage.mode")} value={mode === "cloud" ? t("kin.header.cloud") : t("kin.header.edge")} />
+        <Readout label={t("kin.stage.detection")} value={formatLatency(detectionS)} />
+        <Readout label={t("kin.stage.braking")} value={`${brakingM.toFixed(2)} m`} />
+        <Readout label={t("kin.stage.status")} value={status === "running" ? t("kin.stage.statusRunning") : status === "idle" ? t("kin.stage.statusIdle") : status === "crashed" ? t("kin.stage.statusCrashed") : t("kin.stage.statusSafe")} danger={status === "crashed"} success={status === "safe_stop"} />
       </div>
     </div>
   );

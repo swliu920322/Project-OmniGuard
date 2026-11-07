@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { TrackId, Scenario } from "../config/scenarios";
+import { useI18n } from "@/components/I18nProvider";
+import { TrackId, Scenario, trackLabelKey } from "../config/scenarios";
 import { computeCloudLatencyMs, LLMBreakdownParams } from "../../shared/physics";
 import AGVTrack from "./AGVTrack";
 import AgentPipelineOverlay from "./AgentPipelineOverlay";
@@ -13,6 +14,7 @@ interface FleetTrackViewProps {
 }
 
 export default function FleetTrackView({ tracks, scenario, tokenLLM }: FleetTrackViewProps) {
+  const { t } = useI18n();
   const ids: TrackId[] = ["agv01", "agv02", "agv03"];
 
   return (
@@ -25,7 +27,7 @@ export default function FleetTrackView({ tracks, scenario, tokenLLM }: FleetTrac
         return (
           <AGVTrack
             key={id}
-            label={cfg.label}
+            label={t(trackLabelKey(cfg.label))}
             positionM={tracks[id].positionM}
             totalDistanceM={scenario.shared.totalDistanceM}
             clearanceM={scenario.shared.clearanceM}

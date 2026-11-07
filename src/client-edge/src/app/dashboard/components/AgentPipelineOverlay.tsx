@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { useI18n } from "@/components/I18nProvider";
+import { trackLabelKey } from "../config/scenarios";
 import { TrackId, TrackConfig, Scenario } from "../config/scenarios";
 import { computeCloudLatencyMs } from "../../shared/physics";
 
@@ -17,11 +19,14 @@ interface AgentState {
   subtitle: string;
 }
 
-function getTrackCloudStatus(t: TrackConfig, trackStatus: string): AgentState {
-  if (trackStatus === "idle") return { label: "Cloud Commander", icon: "☁️", statusText: "Awaiting", color: "slate", subtitle: "Cloud-based LLM reasoning (slow)" };
+type Translate = (path: string) => string;
+
+function getTrackCloudStatus(tr: Translate, t: TrackConfig, trackStatus: string): AgentState {
+  const base = { label: tr("fleet.pipeline.cloud"), icon: "☁️", subtitle: tr("fleet.pipeline.cloudSub") };
+  if (trackStatus === "idle") return { ...base, statusText: tr("fleet.pipeline.awaiting"), color: "slate" };
   if (trackStatus === "running") {
     const isComputing = t.cloudLatencyMs === "computed" || (typeof t.cloudLatencyMs === "number" && t.cloudLatencyMs > 3000);
-    return { label: "Cloud Commander", icon: "☁️", statusText: isComputing ? "Generating..." : "Detecting...", color: "cyan", subtitle: "Cloud-based LLM reasoning (slow)" };
+    return { ...base, statusText: isComputing ? tr("fleet.pipeline.generating") : tr("fleet.pipeline.detecting"), color: "cyan" };
   }
 
   const cloudLatencyMs = t.cloudLatencyMs === "computed" && t.llm
@@ -30,36 +35,34 @@ function getTrackCloudStatus(t: TrackConfig, trackStatus: string): AgentState {
 
   if (trackStatus === "crashed") {
     if (t.cloudLatencyMs === "computed" || cloudLatencyMs > 5000) {
-      return { label: "Cloud Commander", icon: "☁️", statusText: "Returned too late", color: "red", subtitle: "Cloud-based LLM reasoning (slow)" };
+      return { ...base, statusText: tr("fleet.pipeline.returnedLate"), color: "red" };
     }
-    return { label: "Cloud Commander", icon: "☁️", statusText: "Detected too late", color: "red", subtitle: "Cloud-based LLM reasoning (slow)" };
+    return { ...base, statusText: tr("fleet.pipeline.detectedLate"), color: "red" };
   }
 
   if (trackStatus === "safe_stop") {
     if (t.edgeLatencyMs !== null) {
-      return { label: "Cloud Commander", icon: "☁️", statusText: "Too slow, edge won", color: "amber", subtitle: "Cloud-based LLM reasoning (slow)" };
+      return { ...base, statusText: tr("fleet.pipeline.edgeWon"), color: "amber" };
     }
-    return { label: "Cloud Commander", icon: "☁️", statusText: "In time", color: "emerald", subtitle: "Cloud-based LLM reasoning (slow)" };
+    return { ...base, statusText: tr("fleet.pipeline.inTime"), color: "emerald" };
   }
 
-  return { label: "Cloud Commander", icon: "☁️", statusText: "Awaiting", color: "slate", subtitle: "Cloud-based LLM reasoning (slow)" };
+  return { ...base, statusText: tr("fleet.pipeline.awaiting"), color: "slate" };
 }
 
-function getTrackEdgeStatus(t: TrackConfig, trackStatus: string): AgentState {
-  if (t.edgeLatencyMs === null) {
-    return { label: "Edge Guardian", icon: "⚡", statusText: "Disabled", color: "red", subtitle: "Edge compute reflex (fast)" };
-  }
-  if (trackStatus === "idle") return { label: "Edge Guardian", icon: "⚡", statusText: "Standby", color: "slate", subtitle: "Edge compute reflex (fast)" };
-  if (trackStatus === "running") return { label: "Edge Guardian", icon: "⚡", statusText: "Monitoring", color: "cyan", subtitle: "Edge compute reflex (fast)" };
-  if (trackStatus === "safe_stop") return { label: "Edge Guardian", icon: "⚡", statusText: "Overridden & safe", color: "emerald", subtitle: "Edge compute reflex (fast)" };
-  return { label: "Edge Guardian", icon: "⚡", statusText: "Failed to stop", color: "red", subtitle: "Edge compute reflex (fast)" };
+function getTrackEdgeStatus(tr: Translate, t: TrackConfig, trackStatus: string): AgentState {
+  const base = { label: tr("fleet.pipeline.edge"), icon: "⚡", subtitle: tr("fleet.pipeline.edgeSub") };
+  if (t.edgeLatencyMs === null) return { ...base, statusText: tr("fleet.pipeline.disabled"), color: "red" };
+  if (trackStatus === "idle") return { ...base, statusText: tr("fleet.pipeline.standby"), color: "slate" };
+  if (trackStatus === "running") return { ...base, statusText: tr("fleet.pipeline.monitoring"), color: "cyan" };
+  if (trackStatus === "safe_stop") return { ...base, statusText: tr("fleet.pipeline.overridden"), color: "emerald" };
+  return { ...base, statusText: tr("fleet.pipeline.failedStop"), color: "red" };
 }
 
-function getTrackBrakeStatus(trackStatus: string): AgentState {
-  if (trackStatus === "crashed") {
-    return { label: "Emergency Brake", icon: "🛑", statusText: "Engaged but too late", color: "red", subtitle: "Hardware safety brake" };
-  }
-  return { label: "Emergency Brake", icon: "🛑", statusText: "Armed", color: "slate", subtitle: "Hardware safety brake" };
+function getTrackBrakeStatus(tr: Translate, trackStatus: string): AgentState {
+  const base = { label: tr("fleet.pipeline.brake"), icon: "🛑", subtitle: tr("fleet.pipeline.brakeSub") };
+  if (trackStatus === "crashed") return { ...base, statusText: tr("fleet.pipeline.engagedLate"), color: "red" };
+  return { ...base, statusText: tr("fleet.pipeline.armed"), color: "slate" };
 }
 
 const colorMap: Record<string, string> = {
@@ -97,6 +100,7 @@ function AgentCard({ agent }: { agent: AgentState }) {
 const TRACK_LABELS: Record<TrackId, string> = { agv01: "AGV-01", agv02: "AGV-02", agv03: "AGV-03" };
 
 export default function AgentPipelineOverlay({ tracks, scenario }: AgentPipelineOverlayProps) {
+  const { t } = useI18n();
   const ids: TrackId[] = ["agv01", "agv02", "agv03"];
 
   // Pick the most interesting (worst) track: crashed → running → safe_stop → idle
@@ -108,19 +112,19 @@ export default function AgentPipelineOverlay({ tracks, scenario }: AgentPipeline
   const cfg = scenario.tracks[worstId];
   const status = tracks[worstId].status;
 
-  const cloudAgent = getTrackCloudStatus(cfg, status);
-  const edgeAgent = getTrackEdgeStatus(cfg, status);
-  const brakeAgent = getTrackBrakeStatus(status);
+  const cloudAgent = getTrackCloudStatus(t, cfg, status);
+  const edgeAgent = getTrackEdgeStatus(t, cfg, status);
+  const brakeAgent = getTrackBrakeStatus(t, status);
 
   return (
     <div className="border border-slate-900 bg-slate-950/40 rounded-xl p-3 flex flex-col min-h-[184px]">
       <h3 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold mb-3">
-        Agent Pipeline
+        {t("fleet.pipeline.title")}
       </h3>
 
       <div className="text-xs font-mono text-slate-400 mb-2 pl-0.5">
-        Showing: <span className="text-cyan-400 font-bold">{TRACK_LABELS[worstId]}</span>
-        {" "}({cfg.label})
+        {t("fleet.pipeline.showing")}: <span className="text-cyan-400 font-bold">{TRACK_LABELS[worstId]}</span>
+        {" "}({t(trackLabelKey(cfg.label))})
       </div>
 
       <div className="flex-1 flex flex-col justify-center space-y-0">
