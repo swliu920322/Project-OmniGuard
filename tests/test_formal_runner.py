@@ -471,6 +471,14 @@ def test_two_identical_runs_still_compare_after_the_stricter_checks(fx, capsys):
     assert COMPARE(fx, a, b) == 0 and json.loads(capsys.readouterr().out)["verdict"] == "PASSED"
 
 
+def test_two_runs_without_a_returned_model_alias_are_not_comparable(fx):
+    a, b, _ = _two_runs(fx)
+    for run in (a, b):
+        _edit(run, "summary.json", lambda s: s.update(distinct_response_models=[]))
+    with pytest.raises(SystemExit, match="returned alias"):
+        COMPARE(fx, a, b)
+
+
 def test_the_code_freeze_is_bound_to_the_frozen_data_manifest(tmp_path, monkeypatch):
     monkeypatch.setattr(F, "FREEZE", str(tmp_path / "CODE_FREEZE.json"))
     fake_manifest = tmp_path / "manifest.json"

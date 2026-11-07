@@ -548,7 +548,7 @@ def compare_runs(dir_a: str, dir_b: str, records: list[dict]) -> dict:
         "same model configuration and declared identity": ca["model"] == cb["model"],
         "same request parameters, retries and timeout": ca["request_settings"] == cb["request_settings"],
         "same scoring policy": ca["scoring_policy"] == cb["scoring_policy"],
-        "one and the same returned alias in both runs, no drift": sa["distinct_response_models"] == sb["distinct_response_models"] and len(sa["distinct_response_models"]) <= 1
+        "one and the same returned alias in both runs, no drift": sa["distinct_response_models"] == sb["distinct_response_models"] and len(sa["distinct_response_models"]) == 1
                                                                  and not sa["model_drift_flag"] and not sb["model_drift_flag"],
     }
     bad = [k for k, ok in checks.items() if not ok]
