@@ -1,0 +1,139 @@
+"""A fake LLM client for the offline rehearsal. It never opens a socket.
+
+It mimics the parts of the OpenAI SDK the runner uses: with_options(), the max_retries property,
+chat.completions.create() and chat.completions.with_raw_response.create(). Its answers come from a
+trivial rule plus scripted faults, so a run against it proves the harness works and says NOTHING
+about any real model.
+"""
+from __future__ import annotations
+
+import re
+
+
+class RateLimitError(Exception):
+    """Same name as the SDK's error, so the recorded error type looks like a real one."""
+
+    status_code = 429
+
+
+class APITimeoutError(Exception):
+    status_code = None
+
+
+# Scripted faults, keyed by the 1-based number of the request that reaches the fake.
+DEFAULT_FAULTS = {
+    7: "rate_limit",
+    15: "timeout",
+    21: "malformed",  # a sentence that contains SENSOR_ERROR but is not a label
+    29: "empty",
+    40: "no_usage",
+}
+MODEL_SWITCH_AT = 330  # from this request on the fake reports a different model string
+
+
+class _Response:
+    def __init__(self, content, model, usage, request_no):
+        self.id = f"fake-{request_no:05d}"
+        self.model = model
+        self.usage = usage
+        self._content = content
+        self.choices = [type("Choice", (), {"message": type("Message", (), {"content": content})(), "finish_reason": "stop"})()]
+
+    def model_dump(self) -> dict:
+        return {
+            "id": self.id,
+            "object": "chat.completion",
+            "created": 0,
+            "model": self.model,
+            "choices": [{"index": 0, "finish_reason": "stop", "message": {"role": "assistant", "content": self._content}}],
+            "usage": self.usage,
+        }
+
+
+class _RawResponse:
+    status_code = 200
+
+    def __init__(self, parsed, request_no):
+        self._parsed = parsed
+        self.headers = {"x-request-id": f"fake-req-{request_no:05d}", "date": "Thu, 01 Jan 1970 00:00:00 GMT"}
+
+    def parse(self):
+        return self._parsed
+
+
+def _toy_rule(user_text: str) -> str:
+    """A throwaway classifier, only so that replies vary."""
+
+    def grab(pattern):
+        m = re.search(pattern, user_text)
+        return float(m.group(1)) if m else None
+
+    dist, temp, bat, hp = grab(r"Distance: ([\d.]+)cm"), grab(r"Temp: ([\d.]+)C"), grab(r"Battery: ([\d.]+)%"), grab(r"HP: ([\d.]+)")
+    if (temp or 0) > 60 or (bat if bat is not None else 100) < 10 or (hp if hp is not None else 100) < 20:
+        return "SENSOR_ERROR"
+    if dist is not None and dist < 50:
+        return "CRITICAL_OBSTACLE"
+    return "NORMAL_NAV"
+
+
+class _Completions:
+    def __init__(self, owner):
+        self._owner = owner
+
+    def create(self, **kwargs):
+        return self._owner._respond(kwargs)
+
+
+class _RawCompletions:
+    def __init__(self, owner):
+        self._owner = owner
+
+    def create(self, **kwargs):
+        parsed = self._owner._respond(kwargs)
+        return _RawResponse(parsed, self._owner.requests_received)
+
+
+class _Chat:
+    def __init__(self, owner):
+        self.completions = _Completions(owner)
+        self.completions.with_raw_response = _RawCompletions(owner)
+
+
+class FakeClient:
+    def __init__(self, faults: dict | None = None, model: str = "fake-model-1", switch_model: bool = True):
+        self.faults = DEFAULT_FAULTS if faults is None else faults
+        self.model = model
+        self.switch_model = switch_model
+        self.requests_received = 0  # every request that reached the fake, retries included
+        self.last_request = None
+        self.max_retries = 2  # like the SDK default; with_options() lowers it
+        self.timeout = 600.0
+        self.options_applied: list[dict] = []
+        self.chat = _Chat(self)
+
+    def with_options(self, **options):
+        self.options_applied.append(options)
+        self.max_retries = options.get("max_retries", self.max_retries)
+        self.timeout = options.get("timeout", self.timeout)
+        return self
+
+    def _respond(self, kwargs: dict):
+        self.requests_received += 1
+        n = self.requests_received
+        self.last_request = kwargs
+        fault = self.faults.get(n)
+        if fault == "rate_limit":
+            raise RateLimitError("fake 429: rate limit exceeded (scripted fault)")
+        if fault == "timeout":
+            raise APITimeoutError("fake timeout (scripted fault)")
+        content = _toy_rule(kwargs["messages"][-1]["content"])
+        if fault == "malformed":
+            content = "The label is SENSOR_ERROR, because the battery looks low."
+        elif fault == "empty":
+            content = ""
+        prompt_tokens = sum(len(m["content"]) for m in kwargs["messages"]) // 3 + 8
+        usage = {"prompt_tokens": prompt_tokens, "completion_tokens": 3, "total_tokens": prompt_tokens + 3}
+        if fault == "no_usage":
+            usage = None
+        model = self.model + "-b" if (self.switch_model and n >= MODEL_SWITCH_AT) else self.model
+        return _Response(content, model, usage, n)

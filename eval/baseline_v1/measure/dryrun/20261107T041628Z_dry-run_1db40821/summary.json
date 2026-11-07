@@ -1,0 +1,100 @@
+{
+  "accuracy_withheld": "dry run with a fake client: accuracy is deliberately not reported",
+  "budget": {
+    "calls_started": 400,
+    "max_calls": 400,
+    "max_tokens": 150000,
+    "tokens_committed": 48740
+  },
+  "calls_recorded": 400,
+  "conditions": {
+    "B": {
+      "all_rows_started": {
+        "accuracy": null,
+        "correct": 197,
+        "failed_calls": 0,
+        "invalid_replies": 2,
+        "n": 200
+      },
+      "calls_started": 200,
+      "calls_without_usage": 1,
+      "confusion_legacy_gold_x_outcome": {
+        "CRITICAL_OBSTACLE": {
+          "CRITICAL_OBSTACLE": 37,
+          "NORMAL_NAV": 1
+        },
+        "NORMAL_NAV": {
+          "INVALID": 2,
+          "NORMAL_NAV": 109
+        },
+        "SENSOR_ERROR": {
+          "SENSOR_ERROR": 51
+        }
+      },
+      "models_seen": [
+        "fake-model-1",
+        "fake-model-1-b"
+      ],
+      "rows_reaching_router": {
+        "accuracy": null,
+        "correct": 169,
+        "failed_calls": 0,
+        "invalid_replies": 2,
+        "n": 172
+      },
+      "substring_sensor_error_replies": 52,
+      "tokens_reported": 31545
+    },
+    "P": {
+      "all_rows_started": {
+        "accuracy": null,
+        "correct": 197,
+        "failed_calls": 2,
+        "invalid_replies": 0,
+        "n": 200
+      },
+      "calls_started": 200,
+      "calls_without_usage": 2,
+      "confusion_legacy_gold_x_outcome": {
+        "CRITICAL_OBSTACLE": {
+          "CRITICAL_OBSTACLE": 37,
+          "NORMAL_NAV": 1
+        },
+        "NORMAL_NAV": {
+          "NORMAL_NAV": 111
+        },
+        "SENSOR_ERROR": {
+          "ERROR": 2,
+          "SENSOR_ERROR": 49
+        }
+      },
+      "models_seen": [
+        "fake-model-1",
+        "fake-model-1-b"
+      ],
+      "rows_reaching_router": {
+        "accuracy": null,
+        "correct": 171,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 172
+      },
+      "substring_sensor_error_replies": 49,
+      "tokens_reported": 16816
+    }
+  },
+  "distinct_response_models": [
+    "fake-model-1",
+    "fake-model-1-b"
+  ],
+  "ended_at": "2026-11-07T04:16:28.892269Z",
+  "is_measurement": false,
+  "legacy_label_rows_critical_at_or_above_30cm": 11,
+  "mode": "dry-run",
+  "model_drift_flag": true,
+  "planned_calls": 400,
+  "requests_that_reached_the_client": 400,
+  "run_id": "20261107T041628Z_dry-run_1db40821",
+  "status": "completed",
+  "stop_reason": "completed all planned calls"
+}
