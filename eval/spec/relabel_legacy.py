@@ -28,7 +28,7 @@ def main() -> None:
         rows.append({"scenario_id": x["scenario_id"], "legacy_label": x["expected_label"], "new_primary": lab["primary"],
                      "risk_set": "|".join(lab["risk_set"]), "gate": lab["gate"], "legacy3_view": lab["legacy3"]})
     with open(OUT / "legacy200_relabel.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
     (OUT / "legacy200_relabel.meta.json").write_text(json.dumps({
