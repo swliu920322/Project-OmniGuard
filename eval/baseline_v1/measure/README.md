@@ -35,7 +35,7 @@ The rehearsal blocks sockets, so a stray real call fails loudly. Its fake model 
 | Interruption keeps the evidence | Ctrl+C, SIGTERM or a crash seal the run as `interrupted` / `crashed`: the in-flight request is recorded with its reservation, the summary and `SHA256SUMS` are written, the temporary worktree is removed |
 | Interleaved conditions | `plan_order()`: B and P alternate per row, and who goes first alternates by row |
 | Scope stated | `SCOPE.md` is copied into every run and hashed in `config.json` |
-| Failures stay in the record | an error becomes a line with `error` set; it counts as wrong in the denominator; no harness retry. A reply that did not end normally (`finish_reason` other than `stop`, e.g. cut off by the guard) scores INVALID even if its text is a valid label; the raw reply and usage are kept |
+| Failures stay in the record | an error becomes a line with `error` set; it counts as wrong in the denominator; no harness retry. Only `finish_reason` `stop` can score correct: a reply that was cut off, ended otherwise or has no finish reason scores INVALID even if its text is a valid label; the raw reply and usage are kept |
 | Exactly one request per call | the runner aborts if `ask_agent` ever sends zero or several requests |
 | No device downlink | `send_c2d_message` is replaced by a function that raises; the run refuses to start if any IoT or Cosmos variable is set |
 | Unique, verified output | each run gets a new directory (`exist_ok=False`); `SHA256SUMS` is written and checked at the end; `--verify` re-checks later |

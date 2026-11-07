@@ -98,7 +98,7 @@
   "distinct_response_models": [
     "fake-model-1"
   ],
-  "ended_at": "2026-11-07T04:42:40.021615Z",
+  "ended_at": "2026-11-07T04:46:49.953388Z",
   "in_flight_at_interruption": 4,
   "interruption": {
     "message": "scripted Ctrl+C",
@@ -112,7 +112,7 @@
   "planned_calls": 20,
   "reasoning_tokens_reported": 240,
   "requests_that_reached_the_client": 5,
-  "run_id": "20261107T044239Z_dry-run_662a424b",
+  "run_id": "20261107T044649Z_dry-run_261d42a1",
   "status": "interrupted",
   "stop_reason": "interrupted: KeyboardInterrupt: scripted Ctrl+C",
   "truncated_replies": 0,

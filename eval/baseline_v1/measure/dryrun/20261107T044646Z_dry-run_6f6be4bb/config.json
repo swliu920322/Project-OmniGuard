@@ -5,7 +5,7 @@
     "input_token_bound": "UTF-8 bytes of system + user text + 64 (each token covers at least one byte)",
     "max_calls": 400,
     "max_tokens": 150000,
-    "max_usd": "1.00",
+    "max_usd": "0.000001",
     "on_violation": "stop at once, status stopped_bound_violation, exit code 3",
     "output_token_bound": 1024,
     "pricing": {
@@ -22,15 +22,15 @@
     "python": "3.13.7"
   },
   "harness": {
-    "SCOPE.md": "e90a172feb07f4490f743fcc8a71157ccd0a17b270deba5a64f852bd58d0a652",
+    "SCOPE.md": "ee9cc13676ab7ce6b5e0cc2ad2a016d00a1116a21337b4ea4ef45e26835dbd57",
     "fake_client.py": "b64dadcfbf9ea9b4a1ddc5fe57dbe1edaa43106766a2acf15abdf214fd3c271f",
-    "measure_lib.py": "b6fe003830417f28fc2a6d25f733c887fcd539dc5745442983695160e9330202",
+    "measure_lib.py": "1491b76a7b62aa8b33907d14897a7352752876e93c4b0a297737c4df1c067bf5",
     "run_baseline_a.py": "01f1c8df2c7c8d1ec3096adc195358efa9f405109a318f1baafd99092250c8c4"
   },
   "inputs": {
     "csv": "src/cloud-orchestrator/embodied_brain/benchmark_results/runs/2026-07-16-thesis-200/results.csv",
     "csv_sha256": "e55866dc792ed6f8908f63a9cce4052462bcfa974f1641457aea7d25b3daf608",
-    "rows_used": 10,
+    "rows_used": 4,
     "sample_input_B": "Telemetry: Distance: 6cm, Velocity: 1.98m/s, HP: 58, Battery: 39.6%, Temp: 39.7C.",
     "sample_input_P": "Telemetry: Distance: 6cm, X: 67.7, Velocity: 1.98m/s, HP: 58, Battery: 39%, Temp: 39C, Device: Simulated-Device."
   },
@@ -56,7 +56,7 @@
       "text": "Classify telemetry into: [CRITICAL_OBSTACLE, NORMAL_NAV, SENSOR_ERROR]. Return ONLY the classification string."
     }
   },
-  "repo_head": "6c0e976b6ac78491bf6743a4ca99053e7088aa1f",
+  "repo_head": "fef383345383044d373657a60d10950a5d546cc6",
   "request_settings": {
     "ask_agent_cache_ttl_s": 0,
     "deviation_from_original_request": "max_tokens added (the original code sends only max_completion_tokens, which this reasoning model ignores)",
@@ -67,7 +67,7 @@
     "sdk_timeout_s": 60.0,
     "temperature": 0.0
   },
-  "run_id": "20261107T044239Z_dry-run_662a424b",
+  "run_id": "20261107T044646Z_dry-run_6f6be4bb",
   "source": {
     "file_sha256": {
       "src/cloud-orchestrator/embodied_brain/benchmark.py": "a61177f18101cb7096602d33f05145231cd18a732608525d70e00d78157d16dc",
@@ -82,7 +82,7 @@
     "kind": "worktree",
     "verified_against": "eval/baseline_v1/SHA256SUMS"
   },
-  "started_at": "2026-11-07T04:42:39.711764Z",
+  "started_at": "2026-11-07T04:46:46.935253Z",
   "tag": "eval-baseline-v1",
   "tag_object": "abd84e0451a49af1e49e454aba51cf66bd9b70c5"
 }

@@ -2,7 +2,7 @@
 
 > **DRY RUN WITH A FAKE CLIENT. Nothing here measures any model.** It only shows that the harness works.
 
-- Run: `20261107T044235Z_dry-run_0e65bf28`, mode `dry-run`, status **completed**
+- Run: `20261107T044645Z_dry-run_a4582532`, mode `dry-run`, status **completed**
 - Source: `worktree` at tag `eval-baseline-v1` (commit `a58b125`)
 - Calls started: 400 of 400 allowed; tokens booked: 78513 of 150000; US$ booked: 0.050793 of 1.00 (rehearsal rates)
 - Spend implied by the usage the API reported: US$ 0.046784; calls with no usable usage: 3

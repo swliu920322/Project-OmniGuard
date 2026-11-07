@@ -110,7 +110,7 @@
     "fake-model-1",
     "fake-model-1-b"
   ],
-  "ended_at": "2026-11-07T04:42:36.287987Z",
+  "ended_at": "2026-11-07T04:46:45.973366Z",
   "in_flight_at_interruption": null,
   "interruption": null,
   "is_measurement": false,
@@ -121,7 +121,7 @@
   "planned_calls": 400,
   "reasoning_tokens_reported": 24784,
   "requests_that_reached_the_client": 400,
-  "run_id": "20261107T044235Z_dry-run_0e65bf28",
+  "run_id": "20261107T044645Z_dry-run_a4582532",
   "status": "completed",
   "stop_reason": "completed all planned calls",
   "truncated_replies": 2,

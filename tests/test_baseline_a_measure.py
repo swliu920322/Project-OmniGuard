@@ -189,7 +189,7 @@ def test_summary_counts_failures_and_invalid_replies_as_wrong():
 
     def rec(i, label, error=None, model="m"):
         return {"row_index": i, "condition": "B", "parsed_label": label, "reply": label, "error": error,
-                "response_model": model, "usage": {"total_tokens": 10}}
+                "finish_reason": None if error else "stop", "response_model": model, "usage": {"total_tokens": 10}}
 
     records = [
         rec(0, "NORMAL_NAV"),  # right
@@ -230,6 +230,28 @@ def test_only_a_normal_finish_can_score_correct(finish):
     cut = L.summarize([_truncated_record(finish=finish, truncated=False)], rows)["conditions"]["B"]["all_rows_started"]
     assert normal["correct"] == 1 and normal["invalid_replies"] == 0
     assert cut["correct"] == 0 and cut["invalid_replies"] == 1
+
+
+@pytest.mark.parametrize("how", ["finish_reason is null", "finish_reason key is missing"])
+def test_a_missing_finish_reason_cannot_score_correct(how):
+    """The reviewer's second case: a valid label with no proof that the reply ended normally."""
+    rows = [{**ROW, "expected_label": "NORMAL_NAV", "obstacle": "300", "gate_decision": "PASS"}]
+    record = _truncated_record(finish=None, truncated=False)
+    if how.endswith("missing"):
+        del record["finish_reason"]
+    s = L.summarize([record], rows)["conditions"]["B"]
+    part = s["all_rows_started"]
+    assert (part["correct"], part["invalid_replies"], part["failed_calls"], part["accuracy"]) == (0, 1, 0, 0.0)
+    assert s["confusion_legacy_gold_x_outcome"] == {"NORMAL_NAV": {"INVALID": 1}}
+    assert s["rows_reaching_router"]["correct"] == 0 and s["truncated_replies"] == 0  # not a truncation, just unproven
+    assert record["reply"] == "NORMAL_NAV" and record["parsed_label"] == "NORMAL_NAV"  # the evidence is kept
+
+
+def test_only_stop_scores_correct_and_all_the_others_are_invalid():
+    rows = [{**ROW, "expected_label": "NORMAL_NAV", "obstacle": "300", "gate_decision": "PASS"}]
+    for finish, correct in (("stop", 1), ("length", 0), ("content_filter", 0), ("tool_calls", 0), (None, 0), ("", 0), ("STOP", 0)):
+        part = L.summarize([_truncated_record(finish=finish, truncated=False)], rows)["conditions"]["B"]["all_rows_started"]
+        assert (part["correct"], part["invalid_replies"]) == (correct, 1 - correct), finish
 
 
 def test_a_failed_call_is_still_an_error_not_invalid():

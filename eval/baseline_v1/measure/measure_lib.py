@@ -287,13 +287,15 @@ def contains_sensor_error(reply: str | None) -> bool:
 def _outcome(record: dict) -> str:
     """Column of the confusion matrix: a real label, INVALID or ERROR (no reply at all).
 
-    INVALID covers a reply that is not a label AND any reply that did not end normally: a reply cut
-    off by the token guard (finish_reason "length") is invalid even if the text so far is a valid label.
-    The raw reply, the parsed label and the usage stay in the record; only the scoring changes.
+    INVALID covers a reply that is not a label AND any reply that cannot be shown to have ended
+    normally: only finish_reason "stop" counts. A reply cut off by the token guard ("length") is
+    invalid even if the text so far is a valid label, and so is a missing or null finish_reason,
+    which proves nothing. The raw reply, the parsed label and the usage stay in the record; only
+    the scoring changes.
     """
     if record.get("error"):
         return "ERROR"
-    if record.get("truncated") or record.get("finish_reason") not in (None, "stop"):
+    if record.get("truncated") or record.get("finish_reason") != "stop":
         return "INVALID"
     label = record.get("parsed_label")
     return label if label in ALLOWED_LABELS else "INVALID"

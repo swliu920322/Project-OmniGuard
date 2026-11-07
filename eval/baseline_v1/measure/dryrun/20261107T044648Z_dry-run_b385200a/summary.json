@@ -92,7 +92,7 @@
   "distinct_response_models": [
     "fake-model-1"
   ],
-  "ended_at": "2026-11-07T04:42:38.777376Z",
+  "ended_at": "2026-11-07T04:46:48.510710Z",
   "in_flight_at_interruption": null,
   "interruption": null,
   "is_measurement": false,
@@ -103,7 +103,7 @@
   "planned_calls": 20,
   "reasoning_tokens_reported": 180,
   "requests_that_reached_the_client": 3,
-  "run_id": "20261107T044238Z_dry-run_ca895389",
+  "run_id": "20261107T044648Z_dry-run_b385200a",
   "status": "stopped_bound_violation",
   "stop_reason": "bound violated by call #2: reported usage (81 prompt + 5000 completion tokens) is above the reserved bound (285 + 1024)",
   "truncated_replies": 0,

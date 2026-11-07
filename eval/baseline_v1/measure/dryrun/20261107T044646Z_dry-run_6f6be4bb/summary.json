@@ -71,7 +71,7 @@
     }
   },
   "distinct_response_models": [],
-  "ended_at": "2026-11-07T04:42:37.530803Z",
+  "ended_at": "2026-11-07T04:46:47.251590Z",
   "in_flight_at_interruption": null,
   "interruption": null,
   "is_measurement": false,
@@ -82,7 +82,7 @@
   "planned_calls": 8,
   "reasoning_tokens_reported": 0,
   "requests_that_reached_the_client": 0,
-  "run_id": "20261107T044237Z_dry-run_7f320296",
+  "run_id": "20261107T044646Z_dry-run_6f6be4bb",
   "status": "stopped_early",
   "stop_reason": "stopped before sending call #0: usd cap 0.000001 would be exceeded (0.000000 committed + 0.001381 worst case for the next call)",
   "truncated_replies": 0,

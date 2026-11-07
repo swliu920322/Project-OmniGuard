@@ -27,7 +27,7 @@ Read this before quoting any number from a run. It is copied into every run dire
 A real canary (`measured/20261107T043259Z_real_401c9ff8`) showed that the model behind the configured name thinks before it answers: 58 of 67 completion tokens were `reasoning_tokens`, and the original `max_completion_tokens=20` did not limit them. Consequences, all recorded in every run:
 
 - Cost and latency include the hidden reasoning. The report gives reasoning tokens separately.
-- The harness adds `max_tokens=1024` to every request so the output (reasoning plus text) is capped and the budget bound is real. Each call record carries `request_deviation`. If the reasoning ever exceeds the cap, the reply is cut off (`finish_reason: length`). **Any reply that did not end normally is scored invalid, even if the text it produced is a valid label**; the raw reply, parsed label and usage stay in the record and the number of such replies is reported; nothing is dropped.
+- The harness adds `max_tokens=1024` to every request so the output (reasoning plus text) is capped and the budget bound is real. Each call record carries `request_deviation`. If the reasoning ever exceeds the cap, the reply is cut off (`finish_reason: length`). **Only `finish_reason: stop` can score correct: a reply that was cut off, ended for another reason, or has no recorded finish reason is scored invalid, even if its text is a valid label**; the raw reply, parsed label and usage stay in the record and the number of such replies is reported; nothing is dropped.
 - This request is therefore **not byte-identical to what the original code sends**; the difference is one added spending guard.
 
 ## Model identity
