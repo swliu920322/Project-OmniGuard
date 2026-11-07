@@ -1,0 +1,33 @@
+{"item_id": "A003", "clauses": [{"text": "万一 worker 出现就减速。", "status": "HYPOTHETICAL", "basis": "“万一”设想工人出现并要求减速，没有报告已出现。"}], "note_status": "HYPOTHETICAL"}
+{"item_id": "A004", "clauses": [{"text": "Shift change is at 3 pm.", "status": "IRRELEVANT", "basis": "交班时间与前方人员或障碍物无关。"}], "note_status": "IRRELEVANT"}
+{"item_id": "A007", "clauses": [{"text": "Maybe someone is ahead, not sure.", "status": "UNCERTAIN", "basis": "“Maybe”和“not sure”表明对前方有人的判断存疑。"}], "note_status": "UNCERTAIN"}
+{"item_id": "A008", "clauses": [{"text": "path 已经 clear", "status": "NEGATED", "basis": "“已经 clear”说明当前道路已无障碍。"}, {"text": "但货架后面 could be 个 person。", "status": "UNCERTAIN", "basis": "“could be”仅推测货架后有人，尚不确定。"}], "note_status": "UNCERTAIN"}
+{"item_id": "A009", "clauses": [{"text": "没有人", "status": "NEGATED", "basis": "明确否认现在有人。"}, {"text": "但前方可能有箱子。", "status": "UNCERTAIN", "basis": "“可能”表示前方箱子的存在尚未确认。"}], "note_status": "UNCERTAIN"}
+{"item_id": "A011", "clauses": [{"text": "刚刚路口有个 person", "status": "HISTORICAL", "basis": "“刚刚”将路口有人的情况限定在此前。"}, {"text": "现在path 上没有 obstacle。", "status": "NEGATED", "basis": "“现在”明确当前时间，并否认道路上有障碍物。"}], "note_status": "NEGATED"}
+{"item_id": "A013", "clauses": [{"text": "A pallet is blocking the path.", "status": "AFFIRMED_CURRENT", "basis": "现在时“is blocking”直接报告货盘正在挡路。"}], "note_status": "AFFIRMED_CURRENT"}
+{"item_id": "A014", "clauses": [{"text": "If someone steps in front, stop the vehicle.", "status": "HYPOTHETICAL", "basis": "以“If”提出有人走到前方时停车的条件指令。"}], "note_status": "HYPOTHETICAL"}
+{"item_id": "A016", "clauses": [{"text": "有一个货盘挡住了路。", "status": "AFFIRMED_CURRENT", "basis": "直接说明货盘挡路，没有过去时间限定或不确定词。"}], "note_status": "AFFIRMED_CURRENT"}
+{"item_id": "A017", "clauses": [{"text": "A worker was in the aisle earlier.", "status": "HISTORICAL", "basis": "“was”和“earlier”描述此前通道里的工人。"}], "note_status": "HISTORICAL"}
+{"item_id": "A018", "clauses": [{"text": "A box was in the lane previously", "status": "HISTORICAL", "basis": "“previously”明确箱子在车道是先前的事。"}, {"text": "if a box falls, report it.", "status": "HYPOTHETICAL", "basis": "“if”设定箱子掉落时上报的条件，没有报告实际掉落。"}], "note_status": "HISTORICAL"}
+{"item_id": "A019", "clauses": [{"text": "下午三点交班。", "status": "IRRELEVANT", "basis": "只说交班安排，未涉及前方人员或障碍。"}], "note_status": "IRRELEVANT"}
+{"item_id": "A020", "clauses": [{"text": "一小时前 pallet 挡过路。", "status": "HISTORICAL", "basis": "“一小时前”与“挡过”说明货盘挡路发生于过去。"}], "note_status": "HISTORICAL"}
+{"item_id": "A023", "clauses": [{"text": "万一有工人出现就减速。", "status": "HYPOTHETICAL", "basis": "“万一”设定工人出现的情形并给出减速指令。"}], "note_status": "HYPOTHETICAL"}
+{"item_id": "A028", "clauses": [{"text": "如果有人出现在前面就停车。", "status": "HYPOTHETICAL", "basis": "“如果”引导有人出现在前方时的停车条件。"}], "note_status": "HYPOTHETICAL"}
+{"item_id": "A030", "clauses": [{"text": "刚才有人", "status": "HISTORICAL", "basis": "“刚才”说明有人是此前的观察。"}, {"text": "如果再出现就停车。", "status": "HYPOTHETICAL", "basis": "“如果再出现”设想人员再次出现，要求届时停车。"}], "note_status": "HISTORICAL"}
+{"item_id": "A035", "clauses": [{"text": "之前有 someone 穿过车道。", "status": "HISTORICAL", "basis": "“之前”限定有人穿过车道发生在过去。"}], "note_status": "HISTORICAL"}
+{"item_id": "A038", "clauses": [{"text": "A worker was here earlier", "status": "HISTORICAL", "basis": "“was”和“earlier”将工人在这里的情况放在此前。"}, {"text": "but the aisle is clear now.", "status": "NEGATED", "basis": "“clear now”明确当前通道已清空。"}], "note_status": "NEGATED"}
+{"item_id": "A047", "clauses": [{"text": "There might be a box in the lane, not sure.", "status": "UNCERTAIN", "basis": "“might”以及“not sure”表示不确定车道里是否有箱子。"}], "note_status": "UNCERTAIN"}
+{"item_id": "A048", "clauses": [{"text": "车道里 nobody 了。", "status": "NEGATED", "basis": "“nobody 了”说明车道里现在已经没人。"}], "note_status": "NEGATED"}
+{"item_id": "A049", "clauses": [{"text": "No one is ahead.", "status": "NEGATED", "basis": "“No one”明确否认前方有人。"}], "note_status": "NEGATED"}
+{"item_id": "A050", "clauses": [{"text": "A person was at the junction earlier", "status": "HISTORICAL", "basis": "“earlier”说明路口有人的情况是此前。"}, {"text": "and now there is no obstacle on the path.", "status": "NEGATED", "basis": "“now”与“no obstacle”明确当前道路没有障碍物。"}], "note_status": "NEGATED"}
+{"item_id": "A054", "clauses": [{"text": "The path is clear", "status": "NEGATED", "basis": "“is clear”报告当前道路无障碍。"}, {"text": "but it could be a person behind the shelf.", "status": "UNCERTAIN", "basis": "“could be”提出货架后可能有人，未作确定断言。"}], "note_status": "UNCERTAIN"}
+{"item_id": "A058", "clauses": [{"text": "前方没有人。", "status": "NEGATED", "basis": "“没有人”直接否认前方人员存在。"}], "note_status": "NEGATED"}
+{"item_id": "A060", "clauses": [{"text": "In case a worker appears, slow down.", "status": "HYPOTHETICAL", "basis": "“In case”设定工人出现时减速的预防性指令。"}], "note_status": "HYPOTHETICAL"}
+{"item_id": "A068", "clauses": [{"text": "Charging dock 2 is free.", "status": "IRRELEVANT", "basis": "只报告二号充电位可用，未报告前方人员或障碍。"}], "note_status": "IRRELEVANT"}
+{"item_id": "A069", "clauses": [{"text": "A worker is standing in the aisle ahead.", "status": "AFFIRMED_CURRENT", "basis": "“is standing”明确工人此刻站在前方通道中。"}], "note_status": "AFFIRMED_CURRENT"}
+{"item_id": "A077", "clauses": [{"text": "The floor was cleaned yesterday.", "status": "IRRELEVANT", "basis": "昨天清洁地板不是关于前方人员或障碍物的描述。"}], "note_status": "IRRELEVANT"}
+{"item_id": "A079", "clauses": [{"text": "前方有 wroker 站着。", "status": "AFFIRMED_CURRENT", "basis": "“前方有…站着”直接报告有人站立；wroker可读作worker的拼写错误。"}], "note_status": "AFFIRMED_CURRENT"}
+{"item_id": "A082", "clauses": [{"text": "前面通道里有工人在站着。", "status": "AFFIRMED_CURRENT", "basis": "“有工人在站着”肯定工人正在前方通道中。"}], "note_status": "AFFIRMED_CURRENT"}
+{"item_id": "A087", "clauses": [{"text": "地面昨天 cleaned。", "status": "IRRELEVANT", "basis": "昨天清洁地面与前方人员或障碍物的状态无关。"}], "note_status": "IRRELEVANT"}
+{"item_id": "A089", "clauses": [{"text": "路上没有障碍物", "status": "NEGATED", "basis": "此分句明确否认路上有障碍物。"}, {"text": "但前方车道上掉了一个箱子。", "status": "AFFIRMED_CURRENT", "basis": "此分句报告箱子已掉到前方车道，未说明已移走，表述现有障碍。"}], "note_status": "AFFIRMED_CURRENT"}
+{"item_id": "A096", "clauses": [{"text": "二号充电桩空闲。", "status": "IRRELEVANT", "basis": "只说明充电桩空闲，未描述前方人员或障碍物。"}], "note_status": "IRRELEVANT"}

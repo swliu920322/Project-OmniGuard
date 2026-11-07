@@ -1,0 +1,7 @@
+{
+ "results_sha256": "4507ba25fe7d6914238e24f28299ae2c9ea8c9bf1cd859cd22f9c5c21a06f34a",
+ "items": 33,
+ "sample_ids_sha256": "f718548fa40e2ac2a9a4f2a76aad0d37186c5276fa8c53bdd14f5e5dd950895d",
+ "sealed_at": "2026-11-07T10:56:26Z",
+ "next_step": "commit sealed/ BEFORE the review packet is released"
+}
