@@ -1,11 +1,13 @@
 "use client";
 
 import React from "react";
+import { useI18n } from "@/components/I18nProvider";
 
 interface PhysicalTwinVisualizerProps {
   distance: number;
   currentX: number;
   robotPosition: number;
+  moving?: boolean;
   isAlert: boolean;
   hp: number;
   battery: number;
@@ -18,6 +20,7 @@ export default function PhysicalTwinVisualizer({
   distance,
   currentX,
   robotPosition,
+  moving,
   isAlert,
   hp,
   battery,
@@ -25,10 +28,15 @@ export default function PhysicalTwinVisualizer({
   temperature,
   latencyMs
 }: PhysicalTwinVisualizerProps) {
+  const { t } = useI18n();
   // Braking distance calculation: V * latency_s * 100 (in cm)
   const brakingDistance = velocity * (latencyMs / 1000) * 100;
   const collisionRisk = brakingDistance > distance && distance > 0;
   const isOverheated = temperature > 60;
+  // While the AGV moves, the motion loop already updates the position every frame, so CSS
+  // transitions must be off: restarting one on every frame makes it stall at its first step.
+  // When stopped, the default eased transition applies again.
+  const slideTransition = moving ? "none" : undefined;
   
   return (
     <div className="border border-slate-900 bg-slate-950 rounded-xl relative overflow-hidden flex flex-col justify-between shadow-inner shadow-black/80">
@@ -47,6 +55,7 @@ export default function PhysicalTwinVisualizer({
           className="absolute h-[1px] border-t border-dashed pointer-events-none transition-all duration-300"
           style={{
             left: `${robotPosition}%`,
+            transition: slideTransition,
             right: `8%`,
             borderColor: isAlert ? "#ef4444" : collisionRisk ? "#f59e0b" : "#10b981",
             borderWidth: isAlert ? "2px" : collisionRisk ? "1.5px" : "1px"
@@ -62,6 +71,7 @@ export default function PhysicalTwinVisualizer({
           className="absolute w-12 h-12 -ml-6 rounded-full border bg-slate-950 flex items-center justify-center transition-all duration-300 shadow-md shadow-black/80 z-10"
           style={{ 
             left: `${robotPosition}%`,
+            transition: slideTransition,
             borderColor: hp <= 0 ? "#64748b" : isAlert ? "#ef4444" : collisionRisk ? "#f59e0b" : "#06b6d4",
             boxShadow: hp <= 0 
               ? "0 0 10px rgba(100,116,139,0.1)" 
@@ -92,8 +102,8 @@ export default function PhysicalTwinVisualizer({
         {hp <= 0 && (
           <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center pointer-events-none z-20">
             <div className="bg-red-950/90 border border-red-500/40 rounded-xl px-5 py-3 text-center shadow-2xl text-red-500 text-sm font-extrabold uppercase tracking-widest animate-pulse flex flex-col items-center space-y-1">
-              <span>⚠️ HARDWARE DEADLOCK ⚠️</span>
-              <span className="text-[10px] text-red-400/80 font-normal normal-case font-mono">System frozen. Reset simulation.</span>
+              <span>⚠️ {t("live.twin.deadlock")} ⚠️</span>
+              <span className="text-[10px] text-red-400/80 font-normal normal-case font-mono">{t("live.twin.deadlockHint")}</span>
             </div>
           </div>
         )}
@@ -104,7 +114,7 @@ export default function PhysicalTwinVisualizer({
               <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-              <span>Emergency Halt Activated</span>
+              <span>{t("live.twin.halt")}</span>
             </div>
           </div>
         )}
@@ -116,7 +126,7 @@ export default function PhysicalTwinVisualizer({
         {/* HP Bar */}
         <div className="flex flex-col space-y-1 bg-slate-900/35 border border-slate-900/50 p-2.5 rounded-lg">
           <div className="flex justify-between items-center text-[10px] font-mono font-bold uppercase text-slate-400">
-            <span>Hardware Health</span>
+            <span>{t("live.twin.health")}</span>
             <span className={`font-bold ${hp > 50 ? "text-emerald-400" : hp > 20 ? "text-amber-400" : "text-red-500 animate-pulse"}`}>{hp} HP</span>
           </div>
           <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
@@ -136,7 +146,7 @@ export default function PhysicalTwinVisualizer({
         {/* Battery Bar */}
         <div className="flex flex-col space-y-1 bg-slate-900/35 border border-slate-900/50 p-2.5 rounded-lg">
           <div className="flex justify-between items-center text-[10px] font-mono font-bold uppercase text-slate-400">
-            <span>Battery Level</span>
+            <span>{t("live.twin.battery")}</span>
             <span className={`font-bold ${battery > 50 ? "text-cyan-400" : battery > 15 ? "text-amber-400" : "text-red-500 animate-pulse"}`}>{battery.toFixed(0)}%</span>
           </div>
           <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
@@ -156,7 +166,7 @@ export default function PhysicalTwinVisualizer({
         {/* Velocity Indicator */}
         <div className="bg-slate-900/35 border border-slate-900/50 p-2.5 rounded-lg flex items-center justify-between">
           <div className="flex flex-col">
-            <span className="text-[9px] font-mono font-bold uppercase text-slate-500">Velocity</span>
+            <span className="text-[9px] font-mono font-bold uppercase text-slate-500">{t("live.twin.velocity")}</span>
             <span className="text-sm font-bold font-mono text-cyan-400 mt-0.5">{velocity.toFixed(2)} m/s</span>
           </div>
           <div className="text-[10px] text-slate-600 font-mono">
@@ -171,7 +181,7 @@ export default function PhysicalTwinVisualizer({
             : "border-slate-900/50 text-slate-400"
         }`}>
           <div className="flex flex-col">
-            <span className="text-[9px] font-mono font-bold uppercase text-slate-500">Core Temp</span>
+            <span className="text-[9px] font-mono font-bold uppercase text-slate-500">{t("live.twin.temp")}</span>
             <span className={`text-sm font-bold font-mono mt-0.5 ${temperature > 60 ? "text-red-400" : "text-amber-400"}`}>
               {temperature.toFixed(0)}°C
             </span>
@@ -187,31 +197,31 @@ export default function PhysicalTwinVisualizer({
       {/* Latency Penalty & Braking Distance Indicator */}
       <div className="bg-slate-950 px-4 py-3.5 border-t border-slate-900 flex flex-col space-y-2">
         <div className="flex justify-between items-center text-[10px] font-mono font-bold uppercase text-slate-500">
-          <span>Latency Braking Metric</span>
+          <span>{t("live.twin.brakingMetric")}</span>
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
             collisionRisk 
               ? "bg-red-500/10 border border-red-500/25 text-red-400 animate-pulse" 
               : "bg-emerald-500/10 border border-emerald-500/25 text-emerald-400"
           }`}>
-            {collisionRisk ? "CRITICAL COLLISION RISK" : "BRAKING THRESHOLD SAFE"}
+            {collisionRisk ? t("live.twin.risk") : t("live.twin.safe")}
           </span>
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs font-mono">
           <div className="bg-slate-900/20 p-2 rounded border border-slate-900 flex flex-col justify-between">
-            <span className="text-[9px] text-slate-500 uppercase">Est. Braking Dist</span>
+            <span className="text-[9px] text-slate-500 uppercase">{t("live.twin.estBraking")}</span>
             <span className={`font-bold mt-0.5 ${collisionRisk ? "text-red-400 font-black animate-pulse" : "text-cyan-400"}`}>
               {brakingDistance.toFixed(1)} cm
             </span>
           </div>
           <div className="bg-slate-900/20 p-2 rounded border border-slate-900 flex flex-col justify-between">
-            <span className="text-[9px] text-slate-500 uppercase">Obstacle Gap</span>
+            <span className="text-[9px] text-slate-500 uppercase">{t("live.twin.gap")}</span>
             <span className="text-emerald-400 font-bold mt-0.5">
               {distance.toFixed(1)} cm
             </span>
           </div>
         </div>
         <div className="text-[9px] text-slate-600 font-mono leading-tight">
-          * Calculated as: <code className="text-slate-400">Sliding Distance = Velocity ({velocity} m/s) × Latency ({latencyMs} ms)</code>. If sliding distance exceeds gap, hardware impact occurs!
+          * {t("live.twin.note", { velocity: velocity.toFixed(2), latency: latencyMs })}
         </div>
       </div>
       

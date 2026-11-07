@@ -1,9 +1,10 @@
-// Pure physics step for the Fleet Dashboard.
+// Pure decision handling for the Fleet Dashboard.
 //
-// IMPORTANT semantics: every read uses the *old* fleet snapshot (velocity,
-// temperature, distance as they were at the start of the step). The function
-// returns the new state for the caller to apply in one batch. It never reads
-// "current" React state — that is what makes it testable and side-effect free.
+// The AGV's motion is NOT computed here: a separate real-time loop (see
+// hooks/useFleetSimulation.ts) moves it at its current velocity while the cloud request is in
+// flight. When the response arrives, applyDecision() only applies what the decision changes
+// (new velocity command, temperature, battery, logs) to the fleet state as it is *now*.
+// It never reads React state, which keeps it testable and side-effect free.
 
 import {
   BATTERY_BASE_DRAIN,
@@ -13,7 +14,6 @@ import {
   DEFAULT_ACTION_SPEED,
   HIGH_LOAD_SPEED,
   HIGH_LOAD_VELOCITY,
-  HP_COLLISION_DAMAGE,
   LOW_BATTERY_THRESHOLD,
   TEMP_BASELINE,
   TEMP_HEATUP,
@@ -30,7 +30,7 @@ export interface FleetState {
   battery: number;
   velocity: number;
   temperature: number;
-  distance: number;
+  distance: number; // live gap to the obstacle (cm), not the configured distance
   currentX: number;
 }
 
@@ -40,6 +40,14 @@ export interface PhysicsStepResult {
   isBlocked: boolean;
   logs: string[];
   shouldContinue: boolean; // whether the autopilot loop may schedule another step
+}
+
+/** What happened while the request was in flight (measured by the motion loop). */
+export interface DecisionWait {
+  speedMps: number; // velocity when the request was sent
+  gapAtSendCm: number; // obstacle gap when the telemetry snapshot was taken
+  slidingCm: number; // distance travelled while waiting for the decision
+  collidedWhileWaiting: boolean; // the AGV hit the obstacle before the decision arrived
 }
 
 type FinalAction = Record<string, any>;
@@ -96,19 +104,16 @@ export function calculateBatteryDrain(
   return drain;
 }
 
-/** Builds the [DECISION] / [PHYSICS] / [WARNING] log lines for a step. Wording is verbatim from the original UI. */
+/** Builds the [DECISION] / [PHYSICS] / [WARNING] log lines for a decision. */
 export function buildPhysicsLogs(
-  oldState: FleetState,
   derived: { newHp: number; newBattery: number; newTemp: number },
   response: SimulateResponse,
   actualLatencyMs: number,
   moveAction: FinalAction | undefined,
-  isCollided: boolean,
+  wait: DecisionWait,
   isBlocked: boolean
 ): string[] {
   const finalAction = response.final_action;
-  const t = actualLatencyMs / 1000;
-  const slidingDist = oldState.velocity * t * 100; // cm
   const { newHp, newBattery, newTemp } = derived;
 
   const logs: string[] = [];
@@ -118,8 +123,8 @@ export function buildPhysicsLogs(
   logs.push(`[DECISION] C2D Action: ${actionDesc} | Latency: ${actualLatencyMs}ms`);
 
   let physicsOutcome = "";
-  if (isCollided) {
-    physicsOutcome = `💥 [COLLISION] Impact! Gap was ${oldState.distance.toFixed(0)}cm, slid ${slidingDist.toFixed(0)}cm. HP reduced to ${newHp}.`;
+  if (wait.collidedWhileWaiting) {
+    physicsOutcome = `💥 [COLLISION] Impact! The decision arrived too late. HP reduced to ${newHp}.`;
   } else if (newHp <= 0) {
     physicsOutcome = `💀 [DEADLOCK] Hardware disabled (HP=0).`;
   } else if (newBattery < LOW_BATTERY_THRESHOLD) {
@@ -131,7 +136,7 @@ export function buildPhysicsLogs(
   }
 
   logs.push(
-    `[PHYSICS] V: ${oldState.velocity.toFixed(2)}m/s | Sliding: ${slidingDist.toFixed(1)}cm | Gap: ${oldState.distance.toFixed(0)}cm | Temp: ${newTemp}°C | ${physicsOutcome}`
+    `[PHYSICS] V: ${wait.speedMps.toFixed(2)}m/s | Sliding: ${wait.slidingCm.toFixed(1)}cm | Gap: ${wait.gapAtSendCm.toFixed(0)}cm | Temp: ${newTemp}°C | ${physicsOutcome}`
   );
 
   if (newTemp > TEMP_OVERHEAT_THRESHOLD) {
@@ -142,85 +147,54 @@ export function buildPhysicsLogs(
 }
 
 /**
- * Run one physics step from an old fleet snapshot + simulation response.
- * Pure: returns the new state + logs; the caller applies them.
+ * Apply a cloud decision to the fleet as it is at the moment the response arrives.
+ * `state` is the live state (the motion loop has already moved the AGV while waiting);
+ * `wait` describes what happened during that time. Pure: returns new state + logs.
  */
-export function applyPhysicsStep(
+export function applyDecision(
   state: FleetState,
   response: SimulateResponse,
-  jitterEnabled: boolean
+  jitterEnabled: boolean,
+  wait: DecisionWait
 ): PhysicsStepResult {
   const finalAction = response.final_action;
   const actualLatencyMs = computeActualLatencyMs(response.latency_ms, jitterEnabled);
   const isBlocked = response.pipeline_trace.some((step) => step.status === "BLOCKED");
-
-  const t = actualLatencyMs / 1000;
-  const slidingDist = state.velocity * t * 100; // cm
   const moveAction = findMoveAction(finalAction);
+  const isCollided = wait.collidedWhileWaiting;
 
-  let newHp = state.hp;
-  let newBattery = state.battery;
-  let newTemp = state.temperature;
-  let newVelocity = state.velocity;
-  let newDistance = state.distance;
-  let newCurrentX = state.currentX;
-  let isCollided = false;
+  // Temperature transition (may flag thermal throttle)
+  const { newTemp, thermalThrottleDrain } = calculateTemperatureChange(state, finalAction, moveAction);
 
-  // 1. Collision check & position/speed update
-  if (slidingDist > state.distance && state.distance > 0) {
-    newHp = Math.max(0, newHp - HP_COLLISION_DAMAGE);
-    isCollided = true;
-    // Vehicle travels the remaining distance, hits the wall, and stops.
-    newCurrentX = Number((newCurrentX + state.distance / 100).toFixed(2));
-    newDistance = 0;
-    newVelocity = 0;
-  } else {
-    // Safe slide during the latency period.
-    newCurrentX = Number((newCurrentX + slidingDist / 100).toFixed(2));
-    newDistance = Math.max(0, Number((newDistance - slidingDist).toFixed(1)));
-    newVelocity = moveAction ? (moveAction.speed || DEFAULT_ACTION_SPEED) / 100 : 0;
-  }
+  // Battery drain
+  const newBattery = Math.max(0, state.battery - calculateBatteryDrain(finalAction, thermalThrottleDrain));
 
-  // 2. Temperature transition (may flag thermal throttle)
-  const { newTemp: updatedTemp, thermalThrottleDrain } = calculateTemperatureChange(
-    state,
-    finalAction,
-    moveAction
-  );
-  newTemp = updatedTemp;
-
-  // 3. Battery drain
-  const batteryDrain = calculateBatteryDrain(finalAction, thermalThrottleDrain);
-  newBattery = Math.max(0, newBattery - batteryDrain);
-
-  // 4. Logs
   const logs = buildPhysicsLogs(
-    state,
-    { newHp, newBattery, newTemp },
+    { newHp: state.hp, newBattery, newTemp },
     response,
     actualLatencyMs,
     moveAction,
-    isCollided,
+    wait,
     isBlocked
   );
 
   const shouldContinue = !(
-    newHp <= 0 ||
+    state.hp <= 0 ||
     newBattery < LOW_BATTERY_THRESHOLD ||
     isBlocked ||
     isCollided ||
     !moveAction
   );
 
+  // The decision is a velocity command: "move" sets the speed, anything else stops the AGV.
+  const commandedVelocity = moveAction ? (moveAction.speed || DEFAULT_ACTION_SPEED) / 100 : 0;
+
   return {
     state: {
-      hp: newHp,
+      ...state,
       battery: newBattery,
-      // On stop the original forces velocity to 0; caller applies this directly.
-      velocity: shouldContinue ? newVelocity : 0,
       temperature: newTemp,
-      distance: newDistance,
-      currentX: newCurrentX,
+      velocity: shouldContinue && !isCollided ? commandedVelocity : 0,
     },
     isCollided,
     isBlocked,

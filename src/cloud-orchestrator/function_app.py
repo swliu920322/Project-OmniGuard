@@ -45,6 +45,11 @@ app = func.AsgiFunctionApp(
     http_auth_level=func.AuthLevel.ANONYMOUS
 )
 
-# Register Embodied AI brain blueprint
-from embodied_brain import brain_bp
-app.register_blueprint(brain_bp)
+# Register the IoT trigger only when its connection string is set: without one the
+# Functions host fails to start at all, which would take the HTTP API down too.
+import os
+if os.environ.get("IotHubEventHubConnectionString"):
+    from embodied_brain import brain_bp
+    app.register_blueprint(brain_bp)
+else:
+    logging.info("IotHubEventHubConnectionString not set: IoT telemetry trigger disabled (HTTP API only).")

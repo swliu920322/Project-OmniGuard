@@ -85,7 +85,7 @@ class TestGetCosmosContainer:
         expected_key = "dGVzdC1rZXk="
         with patch.dict(os.environ, {"COSMOS_ENDPOINT": expected_endpoint,
                                      "COSMOS_KEY": expected_key}):
-            with patch("embodied_brain.utils.CosmosClient") as MockCosmos:
+            with patch("azure.cosmos.CosmosClient") as MockCosmos:
                 mock_client = MagicMock()
                 mock_db = MagicMock()
                 mock_container = MagicMock()

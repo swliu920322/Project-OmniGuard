@@ -1,0 +1,3 @@
+# Only the optional device simulator needs these (it requires a real IoT Hub; see README here)
+azure-iot-device
+python-dotenv

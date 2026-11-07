@@ -237,7 +237,7 @@ out
 
 new
 
-# Local deployment secrets / UI state (copy from the *.example.json)
+# Local deployment inputs and secrets; create from the *.example.json files
 .azure/main.parameters.json
 .env
 .env.*

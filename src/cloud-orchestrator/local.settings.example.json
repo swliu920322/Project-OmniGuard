@@ -1,22 +1,12 @@
 {
+  "_comment": "JSON has no comments, so notes live here (keys outside Values do not become env vars). Copy to local.settings.json and fill in; that file is git-ignored, never commit it. FUNCTIONS_WORKER_RUNTIME and AzureWebJobsStorage are required by the Functions host; dev storage is fine locally (a 'storage unhealthy' log line is harmless for the HTTP API). LLM_PROVIDER: deepseek | openai | azure | openai-compatible; see docs/tutorials/quickstart.md for each provider's keys and defaults. Cosmos DB and IoT Hub are optional: the IoT trigger registers only if IotHubEventHubConnectionString is set, and device twins are stored only if COSMOS_ENDPOINT and COSMOS_KEY are set.",
   "IsEncrypted": false,
   "Values": {
     "FUNCTIONS_WORKER_RUNTIME": "python",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "LOCAL_MOCK_MODE": "false",
-
     "LLM_PROVIDER": "deepseek",
     "OPENAI_BASE_URL": "https://api.deepseek.com",
-    "OPENAI_API_KEY": "YOUR_DEEPSEEK_KEY",
-    "OPENAI_MODEL_NAME": "deepseek-chat",
-
-    "BRAIN_LLM_PROVIDER": "",
-    "BRAIN_LLM_ENDPOINT": "",
-    "BRAIN_LLM_API_KEY": "",
-    "BRAIN_MODEL_NAME": "",
-
-    "COSMOS_ENDPOINT": "",
-    "COSMOS_KEY": "",
-    "IotHubServiceConnectionString": ""
+    "OPENAI_API_KEY": "YOUR_API_KEY",
+    "OPENAI_MODEL_NAME": "deepseek-chat"
   }
 }

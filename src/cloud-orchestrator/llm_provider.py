@@ -43,38 +43,49 @@ def _load_local_settings():
 _load_local_settings()
 
 
+# OpenAI-compatible services share one client; presets only supply default URL and model.
+# Separate presets avoid sending an OpenAI key to DeepSeek when the URL is left unset.
+OPENAI_COMPATIBLE_PRESETS = {
+    "openai": {"endpoint": "https://api.openai.com/v1", "model": "gpt-4o-mini"},
+    "deepseek": {"endpoint": "https://api.deepseek.com", "model": "deepseek-chat"},
+}
+AZURE_ALIASES = {"azure", "azure_openai", "azure-openai"}
+GENERIC_COMPATIBLE_ALIASES = {"openai-compatible", "compatible"}
+
+
+def _resolve_provider_name(service_name: str) -> str:
+    """Pick the provider name: {SERVICE}_LLM_PROVIDER, then LLM_PROVIDER, then infer.
+    """
+    name = ""
+    if service_name:
+        name = os.environ.get(f"{service_name}_LLM_PROVIDER", "").strip()
+    if not name:
+        name = os.environ.get("LLM_PROVIDER", "").strip()
+    if not name:
+        # Keeps old Azure setups working: an Azure endpoint means Azure, otherwise DeepSeek.
+        name = "azure" if os.environ.get("AZURE_OPENAI_ENDPOINT", "").strip() else "deepseek"
+    return name.lower()
+
+
 def resolve_llm_config(service_name: str = "") -> LLMConfig:
     """Resolve LLM provider configuration from env vars.
 
-    Provider selection (priority):
-      1. {SERVICE}_LLM_PROVIDER (e.g., BRAIN_LLM_PROVIDER)
-      2. LLM_PROVIDER
-      3. default: azure
-
-    Azure provider:
-      Endpoint: AZURE_OPENAI_ENDPOINT | OPENAI_BASE_URL
-      Key:      AZURE_OPENAI_API_KEY | OPENAI_API_KEY
-      Model:    {SERVICE}_DEPLOYMENT_NAME | AZURE_OPENAI_DEPLOYMENT_NAME | OPENAI_DEPLOYMENT_NAME -> gpt-4o-mini
-      Version:  AZURE_OPENAI_API_VERSION -> 2024-10-01-preview
-
-    OpenAI-compatible (DeepSeek, Together, etc.):
-      Endpoint: {SERVICE}_LLM_ENDPOINT | OPENAI_BASE_URL -> https://api.deepseek.com
+    Provider (LLM_PROVIDER, or {SERVICE}_LLM_PROVIDER for one service):
+      azure     Azure OpenAI. Uses AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY,
+                {SERVICE}_DEPLOYMENT_NAME | AZURE_OPENAI_DEPLOYMENT_NAME (default gpt-4o-mini),
+                AZURE_OPENAI_API_VERSION.
+      openai    OpenAI. Defaults: https://api.openai.com/v1, gpt-4o-mini.
+      deepseek  DeepSeek. Defaults: https://api.deepseek.com, deepseek-chat.
+      openai-compatible  Any other OpenAI-compatible service; OPENAI_BASE_URL is required.
+    For openai / deepseek / openai-compatible:
+      Endpoint: {SERVICE}_LLM_ENDPOINT | OPENAI_BASE_URL | preset default
       Key:      {SERVICE}_LLM_API_KEY | OPENAI_API_KEY
-      Model:    {SERVICE}_MODEL_NAME | OPENAI_MODEL_NAME -> deepseek-chat
+      Model:    {SERVICE}_MODEL_NAME | OPENAI_MODEL_NAME | preset default
+    If no provider is set: azure when AZURE_OPENAI_ENDPOINT is set, otherwise deepseek.
     """
-    provider_str = ""
-    if service_name:
-        provider_str = os.environ.get(f"{service_name}_LLM_PROVIDER", "").strip()
-    if not provider_str:
-        provider_str = os.environ.get("LLM_PROVIDER", "azure").strip()
+    provider_name = _resolve_provider_name(service_name)
 
-    provider = (
-        LLMProviderType.OPENAI_COMPATIBLE
-        if provider_str.lower() in ("openai", "deepseek")
-        else LLMProviderType.AZURE_OPENAI
-    )
-
-    if provider == LLMProviderType.AZURE_OPENAI:
+    if provider_name in AZURE_ALIASES:
         endpoint = (os.environ.get("AZURE_OPENAI_ENDPOINT") or os.environ.get("OPENAI_BASE_URL") or "").strip()
         api_key = (os.environ.get("AZURE_OPENAI_API_KEY") or os.environ.get("OPENAI_API_KEY") or "").strip()
 
@@ -90,28 +101,34 @@ def resolve_llm_config(service_name: str = "") -> LLMConfig:
             ).strip()
 
         api_version = os.environ.get("AZURE_OPENAI_API_VERSION", "2024-10-01-preview").strip()
-        return LLMConfig(provider, endpoint, api_key, model_name, api_version)
+        return LLMConfig(LLMProviderType.AZURE_OPENAI, endpoint, api_key, model_name, api_version)
 
-    else:
-        endpoint = ""
-        if service_name:
-            endpoint = os.environ.get(f"{service_name}_LLM_ENDPOINT", "").strip()
-        if not endpoint:
-            endpoint = os.environ.get("OPENAI_BASE_URL", "https://api.deepseek.com").strip()
+    # Fail on unknown names instead of silently falling back to Azure (e.g. a typo like "azur").
+    if provider_name not in OPENAI_COMPATIBLE_PRESETS and provider_name not in GENERIC_COMPATIBLE_ALIASES:
+        valid = sorted(AZURE_ALIASES | set(OPENAI_COMPATIBLE_PRESETS) | GENERIC_COMPATIBLE_ALIASES)
+        raise ValueError(f"Unknown LLM_PROVIDER '{provider_name}'. Valid values: {', '.join(valid)}")
 
-        api_key = ""
-        if service_name:
-            api_key = os.environ.get(f"{service_name}_LLM_API_KEY", "").strip()
-        if not api_key:
-            api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    preset = OPENAI_COMPATIBLE_PRESETS.get(provider_name, {})
 
-        model_name = ""
-        if service_name:
-            model_name = os.environ.get(f"{service_name}_MODEL_NAME", "").strip()
-        if not model_name:
-            model_name = os.environ.get("OPENAI_MODEL_NAME", "deepseek-chat").strip()
+    endpoint = ""
+    if service_name:
+        endpoint = os.environ.get(f"{service_name}_LLM_ENDPOINT", "").strip()
+    if not endpoint:
+        endpoint = (os.environ.get("OPENAI_BASE_URL", "").strip() or preset.get("endpoint", ""))
 
-        return LLMConfig(provider, endpoint, api_key, model_name)
+    api_key = ""
+    if service_name:
+        api_key = os.environ.get(f"{service_name}_LLM_API_KEY", "").strip()
+    if not api_key:
+        api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+
+    model_name = ""
+    if service_name:
+        model_name = os.environ.get(f"{service_name}_MODEL_NAME", "").strip()
+    if not model_name:
+        model_name = (os.environ.get("OPENAI_MODEL_NAME", "").strip() or preset.get("model", ""))
+
+    return LLMConfig(LLMProviderType.OPENAI_COMPATIBLE, endpoint, api_key, model_name)
 
 
 def create_llm_client(config: LLMConfig) -> Union[OpenAI, AzureOpenAI]:
@@ -125,7 +142,7 @@ def create_llm_client(config: LLMConfig) -> Union[OpenAI, AzureOpenAI]:
         )
     else:
         if not config.endpoint or not config.api_key:
-            raise ValueError("Missing OPENAI_BASE_URL and OPENAI_API_KEY")
+            raise ValueError("Missing OPENAI_API_KEY (and OPENAI_BASE_URL for openai-compatible providers)")
         return OpenAI(base_url=config.endpoint, api_key=config.api_key)
 
 
@@ -140,7 +157,7 @@ def create_async_llm_client(config: LLMConfig) -> Union[AsyncOpenAI, AsyncAzureO
         )
     else:
         if not config.endpoint or not config.api_key:
-            raise ValueError("Missing OPENAI_BASE_URL and OPENAI_API_KEY")
+            raise ValueError("Missing OPENAI_API_KEY (and OPENAI_BASE_URL for openai-compatible providers)")
         return AsyncOpenAI(base_url=config.endpoint, api_key=config.api_key)
 
 

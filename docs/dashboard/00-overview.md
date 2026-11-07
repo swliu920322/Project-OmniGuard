@@ -65,6 +65,30 @@ Live mode calls the configured backend and can display observed request timing. 
 - a deployed Azure call is evidence only for the named environment and time;
 - model and provider metadata should be captured with any reported latency.
 
+### How the live page works
+
+- **The car moves on its own.** While a run is active, a motion loop moves the AGV at its current speed every frame. The cloud request runs in the background; its decision only changes the car when it arrives (for example a stop command). If the car reaches the obstacle first, it collides before the decision comes back.
+- **Settings and car state are separate.** Obstacle distance, speed cap, X coordinate, tenant and prompts are settings and do not change while driving. The live gap shown on the twin is `distance - travelled`.
+- **Start and Manual Single Step reset the car**, not the settings: position, HP, battery, temperature, speed, alert, logs and the latency readout go back to the scenario's starting state. "Reset all" also restores the settings.
+- **Scenario presets** load settings plus a starting car state and say which pipeline path to expect. After a run the observed path is compared with the expectation, and "Run all scenarios" does this for every preset in turn (spaced by the backend rate limit of one request per five seconds).
+
+| Preset | Starting state | Expected path | Model calls |
+|---|---|---|---|
+| Normal | 80 cm, 0.5 m/s | Router, Safety PASS, Compiler | 3 |
+| Worker appears | 12 cm, 1.8 m/s | Safety blocks, Compiler skipped | 2 |
+| Fallen cargo | 28 cm | Safety blocks, Compiler skipped | 2 |
+| Overheating | 85 °C | Router flags a sensor fault | 1 (model-dependent) |
+| Low battery | battery 3% | Backend hard gate | 0 |
+| Hardware deadlock | HP 0 | Backend hard gate | 0 |
+
+The Overheating expectation depends on the model's judgement, so a mismatch there is a finding rather than a bug. The other expectations are rules in the backend or the 30 cm safety limit.
+
+The pipeline-timing panel shows only what the backend reports: per-agent latency and runtime, plus Cosmos figures when device-twin storage was actually used. The topology tab is a reference diagram of the Azure deployment, which is not deployed now.
+
+### Languages
+
+UI text lives in `src/client-edge/src/locales/translations.ts` (English and Chinese, switch in the sidebar). Add every key to both languages. Audit log lines produced by `lib/physics.ts` stay in English. The Fleet, Theorem and Compare pages are not translated yet.
+
 Current behavior is defined by `src/client-edge/src/app/dashboard/live/page.tsx`.
 
 ## Relationship to benchmark results

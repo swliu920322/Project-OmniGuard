@@ -1,5 +1,7 @@
 # 🌐 Edge Simulator 调试与双端联调运行指南
 
+> **Optional component.** This walkthrough needs a real Azure IoT Hub and Event Hub connection strings (`IotHubEventHubConnectionString`, `IotHubServiceConnectionString`, `IOTHUB_DEVICE_CONNECTION_STRING`). They are not provided and the Azure environment has been torn down. The dashboard and benchmarks do not depend on it. Extra dependencies are in `requirements.txt` here; `function_app.py` registers the IoT trigger only when `IotHubEventHubConnectionString` is set.
+
 本指南详细阐述如何从零开始配置并运行物理设备模拟器与云端控制面（Azure Functions）的本地双端联调。
 
 ## 1. 神经通信架构流向

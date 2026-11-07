@@ -259,9 +259,11 @@ async def simulate_agent_endpoint(request: Request):
         }
         t0 = time.time()
         _cosmos_ru = 0
+        cosmos_ok = False  # True only if the twin was really written to Cosmos DB
         try:
             container = get_cosmos_container()
             container.upsert_item(twin_data)
+            cosmos_ok = True
             logging.info("[💾 模拟器持久化] 模拟器 twin 状态已写入 Cosmos DB。")
             _cosmos_ru = getattr(container.client_connection, 'last_request_charge', _cosmos_ru)
         except Exception as ce:
@@ -372,15 +374,15 @@ async def simulate_agent_endpoint(request: Request):
             "final_action": final_action,
             "pipeline_trace": pipeline_trace,
             "cloud_metrics": {
-                "cosmos_db_ru_charge": _cosmos_ru or 10.67,
-                "cosmos_write_latency_ms": t_cosmos_write,
-                "cosmos_read_latency_ms": t_cosmos_read,
+                # Cosmos numbers are reported only when Cosmos was actually used (None otherwise).
+                "cosmos_db_ru_charge": (_cosmos_ru or None) if cosmos_ok else None,
+                "cosmos_write_latency_ms": t_cosmos_write if cosmos_ok else None,
+                "cosmos_read_latency_ms": t_cosmos_read if cosmos_ok else None,
                 "agent_1_latency_ms": t_agent_1,
                 "agent_2_latency_ms": t_agent_2,
                 "agent_3_latency_ms": t_agent_3,
-                "execution_environment": "Azure Functions (Linux Consumption)",
-                "vnet_isolation": "Active (BackendSubnet)",
-                "iot_hub_routing": "Event Hubs Compatible Endpoint"
+                # Detected from the runtime instead of a fixed claim about the deployment.
+                "execution_environment": "azure-functions" if os.environ.get("WEBSITE_INSTANCE_ID") else "local",
             }
         }
         

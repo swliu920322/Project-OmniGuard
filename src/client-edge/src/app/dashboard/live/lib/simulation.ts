@@ -14,11 +14,16 @@ export interface SimulateResponse {
   final_action: Array<Record<string, any>>;
   pipeline_trace: PipelineStep[];
   cloud_metrics?: {
-    cosmos_db_ru_charge: number;
-    cosmos_write_latency_ms: number;
+    // Cosmos fields are null when device-twin storage is not configured.
+    cosmos_db_ru_charge: number | null;
+    cosmos_write_latency_ms: number | null;
+    cosmos_read_latency_ms?: number | null;
+    agent_1_latency_ms?: number;
+    agent_2_latency_ms?: number;
+    agent_3_latency_ms?: number;
     execution_environment: string;
-    vnet_isolation: string;
-    iot_hub_routing: string;
+    vnet_isolation?: string;
+    iot_hub_routing?: string;
   };
 }
 

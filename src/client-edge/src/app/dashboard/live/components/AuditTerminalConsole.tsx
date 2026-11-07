@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useI18n } from "@/components/I18nProvider";
 
 interface AuditTerminalConsoleProps {
   response: any | null;
@@ -8,6 +9,7 @@ interface AuditTerminalConsoleProps {
 }
 
 export default function AuditTerminalConsole({ response, logs }: AuditTerminalConsoleProps) {
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<"json" | "physics">("physics");
   
   return (
@@ -26,13 +28,13 @@ export default function AuditTerminalConsole({ response, logs }: AuditTerminalCo
             onClick={() => setActiveTab("physics")}
             className={`px-2 py-0.5 rounded transition ${activeTab === "physics" ? "bg-slate-950 text-cyan-400 font-bold" : "text-slate-500 hover:text-slate-400"}`}
           >
-            Physics Logs ({logs.length})
+            {t("live.console.physics", { n: logs.length })}
           </button>
           <button 
             onClick={() => setActiveTab("json")}
             className={`px-2 py-0.5 rounded transition ${activeTab === "json" ? "bg-slate-950 text-cyan-400 font-bold" : "text-slate-500 hover:text-slate-400"}`}
           >
-            Raw API
+            {t("live.console.raw")}
           </button>
         </div>
       </div>
@@ -45,7 +47,7 @@ export default function AuditTerminalConsole({ response, logs }: AuditTerminalCo
             </pre>
           ) : (
             <div className="text-slate-600 italic py-10 text-center">
-              // Initialize simulation to output raw JSON telemetry payload.
+              {t("live.console.emptyJson")}
             </div>
           )
         ) : (
@@ -68,7 +70,7 @@ export default function AuditTerminalConsole({ response, logs }: AuditTerminalCo
             </div>
           ) : (
             <div className="text-slate-600 italic py-10 text-center">
-              // Physics environment events and latency metrics will stream here.
+              {t("live.console.emptyLogs")}
             </div>
           )
         )}

@@ -3,6 +3,7 @@
 
 // ---- Timing / latency -------------------------------------------------------
 export const JITTER_DELAY_MS = 2500; // Network jitter simulation spike
+export const REQUEST_GAP_MS = 5200; // Backend allows 1 request per 5s per client; the scenario suite spaces runs by this
 export const AUTOPILOT_INTERVAL_MS = 800; // Delay between autopilot cycles (after each step completes)
 export const LATENCY_HIGH_THRESHOLD_MS = 2000; // Above this the latency gauge turns red
 export const DEFAULT_DISPLAY_LATENCY_MS = 800; // Latency shown in the visualizer before any response arrives
@@ -46,25 +47,5 @@ export const DEFAULT_CONFIGS: Record<string, TenantPromptConfig> = {
     router: "Classify telemetry into: [HUMAN_DETECTED, STATIC_OBSTACLE, EMERGENCY]. Return ONLY the classification string.",
     safety: "Strict Rule: If HUMAN_DETECTED, the only allowed action is 'stop'. No bypassing.",
     schema: "[{'action': 'stop'|'backward'|'voice_alert', 'speed': int}]"
-  }
-};
-
-// ---- Tenant scenario descriptors (UI copy) ---------------------------------
-export interface TenantScenario {
-  name: string;
-  desc: string;
-  triggerDist: string;
-}
-
-export const TENANT_SCENARIOS: Record<string, TenantScenario> = {
-  "Tenant-Alpha": {
-    name: "Data Center Patrol",
-    desc: "Critical fire/obstacle detection. Block action below 30cm limit.",
-    triggerDist: "30cm"
-  },
-  "Tenant-Beta": {
-    name: "Hospital Delivery",
-    desc: "Emergency safety stop. Force block on human detection.",
-    triggerDist: "human detected / critical block"
   }
 };

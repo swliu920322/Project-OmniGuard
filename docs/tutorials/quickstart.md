@@ -42,6 +42,27 @@ From the repository root:
 
 Edit local.settings.json with the provider and model configuration required for your environment. The local settings file is not documentation and should not be committed.
 
+### Choosing an LLM provider
+
+Set `LLM_PROVIDER` in `local.settings.json` (or as an environment variable). Only the keys for the chosen provider are read.
+
+| `LLM_PROVIDER` | Keys | Defaults |
+|---|---|---|
+| `deepseek` | `OPENAI_API_KEY` | `https://api.deepseek.com`, `deepseek-chat` |
+| `openai` | `OPENAI_API_KEY` | `https://api.openai.com/v1`, `gpt-4o-mini` |
+| `azure` | `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_DEPLOYMENT_NAME` (optional `AZURE_OPENAI_API_VERSION`) | deployment `gpt-4o-mini` |
+| `openai-compatible` | `OPENAI_API_KEY`, `OPENAI_BASE_URL` (required) | none |
+
+`OPENAI_BASE_URL` and `OPENAI_MODEL_NAME` override the defaults for the first three rows. To give the three-agent pipeline a different model from the rest, set `BRAIN_LLM_PROVIDER`, `BRAIN_LLM_API_KEY`, `BRAIN_LLM_ENDPOINT` and `BRAIN_MODEL_NAME` (Azure: `BRAIN_DEPLOYMENT_NAME`). If `LLM_PROVIDER` is unset, Azure is used when `AZURE_OPENAI_ENDPOINT` is set, otherwise DeepSeek. An unrecognised value raises an error instead of silently falling back.
+
+Switching to OpenAI, for example:
+
+    "LLM_PROVIDER": "openai",
+    "OPENAI_API_KEY": "sk-...",
+    "OPENAI_MODEL_NAME": "gpt-4o-mini"
+
+Only DeepSeek has been exercised against a live API for this project; the other providers are covered by configuration tests, not live calls.
+
 ## 3. Frontend environment
 
     cd src/client-edge

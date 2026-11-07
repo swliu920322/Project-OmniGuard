@@ -11,7 +11,6 @@ import requests
 from urllib.parse import quote
 from collections import OrderedDict
 from openai_config import get_azure_openai_client, get_openai_credentials, get_llm_config
-from azure.cosmos import CosmosClient
 
 SCENARIO_REGISTRY_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scenario_registry.json")
 
@@ -25,6 +24,8 @@ def get_cosmos_container():
         key = os.getenv("COSMOS_KEY")
         if not endpoint or not key:
             raise ValueError("Cosmos DB environment variables missing.")
+        # Imported here so the backend starts without azure-cosmos when Cosmos is not used.
+        from azure.cosmos import CosmosClient
         client = CosmosClient(endpoint, credential=key)
         database = client.get_database_client("OmniGuardDB")
         _cosmos_container = database.get_container_client("DeviceTwins")

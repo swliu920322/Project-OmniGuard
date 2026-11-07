@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DEFAULT_DISPLAY_LATENCY_MS, JITTER_DELAY_MS, LATENCY_HIGH_THRESHOLD_MS, TENANT_SCENARIOS } from "./config/simulation";
+import { DEFAULT_DISPLAY_LATENCY_MS, JITTER_DELAY_MS, LATENCY_HIGH_THRESHOLD_MS } from "./config/simulation";
+import { useI18n } from "@/components/I18nProvider";
 import { computeActualLatencyMs } from "./lib/simulation";
 import ControlPanel from "./components/ControlPanel";
 import PhysicalTwinVisualizer from "./components/PhysicalTwinVisualizer";
@@ -19,13 +20,15 @@ export default function FleetDashboard() {
   const [viewMode, setViewMode] = useState<"physical" | "topology" | "sandbox">("physical");
 
   const fleet = useFleetSimulation();
+  const { t } = useI18n();
+  const tenantKey = fleet.tenantId === "Tenant-Beta" ? "beta" : "alpha";
 
   if (!mounted) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center font-mono">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-cyan-400">Loading Fleet Control Plane...</span>
+          <span className="text-cyan-400">{t("live.loading")}</span>
         </div>
       </div>
     );
@@ -38,15 +41,15 @@ export default function FleetDashboard() {
         <div className="flex items-center space-x-3">
           <div className="w-3 h-3 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.8)]"></div>
           <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">
-            Embodied AI Fleet Control Plane
+            {t("live.header.title")}
           </h1>
           <span className="text-xs uppercase bg-slate-900 px-2.5 py-1 rounded border border-slate-800 text-slate-400 font-mono">
-            Digital Twin v2.5
+            {t("live.header.badge")}
           </span>
         </div>
         <div className="flex items-center space-x-4">
           <div className="text-xs font-mono text-slate-500">
-            Sensor Refresh Interval: <span className="text-cyan-400 font-bold">1Hz</span> (Real-Time MQTT Loop)
+            {t("live.header.refresh")}
           </div>
         </div>
       </header>
@@ -58,8 +61,8 @@ export default function FleetDashboard() {
       {fleet.error && (
         <div className="bg-red-950/20 border-y border-red-900/50 py-3 px-6 text-sm text-red-400 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="text-base font-bold">⚠️ Connection Error:</span>
-            <span>{fleet.error}. Verify local Function host is running on port 7071.</span>
+            <span className="text-base font-bold">⚠️ {t("live.error.label")}</span>
+            <span>{fleet.error}. {t("live.error.hint")}</span>
           </div>
           {/* Error clearing is a local page concern, not part of the simulation hook. */}
           <button
@@ -86,7 +89,7 @@ export default function FleetDashboard() {
                       : "text-slate-500 hover:text-slate-400"
                   }`}
                 >
-                  Physical Twin
+                  {t("live.views.physical")}
                 </button>
                 <button
                   onClick={() => setViewMode("topology")}
@@ -96,7 +99,7 @@ export default function FleetDashboard() {
                       : "text-slate-500 hover:text-slate-400"
                   }`}
                 >
-                  Cloud Topology
+                  {t("live.views.topology")}
                 </button>
                 <button
                   onClick={() => setViewMode("sandbox")}
@@ -106,7 +109,7 @@ export default function FleetDashboard() {
                       : "text-slate-500 hover:text-slate-400"
                   }`}
                 >
-                  Sandbox Studio
+                  {t("live.views.sandbox")}
                 </button>
               </div>
               <span
@@ -118,16 +121,17 @@ export default function FleetDashboard() {
                       : "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
                 }`}
               >
-                {fleet.hp <= 0 ? "DEADLOCK" : fleet.isAlert ? "Safety Halt" : "Active"}
+                {fleet.hp <= 0 ? t("live.status.deadlock") : fleet.isAlert ? t("live.status.safetyHalt") : t("live.status.active")}
               </span>
             </div>
 
             {/* Render Visual twin or Cloud topology flowchart */}
             {viewMode === "physical" ? (
               <PhysicalTwinVisualizer
-                distance={fleet.distance}
+                distance={fleet.gap}
                 currentX={fleet.currentX}
                 robotPosition={fleet.robotPosition}
+                moving={fleet.moving}
                 isAlert={fleet.isAlert}
                 hp={fleet.hp}
                 battery={fleet.battery}
@@ -157,7 +161,7 @@ export default function FleetDashboard() {
 
           {/* C2D Motor Action Indicator */}
           <div className="border border-slate-900 bg-slate-950 rounded-xl p-4 mt-4">
-            <h3 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold mb-3">Gateway Motor Actions (C2D Output)</h3>
+            <h3 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold mb-3">{t("live.actions.title")}</h3>
             {fleet.response ? (
               <div className="space-y-2">
                 {fleet.response.final_action.map((action, idx) => (
@@ -177,14 +181,14 @@ export default function FleetDashboard() {
                       {Object.entries(action)
                         .filter(([k]) => k !== "action")
                         .map(([k, v]) => `${k}:${v}`)
-                        .join(" | ") || "Immediate Safety Stop"}
+                        .join(" | ") || t("live.actions.immediateStop")}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="text-xs font-mono text-slate-600 text-center py-4 italic">
-                Awaiting telemetry evaluation...
+                {t("live.actions.awaiting")}
               </div>
             )}
           </div>
@@ -194,17 +198,15 @@ export default function FleetDashboard() {
         <div className="lg:col-span-4 border border-slate-900 bg-slate-900/10 rounded-2xl p-5 flex flex-col justify-between shadow-lg backdrop-blur-sm">
           <div>
             <h2 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold mb-6">
-              Multi-Agent Orchestration Blueprint
+              {t("live.orchestration.title")}
             </h2>
 
-            <AgentOrchestratorFlow response={fleet.response} triggerDist={fleet.tenantTriggerDist} />
+            <AgentOrchestratorFlow response={fleet.response} triggerDist={t(`live.tenant.${tenantKey}.target`)} />
           </div>
 
           {/* Quick explanations */}
           <div className="text-[10px] text-slate-500 border-t border-slate-900 pt-4 mt-6 leading-relaxed">
-            <span className="font-bold text-slate-400 uppercase">Verification Rule:</span> If Agent 2 triggers{" "}
-            <span className="text-red-400">BLOCKED</span>, the pipeline immediately short-circuits. Agent 3 shows{" "}
-            <span className="text-slate-600 font-bold">SKIPPED</span> to save LLM tokens and guarantee low-latency safety overrides.
+            {t("live.orchestration.rule")}
           </div>
         </div>
 
@@ -213,12 +215,12 @@ export default function FleetDashboard() {
           <div className="flex flex-col h-full justify-between space-y-5">
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">Telemetry Audit Logs</h2>
+                <h2 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold">{t("live.logs.title")}</h2>
 
                 {/* Latency Gauge */}
                 {fleet.response && (
                   <div className="flex items-center space-x-1.5 font-mono text-xs text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
-                    <span>Latency:</span>
+                    <span>{t("live.logs.latency")}:</span>
                     <span
                       className={`font-bold ${
                         computeActualLatencyMs(fleet.response.latency_ms, fleet.jitterEnabled) > LATENCY_HIGH_THRESHOLD_MS
@@ -233,7 +235,10 @@ export default function FleetDashboard() {
               </div>
 
               {/* Infrastructure Telemetry Panel */}
-              <InfraTelemetryPanel metrics={fleet.response?.cloud_metrics} />
+              <InfraTelemetryPanel
+                metrics={fleet.response?.cloud_metrics}
+                totalMs={fleet.response ? computeActualLatencyMs(fleet.response.latency_ms, fleet.jitterEnabled) : undefined}
+              />
 
               {/* Black Terminal Code Console */}
               <AuditTerminalConsole response={fleet.response} logs={fleet.collisionLogs} />
@@ -242,14 +247,14 @@ export default function FleetDashboard() {
             {/* Platform statistics */}
             <div className="border border-slate-900 bg-slate-950 rounded-xl p-3 flex justify-around text-center text-xs font-mono">
               <div>
-                <div className="text-slate-500 text-[10px] uppercase">Latency</div>
+                <div className="text-slate-500 text-[10px] uppercase">{t("live.stats.latency")}</div>
                 <div className="text-cyan-400 font-bold text-sm mt-0.5">
                   {fleet.response ? `${computeActualLatencyMs(fleet.response.latency_ms, fleet.jitterEnabled)}ms` : "--"}
                 </div>
               </div>
               <div className="border-r border-slate-900"></div>
               <div>
-                <div className="text-slate-500 text-[10px] uppercase">Pipeline Status</div>
+                <div className="text-slate-500 text-[10px] uppercase">{t("live.stats.status")}</div>
                 <div
                   className={`font-bold text-sm mt-0.5 uppercase ${
                     fleet.hp <= 0
@@ -261,7 +266,7 @@ export default function FleetDashboard() {
                           : "text-slate-600"
                   }`}
                 >
-                  {fleet.hp <= 0 ? "Deadlock" : fleet.isAlert ? "Blocked" : fleet.response ? "Passed" : "Idle"}
+                  {fleet.hp <= 0 ? t("live.pipeline.deadlock") : fleet.isAlert ? t("live.pipeline.blocked") : fleet.response ? t("live.pipeline.passed") : t("live.pipeline.idle")}
                 </div>
               </div>
             </div>

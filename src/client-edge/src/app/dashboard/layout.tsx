@@ -3,16 +3,18 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useI18n } from "@/components/I18nProvider";
 
 const NAV_ITEMS = [
-  { href: "/dashboard/theorem", label: "🧮 Theorem" },
-  { href: "/dashboard/compare", label: "⚖️ Compare" },
-  { href: "/dashboard", label: "🚚 Fleet" },
-  { href: "/dashboard/live", label: "🔴 Live" },
+  { href: "/dashboard/theorem", icon: "🧮", key: "nav.theorem" },
+  { href: "/dashboard/compare", icon: "⚖️", key: "nav.compare" },
+  { href: "/dashboard", icon: "🚚", key: "nav.fleet" },
+  { href: "/dashboard/live", icon: "🔴", key: "nav.live" },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { t } = useI18n();
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -33,7 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   : "text-slate-500 hover:text-slate-300 border border-transparent"
               }`}
             >
-              {item.label}
+              {item.icon} {t(item.key)}
             </Link>
           ))}
         </div>

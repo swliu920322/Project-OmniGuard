@@ -1,83 +1,58 @@
 "use client";
 
-import React from "react";
+// Timing and runtime of the last backend response. Only values the backend really reports are
+// shown: Cosmos rows appear only when device-twin storage was used, and nothing here claims
+// anything about network isolation.
 
-interface CloudMetrics {
-  cosmos_db_ru_charge: number;
-  cosmos_write_latency_ms: number;
-  cosmos_read_latency_ms?: number;
-  agent_1_latency_ms?: number;
-  agent_2_latency_ms?: number;
-  agent_3_latency_ms?: number;
-  execution_environment: string;
-  vnet_isolation: string;
-  iot_hub_routing: string;
-}
+import React from "react";
+import { useI18n } from "@/components/I18nProvider";
+import type { SimulateResponse } from "../lib/simulation";
 
 interface InfraTelemetryPanelProps {
-  metrics: CloudMetrics | undefined;
+  metrics: SimulateResponse["cloud_metrics"] | undefined;
+  totalMs?: number;
 }
 
-export default function InfraTelemetryPanel({ metrics }: InfraTelemetryPanelProps) {
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between border-b border-slate-900 pb-0.5 last:border-b-0">
+      <span className="text-slate-500">{label}</span>
+      <span className="text-cyan-400 font-bold">{value}</span>
+    </div>
+  );
+}
+
+export default function InfraTelemetryPanel({ metrics, totalMs }: InfraTelemetryPanelProps) {
+  const { t } = useI18n();
+  const ms = (value: number | null | undefined) => (value === null || value === undefined ? "--" : `${value} ms`);
+  const cosmosUsed = metrics?.cosmos_write_latency_ms !== null && metrics?.cosmos_write_latency_ms !== undefined;
+
   return (
     <div className="mb-4 border border-slate-900 bg-slate-950 rounded-xl p-4">
-      <h3 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold mb-3">
-        Infrastructure Telemetry (Cloud Proof)
-      </h3>
-      <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-        <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 flex flex-col justify-between">
-          <span className="text-[10px] text-slate-500 uppercase">Cosmos DB Charge</span>
-          <span className="text-emerald-400 font-bold text-sm mt-1 animate-pulse">
-            {metrics?.cosmos_db_ru_charge ? `${metrics.cosmos_db_ru_charge} RU` : "10.67 RU"}
-          </span>
+      <h3 className="text-xs uppercase tracking-wider font-mono text-slate-500 font-bold mb-3">{t("live.timing.title")}</h3>
+      {!metrics ? (
+        <div className="text-xs font-mono text-slate-600 italic text-center py-3">{t("live.timing.none")}</div>
+      ) : (
+        <div className="space-y-1.5 text-[11px] font-mono">
+          <Row label={t("live.timing.router")} value={ms(metrics.agent_1_latency_ms)} />
+          <Row label={t("live.timing.safety")} value={ms(metrics.agent_2_latency_ms)} />
+          <Row label={t("live.timing.compiler")} value={ms(metrics.agent_3_latency_ms)} />
+          {totalMs !== undefined && <Row label={t("live.timing.total")} value={ms(totalMs)} />}
+          <Row
+            label={t("live.timing.runtime")}
+            value={metrics.execution_environment === "azure-functions" ? t("live.timing.runtimeAzure") : t("live.timing.runtimeLocal")}
+          />
+          {cosmosUsed ? (
+            <>
+              <Row label={t("live.timing.cosmosRu")} value={metrics.cosmos_db_ru_charge ? `${metrics.cosmos_db_ru_charge} RU` : "--"} />
+              <Row label={t("live.timing.cosmosRead")} value={ms(metrics.cosmos_read_latency_ms)} />
+              <Row label={t("live.timing.cosmosWrite")} value={ms(metrics.cosmos_write_latency_ms)} />
+            </>
+          ) : (
+            <Row label={t("live.timing.persistence")} value={t("live.timing.persistenceOff")} />
+          )}
         </div>
-        <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 flex flex-col justify-between">
-          <span className="text-[10px] text-slate-500 uppercase">Cosmos DB Write</span>
-          <span className="text-emerald-400 font-bold text-sm mt-1">
-            {metrics?.cosmos_write_latency_ms ? `${metrics.cosmos_write_latency_ms} ms` : "5.3 ms"}
-          </span>
-        </div>
-
-        {/* Detailed Latency Breakdown */}
-        <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 col-span-2 flex flex-col space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase mb-1">Compute Latency Breakdown</span>
-          <div className="space-y-1.5 text-[11px] font-mono">
-            <div className="flex justify-between border-b border-slate-900 pb-0.5">
-              <span className="text-slate-500">Cosmos DB Read:</span>
-              <span className="text-cyan-400 font-bold">{metrics?.cosmos_read_latency_ms ?? 0} ms</span>
-            </div>
-            <div className="flex justify-between border-b border-slate-900 pb-0.5">
-              <span className="text-slate-500">Agent 1 Router:</span>
-              <span className="text-cyan-400 font-bold">{metrics?.agent_1_latency_ms ?? 0} ms</span>
-            </div>
-            <div className="flex justify-between border-b border-slate-900 pb-0.5">
-              <span className="text-slate-500">Agent 2 Safety:</span>
-              <span className="text-cyan-400 font-bold">{metrics?.agent_2_latency_ms ?? 0} ms</span>
-            </div>
-            <div className="flex justify-between border-b border-slate-900 pb-0.5">
-              <span className="text-slate-500">Agent 3 Compiler:</span>
-              <span className="text-cyan-400 font-bold">{metrics?.agent_3_latency_ms ?? 0} ms</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">Cosmos DB Write:</span>
-              <span className="text-cyan-400 font-bold">{metrics?.cosmos_write_latency_ms ?? 0} ms</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 col-span-2 flex flex-col justify-between">
-          <span className="text-[10px] text-slate-500 uppercase">Compute Environment</span>
-          <span className="text-cyan-400 font-bold mt-1 text-[11px] truncate">
-            {metrics?.execution_environment || "Azure Functions (Linux)"}
-          </span>
-        </div>
-        <div className="bg-slate-900/40 p-2.5 rounded border border-slate-900 col-span-2 flex flex-col justify-between">
-          <span className="text-[10px] text-slate-500 uppercase">VNet isolation & Routing</span>
-          <span className="text-indigo-400 font-bold mt-1 text-[11px] truncate">
-            {metrics?.vnet_isolation || "Active (BackendSubnet)"}
-          </span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

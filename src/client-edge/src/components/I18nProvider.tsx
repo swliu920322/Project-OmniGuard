@@ -8,7 +8,8 @@ type Locale = 'zh' | 'en';
 interface I18nContextProps {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (path: string) => string;
+  // Supports {name} placeholders: t('live.suite.summary', { pass: 3, total: 6 })
+  t: (path: string, vars?: Record<string, string | number>) => string;
 }
 
 const I18nContext = createContext<I18nContextProps | undefined>(undefined);
@@ -30,29 +31,23 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('app_locale', newLocale);
   };
 
-  const t = (path: string): string => {
-    const keys = path.split('.');
-    let result: any = translations[locale];
-    
+  const lookup = (lang: Locale, keys: string[]): string | undefined => {
+    let node: any = translations[lang];
     for (const key of keys) {
-      if (result && result[key] !== undefined) {
-        result = result[key];
-      } else {
-        // Fallback to English translation first if key missing in Chinese
-        let fallbackResult: any = translations['en'];
-        for (const fallbackKey of keys) {
-          if (fallbackResult && fallbackResult[fallbackKey] !== undefined) {
-            fallbackResult = fallbackResult[fallbackKey];
-          } else {
-            fallbackResult = path;
-            break;
-          }
-        }
-        return typeof fallbackResult === 'string' ? fallbackResult : path;
-      }
+      if (node && node[key] !== undefined) node = node[key];
+      else return undefined;
     }
-    
-    return typeof result === 'string' ? result : path;
+    return typeof node === 'string' ? node : undefined;
+  };
+
+  const t = (path: string, vars?: Record<string, string | number>): string => {
+    const keys = path.split('.');
+    // Current language first, then English, then the key itself so missing text is visible.
+    let text = lookup(locale, keys) ?? lookup('en', keys) ?? path;
+    if (vars) {
+      text = text.replace(/\{(\w+)\}/g, (_, name) => (name in vars ? String(vars[name]) : `{${name}}`));
+    }
+    return text;
   };
 
   return (

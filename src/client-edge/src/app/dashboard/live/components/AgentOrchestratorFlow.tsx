@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useI18n } from "@/components/I18nProvider";
 
 interface PipelineStep {
   agent: string;
@@ -14,7 +15,8 @@ interface AgentOrchestratorFlowProps {
 }
 
 export default function AgentOrchestratorFlow({ response, triggerDist }: AgentOrchestratorFlowProps) {
-  
+  const { t } = useI18n();
+
   function getStepByAgent(agentName: string): PipelineStep | null {
     if (!response) return null;
     return response.pipeline_trace.find(step => step.agent === agentName) || null;
@@ -23,21 +25,21 @@ export default function AgentOrchestratorFlow({ response, triggerDist }: AgentOr
   function renderAgentNode(title: string, desc: string, step: PipelineStep | null, primaryColor: "purple" | "red" | "cyan") {
     let statusClass = "bg-slate-900/30 border-slate-900 text-slate-500 opacity-60";
     let badgeClass = "bg-slate-950 text-slate-600 border-slate-800";
-    let badgeText = "Awaiting";
+    let badgeText = t("live.flow.badge.awaiting");
 
     if (step) {
       if (step.status === "PASS" || step.status === "COMPILED" || (step.agent === "Router" && step.decision)) {
         statusClass = "border-emerald-500/40 bg-emerald-950/5 text-slate-100 shadow-[0_0_15px_rgba(16,185,129,0.05)]";
         badgeClass = "bg-emerald-950/80 border-emerald-500/30 text-emerald-400";
-        badgeText = step.status || "PASS";
+        badgeText = step.status === "COMPILED" ? t("live.flow.badge.compiled") : t("live.flow.badge.pass");
       } else if (step.status === "BLOCKED") {
         statusClass = "border-red-500/40 bg-red-950/5 text-slate-100 shadow-[0_0_15px_rgba(239,68,68,0.05)]";
         badgeClass = "bg-red-950/80 border-red-500/30 text-red-400 animate-pulse";
-        badgeText = "BLOCKED";
+        badgeText = t("live.flow.badge.blocked");
       } else if (step.status === "SHORT_CIRCUIT" || step.decision === "SKIPPED") {
         statusClass = "border-slate-900 bg-slate-900/10 text-slate-500 opacity-30";
         badgeClass = "bg-slate-950 text-slate-600 border-slate-800";
-        badgeText = "SKIPPED";
+        badgeText = t("live.flow.badge.skipped");
       }
     }
 
@@ -66,7 +68,7 @@ export default function AgentOrchestratorFlow({ response, triggerDist }: AgentOr
           
           {step && step.decision && step.decision !== "SKIPPED" && (
             <div className="bg-slate-950 border border-slate-900 rounded-lg p-2.5 mt-2">
-              <div className="text-[10px] uppercase font-mono text-slate-500 font-bold mb-1">Decision Output</div>
+              <div className="text-[10px] uppercase font-mono text-slate-500 font-bold mb-1">{t("live.flow.decision")}</div>
               <div className="text-xs font-mono font-bold text-cyan-400 break-all whitespace-pre-wrap">
                 {step.decision}
               </div>
@@ -84,24 +86,24 @@ export default function AgentOrchestratorFlow({ response, triggerDist }: AgentOr
 
       {/* Node 1: Intent Router */}
       {renderAgentNode(
-        "1. Intent Router",
-        "Classifies raw telemetry to determine the operational context.",
+        t("live.flow.router.title"),
+        t("live.flow.router.desc"),
         getStepByAgent("Router"),
         "purple"
       )}
 
       {/* Node 2: Safety Firewall */}
       {renderAgentNode(
-        "2. Safety Firewall",
-        `Applies strict compliance policies. Target: ${triggerDist}.`,
+        t("live.flow.safety.title"),
+        t("live.flow.safety.desc", { target: triggerDist }),
         getStepByAgent("Safety"),
         "red"
       )}
 
       {/* Node 3: Action Compiler */}
       {renderAgentNode(
-        "3. Action Compiler",
-        "Translates safe intents into compliant physical motor instructions.",
+        t("live.flow.compiler.title"),
+        t("live.flow.compiler.desc"),
         getStepByAgent("Action Compiler"),
         "cyan"
       )}
