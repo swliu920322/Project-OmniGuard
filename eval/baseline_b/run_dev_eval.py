@@ -274,6 +274,7 @@ def run(args) -> int:
         "planned_calls": len(records), "calls_recorded": len(calls), "requests_that_reached_the_client": client.requests_made,
         "truncated_replies": sum(1 for c in calls if c.get("truncated")), "reasoning_tokens_reported": sum(c.get("reasoning_tokens") or 0 for c in calls),
         "parse_errors": dict(sorted(__import__("collections").Counter(c["parse_error"] for c in done if c.get("parse_error")).items())),
+        "not_started": len(records) - len(calls),
         "distinct_response_models": sorted({c["response_model"] for c in calls if c.get("response_model")}),
         "budget": guard.snapshot(), "calls_without_usable_usage": len(calls) - len(usable_usage),
         "usd_from_reported_usage": f"{sum((pricing.cost(c['usage']['prompt_tokens'], c['usage']['completion_tokens']) for c in usable_usage), Decimal(0)):.6f}",
@@ -281,7 +282,7 @@ def run(args) -> int:
     }
     summary["model_drift_flag"] = len(summary["distinct_response_models"]) > 1
     if real:
-        summary["metrics"] = E.evaluate(records, done)
+        summary["metrics"] = E.evaluate(records, calls)
     else:
         summary["metrics_withheld"] = "dry run with a fake client: no accuracy or safety figure is published for it"
     L.write_json(os.path.join(run_dir, "summary.json"), summary)

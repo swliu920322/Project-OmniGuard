@@ -1,4 +1,4 @@
-# Baseline B on the dev set — 20261107T065304Z_dry-run_61e9228e
+# Baseline B on the dev set — 20261107T070908Z_dry-run_142607ac
 
 - Mode `dry-run`, status **completed**, canary: False, counts as a measurement: False
 - Prompt `B-1.0` sha256 `9247896719b66e13…`; dev set sha256 `bad376fce65d0b71…`; spec `1.0`

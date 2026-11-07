@@ -57,6 +57,18 @@ def build_messages(user_input: str) -> list[dict]:
     return [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": user_input}]
 
 
+class DuplicateKey(ValueError):
+    pass
+
+
+def _no_duplicate_keys(pairs):
+    """json keeps the last of two equal keys silently; a contract reply with a repeated key is ambiguous, so it is refused."""
+    keys = [k for k, _ in pairs]
+    if len(keys) != len(set(keys)):
+        raise DuplicateKey(keys)
+    return dict(pairs)
+
+
 def parse_reply(content) -> tuple[dict | None, str | None]:
     """Strict: the whole reply is one JSON object with exactly the two keys and legal values.
 
@@ -67,7 +79,9 @@ def parse_reply(content) -> tuple[dict | None, str | None]:
     if not isinstance(content, str) or not content.strip():
         return None, "empty reply"
     try:
-        obj = json.loads(content.strip())
+        obj = json.loads(content.strip(), object_pairs_hook=_no_duplicate_keys)
+    except DuplicateKey:
+        return None, "duplicate key in the JSON object"
     except ValueError:
         return None, "not a single JSON value"
     if not isinstance(obj, dict) or set(obj) != CONTRACT_KEYS:

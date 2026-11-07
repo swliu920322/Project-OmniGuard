@@ -59,6 +59,8 @@ def test_the_prompt_contains_no_dev_example():
     ('{"primary":"NORMAL_NAV","note_status":null,"extra":1}', False),
     ('{"primary":"HARDWARE_FAULT","note_status":null}', False),
     ('{"primary":"NORMAL_NAV","note_status":"MAYBE"}', False),
+    ('{"primary":"OVERHEAT","primary":"NORMAL_NAV","note_status":null}', False),   # duplicate key: ambiguous, refused
+    ('{"primary":"NORMAL_NAV","note_status":null,"note_status":null}', False),
     ('["NORMAL_NAV"]', False), ('', False), (None, False), ('{"primary":"normal_nav","note_status":null}', False),
 ])
 def test_reply_contract_is_strict(content, ok):
@@ -203,3 +205,59 @@ def test_the_plan_is_offline_and_lists_calls_and_the_worst_case(capsys):
     assert RUN.main(["--plan", "--price-input-per-mtok", "0.3333334", "--price-output-per-mtok", "1.3333334"]) == 0
     out = json.loads(capsys.readouterr().out)
     assert out["calls"] == 180 and out["output_bound_per_call"] == 2048
+
+
+# --- review round: one gate for context, duplicate keys, interrupted requests -----------------------------------------
+
+def test_a_reply_that_does_not_fit_its_record_is_invalid_everywhere_not_correct_and_halting_at_once():
+    noted = DEV[0]
+    assert noted["note"] and noted["id"] == "DEV-001"
+    bad = _call(noted, prediction={"primary": noted["gold"]["primary"], "note_status": None})        # right class, no status for a noted record
+    assert E.outcome(bad, noted) == "INVALID" and E.note_outcome(bad, noted) == "INVALID" and not E.usable(bad, noted)
+    assert E.usable(bad)                                                                              # the call-only check cannot see it
+    ex = E.executed(bad, noted)
+    assert ex["valid"] is False and ex["action"]["halt_reasons"] == ["PARSE_FAILURE"]
+    plain = next(r for r in DEV if not r["note"])
+    extra = _call(plain, prediction={"primary": plain["gold"]["primary"], "note_status": "NEGATED"})   # a status for a record without a note
+    assert E.outcome(extra, plain) == "INVALID" and E.executed(extra, plain)["valid"] is False
+    out = E.evaluate([noted, plain], [bad, extra])
+    assert out["primary"]["all_started"]["correct"] == 0 and out["primary"]["all_started"]["invalid"] == 2 and out["context_invalid"] == 2
+    assert out["note_status"]["correct"] == 0 and out["legacy3_view"]["correct"] == 0
+    fine = E.evaluate([noted, plain], [_call(noted), _call(plain)])
+    assert fine["primary"]["all_started"]["correct"] == 2 and fine["context_invalid"] == 0
+
+
+def test_main_metric_and_action_layer_always_agree_on_which_replies_are_valid():
+    for rec in DEV:
+        for status in (None, "NEGATED", "AFFIRMED_CURRENT"):
+            call = _call(rec, prediction={"primary": "NORMAL_NAV", "note_status": status})
+            assert E.usable(call, rec) == E.executed(call, rec)["valid"], (rec["id"], status)
+
+
+def test_duplicate_keys_are_refused_and_the_raw_reply_is_kept():
+    raw = '{"primary":"OVERHEAT","primary":"NORMAL_NAV","note_status":null}'
+    assert P.parse_reply(raw) == (None, "duplicate key in the JSON object")
+    cap = {"request": {}, "response": {"choices": [{"finish_reason": "stop", "message": {"content": raw}}], "usage": None, "model": "m"}}
+    call = RUN.build_call_record(1, DEV[1], cap)
+    assert call["reply"] == raw and call["prediction"] is None and call["parse_error"] == "duplicate key in the JSON object"
+    assert E.outcome(call, DEV[1]) == "INVALID"
+
+
+def test_an_interrupted_request_stays_in_the_denominator_and_unsent_records_are_reported_apart():
+    out = tempfile.mkdtemp()
+    assert RUN.main(["--mode", "dry-run", "--out-root", out, "--fault-plan", json.dumps({4: "interrupt"})]) == 130
+    run_dir = next(pathlib.Path(out).iterdir())
+    calls = [json.loads(line) for line in (run_dir / "calls.jsonl").read_text().splitlines()]
+    assert calls[-1]["status"] == "in_flight_at_interruption"
+    m = E.evaluate(DEV, calls)
+    assert m["records_started"] == 4 and m["not_started"] == 176 and m["primary"]["all_started"]["n"] == 4
+    assert m["primary"]["all_started"]["interrupted"] == 1 and m["outcomes"]["INTERRUPTED"] == 1
+    assert m["primary"]["all_started"]["correct"] <= 3                                                # the interrupted one is wrong
+    assert m["safety"]["fault_halts"] >= 1 and "NOT in any denominator" in m["not_started_note"]
+    without = E.evaluate(DEV, calls[:-1])                                                              # dropping it would lose a started request
+    assert without["records_started"] == 3
+
+
+def test_a_run_stopped_early_reports_the_unsent_records():
+    m = E.evaluate(DEV, [_call(r) for r in DEV[:10]])
+    assert m["records_started"] == 10 and m["not_started"] == 170 and m["primary"]["all_started"]["n"] == 10

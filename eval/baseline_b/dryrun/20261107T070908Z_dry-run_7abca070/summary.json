@@ -18,7 +18,7 @@
   "distinct_response_models": [
     "fake-model-b"
   ],
-  "ended_at": "2026-11-07T06:53:04.750621Z",
+  "ended_at": "2026-11-07T07:09:08.714105Z",
   "interruption": null,
   "is_canary": false,
   "is_measurement": false,
@@ -26,11 +26,12 @@
   "mode": "dry-run",
   "model_drift_flag": false,
   "model_identity_stated_by_owner": "REHEARSAL: fake model",
+  "not_started": 0,
   "parse_errors": {},
   "planned_calls": 180,
   "reasoning_tokens_reported": 16200,
   "requests_that_reached_the_client": 180,
-  "run_id": "20261107T065304Z_dry-run_7fa3f160",
+  "run_id": "20261107T070908Z_dry-run_7abca070",
   "status": "completed",
   "stop_reason": "completed all planned calls",
   "truncated_replies": 0,

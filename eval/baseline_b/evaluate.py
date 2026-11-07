@@ -29,24 +29,42 @@ def wilson(k: int, n: int, z: float = 1.96) -> list[float] | None:
     return [round(max(0.0, centre - half), 4), round(min(1.0, centre + half), 4)]
 
 
-def usable(call: dict) -> bool:
-    return not call.get("error") and call.get("finish_reason") == "stop" and call.get("prediction") is not None
+def in_flight(call: dict) -> bool:
+    return call.get("status") == "in_flight_at_interruption"
 
 
-def outcome(call: dict) -> str:
+def usable(call: dict, rec: dict | None = None) -> bool:
+    """One gate for the main metric, the note metric and the action layer.
+
+    The reply must be a clean `stop` with a parsed contract, and, when the record is given, it must also fit THAT record
+    (a note_status for a record with a note, none for a record without): the same check reference_labeler.execute() makes,
+    so a reply cannot score correct and halt the vehicle as invalid at the same time.
+    """
+    if call.get("error") or in_flight(call) or call.get("finish_reason") != "stop" or call.get("prediction") is None:
+        return False
+    return rec is None or R.execute(rec["telemetry"], call["prediction"], note=rec["note"])["valid"]
+
+
+def outcome(call: dict, rec: dict | None = None) -> str:
+    if in_flight(call):
+        return "INTERRUPTED"
     if call.get("error"):
         return "ERROR"
-    return call["prediction"]["primary"] if usable(call) else "INVALID"
+    return call["prediction"]["primary"] if usable(call, rec) else "INVALID"
 
 
-def note_outcome(call: dict) -> str | None:
+def note_outcome(call: dict, rec: dict | None = None) -> str | None:
+    if in_flight(call):
+        return "INTERRUPTED"
     if call.get("error"):
         return "ERROR"
-    return (call["prediction"]["note_status"] or "NULL") if usable(call) else "INVALID"
+    return (call["prediction"]["note_status"] or "NULL") if usable(call, rec) else "INVALID"
 
 
 def fault_of(call: dict) -> str | None:
     err = call.get("error")
+    if in_flight(call):
+        return "API_ERROR"  # started, no result: the vehicle halts like any call that returned nothing
     if not err:
         return None
     name = (err.get("type") or "") + " " + str(err.get("status_code"))
@@ -58,7 +76,7 @@ def fault_of(call: dict) -> str | None:
 
 
 def executed(call: dict, rec: dict) -> dict:
-    return R.execute(rec["telemetry"], call["prediction"] if usable(call) else None, note=rec["note"], fault=fault_of(call))
+    return R.execute(rec["telemetry"], call["prediction"] if usable(call, rec) else None, note=rec["note"], fault=fault_of(call))
 
 
 def _prf(gold: list[str], got: list[str]) -> dict:
@@ -76,7 +94,7 @@ def _prf(gold: list[str], got: list[str]) -> dict:
 
 def score_primary(pairs: list[tuple[dict, dict]]) -> dict:
     gold = [rec["gold"]["primary"] for rec, _ in pairs]
-    got = [outcome(call) for _, call in pairs]
+    got = [outcome(call, rec) for rec, call in pairs]
     n, k = len(pairs), sum(g == o for g, o in zip(gold, got))
     per = _prf(gold, got)
     conf: dict[str, dict[str, int]] = {}
@@ -84,20 +102,21 @@ def score_primary(pairs: list[tuple[dict, dict]]) -> dict:
         conf.setdefault(g, {}).setdefault(o, 0)
         conf[g][o] += 1
     return {"n": n, "correct": k, "accuracy": round(k / n, 4) if n else None, "ci95_wilson": wilson(k, n),
-            "errors": sum(o == "ERROR" for o in got), "invalid": sum(o == "INVALID" for o in got),
+            "errors": sum(o == "ERROR" for o in got), "interrupted": sum(o == "INTERRUPTED" for o in got),
+            "invalid": sum(o == "INVALID" for o in got),
             "per_class": per, "macro_f1": round(sum(v["f1"] for v in per.values()) / len(per), 4) if n else None,
             "confusion_gold_x_outcome": {g: dict(sorted(v.items())) for g, v in sorted(conf.items())}}
 
 
 def score_note(pairs: list[tuple[dict, dict]]) -> dict:
     noted = [(r, c) for r, c in pairs if r["note"]]
-    k = sum(note_outcome(c) == r["note_status"] for r, c in noted)
+    k = sum(note_outcome(c, r) == r["note_status"] for r, c in noted)
     per = {}
     for s in R.NOTE_STATUSES:
         sub = [(r, c) for r, c in noted if r["note_status"] == s]
-        hit = sum(note_outcome(c) == s for r, c in sub)
+        hit = sum(note_outcome(c, r) == s for r, c in sub)
         per[s] = {"support": len(sub), "recall": round(hit / len(sub), 4) if sub else None}
-    wrong = Counter((r["note_status"], note_outcome(c)) for r, c in noted if note_outcome(c) != r["note_status"])
+    wrong = Counter((r["note_status"], note_outcome(c, r)) for r, c in noted if note_outcome(c, r) != r["note_status"])
     return {"n": len(noted), "correct": k, "accuracy": round(k / len(noted), 4) if noted else None,
             "ci95_wilson": wilson(k, len(noted)), "per_status_recall": per,
             "mistakes": [{"gold": g, "got": o, "count": v} for (g, o), v in sorted(wrong.items(), key=str)]}
@@ -131,7 +150,7 @@ def score_safety(pairs: list[tuple[dict, dict]]) -> dict:
 def score_legacy3(pairs: list[tuple[dict, dict]]) -> dict:
     """Compatibility view of the telemetry-only records the old three-class task can describe (OVERSPEED excluded)."""
     sub = [(r, c) for r, c in pairs if not r["note"] and r["gold"]["primary"] != "OVERSPEED"]
-    k = sum(1 for r, c in sub if usable(c) and R.LEGACY3[c["prediction"]["primary"]] == R.LEGACY3[r["gold"]["primary"]])
+    k = sum(1 for r, c in sub if usable(c, r) and R.LEGACY3[c["prediction"]["primary"]] == R.LEGACY3[r["gold"]["primary"]])
     return {"n": len(sub), "correct": k, "accuracy": round(k / len(sub), 4) if sub else None, "ci95_wilson": wilson(k, len(sub)),
             "note": "an extra compatibility view, not the main metric; OVERSPEED records and noted records are excluded"}
 
@@ -146,11 +165,13 @@ def evaluate(records: list[dict], calls: list[dict]) -> dict:
         "rows_reaching_router": [(r, c) for r, c in pairs if r["gold"]["gate"] == "PASS"],
     }
     return {
-        "records_in_set": len(records), "records_started": len(pairs),
+        "records_in_set": len(records), "records_started": len(pairs), "not_started": len(records) - len(pairs),
+        "not_started_note": "records never sent (the run stopped first) are reported here and are NOT in any denominator; a started request without a result is INTERRUPTED and counts as wrong",
+        "context_invalid": sum(1 for r, c in pairs if usable(c) and not usable(c, r)),
         "primary": {name: score_primary(p) for name, p in sel.items()},
         "note_status": score_note(pairs),
         "safety": score_safety(pairs),
         "legacy3_view": score_legacy3(pairs),
-        "outcomes": dict(sorted(Counter(outcome(c) for _, c in pairs).items())),
+        "outcomes": dict(sorted(Counter(outcome(c, r) for r, c in pairs).items())),
         "finish_reasons": dict(sorted(Counter(str(c.get("finish_reason")) for _, c in pairs).items())),
     }
