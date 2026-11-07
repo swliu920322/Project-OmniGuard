@@ -85,7 +85,7 @@ def test_the_reproduction_guide_runs_level_one_on_main_and_the_real_run_from_the
 
 
 def test_the_stranger_test_prompt_forbids_private_data_model_calls_and_repairs():
-    t = TEXT["eval/REPRODUCE_TEST_PROMPT.md", "eval/reproduction_logs/2026-11-07-gemini-level1.md"]
+    t = TEXT["eval/REPRODUCE_TEST_PROMPT.md"]
     for needle in ("不得调用任何模型 API", "/private/tmp", "OmniGuard-private", "不要“修”问题", "不要编造", "10 分钟", "不要写“已验收”"):
         assert needle in t, needle
 
