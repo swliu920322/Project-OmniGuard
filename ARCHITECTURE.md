@@ -99,6 +99,9 @@ This conclusion motivates a deterministic local safety layer; it does not imply 
 
 ## 7. Azure reference topology
 
+Diagrams: [thesis Figure 3.1, the Bicep-derived topology and Figure 3.2](docs/architecture/README.md).
+
+
 The Bicep modules describe a reference deployment containing:
 
 - Azure Container Apps compute;

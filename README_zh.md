@@ -38,6 +38,10 @@ OmniGuard 包含模拟 AGV 仪表盘、三级云端 Agent 流水线、Azure 基�
 
 浏览器 Dashboard 是仿真；Python benchmark 会调用当前配置的 LLM provider；Azure 资源通过 IaC 描述，但代码仓库本身不能证明某套云环境此刻正在运行。
 
+## 架构图
+
+Azure 参考方案在 [docs/architecture](docs/architecture/README.md) 里有三张图：恢复的论文图 3.1（系统架构）和图 3.2（流水线时序），以及按 Bicep 快照绘制的拓扑图，并说明论文图和快照的差异。云环境为论文部署过一次，现已拆除。
+
 ## 状态路由及其评测
 
 Router 阶段有一个可选的扩展形态，共 **6 类遥测状态路由**：`CRITICAL_OBSTACLE`、`OVERHEAT`、`LOW_HEALTH`、`LOW_BATTERY`、`OVERSPEED`、`NORMAL_NAV`，另可附带一条操作员备注（报告前方有人或障碍）。它是对模拟 AGV 的状态识别与处置路由，不是聊天式的意图识别。所有阈值、优先级和动作都是本仿真的实验约定，不是行业标准或现场数据（见[规范](eval/spec/LABEL_SPEC.md)）。

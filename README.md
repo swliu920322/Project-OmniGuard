@@ -38,6 +38,10 @@ Telemetry / seeded scenario
 
 The browser dashboard is a simulation. The Python benchmark calls the configured LLM provider. Azure resources are defined as code, but a checkout of this repository does not prove that a live environment is currently deployed.
 
+## Architecture diagrams
+
+The Azure reference design is drawn three ways in [docs/architecture](docs/architecture/README.md): the restored thesis Figure 3.1 (system architecture) and Figure 3.2 (pipeline sequence), and a topology diagram drawn from the Bicep snapshot, with notes on where the thesis figure differs from the snapshot. The cloud environment was deployed once for the thesis and has been torn down.
+
 ## State routing and its evaluation
 
 The Router stage has an extended, opt-in form with **six telemetry-state routes**: `CRITICAL_OBSTACLE`, `OVERHEAT`, `LOW_HEALTH`, `LOW_BATTERY`, `OVERSPEED`, `NORMAL_NAV`, plus an optional operator note that reports a person or obstacle ahead. It is state recognition and routing for a simulated AGV, not chat-style intent recognition. Every threshold, priority and action is an experimental convention of the simulation, not a standard or field data ([specification](eval/spec/LABEL_SPEC.md)).
