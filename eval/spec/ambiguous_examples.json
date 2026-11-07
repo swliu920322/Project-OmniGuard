@@ -1,0 +1,210 @@
+[
+ {
+  "id": "E01",
+  "title": "boundary: distance exactly 30",
+  "input": {
+   "distance_cm": 30,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "expected_primary": "NORMAL_NAV",
+  "reason": "The rule is 'below the minimum 30 cm'; 30 is not below."
+ },
+ {
+  "id": "E02",
+  "title": "boundary: distance 29",
+  "input": {
+   "distance_cm": 29,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "reason": "Strictly inside the minimum safe distance."
+ },
+ {
+  "id": "E03",
+  "title": "boundary: temperature exactly 60",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 60
+  },
+  "expected_primary": "NORMAL_NAV",
+  "reason": "The rule is 'maximum 60 C'; 60 does not exceed it."
+ },
+ {
+  "id": "E04",
+  "title": "boundary: temperature 60.1",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 60.1
+  },
+  "expected_primary": "OVERHEAT",
+  "reason": "Above the maximum."
+ },
+ {
+  "id": "E05",
+  "title": "boundary: velocity exactly 2.5",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 2.5,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "expected_primary": "NORMAL_NAV",
+  "reason": "The rule is 'max 2.5 m/s'; 2.5 is allowed."
+ },
+ {
+  "id": "E06",
+  "title": "boundary: velocity 2.6",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 2.6,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "expected_primary": "OVERSPEED",
+  "reason": "Above the maximum."
+ },
+ {
+  "id": "E07",
+  "title": "boundary: battery exactly 20",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 20,
+   "temperature_c": 35
+  },
+  "expected_primary": "NORMAL_NAV",
+  "reason": "Policy threshold is 'below 20'."
+ },
+ {
+  "id": "E08",
+  "title": "gap zone: battery 12 (between the old 10 and 20)",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 12,
+   "temperature_c": 35
+  },
+  "expected_primary": "LOW_BATTERY",
+  "reason": "The original generator never produced 10-20; the spec closes the gap at 20."
+ },
+ {
+  "id": "E09",
+  "title": "gap zone: hp 35 (between the old 20 and 50)",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 35,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "expected_primary": "HARDWARE_FAULT",
+  "reason": "Same gap rule, threshold 50."
+ },
+ {
+  "id": "E10",
+  "title": "conflict: obstacle and overheat",
+  "input": {
+   "distance_cm": 10,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 75
+  },
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "reason": "Collision is the nearest consequence; OVERHEAT stays in the risk set so the cool-down is not lost."
+ },
+ {
+  "id": "E11",
+  "title": "conflict: low battery and overspeed",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 2.9,
+   "hp": 80,
+   "battery_pct": 8,
+   "temperature_c": 35
+  },
+  "expected_primary": "LOW_BATTERY",
+  "reason": "Energy outranks speed; LIMIT_SPEED stays in the disposition."
+ },
+ {
+  "id": "E12",
+  "title": "gate: battery 3 reaches no router in production",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 3,
+   "temperature_c": 35
+  },
+  "expected_primary": "LOW_BATTERY",
+  "reason": "Still labelled LOW_BATTERY; gate=SKIP says production never asks the router."
+ },
+ {
+  "id": "E13",
+  "title": "gate: hp 0",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 0,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "expected_primary": "HARDWARE_FAULT",
+  "reason": "hp<=0 is the deadlock case; gate=SKIP."
+ },
+ {
+  "id": "E14",
+  "title": "legacy conflict: 40 cm labelled critical in the old data",
+  "input": {
+   "distance_cm": 40,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "expected_primary": "NORMAL_NAV",
+  "reason": "11 old rows are critical at >= 30 cm; under this spec they are normal. Old gold is not reused."
+ },
+ {
+  "id": "E15",
+  "title": "invalid: negative distance",
+  "input": {
+   "distance_cm": -5,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "expected_primary": null,
+  "reason": "Outside the input contract: rejected before any classifier, disposition STOP, not a class."
+ },
+ {
+  "id": "E16",
+  "title": "invalid: battery above 100 (unit mix-up, 0.8 vs 80 style)",
+  "input": {
+   "distance_cm": 300,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 180,
+   "temperature_c": 35
+  },
+  "expected_primary": null,
+  "reason": "Same: invalid, not classified."
+ }
+]
