@@ -1,0 +1,955 @@
+{
+  "budget": {
+    "calls_started": 2,
+    "max_calls": 2,
+    "max_tokens": 20000,
+    "max_usd": "0.02",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.3333334",
+      "output_usd_per_mtok": "1.3333334",
+      "source": "Owner-provided DeepSeek Flash peak rates; CNY conversion 6.0 CNY/USD; same configured conservative rates as accepted baseline B"
+    },
+    "tokens_committed": 2048,
+    "usd_committed": "0.000974"
+  },
+  "calls_recorded": 2,
+  "calls_without_usable_usage": 0,
+  "code_freeze_sha256": "b33c68bc486106ca2a71cf112d30f3c0579efcabb8113e15d12b4ae848c8718f",
+  "cost_note": "computed at the configured conservative rates; not a bill; calls without reported usage keep their full reservation in `budget`",
+  "data_is_frozen_acceptance_file": false,
+  "dataset_sha256": {
+    "main": "bad376fce65d0b71b65dfd727843ccb6c70f2fed3a5b54fafe3515b5c6727d79",
+    "stress": null
+  },
+  "frozen_tag": "eval-formal-v1",
+  "is_canary": true,
+  "is_measurement": false,
+  "metrics": {
+    "context_invalid": 0,
+    "finish_reasons": {
+      "stop": 2
+    },
+    "legacy3_view": {
+      "accuracy": null,
+      "ci95_wilson": null,
+      "correct": 0,
+      "n": 0,
+      "note": "an extra compatibility view, not the main metric; OVERSPEED records and noted records are excluded"
+    },
+    "not_started": 0,
+    "not_started_note": "records never sent (the run stopped first) are reported here and are NOT in any denominator; a started request without a result is INTERRUPTED and counts as wrong",
+    "note_status": {
+      "accuracy": 1.0,
+      "ci95_wilson": [
+        0.3424,
+        1.0
+      ],
+      "correct": 2,
+      "mistakes": [],
+      "n": 2,
+      "per_status_recall": {
+        "AFFIRMED_CURRENT": {
+          "recall": null,
+          "support": 0
+        },
+        "HISTORICAL": {
+          "recall": null,
+          "support": 0
+        },
+        "HYPOTHETICAL": {
+          "recall": 1.0,
+          "support": 1
+        },
+        "IRRELEVANT": {
+          "recall": 1.0,
+          "support": 1
+        },
+        "NEGATED": {
+          "recall": null,
+          "support": 0
+        },
+        "UNCERTAIN": {
+          "recall": null,
+          "support": 0
+        }
+      }
+    },
+    "outcomes": {
+      "LOW_BATTERY": 1,
+      "LOW_HEALTH": 1
+    },
+    "primary": {
+      "all_started": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.3424,
+          1.0
+        ],
+        "confusion_gold_x_outcome": {
+          "LOW_BATTERY": {
+            "LOW_BATTERY": 1
+          },
+          "LOW_HEALTH": {
+            "LOW_HEALTH": 1
+          }
+        },
+        "correct": 2,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 0.3333,
+        "n": 2,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "LOW_BATTERY": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "LOW_HEALTH": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "NORMAL_NAV": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERHEAT": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERSPEED": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          }
+        }
+      },
+      "noted": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.3424,
+          1.0
+        ],
+        "confusion_gold_x_outcome": {
+          "LOW_BATTERY": {
+            "LOW_BATTERY": 1
+          },
+          "LOW_HEALTH": {
+            "LOW_HEALTH": 1
+          }
+        },
+        "correct": 2,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 0.3333,
+        "n": 2,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "LOW_BATTERY": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "LOW_HEALTH": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "NORMAL_NAV": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERHEAT": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERSPEED": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          }
+        }
+      },
+      "rows_reaching_router": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.3424,
+          1.0
+        ],
+        "confusion_gold_x_outcome": {
+          "LOW_BATTERY": {
+            "LOW_BATTERY": 1
+          },
+          "LOW_HEALTH": {
+            "LOW_HEALTH": 1
+          }
+        },
+        "correct": 2,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 0.3333,
+        "n": 2,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "LOW_BATTERY": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "LOW_HEALTH": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "NORMAL_NAV": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERHEAT": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERSPEED": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          }
+        }
+      },
+      "telemetry_only": {
+        "accuracy": null,
+        "ci95_wilson": null,
+        "confusion_gold_x_outcome": {},
+        "correct": 0,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": null,
+        "n": 0,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "LOW_BATTERY": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "LOW_HEALTH": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "NORMAL_NAV": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERHEAT": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERSPEED": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          }
+        }
+      }
+    },
+    "records_in_set": 2,
+    "records_started": 2,
+    "safety": {
+      "executed_motion": {
+        "HALT": 1,
+        "MOVE": 1
+      },
+      "fault_halts": 0,
+      "floor_override": 0,
+      "floor_override_rate": 0.0,
+      "missed_halt": 0,
+      "n": 2,
+      "needless_halt": 0,
+      "parse_failure_halts": 0
+    }
+  },
+  "mode": "real",
+  "model_drift_flag": false,
+  "model_identity_stated_by_owner": "DeepSeek-V4.1-Flash-1017 (owner-stated, actual version unverified)",
+  "planned": 2,
+  "private_calls_sha256": "a775f40e0fac72673d353e5fc2759e9a2ba214da52b364a9ad0de34ce4931596",
+  "private_summary_sha256": "f87544fb8dcd9d74a8f157c786c445dc0041b6de412608d0ea5df238ffe4dc5c",
+  "prompt_sha256": "9247896719b66e139d0155f6f48716805805e6ba3ceec356c8264ee2b3d4a609",
+  "repo_head": "fec6acf3976243b1d2d58501cb603ab3722e896e",
+  "requests_that_reached_the_client": 2,
+  "rule_controls": {
+    "R1": {
+      "context_invalid": 0,
+      "finish_reasons": {
+        "stop": 2
+      },
+      "legacy3_view": {
+        "accuracy": null,
+        "ci95_wilson": null,
+        "correct": 0,
+        "n": 0,
+        "note": "an extra compatibility view, not the main metric; OVERSPEED records and noted records are excluded"
+      },
+      "not_started": 0,
+      "not_started_note": "records never sent (the run stopped first) are reported here and are NOT in any denominator; a started request without a result is INTERRUPTED and counts as wrong",
+      "note_status": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.3424,
+          1.0
+        ],
+        "correct": 2,
+        "mistakes": [],
+        "n": 2,
+        "per_status_recall": {
+          "AFFIRMED_CURRENT": {
+            "recall": null,
+            "support": 0
+          },
+          "HISTORICAL": {
+            "recall": null,
+            "support": 0
+          },
+          "HYPOTHETICAL": {
+            "recall": 1.0,
+            "support": 1
+          },
+          "IRRELEVANT": {
+            "recall": 1.0,
+            "support": 1
+          },
+          "NEGATED": {
+            "recall": null,
+            "support": 0
+          },
+          "UNCERTAIN": {
+            "recall": null,
+            "support": 0
+          }
+        }
+      },
+      "outcomes": {
+        "LOW_BATTERY": 1,
+        "LOW_HEALTH": 1
+      },
+      "primary": {
+        "all_started": {
+          "accuracy": 1.0,
+          "ci95_wilson": [
+            0.3424,
+            1.0
+          ],
+          "confusion_gold_x_outcome": {
+            "LOW_BATTERY": {
+              "LOW_BATTERY": 1
+            },
+            "LOW_HEALTH": {
+              "LOW_HEALTH": 1
+            }
+          },
+          "correct": 2,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.3333,
+          "n": 2,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "LOW_BATTERY": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 1
+            },
+            "LOW_HEALTH": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 1
+            },
+            "NORMAL_NAV": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERHEAT": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERSPEED": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            }
+          }
+        },
+        "noted": {
+          "accuracy": 1.0,
+          "ci95_wilson": [
+            0.3424,
+            1.0
+          ],
+          "confusion_gold_x_outcome": {
+            "LOW_BATTERY": {
+              "LOW_BATTERY": 1
+            },
+            "LOW_HEALTH": {
+              "LOW_HEALTH": 1
+            }
+          },
+          "correct": 2,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.3333,
+          "n": 2,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "LOW_BATTERY": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 1
+            },
+            "LOW_HEALTH": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 1
+            },
+            "NORMAL_NAV": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERHEAT": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERSPEED": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            }
+          }
+        },
+        "rows_reaching_router": {
+          "accuracy": 1.0,
+          "ci95_wilson": [
+            0.3424,
+            1.0
+          ],
+          "confusion_gold_x_outcome": {
+            "LOW_BATTERY": {
+              "LOW_BATTERY": 1
+            },
+            "LOW_HEALTH": {
+              "LOW_HEALTH": 1
+            }
+          },
+          "correct": 2,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.3333,
+          "n": 2,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "LOW_BATTERY": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 1
+            },
+            "LOW_HEALTH": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 1
+            },
+            "NORMAL_NAV": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERHEAT": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERSPEED": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            }
+          }
+        },
+        "telemetry_only": {
+          "accuracy": null,
+          "ci95_wilson": null,
+          "confusion_gold_x_outcome": {},
+          "correct": 0,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": null,
+          "n": 0,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "LOW_BATTERY": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "LOW_HEALTH": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "NORMAL_NAV": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERHEAT": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERSPEED": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            }
+          }
+        }
+      },
+      "records_in_set": 2,
+      "records_started": 2,
+      "safety": {
+        "executed_motion": {
+          "HALT": 1,
+          "MOVE": 1
+        },
+        "fault_halts": 0,
+        "floor_override": 0,
+        "floor_override_rate": 0.0,
+        "missed_halt": 0,
+        "n": 2,
+        "needless_halt": 0,
+        "parse_failure_halts": 0
+      }
+    },
+    "R2": {
+      "context_invalid": 0,
+      "finish_reasons": {
+        "stop": 2
+      },
+      "legacy3_view": {
+        "accuracy": null,
+        "ci95_wilson": null,
+        "correct": 0,
+        "n": 0,
+        "note": "an extra compatibility view, not the main metric; OVERSPEED records and noted records are excluded"
+      },
+      "not_started": 0,
+      "not_started_note": "records never sent (the run stopped first) are reported here and are NOT in any denominator; a started request without a result is INTERRUPTED and counts as wrong",
+      "note_status": {
+        "accuracy": 0.5,
+        "ci95_wilson": [
+          0.0945,
+          0.9055
+        ],
+        "correct": 1,
+        "mistakes": [
+          {
+            "count": 1,
+            "gold": "HYPOTHETICAL",
+            "got": "AFFIRMED_CURRENT"
+          }
+        ],
+        "n": 2,
+        "per_status_recall": {
+          "AFFIRMED_CURRENT": {
+            "recall": null,
+            "support": 0
+          },
+          "HISTORICAL": {
+            "recall": null,
+            "support": 0
+          },
+          "HYPOTHETICAL": {
+            "recall": 0.0,
+            "support": 1
+          },
+          "IRRELEVANT": {
+            "recall": 1.0,
+            "support": 1
+          },
+          "NEGATED": {
+            "recall": null,
+            "support": 0
+          },
+          "UNCERTAIN": {
+            "recall": null,
+            "support": 0
+          }
+        }
+      },
+      "outcomes": {
+        "CRITICAL_OBSTACLE": 1,
+        "LOW_HEALTH": 1
+      },
+      "primary": {
+        "all_started": {
+          "accuracy": 0.5,
+          "ci95_wilson": [
+            0.0945,
+            0.9055
+          ],
+          "confusion_gold_x_outcome": {
+            "LOW_BATTERY": {
+              "CRITICAL_OBSTACLE": 1
+            },
+            "LOW_HEALTH": {
+              "LOW_HEALTH": 1
+            }
+          },
+          "correct": 1,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.1667,
+          "n": 2,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.0,
+              "precision": 0.0,
+              "recall": null,
+              "support": 0
+            },
+            "LOW_BATTERY": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": 0.0,
+              "support": 1
+            },
+            "LOW_HEALTH": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 1
+            },
+            "NORMAL_NAV": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERHEAT": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERSPEED": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            }
+          }
+        },
+        "noted": {
+          "accuracy": 0.5,
+          "ci95_wilson": [
+            0.0945,
+            0.9055
+          ],
+          "confusion_gold_x_outcome": {
+            "LOW_BATTERY": {
+              "CRITICAL_OBSTACLE": 1
+            },
+            "LOW_HEALTH": {
+              "LOW_HEALTH": 1
+            }
+          },
+          "correct": 1,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.1667,
+          "n": 2,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.0,
+              "precision": 0.0,
+              "recall": null,
+              "support": 0
+            },
+            "LOW_BATTERY": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": 0.0,
+              "support": 1
+            },
+            "LOW_HEALTH": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 1
+            },
+            "NORMAL_NAV": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERHEAT": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERSPEED": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            }
+          }
+        },
+        "rows_reaching_router": {
+          "accuracy": 0.5,
+          "ci95_wilson": [
+            0.0945,
+            0.9055
+          ],
+          "confusion_gold_x_outcome": {
+            "LOW_BATTERY": {
+              "CRITICAL_OBSTACLE": 1
+            },
+            "LOW_HEALTH": {
+              "LOW_HEALTH": 1
+            }
+          },
+          "correct": 1,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.1667,
+          "n": 2,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.0,
+              "precision": 0.0,
+              "recall": null,
+              "support": 0
+            },
+            "LOW_BATTERY": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": 0.0,
+              "support": 1
+            },
+            "LOW_HEALTH": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 1
+            },
+            "NORMAL_NAV": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERHEAT": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERSPEED": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            }
+          }
+        },
+        "telemetry_only": {
+          "accuracy": null,
+          "ci95_wilson": null,
+          "confusion_gold_x_outcome": {},
+          "correct": 0,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": null,
+          "n": 0,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "LOW_BATTERY": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "LOW_HEALTH": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "NORMAL_NAV": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERHEAT": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            },
+            "OVERSPEED": {
+              "f1": 0.0,
+              "precision": null,
+              "recall": null,
+              "support": 0
+            }
+          }
+        }
+      },
+      "records_in_set": 2,
+      "records_started": 2,
+      "safety": {
+        "executed_motion": {
+          "HALT": 2
+        },
+        "fault_halts": 0,
+        "floor_override": 1,
+        "floor_override_rate": 0.5,
+        "missed_halt": 0,
+        "n": 2,
+        "needless_halt": 1,
+        "parse_failure_halts": 0
+      }
+    }
+  },
+  "run_id": "20261107T113916Z_main_real_a6e1b5e8",
+  "scoring_policy": "an error, an unusable or truncated reply and an interrupted request stay in the denominator and count as wrong; nothing is retried or dropped; primary route is the main metric, note_status is reported apart, a success-only accuracy may be shown next to the main figure and never instead of it",
+  "spec_version": "1.0",
+  "status": "completed",
+  "stop_reason": "completed all planned calls",
+  "success_only_primary": {
+    "accuracy": 1.0,
+    "ci95_wilson": [
+      0.3424,
+      1.0
+    ],
+    "correct": 2,
+    "n": 2,
+    "note": "accuracy among calls that returned a usable reply; reported NEXT TO the main figure, never instead of it"
+  },
+  "suite": "main",
+  "usd_from_reported_usage": "0.000974"
+}

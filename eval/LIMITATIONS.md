@@ -12,7 +12,7 @@ Written now so that nothing is discovered later and quietly left out. It lists w
 ## About the model and the measurements
 6. **The model version is unverified.** The API returns only an alias (`deepseek-flash`); the configured name `deepseek-v4-flash` is no longer in the provider's model list. The version in every record is the owner's statement.
 7. **A reasoning model.** It spends hidden reasoning tokens and ignored `max_completion_tokens=20`. Cost and latency include them. The requests carry `temperature=0`, but the provider documents that its default reasoning mode ignores temperature, so the temperature is **not** demonstrably controlled; reproducibility rests on the two-run agreement gate, not on the setting.
-8. **Provider errors are part of the numbers.** Baseline B's dev run had 5 failed calls of 180 (four HTTP 500, one 503); they count as wrong and are not retried. Two baseline-B canaries failed with HTTP 500 and a later diagnosis could not tie the failures to any change in the request; the cause is not established (a service incident was showing on the status page, which makes a service-side cause plausible, not proven). Whether a formal run should treat such errors differently was fixed in advance: no retry, failures counted wrong, a success-only accuracy may be reported next to the main figure and never instead of it.
+8. **Provider errors are part of the numbers.** Baseline B's dev run had 5 failed calls of 180 (four HTTP 500, one 503); they count as wrong and are not retried. Two baseline-B canaries failed with HTTP 500 and a later diagnosis could not tie the failures to any change in the request; the cause is not established (a service incident was showing on the status page, which makes a service-side cause plausible, not proven). The formal policy was fixed in advance: no retry, failures counted wrong, a success-only accuracy only next to the main figure. The formal programme observed no provider error in 634 calls; that does not establish future availability.
 9. **Costs are estimates, not bills.** See the ledger in `EVIDENCE_INDEX.md`.
 
 ## About the backend path
@@ -24,7 +24,10 @@ Written now so that nothing is discovered later and quietly left out. It lists w
 ## About the rule controls
 14. **R1 and R2 are weak baselines with disclosed failures**: the subject of a clause cannot be carried over ("刚才有人，现在走了"), and typos defeat the keywords (one missed halt in the dev stress cases). Their word lists were written by the author of the dev notes and extended once on the public examples; their dev numbers are offline results on dev material, not formal results and no evidence of generalisation.
 
-## Not yet known (will become limitations or results)
-- accuracy, macro-F1 and per-class recall of baseline B and of any optimised version on the **independent frozen test set**;
-- behaviour of a real model on injection, typos and multi-clause notes at stress-test scale;
-- run-to-run agreement on the test set; reproduction by a stranger.
+15. **Observed formal results are bounded by the synthetic set.** Both main runs returned 300/300 correct primary labels and 72/72 note statuses; the 55-case stress set had no observed missed halt, needless halt or model error. This is consistency with spec 1.0 on these samples, not industrial safety or general language robustness. The reported Wilson intervals are record-level, not adjusted for 34 families.
+16. **One raw stress counter includes offline cases.** `calls_without_usable_usage=23` counts the 23 stress rows that never called the API. All 32 real stress requests reported usage. The original result is preserved and `formal/results/VERIFICATION.json` supplies the interpretation; costs and scores are unaffected.
+
+## Not yet known
+- behaviour on production or expert-labelled data, other model versions and broader adversarial inputs;
+- an optimised version's result: none was invented, so Y is unmeasured;
+- reproduction by a stranger and oral acceptance. Formal results and rule-control comparisons are in [report.md](report.md).

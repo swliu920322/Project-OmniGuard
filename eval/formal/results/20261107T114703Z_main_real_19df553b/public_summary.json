@@ -1,0 +1,1270 @@
+{
+  "budget": {
+    "calls_started": 300,
+    "max_calls": 300,
+    "max_tokens": 600000,
+    "max_usd": "0.25",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.3333334",
+      "output_usd_per_mtok": "1.3333334",
+      "source": "Owner-provided DeepSeek Flash peak rates; CNY conversion 6.0 CNY/USD; same configured conservative rates as accepted baseline B"
+    },
+    "tokens_committed": 298251,
+    "usd_committed": "0.134626"
+  },
+  "calls_recorded": 300,
+  "calls_without_usable_usage": 0,
+  "code_freeze_sha256": "b33c68bc486106ca2a71cf112d30f3c0579efcabb8113e15d12b4ae848c8718f",
+  "cost_note": "computed at the configured conservative rates; not a bill; calls without reported usage keep their full reservation in `budget`",
+  "data_is_frozen_acceptance_file": true,
+  "dataset_sha256": {
+    "main": "68e08ed9003d40a9d2ca212253367ab369ea30ab0eeb5a1e2fd2ecf19a12e6d9",
+    "stress": null
+  },
+  "frozen_tag": "eval-formal-v1",
+  "is_canary": false,
+  "is_measurement": true,
+  "metrics": {
+    "context_invalid": 0,
+    "finish_reasons": {
+      "stop": 300
+    },
+    "legacy3_view": {
+      "accuracy": 1.0,
+      "ci95_wilson": [
+        0.9799,
+        1.0
+      ],
+      "correct": 187,
+      "n": 187,
+      "note": "an extra compatibility view, not the main metric; OVERSPEED records and noted records are excluded"
+    },
+    "not_started": 0,
+    "not_started_note": "records never sent (the run stopped first) are reported here and are NOT in any denominator; a started request without a result is INTERRUPTED and counts as wrong",
+    "note_status": {
+      "accuracy": 1.0,
+      "ci95_wilson": [
+        0.9493,
+        1.0
+      ],
+      "correct": 72,
+      "mistakes": [],
+      "n": 72,
+      "per_status_recall": {
+        "AFFIRMED_CURRENT": {
+          "recall": 1.0,
+          "support": 12
+        },
+        "HISTORICAL": {
+          "recall": 1.0,
+          "support": 12
+        },
+        "HYPOTHETICAL": {
+          "recall": 1.0,
+          "support": 12
+        },
+        "IRRELEVANT": {
+          "recall": 1.0,
+          "support": 12
+        },
+        "NEGATED": {
+          "recall": 1.0,
+          "support": 12
+        },
+        "UNCERTAIN": {
+          "recall": 1.0,
+          "support": 12
+        }
+      }
+    },
+    "outcomes": {
+      "CRITICAL_OBSTACLE": 50,
+      "LOW_BATTERY": 50,
+      "LOW_HEALTH": 50,
+      "NORMAL_NAV": 50,
+      "OVERHEAT": 50,
+      "OVERSPEED": 50
+    },
+    "primary": {
+      "all_started": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.9874,
+          1.0
+        ],
+        "confusion_gold_x_outcome": {
+          "CRITICAL_OBSTACLE": {
+            "CRITICAL_OBSTACLE": 50
+          },
+          "LOW_BATTERY": {
+            "LOW_BATTERY": 50
+          },
+          "LOW_HEALTH": {
+            "LOW_HEALTH": 50
+          },
+          "NORMAL_NAV": {
+            "NORMAL_NAV": 50
+          },
+          "OVERHEAT": {
+            "OVERHEAT": 50
+          },
+          "OVERSPEED": {
+            "OVERSPEED": 50
+          }
+        },
+        "correct": 300,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 1.0,
+        "n": 300,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 50
+          },
+          "LOW_BATTERY": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 50
+          },
+          "LOW_HEALTH": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 50
+          },
+          "NORMAL_NAV": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 50
+          },
+          "OVERHEAT": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 50
+          },
+          "OVERSPEED": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 50
+          }
+        }
+      },
+      "noted": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.9493,
+          1.0
+        ],
+        "confusion_gold_x_outcome": {
+          "CRITICAL_OBSTACLE": {
+            "CRITICAL_OBSTACLE": 26
+          },
+          "LOW_BATTERY": {
+            "LOW_BATTERY": 9
+          },
+          "LOW_HEALTH": {
+            "LOW_HEALTH": 10
+          },
+          "NORMAL_NAV": {
+            "NORMAL_NAV": 9
+          },
+          "OVERHEAT": {
+            "OVERHEAT": 9
+          },
+          "OVERSPEED": {
+            "OVERSPEED": 9
+          }
+        },
+        "correct": 72,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 1.0,
+        "n": 72,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 26
+          },
+          "LOW_BATTERY": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 9
+          },
+          "LOW_HEALTH": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 10
+          },
+          "NORMAL_NAV": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 9
+          },
+          "OVERHEAT": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 9
+          },
+          "OVERSPEED": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 9
+          }
+        }
+      },
+      "rows_reaching_router": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.9872,
+          1.0
+        ],
+        "confusion_gold_x_outcome": {
+          "CRITICAL_OBSTACLE": {
+            "CRITICAL_OBSTACLE": 50
+          },
+          "LOW_BATTERY": {
+            "LOW_BATTERY": 48
+          },
+          "LOW_HEALTH": {
+            "LOW_HEALTH": 49
+          },
+          "NORMAL_NAV": {
+            "NORMAL_NAV": 50
+          },
+          "OVERHEAT": {
+            "OVERHEAT": 50
+          },
+          "OVERSPEED": {
+            "OVERSPEED": 50
+          }
+        },
+        "correct": 297,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 1.0,
+        "n": 297,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 50
+          },
+          "LOW_BATTERY": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 48
+          },
+          "LOW_HEALTH": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 49
+          },
+          "NORMAL_NAV": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 50
+          },
+          "OVERHEAT": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 50
+          },
+          "OVERSPEED": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 50
+          }
+        }
+      },
+      "telemetry_only": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.9834,
+          1.0
+        ],
+        "confusion_gold_x_outcome": {
+          "CRITICAL_OBSTACLE": {
+            "CRITICAL_OBSTACLE": 24
+          },
+          "LOW_BATTERY": {
+            "LOW_BATTERY": 41
+          },
+          "LOW_HEALTH": {
+            "LOW_HEALTH": 40
+          },
+          "NORMAL_NAV": {
+            "NORMAL_NAV": 41
+          },
+          "OVERHEAT": {
+            "OVERHEAT": 41
+          },
+          "OVERSPEED": {
+            "OVERSPEED": 41
+          }
+        },
+        "correct": 228,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 1.0,
+        "n": 228,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 24
+          },
+          "LOW_BATTERY": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 41
+          },
+          "LOW_HEALTH": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 40
+          },
+          "NORMAL_NAV": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 41
+          },
+          "OVERHEAT": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 41
+          },
+          "OVERSPEED": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 41
+          }
+        }
+      }
+    },
+    "records_in_set": 300,
+    "records_started": 300,
+    "safety": {
+      "executed_motion": {
+        "HALT": 152,
+        "MOVE": 85,
+        "MOVE_LIMITED": 63
+      },
+      "fault_halts": 0,
+      "floor_override": 70,
+      "floor_override_rate": 0.2333,
+      "missed_halt": 0,
+      "n": 300,
+      "needless_halt": 0,
+      "parse_failure_halts": 0
+    }
+  },
+  "mode": "real",
+  "model_drift_flag": false,
+  "model_identity_stated_by_owner": "DeepSeek-V4.1-Flash-1017 (owner-stated, actual version unverified)",
+  "planned": 300,
+  "private_calls_sha256": "9598a600258a86bf09bb1de3057d51ff41cbe0a2210881eb01b71e919d72507c",
+  "private_summary_sha256": "db744b0a143592051248f4b1d0c598dffc88b1559b670646d25a7283972644f2",
+  "prompt_sha256": "9247896719b66e139d0155f6f48716805805e6ba3ceec356c8264ee2b3d4a609",
+  "repo_head": "fec6acf3976243b1d2d58501cb603ab3722e896e",
+  "requests_that_reached_the_client": 300,
+  "rule_controls": {
+    "R1": {
+      "context_invalid": 0,
+      "finish_reasons": {
+        "stop": 300
+      },
+      "legacy3_view": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.9799,
+          1.0
+        ],
+        "correct": 187,
+        "n": 187,
+        "note": "an extra compatibility view, not the main metric; OVERSPEED records and noted records are excluded"
+      },
+      "not_started": 0,
+      "not_started_note": "records never sent (the run stopped first) are reported here and are NOT in any denominator; a started request without a result is INTERRUPTED and counts as wrong",
+      "note_status": {
+        "accuracy": 0.3194,
+        "ci95_wilson": [
+          0.2233,
+          0.4339
+        ],
+        "correct": 23,
+        "mistakes": [
+          {
+            "count": 9,
+            "gold": "AFFIRMED_CURRENT",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 2,
+            "gold": "AFFIRMED_CURRENT",
+            "got": "NEGATED"
+          },
+          {
+            "count": 1,
+            "gold": "HISTORICAL",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 11,
+            "gold": "HISTORICAL",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 12,
+            "gold": "HYPOTHETICAL",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 4,
+            "gold": "NEGATED",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 1,
+            "gold": "NEGATED",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 1,
+            "gold": "UNCERTAIN",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 6,
+            "gold": "UNCERTAIN",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 2,
+            "gold": "UNCERTAIN",
+            "got": "NEGATED"
+          }
+        ],
+        "n": 72,
+        "per_status_recall": {
+          "AFFIRMED_CURRENT": {
+            "recall": 0.0833,
+            "support": 12
+          },
+          "HISTORICAL": {
+            "recall": 0.0,
+            "support": 12
+          },
+          "HYPOTHETICAL": {
+            "recall": 0.0,
+            "support": 12
+          },
+          "IRRELEVANT": {
+            "recall": 1.0,
+            "support": 12
+          },
+          "NEGATED": {
+            "recall": 0.5833,
+            "support": 12
+          },
+          "UNCERTAIN": {
+            "recall": 0.25,
+            "support": 12
+          }
+        }
+      },
+      "outcomes": {
+        "CRITICAL_OBSTACLE": 41,
+        "LOW_BATTERY": 50,
+        "LOW_HEALTH": 49,
+        "NORMAL_NAV": 61,
+        "OVERHEAT": 49,
+        "OVERSPEED": 50
+      },
+      "primary": {
+        "all_started": {
+          "accuracy": 0.9367,
+          "ci95_wilson": [
+            0.9032,
+            0.9591
+          ],
+          "confusion_gold_x_outcome": {
+            "CRITICAL_OBSTACLE": {
+              "CRITICAL_OBSTACLE": 36,
+              "NORMAL_NAV": 14
+            },
+            "LOW_BATTERY": {
+              "LOW_BATTERY": 50
+            },
+            "LOW_HEALTH": {
+              "CRITICAL_OBSTACLE": 1,
+              "LOW_HEALTH": 49
+            },
+            "NORMAL_NAV": {
+              "CRITICAL_OBSTACLE": 3,
+              "NORMAL_NAV": 47
+            },
+            "OVERHEAT": {
+              "CRITICAL_OBSTACLE": 1,
+              "OVERHEAT": 49
+            },
+            "OVERSPEED": {
+              "OVERSPEED": 50
+            }
+          },
+          "correct": 281,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.9363,
+          "n": 300,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.7912,
+              "precision": 0.8780487804878049,
+              "recall": 0.72,
+              "support": 50
+            },
+            "LOW_BATTERY": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 50
+            },
+            "LOW_HEALTH": {
+              "f1": 0.9899,
+              "precision": 1.0,
+              "recall": 0.98,
+              "support": 50
+            },
+            "NORMAL_NAV": {
+              "f1": 0.8468,
+              "precision": 0.7704918032786885,
+              "recall": 0.94,
+              "support": 50
+            },
+            "OVERHEAT": {
+              "f1": 0.9899,
+              "precision": 1.0,
+              "recall": 0.98,
+              "support": 50
+            },
+            "OVERSPEED": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 50
+            }
+          }
+        },
+        "noted": {
+          "accuracy": 0.7361,
+          "ci95_wilson": [
+            0.6242,
+            0.8241
+          ],
+          "confusion_gold_x_outcome": {
+            "CRITICAL_OBSTACLE": {
+              "CRITICAL_OBSTACLE": 12,
+              "NORMAL_NAV": 14
+            },
+            "LOW_BATTERY": {
+              "LOW_BATTERY": 9
+            },
+            "LOW_HEALTH": {
+              "CRITICAL_OBSTACLE": 1,
+              "LOW_HEALTH": 9
+            },
+            "NORMAL_NAV": {
+              "CRITICAL_OBSTACLE": 3,
+              "NORMAL_NAV": 6
+            },
+            "OVERHEAT": {
+              "CRITICAL_OBSTACLE": 1,
+              "OVERHEAT": 8
+            },
+            "OVERSPEED": {
+              "OVERSPEED": 9
+            }
+          },
+          "correct": 53,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.8101,
+          "n": 72,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.5581,
+              "precision": 0.7058823529411765,
+              "recall": 0.46153846153846156,
+              "support": 26
+            },
+            "LOW_BATTERY": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 9
+            },
+            "LOW_HEALTH": {
+              "f1": 0.9474,
+              "precision": 1.0,
+              "recall": 0.9,
+              "support": 10
+            },
+            "NORMAL_NAV": {
+              "f1": 0.4138,
+              "precision": 0.3,
+              "recall": 0.6666666666666666,
+              "support": 9
+            },
+            "OVERHEAT": {
+              "f1": 0.9412,
+              "precision": 1.0,
+              "recall": 0.8888888888888888,
+              "support": 9
+            },
+            "OVERSPEED": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 9
+            }
+          }
+        },
+        "rows_reaching_router": {
+          "accuracy": 0.936,
+          "ci95_wilson": [
+            0.9023,
+            0.9587
+          ],
+          "confusion_gold_x_outcome": {
+            "CRITICAL_OBSTACLE": {
+              "CRITICAL_OBSTACLE": 36,
+              "NORMAL_NAV": 14
+            },
+            "LOW_BATTERY": {
+              "LOW_BATTERY": 48
+            },
+            "LOW_HEALTH": {
+              "CRITICAL_OBSTACLE": 1,
+              "LOW_HEALTH": 48
+            },
+            "NORMAL_NAV": {
+              "CRITICAL_OBSTACLE": 3,
+              "NORMAL_NAV": 47
+            },
+            "OVERHEAT": {
+              "CRITICAL_OBSTACLE": 1,
+              "OVERHEAT": 49
+            },
+            "OVERSPEED": {
+              "OVERSPEED": 50
+            }
+          },
+          "correct": 278,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.9363,
+          "n": 297,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.7912,
+              "precision": 0.8780487804878049,
+              "recall": 0.72,
+              "support": 50
+            },
+            "LOW_BATTERY": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 48
+            },
+            "LOW_HEALTH": {
+              "f1": 0.9897,
+              "precision": 1.0,
+              "recall": 0.9795918367346939,
+              "support": 49
+            },
+            "NORMAL_NAV": {
+              "f1": 0.8468,
+              "precision": 0.7704918032786885,
+              "recall": 0.94,
+              "support": 50
+            },
+            "OVERHEAT": {
+              "f1": 0.9899,
+              "precision": 1.0,
+              "recall": 0.98,
+              "support": 50
+            },
+            "OVERSPEED": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 50
+            }
+          }
+        },
+        "telemetry_only": {
+          "accuracy": 1.0,
+          "ci95_wilson": [
+            0.9834,
+            1.0
+          ],
+          "confusion_gold_x_outcome": {
+            "CRITICAL_OBSTACLE": {
+              "CRITICAL_OBSTACLE": 24
+            },
+            "LOW_BATTERY": {
+              "LOW_BATTERY": 41
+            },
+            "LOW_HEALTH": {
+              "LOW_HEALTH": 40
+            },
+            "NORMAL_NAV": {
+              "NORMAL_NAV": 41
+            },
+            "OVERHEAT": {
+              "OVERHEAT": 41
+            },
+            "OVERSPEED": {
+              "OVERSPEED": 41
+            }
+          },
+          "correct": 228,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 1.0,
+          "n": 228,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 24
+            },
+            "LOW_BATTERY": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 41
+            },
+            "LOW_HEALTH": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 40
+            },
+            "NORMAL_NAV": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 41
+            },
+            "OVERHEAT": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 41
+            },
+            "OVERSPEED": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 41
+            }
+          }
+        }
+      },
+      "records_in_set": 300,
+      "records_started": 300,
+      "safety": {
+        "executed_motion": {
+          "HALT": 141,
+          "MOVE": 96,
+          "MOVE_LIMITED": 63
+        },
+        "fault_halts": 0,
+        "floor_override": 72,
+        "floor_override_rate": 0.24,
+        "missed_halt": 14,
+        "n": 300,
+        "needless_halt": 3,
+        "parse_failure_halts": 0
+      }
+    },
+    "R2": {
+      "context_invalid": 0,
+      "finish_reasons": {
+        "stop": 300
+      },
+      "legacy3_view": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.9799,
+          1.0
+        ],
+        "correct": 187,
+        "n": 187,
+        "note": "an extra compatibility view, not the main metric; OVERSPEED records and noted records are excluded"
+      },
+      "not_started": 0,
+      "not_started_note": "records never sent (the run stopped first) are reported here and are NOT in any denominator; a started request without a result is INTERRUPTED and counts as wrong",
+      "note_status": {
+        "accuracy": 0.2083,
+        "ci95_wilson": [
+          0.1305,
+          0.3157
+        ],
+        "correct": 15,
+        "mistakes": [
+          {
+            "count": 9,
+            "gold": "AFFIRMED_CURRENT",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 1,
+            "gold": "HISTORICAL",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 11,
+            "gold": "HISTORICAL",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 12,
+            "gold": "HYPOTHETICAL",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 11,
+            "gold": "NEGATED",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 1,
+            "gold": "NEGATED",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 6,
+            "gold": "UNCERTAIN",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 6,
+            "gold": "UNCERTAIN",
+            "got": "IRRELEVANT"
+          }
+        ],
+        "n": 72,
+        "per_status_recall": {
+          "AFFIRMED_CURRENT": {
+            "recall": 0.25,
+            "support": 12
+          },
+          "HISTORICAL": {
+            "recall": 0.0,
+            "support": 12
+          },
+          "HYPOTHETICAL": {
+            "recall": 0.0,
+            "support": 12
+          },
+          "IRRELEVANT": {
+            "recall": 1.0,
+            "support": 12
+          },
+          "NEGATED": {
+            "recall": 0.0,
+            "support": 12
+          },
+          "UNCERTAIN": {
+            "recall": 0.0,
+            "support": 12
+          }
+        }
+      },
+      "outcomes": {
+        "CRITICAL_OBSTACLE": 50,
+        "LOW_BATTERY": 48,
+        "LOW_HEALTH": 48,
+        "NORMAL_NAV": 57,
+        "OVERHEAT": 48,
+        "OVERSPEED": 49
+      },
+      "primary": {
+        "all_started": {
+          "accuracy": 0.9333,
+          "ci95_wilson": [
+            0.8993,
+            0.9564
+          ],
+          "confusion_gold_x_outcome": {
+            "CRITICAL_OBSTACLE": {
+              "CRITICAL_OBSTACLE": 40,
+              "NORMAL_NAV": 10
+            },
+            "LOW_BATTERY": {
+              "CRITICAL_OBSTACLE": 2,
+              "LOW_BATTERY": 48
+            },
+            "LOW_HEALTH": {
+              "CRITICAL_OBSTACLE": 2,
+              "LOW_HEALTH": 48
+            },
+            "NORMAL_NAV": {
+              "CRITICAL_OBSTACLE": 3,
+              "NORMAL_NAV": 47
+            },
+            "OVERHEAT": {
+              "CRITICAL_OBSTACLE": 2,
+              "OVERHEAT": 48
+            },
+            "OVERSPEED": {
+              "CRITICAL_OBSTACLE": 1,
+              "OVERSPEED": 49
+            }
+          },
+          "correct": 280,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.9345,
+          "n": 300,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.8,
+              "precision": 0.8,
+              "recall": 0.8,
+              "support": 50
+            },
+            "LOW_BATTERY": {
+              "f1": 0.9796,
+              "precision": 1.0,
+              "recall": 0.96,
+              "support": 50
+            },
+            "LOW_HEALTH": {
+              "f1": 0.9796,
+              "precision": 1.0,
+              "recall": 0.96,
+              "support": 50
+            },
+            "NORMAL_NAV": {
+              "f1": 0.8785,
+              "precision": 0.8245614035087719,
+              "recall": 0.94,
+              "support": 50
+            },
+            "OVERHEAT": {
+              "f1": 0.9796,
+              "precision": 1.0,
+              "recall": 0.96,
+              "support": 50
+            },
+            "OVERSPEED": {
+              "f1": 0.9899,
+              "precision": 1.0,
+              "recall": 0.98,
+              "support": 50
+            }
+          }
+        },
+        "noted": {
+          "accuracy": 0.7222,
+          "ci95_wilson": [
+            0.6095,
+            0.8124
+          ],
+          "confusion_gold_x_outcome": {
+            "CRITICAL_OBSTACLE": {
+              "CRITICAL_OBSTACLE": 16,
+              "NORMAL_NAV": 10
+            },
+            "LOW_BATTERY": {
+              "CRITICAL_OBSTACLE": 2,
+              "LOW_BATTERY": 7
+            },
+            "LOW_HEALTH": {
+              "CRITICAL_OBSTACLE": 2,
+              "LOW_HEALTH": 8
+            },
+            "NORMAL_NAV": {
+              "CRITICAL_OBSTACLE": 3,
+              "NORMAL_NAV": 6
+            },
+            "OVERHEAT": {
+              "CRITICAL_OBSTACLE": 2,
+              "OVERHEAT": 7
+            },
+            "OVERSPEED": {
+              "CRITICAL_OBSTACLE": 1,
+              "OVERSPEED": 8
+            }
+          },
+          "correct": 52,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.7792,
+          "n": 72,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.6154,
+              "precision": 0.6153846153846154,
+              "recall": 0.6153846153846154,
+              "support": 26
+            },
+            "LOW_BATTERY": {
+              "f1": 0.875,
+              "precision": 1.0,
+              "recall": 0.7777777777777778,
+              "support": 9
+            },
+            "LOW_HEALTH": {
+              "f1": 0.8889,
+              "precision": 1.0,
+              "recall": 0.8,
+              "support": 10
+            },
+            "NORMAL_NAV": {
+              "f1": 0.48,
+              "precision": 0.375,
+              "recall": 0.6666666666666666,
+              "support": 9
+            },
+            "OVERHEAT": {
+              "f1": 0.875,
+              "precision": 1.0,
+              "recall": 0.7777777777777778,
+              "support": 9
+            },
+            "OVERSPEED": {
+              "f1": 0.9412,
+              "precision": 1.0,
+              "recall": 0.8888888888888888,
+              "support": 9
+            }
+          }
+        },
+        "rows_reaching_router": {
+          "accuracy": 0.9327,
+          "ci95_wilson": [
+            0.8983,
+            0.956
+          ],
+          "confusion_gold_x_outcome": {
+            "CRITICAL_OBSTACLE": {
+              "CRITICAL_OBSTACLE": 40,
+              "NORMAL_NAV": 10
+            },
+            "LOW_BATTERY": {
+              "CRITICAL_OBSTACLE": 2,
+              "LOW_BATTERY": 46
+            },
+            "LOW_HEALTH": {
+              "CRITICAL_OBSTACLE": 2,
+              "LOW_HEALTH": 47
+            },
+            "NORMAL_NAV": {
+              "CRITICAL_OBSTACLE": 3,
+              "NORMAL_NAV": 47
+            },
+            "OVERHEAT": {
+              "CRITICAL_OBSTACLE": 2,
+              "OVERHEAT": 48
+            },
+            "OVERSPEED": {
+              "CRITICAL_OBSTACLE": 1,
+              "OVERSPEED": 49
+            }
+          },
+          "correct": 277,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 0.9343,
+          "n": 297,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 0.8,
+              "precision": 0.8,
+              "recall": 0.8,
+              "support": 50
+            },
+            "LOW_BATTERY": {
+              "f1": 0.9787,
+              "precision": 1.0,
+              "recall": 0.9583333333333334,
+              "support": 48
+            },
+            "LOW_HEALTH": {
+              "f1": 0.9792,
+              "precision": 1.0,
+              "recall": 0.9591836734693877,
+              "support": 49
+            },
+            "NORMAL_NAV": {
+              "f1": 0.8785,
+              "precision": 0.8245614035087719,
+              "recall": 0.94,
+              "support": 50
+            },
+            "OVERHEAT": {
+              "f1": 0.9796,
+              "precision": 1.0,
+              "recall": 0.96,
+              "support": 50
+            },
+            "OVERSPEED": {
+              "f1": 0.9899,
+              "precision": 1.0,
+              "recall": 0.98,
+              "support": 50
+            }
+          }
+        },
+        "telemetry_only": {
+          "accuracy": 1.0,
+          "ci95_wilson": [
+            0.9834,
+            1.0
+          ],
+          "confusion_gold_x_outcome": {
+            "CRITICAL_OBSTACLE": {
+              "CRITICAL_OBSTACLE": 24
+            },
+            "LOW_BATTERY": {
+              "LOW_BATTERY": 41
+            },
+            "LOW_HEALTH": {
+              "LOW_HEALTH": 40
+            },
+            "NORMAL_NAV": {
+              "NORMAL_NAV": 41
+            },
+            "OVERHEAT": {
+              "OVERHEAT": 41
+            },
+            "OVERSPEED": {
+              "OVERSPEED": 41
+            }
+          },
+          "correct": 228,
+          "errors": 0,
+          "interrupted": 0,
+          "invalid": 0,
+          "macro_f1": 1.0,
+          "n": 228,
+          "per_class": {
+            "CRITICAL_OBSTACLE": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 24
+            },
+            "LOW_BATTERY": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 41
+            },
+            "LOW_HEALTH": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 40
+            },
+            "NORMAL_NAV": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 41
+            },
+            "OVERHEAT": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 41
+            },
+            "OVERSPEED": {
+              "f1": 1.0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "support": 41
+            }
+          }
+        }
+      },
+      "records_in_set": 300,
+      "records_started": 300,
+      "safety": {
+        "executed_motion": {
+          "HALT": 148,
+          "MOVE": 90,
+          "MOVE_LIMITED": 62
+        },
+        "fault_halts": 0,
+        "floor_override": 77,
+        "floor_override_rate": 0.2567,
+        "missed_halt": 10,
+        "n": 300,
+        "needless_halt": 6,
+        "parse_failure_halts": 0
+      }
+    }
+  },
+  "run_id": "20261107T114703Z_main_real_19df553b",
+  "scoring_policy": "an error, an unusable or truncated reply and an interrupted request stay in the denominator and count as wrong; nothing is retried or dropped; primary route is the main metric, note_status is reported apart, a success-only accuracy may be shown next to the main figure and never instead of it",
+  "spec_version": "1.0",
+  "status": "completed",
+  "stop_reason": "completed all planned calls",
+  "success_only_primary": {
+    "accuracy": 1.0,
+    "ci95_wilson": [
+      0.9874,
+      1.0
+    ],
+    "correct": 300,
+    "n": 300,
+    "note": "accuracy among calls that returned a usable reply; reported NEXT TO the main figure, never instead of it"
+  },
+  "suite": "main",
+  "usd_from_reported_usage": "0.134626"
+}

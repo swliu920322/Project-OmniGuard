@@ -1,0 +1,79 @@
+{
+  "status": "independently_verified",
+  "formal_tag": "eval-formal-v1",
+  "formal_commit": "fec6acf3976243b1d2d58501cb603ab3722e896e",
+  "distinct_test_records": 300,
+  "main_runs": 2,
+  "stress_cases": 55,
+  "api_requests": 634,
+  "tokens_booked": 630792,
+  "usd_booked_at_configured_rates": "0.284948",
+  "api_requests_without_usage": 0,
+  "offline_stress_rows_without_usage": 23,
+  "limits": {
+    "usd": ".57",
+    "tokens": 1320000,
+    "api_requests": 642
+  },
+  "runs": [
+    {
+      "phase": "canary",
+      "run_id": "20261107T113916Z_main_real_a6e1b5e8",
+      "logical_records": 2,
+      "api_requests": 2,
+      "tokens_booked": 2048,
+      "usd_booked": "0.000974",
+      "private_calls_sha256": "a775f40e0fac72673d353e5fc2759e9a2ba214da52b364a9ad0de34ce4931596",
+      "private_summary_sha256": "f87544fb8dcd9d74a8f157c786c445dc0041b6de412608d0ea5df238ffe4dc5c"
+    },
+    {
+      "phase": "main",
+      "run_id": "20261107T113942Z_main_real_094cb6c1",
+      "logical_records": 300,
+      "api_requests": 300,
+      "tokens_booked": 297202,
+      "usd_booked": "0.133227",
+      "private_calls_sha256": "32d80b897b7ab9d4ea81cca660908df84ba472b6b57a178a3dc640437b2f3ac7",
+      "private_summary_sha256": "28a94f148197a06c42b92f3a35e8761971a9cd943b40cc2d6182d99c92801ce6"
+    },
+    {
+      "phase": "main",
+      "run_id": "20261107T114703Z_main_real_19df553b",
+      "logical_records": 300,
+      "api_requests": 300,
+      "tokens_booked": 298251,
+      "usd_booked": "0.134626",
+      "private_calls_sha256": "9598a600258a86bf09bb1de3057d51ff41cbe0a2210881eb01b71e919d72507c",
+      "private_summary_sha256": "db744b0a143592051248f4b1d0c598dffc88b1559b670646d25a7283972644f2"
+    },
+    {
+      "phase": "stress",
+      "run_id": "20261107T115548Z_stress_real_8352b4ff",
+      "logical_records": 55,
+      "api_requests": 32,
+      "tokens_booked": 33291,
+      "usd_booked": "0.016121",
+      "private_calls_sha256": "77387036783746dcc3c8b6d3f488be1867b00a1d79384c4bd20e421c2683f273",
+      "private_summary_sha256": "7158db5b32b2dec8924850842612021b5975cc0c634da9e1379e3d2a2bd4c811"
+    }
+  ],
+  "main_primary_agreement": 1.0,
+  "main_note_status_agreement": 1.0,
+  "accuracy_difference_points": 0.0,
+  "data_hashes": {
+    "test_set.jsonl": "68e08ed9003d40a9d2ca212253367ab369ea30ab0eeb5a1e2fd2ecf19a12e6d9",
+    "stress_cases.jsonl": "dc888af048f9a195a7a7b2b39203c3542a0bd9d02188c80187a51940394b468b"
+  },
+  "corrections_to_runner_summary": [
+    "The stress summary calls_without_usable_usage=23 counts offline cases, not failed API requests. All 32 actual stress API requests reported usage. This does not change the budget or metrics."
+  ],
+  "scope": [
+    "Synthetic data: 300 records, 34 families, AI annotation and review",
+    "Router and decision-function evaluation; no real robot or live HTTP end-to-end verification",
+    "No before-after optimisation claim; no Y measured",
+    "Stranger reproduction and oral acceptance still pending"
+  ],
+  "sum_raw_api_usage_tokens": 630792,
+  "recomputed_cost_from_raw_usage_usd": "0.2849480420528",
+  "recomputed_cost_rounded_6dp_usd": "0.284948"
+}

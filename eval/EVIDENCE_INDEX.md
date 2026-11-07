@@ -1,6 +1,6 @@
 # Evidence index (framework, status of 2026-11-07)
 
-A map from each claim to the file that proves it. **Empty cells are empty on purpose: nothing unfinished is written as a conclusion.** The path a reader should be able to follow is: README claim -> evaluation report -> data version and code commit -> per-record raw results. The independent test data is now frozen; formal model evaluation and its raw results are still pending. See `acceptance/FROZEN_MANIFEST.json`.
+A map from each claim to the file that proves it. **Empty cells are empty on purpose: nothing unfinished is written as a conclusion.** The path a reader should be able to follow is: README claim -> evaluation report -> data version and code commit -> per-record raw results. Independent data is frozen and formal evaluation is complete: see [report.md](report.md), `acceptance/FROZEN_MANIFEST.json` and `formal/results/VERIFICATION.json`. Stranger reproduction and oral acceptance remain pending.
 
 Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Each gate below is "passed", "not passed" or "waived with a reason" at the deadline; waived is not passed.
 
@@ -10,7 +10,7 @@ Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Ea
 |---|---|---|
 | 覆盖【N】类意图 | 6 state-routing classes, spec 1.0 | data frozen in `acceptance/FROZEN_MANIFEST.json`; this is not a claim that model quality has passed |
 | 【M】条评测集 | 300 frozen independent test records, 50 per class | 34 conservative families, not 300 independent scenarios; 55 independent stress cases are separate from M. Dev records, dev stress and public examples are also separate |
-| 识别准确率从【X%】 | not measured | baseline B on the frozen test set |
+| 识别准确率从【X%】 | baseline B: 300/300 (100%) in each of two runs | measured on the frozen synthetic test set; use as a final accuracy, not as the start of an invented improvement |
 | 提升至【Y%】 | not measured | the optimised version on the same frozen test set; written only if the improvement is reliable. The dev set is already at 97.2 % for B (5 provider errors, every returned reply correct), so there may be little to improve on this kind of data |
 
 ## Gate 1: the evaluation can be trusted
@@ -21,9 +21,9 @@ Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Ea
 | Baseline A measured (descriptive only, not a start of "improvement") | done | harness `f5e0763`; runs `78906f0` (400 calls); canary `9cdad69`; first canary that stopped on a bound violation `588231e` |
 | Label specification 1.0, input contract, data plan, annotation protocol | done | `2ac27c6`, `eval/spec/` (manifest `SHA256SUMS`) |
 | Dev set, 180 records, regenerable | done | `35914f2`, `eval/dev/` |
-| **Independent frozen test set** with a hash commitment | done, data only | `acceptance/FROZEN_MANIFEST.json`; inputs and labels held outside the repository; no formal model run yet |
+| **Independent frozen test set** with a hash commitment | done | `acceptance/FROZEN_MANIFEST.json`; inputs and labels held outside the repository; both formal main runs completed |
 | Blind annotation (sealed) and full review of the note statuses | done | Dev: 33/96 blind, 96 reviewed, `annotation/agreement_report.json`. Final test: 24/72 blind before full review, all 72 reviewed; 20 stress notes independently annotated and reviewed. AI annotation, not expert truth. See frozen manifest |
-| Accuracy, per-class P/R/F1, macro-F1, confusion matrix, 95 % intervals on the test set | **not done** | evaluator ready (`eval/baseline_b/evaluate.py`); needs the test set and an authorised run |
+| Accuracy, per-class P/R/F1, macro-F1, confusion matrix, 95 % intervals on the test set | done | [report.md](report.md); both main runs in `formal/results/`; each 300/300, macro-F1 1.0, no provider errors |
 
 ## Gate 2: stress and limits
 
@@ -32,22 +32,22 @@ Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Ea
 | Dev-side stress cases, 66 (11 types x 6) | done, offline | `01d4ce4`, `eval/dev/stress/` |
 | Behaviour of the decision path against a lax or wrong model, fake dependencies | done | `tests/test_stress_dev.py`, `tests/test_extended_endpoint.py`; backend `6aa7824` |
 | R1/R2 rule controls on dev material | done, offline | `2243bee`, `eval/dev/rule_control/` |
-| Stress cases with a **real model** | **not done** | needs an authorised run |
-| Test-side stress cases (written by the acceptance session) | done, data only | 55 cases, 11 types x 5; frozen manifest; real-model stress validation still pending |
+| Stress cases with a **real model** | done, decision-function scope | 32 valid content cases sent to the model; 13 input rejections and 10 injected faults checked offline; no missed halt, needless halt or model error in this set |
+| Test-side stress cases (written by the acceptance session) | done | 55 cases, 11 types x 5; frozen manifest and `formal/results/`; no real robot or live HTTP end-to-end claim |
 
 ## Gate 3: reproducibility
 
 | Item | Status | Evidence |
 |---|---|---|
 | One-command evaluation, caps and sealed run directories | done for the dev set | `eval/baseline_b/README.md` |
-| Two independent runs on the frozen test set: agreement >= 98 %, accuracy difference <= 2 points | **not done** | needs the test set |
+| Two independent runs on the frozen test set: agreement >= 98 %, accuracy difference <= 2 points | passed | primary and note agreement both 100%, accuracy difference 0 points; comparison JSON in `formal/results/` |
 | A stranger reproduces it from the README with real credentials in 10 minutes | **not done** | |
 
 ## Gate 4: it can be explained
 
 | Item | Status | Evidence |
 |---|---|---|
-| Real errors with counts and raw examples | **not done** for the test set | on the dev set baseline B made no classification error; the 5 misses are provider errors (four HTTP 500, one 503) kept as failures |
+| Real errors with counts and raw examples | no model errors observed in this formal set | no five model-error categories can be invented; actual rule-control error directions are in `report.md`, examples stay private. Dev provider failures remain preserved separately |
 | Limitations | draft | `eval/LIMITATIONS.md` |
 | Four-line cards, oral check | **not done** | |
 
@@ -68,10 +68,12 @@ Costs are computed at the conservative configured rates (Flash peak rate, applie
 
 Baseline B calls: 192 (the 2 + 2 failed canary calls, 6 diagnostic calls, 2 canary calls, 180 dev-run calls). Baseline A calls: 403.
 
+Formal programme (separate authorization, US$0.57): health canary 2 calls, two main runs of 300, stress 32 API calls plus 23 offline checks. Total 634 API calls and 630,792 reported tokens; computed at the configured conservative rates US$0.284948, not a bill. Every actual API call reported usage. `formal/results/VERIFICATION.json` lists each run, hashes and budgets. The stress runner's raw `calls_without_usable_usage=23` includes the offline checks, not unknown-usage API requests; the raw artifact is retained and the distinction is documented.
+
 ## Formal evaluation entry
 
 Prepared offline: `eval/formal/` (`FORMAL_PLAN.md`, `ACCEPTANCE_FORMAT.md`, `run_formal.py`, `CODE_FREEZE.json`). Baseline B-1.0 and R1/R2 on the frozen test set, two independent runs and the stress suite; budget listed offline. **No real run exists yet**; the freeze tag, the owner's authorisation of the caps and the custodian's runs are pending.
 
 ## Code and tests
 
-Backend extended router and its endpoint flow: `01d4ce4`, `c6f85a2`, `6aa7824` (`src/cloud-orchestrator/router_v2/`, `embodied_brain/extended.py`; tests with fake dependencies). Nothing in the backend path has been run against a real model with the new prompt except the baseline-B dev run, which used the evaluation runner, not the HTTP endpoint. The whole suite: `python -m pytest tests` (335 tests at the time of writing).
+Backend extended router and its endpoint flow: `01d4ce4`, `c6f85a2`, `6aa7824` (`src/cloud-orchestrator/router_v2/`, `embodied_brain/extended.py`; endpoint tests with fake dependencies). Formal stress now exercises the backend decision function against a real model, but not the HTTP Router/Safety/Compiler flow end to end. Formal evaluator tag: `eval-formal-v1` at `fec6acf`. Its 50 focused tests passed in reviewer execution; the full suite was not rerun during the paid programme.
