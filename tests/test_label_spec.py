@@ -24,8 +24,10 @@ def test_every_example_matches_the_reference_rules():
         a = r["action"]
         assert r["primary"] == e["expected_primary"], e["id"]
         assert (a["motion"], a["goal"], a["deferred"]) == (e["expected_motion"], e["expected_goal"], e["expected_deferred"]), e["id"]
-        if e["expected_conflict"] is not None:
-            assert r["note"]["conflicts_with_telemetry"] == e["expected_conflict"], e["id"]
+        if e["expected_disagreement"] is not None:
+            assert r["note"]["source_disagreement"] == e["expected_disagreement"], e["id"]
+        if e["clauses"]:
+            assert R.combine_clause_statuses(e["clauses"]) == e["note_status"], e["id"]
 
 
 def test_examples_are_in_the_document_and_marked_dev_public():
@@ -35,8 +37,25 @@ def test_examples_are_in_the_document_and_marked_dev_public():
         assert f"| {e['id']} |" in DOC and e["split"] == "dev_public"
 
 
-def test_every_note_status_has_a_public_example():
+def test_every_note_status_and_language_has_a_public_example():
     assert {e["note_status"] for e in EXAMPLES if e["note_status"]} == set(R.NOTE_STATUSES)
+    assert {e["language"] for e in EXAMPLES if e["note"]} == {"en", "zh", "mixed"}
+    assert sum(1 for e in EXAMPLES if e["clauses"] and len(e["clauses"]) > 1) >= 4
+
+
+def test_clause_combination_is_current_state_first_then_stricter():
+    c = R.combine_clause_statuses
+    assert c(["HISTORICAL", "NEGATED"]) == "NEGATED"          # a past person does not outrank 'now gone'
+    assert c(["NEGATED", "AFFIRMED_CURRENT"]) == "AFFIRMED_CURRENT"
+    assert c(["UNCERTAIN", "NEGATED"]) == "UNCERTAIN"
+    assert c(["HYPOTHETICAL", "HISTORICAL"]) == "HISTORICAL"
+    assert c(["IRRELEVANT"]) == "IRRELEVANT" and c([]) == "IRRELEVANT"
+    for bad in (["MAYBE"],):
+        try:
+            c(bad)
+        except ValueError:
+            continue
+        raise AssertionError("unknown status accepted")
 
 
 def test_every_threshold_is_exclusive_at_the_boundary():
@@ -52,7 +71,7 @@ def test_a_note_can_add_a_risk_but_never_remove_one():
         for status in [None, *R.NOTE_STATUSES]:
             out = R.compose(rec, status)
             assert set(R.risk_set(rec)) <= set(out["risk_set"]), (risks, status)
-            if status != "AFFIRMED_CURRENT":
+            if status not in R.NOTE_RISK_STATUSES:
                 assert out["risk_set"] == R.risk_set(rec)
             else:
                 assert "CRITICAL_OBSTACLE" in out["risk_set"]
@@ -130,3 +149,82 @@ def test_relabelled_legacy_file_is_derived_and_the_original_is_untouched():
     assert got == {("NORMAL_NAV", "NORMAL_NAV"): 111, ("SENSOR_ERROR", "OVERHEAT"): 51,
                    ("CRITICAL_OBSTACLE", "CRITICAL_OBSTACLE"): 27, ("CRITICAL_OBSTACLE", "NORMAL_NAV"): 11}
     assert "baseline_v1" not in str(SPEC / "derived")
+
+
+# --- from a model reply to the executed action -----------------------------------------------------------------------
+
+def _record(risks):
+    rec = {**OK}
+    for r in risks:
+        rec.update(TRIGGER[r])
+    return rec
+
+
+def test_execute_never_removes_a_risk_whatever_the_model_says():
+    for risks in itertools.chain.from_iterable(itertools.combinations(TRIGGER, n) for n in range(6)):
+        rec = _record(risks)
+        for primary in R.CLASSES:
+            for status in [None, *R.NOTE_STATUSES]:
+                out = R.execute(rec, {"primary": primary, "note_status": status}, note="x" if status else None)
+                assert set(R.risk_set(rec)) <= set(out["risk_set"]), (risks, primary, status)
+
+
+def test_execute_adds_the_models_stricter_reading_and_flags_the_override():
+    out = R.execute(OK, {"primary": "OVERHEAT", "note_status": None})           # false alarm from the model: stricter, accepted
+    assert out["action"]["motion"] == "HALT" and out["risk_set"] == ["OVERHEAT"]
+    low = R.execute(_record(["CRITICAL_OBSTACLE"]), {"primary": "NORMAL_NAV", "note_status": None})  # model too lax: code floor holds
+    assert low["action"]["motion"] == "HALT" and low["floor_override"] is True
+    same = R.execute(OK, {"primary": "NORMAL_NAV", "note_status": None})
+    assert same["floor_override"] is False and same["action"]["motion"] == "MOVE"
+
+
+def test_execute_uses_the_predicted_note_status_by_the_same_rule_as_the_gold():
+    for status in R.NOTE_STATUSES:
+        out = R.execute(OK, {"primary": "NORMAL_NAV", "note_status": status}, note="Worker ahead.")
+        assert (out["action"]["motion"] == "HALT") == (status in R.NOTE_RISK_STATUSES), status
+
+
+def test_execute_halts_on_unparseable_or_out_of_contract_replies():
+    for bad in (None, {"primary": "MAYBE", "note_status": None}, {"primary": "NORMAL_NAV", "note_status": "SORT_OF"},
+                {"primary": "NORMAL_NAV", "note_status": "NEGATED"}):  # a status for a record that has no note
+        out = R.execute(OK, bad)
+        assert out["valid"] is False and out["action"]["motion"] == "HALT" and out["action"]["halt_reasons"][0] == "PARSE_FAILURE"
+    assert R.execute({**OK, "hp": None}, {"primary": "NORMAL_NAV", "note_status": None})["action"]["halt_reasons"][0] == "INVALID_INPUT"
+
+
+def test_emergency_stop_flag_wins_over_any_model_reply():
+    assert R.execute(OK, {"primary": "NORMAL_NAV", "note_status": None}, estop=True)["action"]["motion"] == "HALT"
+    assert R.execute(OK, None, estop=True)["action"]["halt_reasons"] == ["PARSE_FAILURE", "ESTOP"]
+
+
+# --- rule controls ---------------------------------------------------------------------------------------------------
+
+_c = importlib.util.spec_from_file_location("rule_control", SPEC / "rule_control.py")
+import sys  # noqa: E402
+sys.path.insert(0, str(SPEC))
+C = importlib.util.module_from_spec(_c)
+_c.loader.exec_module(C)
+
+
+def test_rule_controls_read_only_the_rendered_text_and_are_deterministic():
+    for e in EXAMPLES:
+        text = R.render_telemetry(e["input"], e["note"])
+        assert C.predict(text, "R1") == C.predict(text, "R1") and C.predict(text, "R2") == C.predict(text, "R2")
+
+
+def test_r1_telemetry_part_equals_the_reference_on_telemetry_only_records():
+    for e in EXAMPLES:
+        if e["note"] is None and e["expected_primary"] is not None:
+            assert C.predict(R.render_telemetry(e["input"]), "R1")["primary"] == e["expected_primary"], e["id"]
+
+
+def test_r1_on_the_public_notes_and_its_known_failure_is_visible():
+    wrong = {e["id"] for e in EXAMPLES if e["note"] and C.note_status_r1(e["note"]) != e["note_status"]}
+    assert wrong == {"N16"}  # 'now gone' has no topic word: R1 cannot carry the subject over. Reported, not tuned away.
+
+
+def test_r2_only_ever_adds_risk_relative_to_r1():
+    for e in EXAMPLES:
+        if e["note"]:
+            r1, r2 = C.note_status_r1(e["note"]), C.note_status_r2(e["note"])
+            assert not (r1 in R.NOTE_RISK_STATUSES and r2 not in R.NOTE_RISK_STATUSES), e["id"]

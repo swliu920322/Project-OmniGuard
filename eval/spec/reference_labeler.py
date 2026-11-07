@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-SPEC_VERSION = "0.2-draft"
+SPEC_VERSION = "0.3-candidate"
 
 # "below" means <, "above" means >. All values are experimental conventions (see LABEL_SPEC.md).
 THRESHOLDS = {
@@ -40,6 +40,22 @@ LEGACY3 = {"CRITICAL_OBSTACLE": "CRITICAL_OBSTACLE", "NORMAL_NAV": "NORMAL_NAV",
 
 # Human-annotated status of an operator note about "a person or obstacle ahead" (the only topic).
 NOTE_STATUSES = ["AFFIRMED_CURRENT", "NEGATED", "HISTORICAL", "HYPOTHETICAL", "UNCERTAIN", "IRRELEVANT"]
+NOTE_RISK_STATUSES = ("AFFIRMED_CURRENT", "UNCERTAIN")  # these add CRITICAL_OBSTACLE (an uncertain report halts: conservative)
+# Clause combination, strictest first. A clause about the CURRENT state outranks one about the past, a condition or an
+# unrelated matter; among current-state clauses the stricter wins. See LABEL_SPEC.md section 8.
+CURRENT_STATE_ORDER = ["AFFIRMED_CURRENT", "UNCERTAIN", "NEGATED"]
+OTHER_ORDER = ["HISTORICAL", "HYPOTHETICAL", "IRRELEVANT"]
+
+
+def combine_clause_statuses(clauses: list[str]) -> str:
+    """Overall status of a multi-clause note from the statuses of its clauses about the topic."""
+    for status in clauses:
+        if status not in NOTE_STATUSES:
+            raise ValueError(f"unknown clause status {status!r}")
+    for status in CURRENT_STATE_ORDER + OTHER_ORDER:
+        if status in clauses:
+            return status
+    return "IRRELEVANT"
 
 
 def validate(rec: dict) -> str | None:
@@ -79,12 +95,13 @@ def note_effect(note_status: str | None, telemetry_risks: list[str]) -> dict:
     """Layer 2: what an annotated note does. It can add CRITICAL_OBSTACLE; it can never remove a risk."""
     if note_status is not None and note_status not in NOTE_STATUSES:
         raise ValueError(f"unknown note status {note_status!r}")
-    adds = note_status == "AFFIRMED_CURRENT"
+    adds = note_status in NOTE_RISK_STATUSES
     telemetry_obstacle = "CRITICAL_OBSTACLE" in telemetry_risks
     return {
         "adds_critical_obstacle": adds,
-        # disagreement between the note and the telemetry; the stricter reading always wins
-        "conflicts_with_telemetry": (adds and not telemetry_obstacle) or (note_status == "NEGATED" and telemetry_obstacle),
+        # the two sources disagree (they may observe different ranges, so this is not a factual contradiction);
+        # the stricter reading always wins
+        "source_disagreement": (adds and not telemetry_obstacle) or (note_status == "NEGATED" and telemetry_obstacle),
     }
 
 
@@ -136,6 +153,36 @@ def compose(rec: dict, note_status: str | None = None, estop: bool = False) -> d
         "legacy3": LEGACY3[primary] if note_status is None else None,  # a compatibility view of telemetry-only records
         "action": resolve_action(risks, g, estop),
     }
+
+
+# --- from a model reply to the executed action ---------------------------------------------------------------------
+
+def execute(rec: dict, prediction: dict | None, note: str | None = None, estop: bool = False) -> dict:
+    """The one deterministic rule that turns a (possibly wrong) model reply into the executed action.
+
+    1. telemetry risks come from the code, never from the model;
+    2. the predicted note_status adds CRITICAL_OBSTACLE by the same rule as the gold (AFFIRMED_CURRENT or UNCERTAIN);
+    3. the predicted `primary`, if not NORMAL_NAV, is added as one more risk;
+    4. the action resolver of section 5 runs once on the merged risks.
+    Nothing a model says can remove a risk. A reply that is None (unparseable), has a label or status outside the enums,
+    or carries a note_status for a record without a note, HALTs.
+    """
+    reason = validate(rec)
+    if reason or prediction is None:
+        return {"valid": False, "primary": None, "risk_set": [], "floor_override": False,
+                "action": {"motion": "HALT", "goal": "NONE", "speed_cap": False, "deferred": [], "holds": [],
+                           "halt_reasons": ["INVALID_INPUT" if reason else "PARSE_FAILURE"] + (["ESTOP"] if estop else [])}}
+    primary, status = prediction.get("primary"), prediction.get("note_status")
+    has_note = bool(note)
+    if primary not in CLASSES or (status is not None and status not in NOTE_STATUSES) or (status is not None and not has_note):
+        return execute(rec, None, note, estop)
+    tele = risk_set(rec)
+    added = {r for r in ([primary] if primary != "NORMAL_NAV" else [])} | ({"CRITICAL_OBSTACLE"} if status in NOTE_RISK_STATUSES else set())
+    risks = [r for r in PRIORITY if r in tele or r in added]
+    executed_primary = risks[0] if risks else "NORMAL_NAV"
+    return {"valid": True, "primary": executed_primary, "risk_set": risks,
+            "floor_override": executed_primary != primary,  # the code corrected the model
+            "action": resolve_action(risks, gate(rec), estop)}
 
 
 # --- numeric precision: the model must see exactly the numbers the label was computed from -------------------------

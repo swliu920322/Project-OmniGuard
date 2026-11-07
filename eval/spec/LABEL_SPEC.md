@@ -1,14 +1,14 @@
 # Label specification — AGV telemetry state recognition and routing
 
-**Version 0.2-draft. Not frozen. Nothing here has been measured; no model was called.**
+**Version 0.3-candidate (freeze candidate after the GPT directional review of 0.2). Not frozen. Nothing here has been measured; no model was called.**
 Executable form: `reference_labeler.py`. Public boundary examples: `ambiguous_examples.json` (all shown in section 11).
-Changes from 0.1: `HARDWARE_FAULT` renamed `LOW_HEALTH`; note rules added; three layers redefined; the action union replaced by a single resolved action; numeric precision fixed; data and control boundaries stated.
+Changes from 0.2: the nine open questions are decided (section 12); the model-reply-to-action rule is now one deterministic algorithm (`execute()`, section 4); multi-clause note annotation (section 8); `UNCERTAIN` notes halt; the note/telemetry mismatch is called a *source disagreement*; Chinese and mixed-language notes are in scope; rule controls R1/R2 are implemented with complete word lists (`rule_control.py`, section 10).
 
 ## 0. Positioning
 
 This is a **cloud-edge AGV simulation experiment** that demonstrates a cloud platform, agent routing and an evaluation method. Every threshold, priority and disposition below is an **experimental convention for the simulation**. None claims to come from real industrial equipment, a safety standard or field data, and none should be quoted as such.
 
-The task is telemetry state recognition and disposition routing. It is not natural-language command recognition. The six classes are candidates; whether the six hold is decided at the review before freezing.
+The task is telemetry state recognition and disposition routing. It is not natural-language command recognition. The six classes stay candidates until the pre-freeze review; no class or business scope is added by this version.
 
 ## 1. Owner decisions (business scope only)
 
@@ -59,9 +59,16 @@ Equality is never a violation: 30 cm, 60 °C, 2.5 m/s, 20 % and 50 HP are normal
 | **3a. Final primary route** | one of the six classes | **model** outputs `primary`; **code** computes the gold from layers 1 and 2 (`compose()`) | **main metric**: accuracy, per-class P/R/F1, macro-F1, confusion matrix; N counts these |
 | **3b. Executed action** | one resolved action (section 5) | **code**, from layer 1 plus the model's `note_status`, plus the model's `primary` if it is stricter | safety metrics: `missed_halt` (gold halts, executed does not), `needless_halt` (executed halts, gold does not), `floor_override` (the code corrected the model) |
 
-The model replies with a fixed JSON object `{"primary": ..., "note_status": ...}` (`note_status` only for noted records), parsed strictly: an exact match of the six labels / six statuses, no substring search. An unparseable reply is INVALID, counted in the denominator, and the action falls back to HALT.
+The model replies **once** with a fixed JSON object `{"primary": ..., "note_status": ...}` (`note_status` only for noted records), parsed strictly: an exact match of the six labels / six statuses, no substring search. An unparseable reply is INVALID, counted in the denominator, and the action falls back to HALT.
 
-**The model can only make the executed action stricter than the code floor, never looser.** The one way it can fail unsafe is a wrong `note_status` on a noted record (a missed current report); that is exactly what `missed_halt` measures.
+**From a model reply to the executed action (`execute()`, one fixed algorithm):**
+
+1. telemetry risks come from the code, never from the model;
+2. the predicted `note_status` adds `CRITICAL_OBSTACLE` by the same rule as the gold (`AFFIRMED_CURRENT` or `UNCERTAIN`);
+3. the predicted `primary`, if it is not `NORMAL_NAV`, is added as one more risk;
+4. the action resolver of section 5 runs once on the merged risks.
+
+No model output can remove a risk. A reply that is unparseable, has a label or status outside the enums, or carries a `note_status` for a record without a note, **HALTs** (`PARSE_FAILURE`); invalid telemetry HALTs (`INVALID_INPUT`); the emergency-stop flag HALTs above all. `floor_override` is true when the executed primary differs from the model's (the code corrected it). The one way a model can still fail unsafe is a wrong `note_status` that misses a current report; that is exactly what `missed_halt` measures.
 
 `legacy3` (`LOW_BATTERY`, `OVERHEAT`, `LOW_HEALTH` → `SENSOR_ERROR`; `OVERSPEED` → none) is **only an extra compatibility view** of telemetry-only records, used to check the old three-class ability did not regress. It is not the main route, not the main metric and is empty for noted records.
 
@@ -92,19 +99,25 @@ An emergency stop is a **structured flag from a separate deterministic entry** (
 
 ## 8. Restricted B: the operator note (provisional, subject to the D2 stop-loss)
 
-An optional free-text `note` may report **one topic only: a person or obstacle ahead**. Rules:
+An optional free-text `note`, in English, Chinese or mixed, may report **one topic only: a person or obstacle ahead**. People and static obstacles are one class (no different action).
 
-| Status of the note | Meaning | Effect |
+**Status of one clause about the topic**
+
+| Status | Meaning | Effect |
 |---|---|---|
-| `AFFIRMED_CURRENT` | says it is happening now | **adds** `CRITICAL_OBSTACLE` (N01, N02, N10) |
-| `NEGATED` | says it is not there | none (N03) |
-| `HISTORICAL` | something that happened earlier | none (N05) |
-| `HYPOTHETICAL` | a condition or instruction ("if ...") | none (N06) |
-| `UNCERTAIN` | "maybe", "not sure" | none, only recorded (N07; open question Q1) |
-| `IRRELEVANT` | about something else | none (N08, N09) |
+| `AFFIRMED_CURRENT` | says it is happening now | **adds** `CRITICAL_OBSTACLE` (N01, N02, N10, N11, N15) |
+| `UNCERTAIN` | "maybe", "not sure" | **adds** `CRITICAL_OBSTACLE`: conservative halt; the status stays `UNCERTAIN` so it is scored on its own (N07, N18). No new class or action. |
+| `NEGATED` | says it is not there | none (N03, N12) |
+| `HISTORICAL` | something earlier | none (N05, N13) |
+| `HYPOTHETICAL` | a condition or instruction ("if ...") | none (N06, N14) |
+| `IRRELEVANT` | not about the topic | none (N08, N09) |
 | (no note) | | none |
 
-**Conflicts with telemetry.** The stricter reading always wins, and the disagreement is recorded (`conflicts_with_telemetry`): an affirmed report with clear telemetry adds the risk (N01); a negation with close-range telemetry is ignored and the obstacle stays (N04). **A note can add a risk and can never remove one** (tested over all risk combinations and all statuses). It cannot lift a telemetry limit, and it is not a conversation. Gold `note_status` is human-annotated; the gold route for noted records is then composed by code.
+**Notes with several clauses.** Annotate by clause, then combine with one rule (`combine_clause_statuses`): clauses about the **current state** outrank clauses about the past, a condition or another matter; among current-state clauses the stricter wins: `AFFIRMED_CURRENT` > `UNCERTAIN` > `NEGATED`; if no clause is about the current state: `HISTORICAL` > `HYPOTHETICAL` > `IRRELEVANT`. A word such as "no" or "earlier" never overrides a whole note; it only decides its own clause. Examples: "刚才有人，现在走了" → `NEGATED` (N16); "没有人，但前方有箱子" → `AFFIRMED_CURRENT` (N17); "可能有人，也可能是影子" → `UNCERTAIN` (N18); N19, N20 in English.
+
+**Source disagreement.** When the note and the telemetry point different ways (an affirmed or uncertain report with clear telemetry; a negation with close-range telemetry) the record is flagged `source_disagreement`. It is not called a factual contradiction: the two sources may observe different ranges. The stricter reading always wins (N01, N04).
+
+A note can add a risk and can **never remove one**, cannot lift a telemetry limit, and is not a conversation. Gold `note_status` is human-annotated (per clause, then combined); the gold route for noted records is composed by code.
 
 **D2 stop-loss:** if this specification and an independent test set are not frozen by the D2 gate, the product is telemetry-only and the missing note capability is recorded as not delivered.
 
@@ -117,15 +130,19 @@ A candidate needs a clear definition, independent annotation, a different action
 - **Archived originals are never modified.** Relabelling the archived 200 rows only produces derived files: `derived/legacy200_relabel.csv` and `.meta.json` (with the source SHA-256), generated by `relabel_legacy.py`, which only reads the source. The derived file is history for comparison, not a test set.
 - What the archived rows support under this spec: 111 NORMAL_NAV stay normal; 27 CRITICAL_OBSTACLE stay; **11 old "critical" rows at 30 to 50 cm become normal**; all 51 old SENSOR_ERROR rows become `OVERHEAT`. The old data holds **no independent evidence for `LOW_BATTERY`, `LOW_HEALTH` or `OVERSPEED`**; those need newly generated samples.
 - **Public boundary examples are development material.** They carry `split: dev_public`, may be used to write and tune prompts, and **must not appear in the frozen test set**: the test set is deduplicated against the examples' inputs before freezing.
-- **The telemetry-only reference labeler is not the rule control of the full B task.** On telemetry-only records it is the generator of the gold, so it scores 100% by construction and is only a sanity ceiling. The proposal for a rule control that sees the same input as the model:
-
-  - **R1, same-input rule control.** It receives only the rendered input text: parses the five numbers back (`parse_rendered`), applies the section 3 rules, and for the note applies a keyword rule: path-blocked words (`person`, `worker`, `people`, `obstacle`, `blocked`, plus Chinese equivalents) make the status `AFFIRMED_CURRENT` unless a cue word marks it otherwise (`no`, `not`, `clear` → `NEGATED`; `was`, `ago`, `earlier` → `HISTORICAL`; `if`, `unless` → `HYPOTHETICAL`; `maybe`, `might`, `not sure` → `UNCERTAIN`).
-  - **R2, fail-safe variant.** Any path-blocked word means `AFFIRMED_CURRENT`; no cue analysis.
-  - Reported on two subsets: telemetry-only (sanity ceiling) and noted records (the real comparison). Both rules are fixed before the test set is frozen and never tuned on it.
+- **The telemetry-only reference labeler is not the rule control of the full B task.** On telemetry-only records it generates the gold, so it scores 100% by construction and is only a sanity ceiling. The rule controls that read **the same rendered input text as the model** are implemented in `rule_control.py`; everything that decides a result is in that file and is fixed at freeze time:
+  - **Parsing.** The five numbers are read back with `parse_rendered`; the primary comes from the section 3 rules; the note is the text after `Operator note:`.
+  - **R1 note status.** Split the note into clauses at `, ; . ! ?` (and the Chinese `，；。！？`) and at the words `but`, `however`, `但是`, `但`, `然而`. A clause counts only if it contains a **topic word**; a note with no such clause is `IRRELEVANT`. A clause with no cue word is `AFFIRMED_CURRENT`. Clause statuses are combined with the section 8 rule.
+  - **Topic words.** English, whole words, case-insensitive: person, people, worker, workers, human, someone, somebody, pedestrian, obstacle, box, pallet, blocked, blocking, path, aisle, nobody; phrases "in the way", "no one". Chinese, substring: 人, 工人, 行人, 障碍, 箱子, 货物, 挡.
+  - **Cue words** (English whole words / phrases; Chinese substrings). `HYPOTHETICAL`: if, unless, in case, would; 如果, 假如, 万一, 要是. `UNCERTAIN`: maybe, might, possibly, perhaps, not sure, unsure, could be; 可能, 也许, 或许, 不确定. `NEGATED`: no, not, none, nobody, clear, gone, left, cleared, without; 没有, 没, 无, 不在, 走了, 离开. `HISTORICAL`: was, were, earlier, ago, before, previously; 刚才, 刚刚, 之前, 曾.
+  - **Several cues in one clause:** the first status in this order wins: `HYPOTHETICAL`, `UNCERTAIN`, `NEGATED`, `HISTORICAL`; no cue gives `AFFIRMED_CURRENT`.
+  - **R2** (fail-safe): any topic word anywhere means `AFFIRMED_CURRENT`; no cue analysis.
+  - The word lists were extended once on the public examples (adding `path`, `aisle`, `nobody`, "no one") and are not to be tuned on the frozen test set. **Known failure, kept visible:** "刚才有人，现在走了" is read as `HISTORICAL` by R1 because "现在走了" contains no topic word (N16); a test pins this.
+  - Reported on two subsets: telemetry-only (sanity ceiling) and noted records (the real comparison).
 
 ## 11. Public boundary examples
 
-Checked by `tests/test_label_spec.py` against `reference_labeler.py`. E = telemetry boundary, N = note, S = emergency stop, A = action conflict. Inputs, notes and expected actions are in `ambiguous_examples.json`.
+Checked by `tests/test_label_spec.py` against `reference_labeler.py`. E = telemetry boundary, N = note (including Chinese, mixed and multi-clause), S = emergency stop, A = action conflict. Inputs, notes, clause statuses and expected actions are in `ambiguous_examples.json`.
 
 | ID | Case | Expected primary | Reason |
 |---|---|---|---|
@@ -148,7 +165,7 @@ Checked by `tests/test_label_spec.py` against `reference_labeler.py`. E = teleme
 | N04 | negation contradicts telemetry | CRITICAL_OBSTACLE | A note can never lift a telemetry limit: the all-clear is ignored and the conflict recorded. |
 | N05 | historical event | NORMAL_NAV | A past event is not a current report. |
 | N06 | hypothetical | NORMAL_NAV | A condition ('if') is not a report. |
-| N07 | uncertain report | NORMAL_NAV | An uncertain report does not change the class (open question Q1); it is only recorded. |
+| N07 | uncertain report | CRITICAL_OBSTACLE | Decision Q1: an uncertain report halts (conservative). The status stays UNCERTAIN so it is scored as its own status; no new class or action. |
 | N08 | irrelevant note | NORMAL_NAV | Not about the path. |
 | N09 | note says 'stop' but is not an emergency-stop request | NORMAL_NAV | Free text is never an emergency stop: the stop entry is a separate flag. The word 'stop' here is IRRELEVANT to the path. |
 | N10 | affirmed report, other risks present | CRITICAL_OBSTACLE | Primary follows the priority; the overheat hold is kept. |
@@ -162,15 +179,33 @@ Checked by `tests/test_label_spec.py` against `reference_labeler.py`. E = teleme
 | A07 | physical gate: hp 0 | LOW_HEALTH | Deadlock case: halted. |
 | A08 | obstacle + overspeed | CRITICAL_OBSTACLE | Halted; the speed cap applies on resume. |
 | A09 | overheat + low health + low battery + overspeed | OVERHEAT | Cool and lock; charging and speed cap are both deferred. |
+| N11 | Chinese: current affirmed | CRITICAL_OBSTACLE | Same rule as N01 in Chinese. |
+| N12 | Chinese: negated | NORMAL_NAV | Same as N03. |
+| N13 | Chinese: historical | NORMAL_NAV | Past event only. |
+| N14 | Chinese: hypothetical | NORMAL_NAV | A condition, not a report. |
+| N15 | mixed language: current affirmed | CRITICAL_OBSTACLE | Mixed Chinese and English: same rule. |
+| N16 | multi-clause: past person, now gone | NORMAL_NAV | The clause about the CURRENT state decides: a past person does not outrank 'now gone'. |
+| N17 | multi-clause: no person but a box ahead | CRITICAL_OBSTACLE | Negating the person does not cancel the box: scope is per clause. |
+| N18 | multi-clause: maybe a person, maybe a shadow | CRITICAL_OBSTACLE | Uncertain, and it halts (Q1). |
+| N19 | multi-clause: earlier worker, aisle clear now | NORMAL_NAV | Current-state clause wins over the historical one. |
+| N20 | multi-clause: clear but a pallet blocks | CRITICAL_OBSTACLE | The affirmed current clause wins. |
 
-## 12. Open questions for review
+## 12. Decisions on the nine open questions
 
-- **Q1.** An `UNCERTAIN` note ("maybe someone is ahead") currently changes nothing. Alternatives: treat it as affirmed (safer, more needless halts) or add a "confirm path" action. Which?
-- **Q2.** A person and a static obstacle are one class (`CRITICAL_OBSTACLE`). Is a separate person class justified by a different action? Not at present.
-- **Q3.** `LOW_HEALTH` locks the vehicle for maintenance. Is "lock" the right experimental action, or only "halt"?
-- **Q4.** Low battery below 5 % is gated (halt) and charging is deferred. Who or what resumes it is outside this task; is a deferred-only entry acceptable?
-- **Q5.** The model outputs `primary` and `note_status` in one reply. A two-call design (status first) would separate the errors but doubles the cost. Keep one reply?
-- **Q6.** Notes are English only in the public examples. Are Chinese and mixed-language notes in scope for the stress set (the plan needs typo and mixed-language stress), and who annotates them?
-- **Q7.** The experimental thresholds (`20`, `50`) sit at the edge of the old "normal" ranges. Keep, or choose different round numbers and regenerate?
-- **Q8.** Priority (section 6) is a convention. Is there a reason to put `LOW_HEALTH` above `OVERHEAT`?
-- **Q9.** The R1 keyword and cue lists are my proposal; they need reviewing before they are fixed.
+| Q | Decision |
+|---|---|
+| Q1 uncertain note | Halt conservatively; keep the `UNCERTAIN` status; no seventh class, no new action. |
+| Q2 person vs static obstacle | One class `CRITICAL_OBSTACLE`; no different action. |
+| Q3 low health | `HALT` + `LOCK`, an experimental simulation convention. |
+| Q4 battery below 5 | Charging recorded as a deferred follow-up; the recovery procedure is out of scope. |
+| Q5 calls | One JSON reply with `primary` and `note_status`, scored separately. |
+| Q6 Chinese and mixed notes | In scope for dev set, independent test set and stress set. Claude writes the dev samples; the acceptance session independently writes and reviews the test samples; disputed items come to the owner. |
+| Q7 thresholds | Keep 20 and 50; not changed to create new samples. |
+| Q8 priority | Unchanged; stated as an experimental convention. |
+| Q9 rule controls | R1 and R2 adopted with the complete lists in section 10, fixed before freeze. |
+
+## 13. Still open before the freeze
+
+- Review of the R1 word and cue lists by the acceptance session.
+- The dev/test split and quantities: see `DATA_PLAN.md` (a plan, nothing generated).
+- Annotation protocol for the human-annotated gold note statuses: who annotates, how disagreements are resolved, agreement measured on a sample (to be written with the test-set procedure).

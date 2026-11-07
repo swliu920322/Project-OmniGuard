@@ -14,11 +14,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": null,
   "expected_motion": "MOVE",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "Rule is 'below 30'; equality is not a violation."
+  "reason": "Rule is 'below 30'; equality is not a violation.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E02",
@@ -35,11 +37,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "CRITICAL_OBSTACLE",
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "Strictly below the configured minimum."
+  "reason": "Strictly below the configured minimum.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E03",
@@ -56,11 +60,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": null,
   "expected_motion": "MOVE",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "Rule is 'above 60'."
+  "reason": "Rule is 'above 60'.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E04",
@@ -77,11 +83,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "OVERHEAT",
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "Above the configured maximum."
+  "reason": "Above the configured maximum.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E05",
@@ -98,11 +106,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": null,
   "expected_motion": "MOVE",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "Rule is 'above 2.5'."
+  "reason": "Rule is 'above 2.5'.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E06",
@@ -119,11 +129,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "OVERSPEED",
-  "expected_conflict": null,
   "expected_motion": "MOVE_LIMITED",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "Above the configured maximum; keeps moving, capped."
+  "reason": "Above the configured maximum; keeps moving, capped.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E07",
@@ -140,11 +152,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": null,
   "expected_motion": "MOVE",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "Experimental threshold is 'below 20'."
+  "reason": "Experimental threshold is 'below 20'.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E08",
@@ -161,11 +175,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "LOW_BATTERY",
-  "expected_conflict": null,
   "expected_motion": "MOVE",
   "expected_goal": "CHARGER",
   "expected_deferred": [],
-  "reason": "The original generator never produced 10-20; this spec closes the gap at 20."
+  "reason": "The original generator never produced 10-20; this spec closes the gap at 20.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E09",
@@ -182,11 +198,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": null,
   "expected_motion": "MOVE",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "Experimental threshold is 'below 50'."
+  "reason": "Experimental threshold is 'below 50'.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E10",
@@ -203,11 +221,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "LOW_HEALTH",
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "Same gap rule; stops and locks."
+  "reason": "Same gap rule; stops and locks.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E11",
@@ -224,11 +244,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": null,
   "expected_motion": "MOVE",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "11 archived rows are 'critical' at 30-50 cm; under this spec they are normal. The old gold is not reused."
+  "reason": "11 archived rows are 'critical' at 30-50 cm; under this spec they are normal. The old gold is not reused.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E12",
@@ -245,11 +267,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": null,
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "Outside the input contract: halted, not a class."
+  "reason": "Outside the input contract: halted, not a class.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "E13",
@@ -266,11 +290,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": null,
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "Same: invalid, not classified."
+  "reason": "Same: invalid, not classified.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "N01",
@@ -287,11 +313,13 @@
   "note_status": "AFFIRMED_CURRENT",
   "estop": false,
   "expected_primary": "CRITICAL_OBSTACLE",
-  "expected_conflict": true,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "A current positive report adds the risk even with no telemetry support; the stricter reading wins and the disagreement is recorded."
+  "reason": "A current positive report adds the risk even with no telemetry support; the stricter reading wins and the disagreement is recorded.",
+  "expected_disagreement": true,
+  "clauses": null,
+  "language": "en"
  },
  {
   "id": "N02",
@@ -308,11 +336,13 @@
   "note_status": "AFFIRMED_CURRENT",
   "estop": false,
   "expected_primary": "CRITICAL_OBSTACLE",
-  "expected_conflict": false,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "Note and telemetry agree: no conflict."
+  "reason": "Note and telemetry agree: no conflict.",
+  "expected_disagreement": false,
+  "clauses": null,
+  "language": "en"
  },
  {
   "id": "N03",
@@ -329,11 +359,13 @@
   "note_status": "NEGATED",
   "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": false,
   "expected_motion": "MOVE",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "A negated report changes nothing."
+  "reason": "A negated report changes nothing.",
+  "expected_disagreement": false,
+  "clauses": null,
+  "language": "en"
  },
  {
   "id": "N04",
@@ -350,11 +382,13 @@
   "note_status": "NEGATED",
   "estop": false,
   "expected_primary": "CRITICAL_OBSTACLE",
-  "expected_conflict": true,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "A note can never lift a telemetry limit: the all-clear is ignored and the conflict recorded."
+  "reason": "A note can never lift a telemetry limit: the all-clear is ignored and the conflict recorded.",
+  "expected_disagreement": true,
+  "clauses": null,
+  "language": "en"
  },
  {
   "id": "N05",
@@ -371,11 +405,13 @@
   "note_status": "HISTORICAL",
   "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": false,
   "expected_motion": "MOVE",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "A past event is not a current report."
+  "reason": "A past event is not a current report.",
+  "expected_disagreement": false,
+  "clauses": null,
+  "language": "en"
  },
  {
   "id": "N06",
@@ -392,11 +428,13 @@
   "note_status": "HYPOTHETICAL",
   "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": false,
   "expected_motion": "MOVE",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "A condition ('if') is not a report."
+  "reason": "A condition ('if') is not a report.",
+  "expected_disagreement": false,
+  "clauses": null,
+  "language": "en"
  },
  {
   "id": "N07",
@@ -412,12 +450,14 @@
   "note": "Maybe someone is ahead, not sure.",
   "note_status": "UNCERTAIN",
   "estop": false,
-  "expected_primary": "NORMAL_NAV",
-  "expected_conflict": false,
-  "expected_motion": "MOVE",
-  "expected_goal": "CONTINUE",
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "An uncertain report does not change the class (open question Q1); it is only recorded."
+  "reason": "Decision Q1: an uncertain report halts (conservative). The status stays UNCERTAIN so it is scored as its own status; no new class or action.",
+  "expected_disagreement": true,
+  "clauses": null,
+  "language": "en"
  },
  {
   "id": "N08",
@@ -434,11 +474,13 @@
   "note_status": "IRRELEVANT",
   "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": false,
   "expected_motion": "MOVE",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "Not about the path."
+  "reason": "Not about the path.",
+  "expected_disagreement": false,
+  "clauses": null,
+  "language": "en"
  },
  {
   "id": "N09",
@@ -455,11 +497,13 @@
   "note_status": "IRRELEVANT",
   "estop": false,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": false,
   "expected_motion": "MOVE",
   "expected_goal": "CONTINUE",
   "expected_deferred": [],
-  "reason": "Free text is never an emergency stop: the stop entry is a separate flag. The word 'stop' here is IRRELEVANT to the path."
+  "reason": "Free text is never an emergency stop: the stop entry is a separate flag. The word 'stop' here is IRRELEVANT to the path.",
+  "expected_disagreement": false,
+  "clauses": null,
+  "language": "en"
  },
  {
   "id": "N10",
@@ -476,11 +520,13 @@
   "note_status": "AFFIRMED_CURRENT",
   "estop": false,
   "expected_primary": "CRITICAL_OBSTACLE",
-  "expected_conflict": true,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "Primary follows the priority; the overheat hold is kept."
+  "reason": "Primary follows the priority; the overheat hold is kept.",
+  "expected_disagreement": true,
+  "clauses": null,
+  "language": "en"
  },
  {
   "id": "S01",
@@ -497,11 +543,13 @@
   "note_status": null,
   "estop": true,
   "expected_primary": "NORMAL_NAV",
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "The flag halts the vehicle; the telemetry label is unchanged because the stop is an action, not a class."
+  "reason": "The flag halts the vehicle; the telemetry label is unchanged because the stop is an action, not a class.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "A01",
@@ -518,11 +566,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "LOW_BATTERY",
-  "expected_conflict": null,
   "expected_motion": "MOVE",
   "expected_goal": "CHARGER",
   "expected_deferred": [],
-  "reason": "Goes to the charger."
+  "reason": "Goes to the charger.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "A02",
@@ -539,11 +589,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "LOW_BATTERY",
-  "expected_conflict": null,
   "expected_motion": "MOVE_LIMITED",
   "expected_goal": "CHARGER",
   "expected_deferred": [],
-  "reason": "Goes to the charger with the speed cap on."
+  "reason": "Goes to the charger with the speed cap on.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "A03",
@@ -560,13 +612,15 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "CRITICAL_OBSTACLE",
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [
    "RETURN_TO_CHARGE"
   ],
-  "reason": "Halted: no travel to the charger while the obstacle holds; charging is kept as a follow-up."
+  "reason": "Halted: no travel to the charger while the obstacle holds; charging is kept as a follow-up.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "A04",
@@ -583,13 +637,15 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "OVERHEAT",
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [
    "RETURN_TO_CHARGE"
   ],
-  "reason": "Cooling comes first; return to charge is deferred."
+  "reason": "Cooling comes first; return to charge is deferred.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "A05",
@@ -606,13 +662,15 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "LOW_HEALTH",
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [
    "RETURN_TO_CHARGE"
   ],
-  "reason": "Locked; return to charge is deferred."
+  "reason": "Locked; return to charge is deferred.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "A06",
@@ -629,13 +687,15 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "LOW_BATTERY",
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [
    "RETURN_TO_CHARGE"
   ],
-  "reason": "Gate halts the vehicle before everything; charging is a deferred follow-up."
+  "reason": "Gate halts the vehicle before everything; charging is a deferred follow-up.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "A07",
@@ -652,11 +712,13 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "LOW_HEALTH",
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [],
-  "reason": "Deadlock case: halted."
+  "reason": "Deadlock case: halted.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "A08",
@@ -673,13 +735,15 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "CRITICAL_OBSTACLE",
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [
    "LIMIT_SPEED_ON_RESUME"
   ],
-  "reason": "Halted; the speed cap applies on resume."
+  "reason": "Halted; the speed cap applies on resume.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
  },
  {
   "id": "A09",
@@ -696,13 +760,269 @@
   "note_status": null,
   "estop": false,
   "expected_primary": "OVERHEAT",
-  "expected_conflict": null,
   "expected_motion": "HALT",
   "expected_goal": "NONE",
   "expected_deferred": [
    "RETURN_TO_CHARGE",
    "LIMIT_SPEED_ON_RESUME"
   ],
-  "reason": "Cool and lock; charging and speed cap are both deferred."
+  "reason": "Cool and lock; charging and speed cap are both deferred.",
+  "expected_disagreement": null,
+  "clauses": null,
+  "language": null
+ },
+ {
+  "id": "N11",
+  "split": "dev_public",
+  "title": "Chinese: current affirmed",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "前方有人。",
+  "note_status": "AFFIRMED_CURRENT",
+  "estop": false,
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_disagreement": true,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "Same rule as N01 in Chinese.",
+  "clauses": [
+   "AFFIRMED_CURRENT"
+  ],
+  "language": "zh"
+ },
+ {
+  "id": "N12",
+  "split": "dev_public",
+  "title": "Chinese: negated",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "前方没有人。",
+  "note_status": "NEGATED",
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_disagreement": false,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "Same as N03.",
+  "clauses": [
+   "NEGATED"
+  ],
+  "language": "zh"
+ },
+ {
+  "id": "N13",
+  "split": "dev_public",
+  "title": "Chinese: historical",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "刚才有人经过。",
+  "note_status": "HISTORICAL",
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_disagreement": false,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "Past event only.",
+  "clauses": [
+   "HISTORICAL"
+  ],
+  "language": "zh"
+ },
+ {
+  "id": "N14",
+  "split": "dev_public",
+  "title": "Chinese: hypothetical",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "如果有人出现就停车。",
+  "note_status": "HYPOTHETICAL",
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_disagreement": false,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "A condition, not a report.",
+  "clauses": [
+   "HYPOTHETICAL"
+  ],
+  "language": "zh"
+ },
+ {
+  "id": "N15",
+  "split": "dev_public",
+  "title": "mixed language: current affirmed",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "Worker 在前面通道里。",
+  "note_status": "AFFIRMED_CURRENT",
+  "estop": false,
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_disagreement": true,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "Mixed Chinese and English: same rule.",
+  "clauses": [
+   "AFFIRMED_CURRENT"
+  ],
+  "language": "mixed"
+ },
+ {
+  "id": "N16",
+  "split": "dev_public",
+  "title": "multi-clause: past person, now gone",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "刚才有人，现在走了。",
+  "note_status": "NEGATED",
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_disagreement": false,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "The clause about the CURRENT state decides: a past person does not outrank 'now gone'.",
+  "clauses": [
+   "HISTORICAL",
+   "NEGATED"
+  ],
+  "language": "zh"
+ },
+ {
+  "id": "N17",
+  "split": "dev_public",
+  "title": "multi-clause: no person but a box ahead",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "没有人，但前方有箱子。",
+  "note_status": "AFFIRMED_CURRENT",
+  "estop": false,
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_disagreement": true,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "Negating the person does not cancel the box: scope is per clause.",
+  "clauses": [
+   "NEGATED",
+   "AFFIRMED_CURRENT"
+  ],
+  "language": "zh"
+ },
+ {
+  "id": "N18",
+  "split": "dev_public",
+  "title": "multi-clause: maybe a person, maybe a shadow",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "可能有人，也可能是影子。",
+  "note_status": "UNCERTAIN",
+  "estop": false,
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_disagreement": true,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "Uncertain, and it halts (Q1).",
+  "clauses": [
+   "UNCERTAIN"
+  ],
+  "language": "zh"
+ },
+ {
+  "id": "N19",
+  "split": "dev_public",
+  "title": "multi-clause: earlier worker, aisle clear now",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "A worker was here earlier, but the aisle is clear now.",
+  "note_status": "NEGATED",
+  "estop": false,
+  "expected_primary": "NORMAL_NAV",
+  "expected_disagreement": false,
+  "expected_motion": "MOVE",
+  "expected_goal": "CONTINUE",
+  "expected_deferred": [],
+  "reason": "Current-state clause wins over the historical one.",
+  "clauses": [
+   "HISTORICAL",
+   "NEGATED"
+  ],
+  "language": "en"
+ },
+ {
+  "id": "N20",
+  "split": "dev_public",
+  "title": "multi-clause: clear but a pallet blocks",
+  "input": {
+   "distance_cm": 400,
+   "velocity_ms": 1,
+   "hp": 80,
+   "battery_pct": 60,
+   "temperature_c": 35
+  },
+  "note": "The aisle is clear, but a pallet is blocking the path.",
+  "note_status": "AFFIRMED_CURRENT",
+  "estop": false,
+  "expected_primary": "CRITICAL_OBSTACLE",
+  "expected_disagreement": true,
+  "expected_motion": "HALT",
+  "expected_goal": "NONE",
+  "expected_deferred": [],
+  "reason": "The affirmed current clause wins.",
+  "clauses": [
+   "NEGATED",
+   "AFFIRMED_CURRENT"
+  ],
+  "language": "en"
  }
 ]
