@@ -1,0 +1,31 @@
+{
+  "blind_annotation": {
+    "n": 20,
+    "raw_agreement": 1.0,
+    "kappa": 1.0,
+    "kappa_note": null,
+    "disagreements": []
+  },
+  "review": {
+    "items": 20,
+    "status_changes": 0
+  },
+  "review_sha256": "dd66d30ccd3393e5348e545eecd08f97c8a74d6a4ee9ec0f911132263f3ef19d",
+  "to_owner": [],
+  "model_calls": 0,
+  "stress_records": 55,
+  "type_counts": {
+    "1": 5,
+    "2": 5,
+    "3": 5,
+    "4": 5,
+    "5": 5,
+    "6": 5,
+    "7": 5,
+    "8": 5,
+    "9": 5,
+    "10": 5,
+    "11": 5
+  },
+  "note": "AI annotation and AI review; annotation completion is not model stress-test completion"
+}

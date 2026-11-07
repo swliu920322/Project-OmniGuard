@@ -1,0 +1,19 @@
+{
+  "state": "revised_candidate_not_frozen",
+  "records": 300,
+  "classes": 6,
+  "counts_per_class": 50,
+  "notes": 72,
+  "blind_sample": 24,
+  "reason": "14 notes rewritten before any model evaluation after semantic overlap audit; numeric mandated boundary coverage retained",
+  "previous_candidate_commit": "22eed2c",
+  "sha256": {
+    "acceptance-v1.candidate.jsonl": "68e08ed9003d40a9d2ca212253367ab369ea30ab0eeb5a1e2fd2ecf19a12e6d9",
+    "blind-inputs-24.jsonl": "234f1c43c3173cefdcb54ca061ab07914ad4987a3a4e3db2c0560227e841383e",
+    "blind-selection-commitment.json": "cd95fa9c7896e8bd36cb2d70732e0c38f43a5351525ec021d397eaa951552610",
+    "review-inputs-72.jsonl": "7dc3eb767a6ead823736e3edb142c9fe6e52eaa56d6d7141c810f61d106e3623",
+    "author-labels-isolated.json": "ec8d5c8121ecd1c080755f446c26128fe00613efbb628eb18169d333ef61e95b"
+  },
+  "model_calls": 0,
+  "inputs_and_labels_in_repository": false
+}
