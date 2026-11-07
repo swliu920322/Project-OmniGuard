@@ -1,0 +1,9 @@
+{
+  "status": "blind_annotation_sealed_before_full_review",
+  "count": 24,
+  "results_sha256": "97d8690772adb9b761ea8ab53a0627663ec0899deca673711016f9acefb22a5b",
+  "input_packet_sha256": "ad39f41c5e2e66f46e5c939f721c02225261895790748eeab54671a6e4247912",
+  "candidate_commitment_commit": "22eed2c",
+  "model_calls": 0,
+  "labels_in_repository": false
+}
