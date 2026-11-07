@@ -50,6 +50,55 @@ def openai_model_call(client, model_name: str, max_tokens: int = MAX_TOKENS, tem
     return call
 
 
+def no_retry_client(client, timeout: float = 60.0):
+    """The client with SDK retries off and a fixed timeout, or RuntimeError if that cannot be confirmed (so a retry can never hide a failure)."""
+    limited = client.with_options(max_retries=0, timeout=timeout)
+    if getattr(limited, "max_retries", None) != 0 or getattr(limited, "timeout", None) != timeout:
+        raise RuntimeError("could not confirm that SDK retries are disabled and the timeout is fixed")
+    return limited
+
+
+def precheck(rec: dict, note) -> str | None:
+    """Everything decide() rejects before a model call, so a caller can refuse a request before touching any external service."""
+    reason = R.check_input(rec, note)
+    if reason is None:
+        try:
+            R.render_telemetry(rec, (note or "").strip() or None)
+        except ValueError as exc:
+            reason = str(exc)
+    return reason
+
+
+MAX_SPEED_CM_S = 250  # 2.5 m/s, the OVERSPEED threshold, in the cm/s unit of the action schema
+DEFAULT_ALLOWED_ACTIONS = ("stop", "turn", "move")
+
+
+def validate_actions(actions, decision_action: dict, target_speed, allowed=DEFAULT_ALLOWED_ACTIONS) -> list[str]:
+    """Violations of the code constraints by an action list (empty = acceptable). The router's decision is never loosened:
+
+    - a halting decision allows only `stop`;
+    - every action must be a dict whose `action` is in the allowed set; an unparseable or empty list cannot be verified, so it is a violation;
+    - `speed` must be a number between 0 and the cap: the request's target speed, and at most 250 cm/s (2.5 m/s) when the decision has a speed cap.
+    """
+    problems = []
+    if not isinstance(actions, list) or not actions:
+        return ["the action list is missing, empty or not a list"]
+    cap = target_speed if isinstance(target_speed, (int, float)) and not isinstance(target_speed, bool) else MAX_SPEED_CM_S
+    if decision_action.get("speed_cap"):
+        cap = min(cap, MAX_SPEED_CM_S)
+    for i, a in enumerate(actions):
+        if not isinstance(a, dict) or a.get("action") not in allowed:
+            problems.append(f"action {i}: {a!r} is not an allowed action {list(allowed)}")
+            continue
+        if decision_action.get("motion") == "HALT" and a["action"] != "stop":
+            problems.append(f"action {i}: {a['action']!r} while the decision is HALT")
+        if "speed" in a:
+            sp = a["speed"]
+            if isinstance(sp, bool) or not isinstance(sp, (int, float)) or sp != sp or sp < 0 or sp > cap:
+                problems.append(f"action {i}: speed {sp!r} outside 0..{cap}")
+    return problems
+
+
 def decide(rec: dict, note: str | None, call_model, estop: bool = False) -> dict:
     """Returns {"executed": rules.execute(...), "model_called": bool, "prediction": ..., "parse_error": ..., "user_input": ...}."""
     base = {"model_called": False, "prediction": None, "parse_error": None, "user_input": None, "fault": None}

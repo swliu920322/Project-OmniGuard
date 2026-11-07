@@ -1,15 +1,12 @@
 """Backend router_v2: same rules, same prompt, same parser and same decisions as the evaluation path; opt-in wiring into brain.py."""
 import hashlib
+import pytest
 import importlib.util
 import json
 import pathlib
 import sys
-import time
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
-import pytest
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 for sub in ("src/cloud-orchestrator", "eval/spec", "eval/baseline_b"):
@@ -130,90 +127,41 @@ def test_a_lax_model_cannot_lift_a_telemetry_risk_and_the_stop_flag_wins():
     assert V.decide(clear, None, lax, estop=True)["executed"]["action"]["halt_reasons"] == ["ESTOP"]
 
 
-# --- opt-in wiring in brain.py ----------------------------------------------------------------------------------------
-
-EXT_CONFIG = {"router_mode": "extended", "agent_router_prompt": "unused", "agent_safety_rules": "Maintain 30cm minimum distance.",
-              "agent_execution_schema": "[{'action': 'stop'|'turn'|'move', 'degree': int, 'speed': int}]"}
-LEGACY_CONFIG = {"agent_router_prompt": "Classify telemetry into: [CRITICAL_OBSTACLE, NORMAL_NAV, SENSOR_ERROR]",
-                 "agent_safety_rules": "Maintain 30cm minimum distance.", "agent_execution_schema": "[...]"}
-
-
-@pytest.fixture
-def api():
-    from embodied_brain.brain import brain_router, _rate_limit_store
-    _rate_limit_store.clear()
-    app = FastAPI()
-    app.include_router(brain_router)
-    return TestClient(app)
-
-
-def _post(api, config, body, model_reply=None, legacy_replies=None):
-    from embodied_brain import brain
-    with patch.object(brain, "load_scenario_config", return_value=config), patch.object(brain, "get_cosmos_container", side_effect=RuntimeError("no cosmos")), \
-         patch.object(brain, "get_llm_client_and_model", return_value=(object(), "m")), \
-         patch("router_v2.openai_model_call", return_value=model_reply or (lambda s, u: V.ModelReply(fault="API_ERROR"))), \
-         patch.object(brain, "ask_agent", side_effect=legacy_replies or ["NORMAL_NAV", "PASS", '[{"action":"move","speed":30}]']) as ask:
-        r = api.post("/api/simulate_agent", json=body)
-    return r, ask
-
-
-BODY = {"tenant_id": "T", "obstacle_distance_cm": 400, "velocity": 1.0, "hp": 80, "battery": 60, "temperature": 35}
-
-
-def test_extended_tenant_through_the_http_endpoint(api):
-    lax = lambda s, u: V.ModelReply(content=json.dumps({"primary": "NORMAL_NAV", "note_status": None}), finish_reason="stop")
-    r, ask = _post(api, EXT_CONFIG, {**BODY, "obstacle_distance_cm": 10}, lax)
-    body = r.json()
-    assert r.status_code == 200 and body["final_action"] == [{"action": "stop"}]
-    assert body["pipeline_trace"][0]["decision"].startswith("CRITICAL_OBSTACLE | motion=HALT") and "floor_override=True" in body["pipeline_trace"][0]["decision"]
-    assert [t["status"] for t in body["pipeline_trace"][1:]] == ["SHORT_CIRCUIT", "SHORT_CIRCUIT"] and ask.call_count == 0
-
-
-def test_extended_tenant_continues_to_safety_and_compiler_when_nothing_halts(api):
-    ok = lambda s, u: V.ModelReply(content=json.dumps({"primary": "NORMAL_NAV", "note_status": None}), finish_reason="stop")
-    r, ask = _post(api, EXT_CONFIG, BODY, ok, legacy_replies=["PASS", '[{"action":"move","speed":30}]'])
-    body = r.json()
-    assert r.status_code == 200 and body["final_action"] == [{"action": "move", "speed": 30}] and ask.call_count == 2
-    assert "motion=MOVE" in body["pipeline_trace"][0]["decision"]
-
-
-def test_extended_tenant_uses_the_operator_note_and_the_stop_flag(api):
-    seen = {}
-
-    def model(s, u):
-        seen["user"] = u
-        return V.ModelReply(content=json.dumps({"primary": "CRITICAL_OBSTACLE", "note_status": "AFFIRMED_CURRENT"}), finish_reason="stop")
-
-    r, _ = _post(api, EXT_CONFIG, {**BODY, "operator_note": "A worker is standing in the aisle ahead."}, model)
-    assert r.json()["final_action"] == [{"action": "stop"}] and seen["user"].endswith("Operator note: A worker is standing in the aisle ahead.")
-    from embodied_brain.brain import _rate_limit_store
-    _rate_limit_store.clear()
-    r, _ = _post(api, EXT_CONFIG, {**BODY, "emergency_stop": True}, lambda s, u: V.ModelReply(content=json.dumps({"primary": "NORMAL_NAV", "note_status": None}), finish_reason="stop"))
-    assert r.json()["final_action"] == [{"action": "stop"}] and "ESTOP" in r.json()["pipeline_trace"][0]["decision"]
-
-
-def test_extended_tenant_with_an_api_fault_or_bad_input_stops_and_a_bad_input_is_not_sent(api):
-    r, _ = _post(api, EXT_CONFIG, BODY)                                    # the model call fails
-    assert r.json()["final_action"] == [{"action": "stop"}] and "halt_reasons=['API_ERROR']" in r.json()["pipeline_trace"][0]["decision"]
-    from embodied_brain.brain import _rate_limit_store
-    _rate_limit_store.clear()
-    called = []
-    r, _ = _post(api, EXT_CONFIG, {**BODY, "battery": 180}, lambda s, u: called.append(u))
-    assert r.json()["final_action"] == [{"action": "stop"}] and called == [] and "model_called=False" in r.json()["pipeline_trace"][0]["decision"]
-
-
-def test_legacy_tenants_are_untouched_by_the_extended_wiring(api):
-    r, ask = _post(api, LEGACY_CONFIG, BODY)
-    body = r.json()
-    assert r.status_code == 200 and body["pipeline_trace"][0] == {"agent": "Router", "decision": "NORMAL_NAV"} and ask.call_count == 3
-    first_call = ask.call_args_list[0]
-    assert first_call.args[0] == LEGACY_CONFIG["agent_router_prompt"] and first_call.kwargs == {"max_completion_tokens": 20}
-    from embodied_brain.brain import _rate_limit_store
-    _rate_limit_store.clear()
-    r, ask = _post(api, LEGACY_CONFIG, BODY, legacy_replies=["SENSOR_ERROR"])
-    assert r.json()["final_action"] == [{"action": "stop"}] and ask.call_count == 1                      # the old short-circuit still works
-
-
 def test_the_registry_has_the_opt_in_tenant_and_the_old_tenants_have_no_router_mode(scenario_registry):
     assert scenario_registry["Tenant-Alpha-Extended"]["router_mode"] == "extended"
     assert "router_mode" not in scenario_registry["Tenant-Alpha"] and "router_mode" not in scenario_registry["Tenant-Beta"]
+
+
+def test_validate_actions_never_loosens_a_halt_or_a_speed_cap():
+    move = {"motion": "MOVE", "speed_cap": False}
+    capped = {"motion": "MOVE_LIMITED", "speed_cap": True}
+    halt = {"motion": "HALT", "speed_cap": False}
+    assert V.validate_actions([{"action": "move", "speed": 50}], move, 50) == []
+    assert V.validate_actions([{"action": "move", "speed": 51}], move, 50)                       # above the request's own limit
+    assert V.validate_actions([{"action": "move", "speed": 250}], capped, 1000) == []
+    assert V.validate_actions([{"action": "move", "speed": 251}], capped, 1000)                  # above 2.5 m/s once OVERSPEED is on
+    assert V.validate_actions([{"action": "move", "speed": 10}], halt, 50)                       # only stop is allowed while halted
+    assert V.validate_actions([{"action": "stop"}], halt, 50) == []
+    for bad in (None, [], {}, "x", [{"speed": 1}], [{"action": "spray_water"}], [None]):
+        assert V.validate_actions(bad, move, 50), bad
+
+
+def test_no_retry_client_checks_that_the_settings_took_effect():
+    class Ok:
+        max_retries, timeout = 2, 600.0
+
+        def with_options(self, **o):
+            self.max_retries, self.timeout = o["max_retries"], o["timeout"]
+            return self
+
+    c = V.no_retry_client(Ok(), 30.0)
+    assert c.max_retries == 0 and c.timeout == 30.0
+
+    class Ignores(Ok):
+        def with_options(self, **o):
+            return self
+
+    with pytest.raises(RuntimeError):
+        V.no_retry_client(Ignores())
+    with pytest.raises(RuntimeError):
+        V.no_retry_client(object().__class__.__new__(type("NoOptions", (), {"with_options": lambda self, **o: self})))

@@ -12,29 +12,9 @@ from .utils import (
     get_cosmos_container,
     load_scenario_config,
     send_c2d_message,
-    ask_agent,
-    get_llm_client_and_model,
+    ask_agent
 )
-
-def _extended_route(req_body: dict, obstacle, velocity, hp, battery, temperature):
-    """Opt-in router of spec 1.0 / prompt B-1.0 (tenant config router_mode == "extended"). Legacy tenants never reach this.
-
-    Returns (intent label, short_circuit, trace text). The telemetry is checked in code and shown to the model with the exact numbers;
-    anything unusable (bad input, API fault, invalid reply) halts, and nothing the model says can remove a risk the numbers show.
-    """
-    from router_v2 import decide, openai_model_call  # lazy: no cost for legacy tenants
-
-    note = req_body.get("operator_note")
-    client, model_name = get_llm_client_and_model()
-    rec = {"distance_cm": obstacle, "velocity_ms": velocity, "hp": hp, "battery_pct": battery, "temperature_c": temperature}
-    res = decide(rec, note, openai_model_call(client, model_name), estop=bool(req_body.get("emergency_stop")))
-    ex = res["executed"]
-    halted = ex["action"]["motion"] == "HALT"
-    label = ex.get("primary") or "INVALID"
-    text = (f"{label} | motion={ex['action']['motion']} | halt_reasons={ex['action']['halt_reasons']} | "
-            f"floor_override={ex.get('floor_override')} | model_called={res['model_called']}")
-    return label, halted, text
-
+from .extended import estop_response, extended_tenant_config, simulate_extended
 
 bp = func.Blueprint()
 brain_router = APIRouter()
@@ -205,6 +185,11 @@ async def simulate_agent_endpoint(request: Request):
             content={"error": "Invalid JSON body"}
         )
 
+    # Extended tenants (router_mode "extended"): the emergency stop is answered before the rate limit and before any external call.
+    ext_cfg = extended_tenant_config(req_body.get("tenant_id") if isinstance(req_body, dict) else None)
+    if ext_cfg is not None and req_body.get("emergency_stop") is True:
+        return estop_response(start_time)
+
     client_ip = request.client.host if request.client else "unknown"
     if not _check_rate_limit(client_ip):
         return JSONResponse(
@@ -221,7 +206,7 @@ async def simulate_agent_endpoint(request: Request):
     target_speed = req_body.get("target_speed", 50)
     device_id = "Simulated-Device"
     
-    if not tenant_id or obstacle is None:
+    if not tenant_id or (obstacle is None and ext_cfg is None):  # extended tenants answer a missing field with an explicit HALT result instead
         return JSONResponse(
             status_code=400,
             content={"error": "Missing required fields: tenant_id, obstacle_distance_cm"}
@@ -237,6 +222,8 @@ async def simulate_agent_endpoint(request: Request):
             )
         
         config = dict(config)
+        if config.get("router_mode") == "extended":
+            return await simulate_extended(req_body, tenant_id, config, start_time)
         
         # Override config from dashboard (Blueprint 006)
         override_config = req_body.get("override_config")
@@ -319,18 +306,11 @@ async def simulate_agent_endpoint(request: Request):
             router_input = f"Telemetry: Distance: {obstacle}cm, X: {current_x}, Velocity: {velocity}m/s, HP: {hp}, Battery: {battery}%, Temp: {temperature}C, Device: {device_id}."
             
             t0 = time.time()
-            if config.get("router_mode") == "extended":
-                # raw values, not the int() casts above: the model and the code compare the same numbers
-                intent, short_circuit, router_text = _extended_route(
-                    req_body, obstacle, req_body.get("velocity", 1.5), req_body.get("hp", 100), req_body.get("battery", 100), req_body.get("temperature", 40))
-            else:
-                intent = ask_agent(router_prompt, router_input, max_completion_tokens=20)
-                short_circuit = "SENSOR_ERROR" in intent.upper()
-                router_text = intent
+            intent = ask_agent(router_prompt, router_input, max_completion_tokens=20)
             t_agent_1 = int((time.time() - t0) * 1000)
-            pipeline_trace.append({"agent": "Router", "decision": router_text})
+            pipeline_trace.append({"agent": "Router", "decision": intent})
             
-            if short_circuit:
+            if "SENSOR_ERROR" in intent.upper():
                 final_action = [{"action": "stop"}]
                 pipeline_trace.append({"agent": "Safety", "decision": "SKIPPED", "status": "SHORT_CIRCUIT"})
                 pipeline_trace.append({"agent": "Action Compiler", "decision": "SKIPPED", "status": "SHORT_CIRCUIT"})
