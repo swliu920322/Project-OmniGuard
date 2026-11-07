@@ -135,7 +135,9 @@ class RecordingClient:
 
     def _create(self, **kwargs):
         self.requests_made += 1
-        cap = {"request": kwargs, "started_at": L.utc_now(), "attempt": 1}
+        # The one deviation from the original request: a spending guard (see measure_lib.SAFETY_MAX_TOKENS).
+        kwargs = {**kwargs, "max_tokens": L.SAFETY_MAX_TOKENS}
+        cap = {"request": kwargs, "started_at": L.utc_now(), "attempt": 1, "request_deviation": {"added": {"max_tokens": L.SAFETY_MAX_TOKENS}}}
         t0 = time.perf_counter()
         try:
             completions = self.inner.chat.completions
@@ -184,6 +186,9 @@ def build_record(seq, row_index, cond, row, system, user, reply, capture, exc) -
         "input_sha256": L.sha256_text(user),
         "system_prompt_sha256": L.sha256_text(system),
         "request": (capture or {}).get("request"),
+        "request_deviation": (capture or {}).get("request_deviation"),
+        "reasoning_tokens": L.reasoning_tokens(resp.get("usage")),
+        "truncated": choice.get("finish_reason") == "length",
         "started_at": (capture or {}).get("started_at"),
         "ended_at": (capture or {}).get("ended_at"),
         "latency_ms": (capture or {}).get("latency_ms"),
@@ -212,8 +217,10 @@ def write_report(run_dir: str, config: dict, summary: dict) -> None:
         f"- Calls started: {b['calls_started']} of {b['max_calls']} allowed; tokens booked: {b['tokens_committed']} of {b['max_tokens']}; "
         f"US$ booked: {b['usd_committed']} of {b['max_usd']}" + (" (rehearsal rates)" if fake else ""),
         f"- Spend implied by the usage the API reported: US$ {summary['usd_from_reported_usage']}; calls with no usable usage: {summary['calls_without_usable_usage']}",
+        f"- Replies cut off by max_tokens (finish_reason length): {summary['truncated_replies']}; reasoning tokens reported: {summary['reasoning_tokens_reported']}",
         f"- Stop reason: {summary['stop_reason']}",
-        f"- Models reported by the API: {summary['distinct_response_models'] or 'none'}"
+        f"- Model version stated by the owner: {summary['model_identity_stated_by_owner']}",
+        f"- Alias reported by the API (`response.model`): {summary['distinct_response_models'] or 'none'}"
         + ("  **(more than one: the model changed during the run)**" if summary["model_drift_flag"] else ""),
     ]
     if summary.get("interruption"):
@@ -243,7 +250,7 @@ def write_report(run_dir: str, config: dict, summary: dict) -> None:
 def resolve_budget(args, real: bool):
     """Parse and validate the money settings. Returns (usd_cap, pricing) or prints why not."""
     if real:
-        missing = [n for n in ("usd_cap", "price_input_per_mtok", "price_output_per_mtok", "price_source", "authorized_by", "max_calls", "max_tokens")
+        missing = [n for n in ("usd_cap", "price_input_per_mtok", "price_output_per_mtok", "price_source", "authorized_by", "model_identity", "max_calls", "max_tokens")
                    if not getattr(args, n)]
         if missing:
             print("a real run needs: " + ", ".join("--" + m.replace("_", "-") for m in missing), file=sys.stderr)
@@ -350,11 +357,14 @@ def run(args) -> int:
                 "endpoint_host": urlparse(cfg.endpoint).netloc or None,
                 "configured_model_name": cfg.model_name,
                 "api_key_present": bool(cfg.api_key),
-                "real_model_is_the_response_model_field": True,
+                "identity_stated_by_owner": args.model_identity or "REHEARSAL: fake model",
+                "identity_note": "The API reports only an alias in response.model; it cannot prove the exact version. The version is the owner's statement at run time; a provider-side change during the run would not be visible.",
             },
             "request_settings": {
                 "temperature": L.TEMPERATURE,
                 "max_completion_tokens": L.MAX_COMPLETION_TOKENS,
+                "max_tokens_spending_guard": L.SAFETY_MAX_TOKENS,
+                "deviation_from_original_request": "max_tokens added (the original code sends only max_completion_tokens, which this reasoning model ignores)",
                 "sdk_max_retries": limited.max_retries,
                 "sdk_timeout_s": L.SDK_TIMEOUT_S,
                 "ask_agent_cache_ttl_s": U.ASK_AGENT_CACHE_TTL,
@@ -366,7 +376,7 @@ def run(args) -> int:
                 "max_usd": str(usd_cap),
                 "pricing": pricing.as_dict(),
                 "input_token_bound": f"UTF-8 bytes of system + user text + {L.CHAT_OVERHEAD_TOKENS} (each token covers at least one byte)",
-                "output_token_bound": L.MAX_COMPLETION_TOKENS,
+                "output_token_bound": L.OUTPUT_TOKEN_BOUND,
                 "on_violation": "stop at once, status stopped_bound_violation, exit code 3",
             },
             "authorization": {"authorized_by": args.authorized_by, "usd_cap_as_given": args.usd_cap} if real else None,
@@ -396,7 +406,7 @@ def run(args) -> int:
                 row, system = rows[row_index], prompts[cond]
                 user = L.build_input(cond, row)
                 try:  # checked BEFORE the request is sent
-                    resv = guard.reserve(L.input_token_upper_bound(system, user), L.MAX_COMPLETION_TOKENS)
+                    resv = guard.reserve(L.input_token_upper_bound(system, user), L.OUTPUT_TOKEN_BOUND)
                 except L.BudgetExceeded as exc:
                     status, stop_reason = "stopped_early", f"stopped before sending call #{seq}: {exc.reason}"
                     break
@@ -446,6 +456,9 @@ def run(args) -> int:
                 "status": status,
                 "stop_reason": stop_reason,
                 "interruption": interruption,
+                "model_identity_stated_by_owner": config["model"]["identity_stated_by_owner"],
+                "truncated_replies": sum(1 for r in records if r.get("truncated")),
+                "reasoning_tokens_reported": sum(r.get("reasoning_tokens") or 0 for r in records),
                 "in_flight_at_interruption": next((r["seq"] for r in records if r.get("status") == "in_flight_at_interruption"), None),
                 "planned_calls": len(plan),
                 "calls_recorded": len(records),
@@ -490,6 +503,7 @@ def main(argv=None) -> int:
     p.add_argument("--price-output-per-mtok", help="USD per million completion tokens")
     p.add_argument("--price-source", help="where the prices came from and when (recorded in config.json)")
     p.add_argument("--authorized-by")
+    p.add_argument("--model-identity", help="the exact model version, as stated by the owner (the API only reports an alias)")
     p.add_argument("--fault-plan", default="default", help="dry-run only: default | none | a JSON object {request number: fault}")
     p.add_argument("--verify", metavar="RUN_DIR", help="re-check the hashes of an existing run directory")
     args = p.parse_args(argv)

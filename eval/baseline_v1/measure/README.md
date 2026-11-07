@@ -29,6 +29,8 @@ The rehearsal blocks sockets, so a stray real call fails loudly. Its fake model 
 | Calls, tokens and dollars capped **before** sending | `BudgetGuard.reserve()` books the worst case ahead of each call and refuses if any of the three caps would break. The dollar cap needs prices (`--price-input-per-mtok`, `--price-output-per-mtok`, `--price-source`), recorded in `config.json`; the input price is applied to every prompt token |
 | Token bound with a stated basis | prompt tokens <= UTF-8 bytes of the text + 64 (a token covers at least one byte); completion <= 20. The API's reported usage is checked against it after every call |
 | A wrong bound stops the run | if reported usage exceeds the reservation the overrun is booked as it was and the run stops with `stopped_bound_violation` (exit code 3) |
+| Reasoning model | the real canary showed hidden reasoning tokens that `max_completion_tokens=20` does not limit; the runner adds `max_tokens=1024` to every request (the one deviation, recorded as `request_deviation`) and reserves 1024 output tokens |
+| Model version | `--model-identity` is required for a real run and recorded; the API only reports an alias (`response.model`) |
 | Unknown usage keeps the reservation | a failed call, a missing usage field or an interrupted request never frees budget |
 | Interruption keeps the evidence | Ctrl+C, SIGTERM or a crash seal the run as `interrupted` / `crashed`: the in-flight request is recorded with its reservation, the summary and `SHA256SUMS` are written, the temporary worktree is removed |
 | Interleaved conditions | `plan_order()`: B and P alternate per row, and who goes first alternates by row |
@@ -47,9 +49,18 @@ export BASELINE_A_AUTHORIZED=yes          # second switch; a real run refuses wi
 # prices: copy them from the provider's price page and say where and when (the cache-miss input price)
 export LLM_PROVIDER=deepseek OPENAI_BASE_URL=https://api.deepseek.com OPENAI_API_KEY=... OPENAI_MODEL_NAME=...
 python eval/baseline_v1/measure/run_baseline_a.py --mode real \
-  --authorized-by "<who>" --usd-cap "<positive amount in USD>" \
+  --authorized-by "<who>" --model-identity "<exact version, as stated by the owner>" --usd-cap "<positive amount in USD>" \
   --price-input-per-mtok "<USD per million>" --price-output-per-mtok "<USD per million>" \
   --price-source "<page and date>" --max-calls 400 --max-tokens 150000
 ```
 
 A real run also requires a clean tracked working tree, and records `pip freeze`, the SDK version and the model string the API returns for each call.
+
+## Canary, then the full run: fixed criteria
+
+The sequence for the real measurement, with the criteria set in advance so nothing is judged after the fact:
+
+1. **Canary**: the same command with `--limit 1` (2 real calls, a few thousandths of a dollar). It passes only if **all** of these hold: `status` is `completed`; both calls have `error` null and `finish_reason` `stop`; each reply, stripped and upper-cased, is one of the three labels; each `usage.completion_tokens` is at most 1024; `response.model` is the same alias in both; `calls.jsonl` shows `max_tokens: 1024` in both requests; the run directory verifies.
+2. **Full run**: only if the canary passed, the same command without `--limit`. Interleaved, 400 calls at most.
+3. If either run ends in `stopped_bound_violation`, `crashed` or `interrupted`, stop and report; do not change a parameter and continue. A change is a new run with its own directory and a new review.
+4. The canary and its directory are kept and committed whatever the outcome.

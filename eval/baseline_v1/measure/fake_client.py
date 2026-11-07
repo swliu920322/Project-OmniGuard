@@ -1,5 +1,7 @@
 """A fake LLM client for the offline rehearsal. It never opens a socket.
 
+It behaves like the reasoning model seen in the real canary: it ignores max_completion_tokens,
+honours max_tokens (reasoning tokens count), and spends reasoning tokens before the text reply.
 It mimics the parts of the OpenAI SDK the runner uses: with_options(), the max_retries property,
 chat.completions.create() and chat.completions.with_raw_response.create(). Its answers come from a
 trivial rule plus scripted faults, so a run against it proves the harness works and says NOTHING
@@ -26,8 +28,9 @@ class APITimeoutError(Exception):
 #   rate_limit / timeout   the call raises, like the SDK's errors
 #   malformed / empty      the reply is not a label
 #   no_usage               the response carries no usage field
+#   truncate               the reasoning is longer than max_tokens: finish_reason "length", empty reply
 #   usage_over             the reported prompt tokens are far above any sane bound
-#   long_reply             the reply and completion tokens are far above max_completion_tokens
+#   long_reply             the provider ignores every cap: completion tokens far above max_tokens
 #   interrupt              Ctrl+C arrives while the request is in flight (KeyboardInterrupt)
 #   sigterm                the process receives SIGTERM while the request is in flight
 DEFAULT_FAULTS = {
@@ -36,17 +39,20 @@ DEFAULT_FAULTS = {
     21: "malformed",  # a sentence that contains SENSOR_ERROR but is not a label
     29: "empty",
     40: "no_usage",
+    50: "truncate",
 }
+REASONING_TOKENS = 60  # what the fake "thinks" before every reply (the real canary: 58)
 MODEL_SWITCH_AT = 330  # from this request on the fake reports a different model string
 
 
 class _Response:
-    def __init__(self, content, model, usage, request_no):
+    def __init__(self, content, model, usage, request_no, finish_reason="stop"):
         self.id = f"fake-{request_no:05d}"
         self.model = model
         self.usage = usage
         self._content = content
-        self.choices = [type("Choice", (), {"message": type("Message", (), {"content": content})(), "finish_reason": "stop"})()]
+        self._finish = finish_reason
+        self.choices = [type("Choice", (), {"message": type("Message", (), {"content": content})(), "finish_reason": finish_reason})()]
 
     def model_dump(self) -> dict:
         return {
@@ -54,7 +60,11 @@ class _Response:
             "object": "chat.completion",
             "created": 0,
             "model": self.model,
-            "choices": [{"index": 0, "finish_reason": "stop", "message": {"role": "assistant", "content": self._content}}],
+            "choices": [{
+                "index": 0,
+                "finish_reason": self._finish,
+                "message": {"role": "assistant", "content": self._content, "reasoning_content": "fake reasoning"},
+            }],
             "usage": self.usage,
         }
 
@@ -145,13 +155,24 @@ class FakeClient:
         elif fault == "empty":
             content = ""
         prompt_tokens = sum(len(m["content"]) for m in kwargs["messages"]) // 3 + 8
-        usage = {"prompt_tokens": prompt_tokens, "completion_tokens": 3, "total_tokens": prompt_tokens + 3}
+        reasoning = REASONING_TOKENS * (40 if fault == "truncate" else 1)
+        text_tokens = max(1, len(content) // 3)
+        completion = reasoning + text_tokens
+        finish = "stop"
+        cap = kwargs.get("max_tokens")  # max_completion_tokens is ignored, like the real model
+        if cap is not None and completion > cap:
+            completion, finish, content = cap, "length", ""  # cut off before the reply: reasoning ate the budget
+        if fault == "long_reply":
+            completion = 5000  # a provider that ignores every cap
+        usage = {
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion,
+            "total_tokens": prompt_tokens + completion,
+            "completion_tokens_details": {"reasoning_tokens": min(reasoning, completion)},
+        }
         if fault == "no_usage":
             usage = None
         elif fault == "usage_over":
             usage = {"prompt_tokens": 10_000_000, "completion_tokens": 3, "total_tokens": 10_000_003}
-        elif fault == "long_reply":
-            content = "SENSOR_ERROR " * 200
-            usage = {"prompt_tokens": prompt_tokens, "completion_tokens": 500, "total_tokens": prompt_tokens + 500}
         model = self.model + "-b" if (self.switch_model and n >= MODEL_SWITCH_AT) else self.model
-        return _Response(content, model, usage, n)
+        return _Response(content, model, usage, n, finish)

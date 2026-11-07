@@ -2,12 +2,14 @@
 
 > **DRY RUN WITH A FAKE CLIENT. Nothing here measures any model.** It only shows that the harness works.
 
-- Run: `20261107T042524Z_dry-run_49131223`, mode `dry-run`, status **interrupted**
+- Run: `20261107T043840Z_dry-run_0687dd33`, mode `dry-run`, status **interrupted**
 - Source: `worktree` at tag `eval-baseline-v1` (commit `a58b125`)
-- Calls started: 5 of 400 allowed; tokens booked: 1013 of 150000; US$ booked: 0.000333 of 1.00 (rehearsal rates)
-- Spend implied by the usage the API reported: US$ 0.000156; calls with no usable usage: 1
+- Calls started: 5 of 400 allowed; tokens booked: 2263 of 150000; US$ booked: 0.001833 of 1.00 (rehearsal rates)
+- Spend implied by the usage the API reported: US$ 0.000452; calls with no usable usage: 1
+- Replies cut off by max_tokens (finish_reason length): 0; reasoning tokens reported: 240
 - Stop reason: interrupted: KeyboardInterrupt: scripted Ctrl+C
-- Models reported by the API: ['fake-model-1']
+- Model version stated by the owner: REHEARSAL: fake model
+- Alias reported by the API (`response.model`): ['fake-model-1']
 - **Interrupted**: KeyboardInterrupt: scripted Ctrl+C
 - A request was in flight at the interruption; it is recorded and its budget stays booked.
 

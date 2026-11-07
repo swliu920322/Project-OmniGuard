@@ -9,8 +9,8 @@ Read this before quoting any number from a run. It is copied into every run dire
 - **Two conditions, same 200 telemetry rows, interleaved row by row** (B and P alternate; the one that goes first alternates by row):
   - **B, benchmark path.** The descriptive `ROUTER_PROMPT` from `benchmark.py` and the input format of `benchmark.py`: CSV values as they are, no X, no device. This uses the prompt and input format stored in the tagged `benchmark.py`. Nothing proves that the historical runs used exactly these, so it is **not** a reproduction of them.
   - **P, business router.** The tenant-Alpha prompt from `scenario_registry.json` and the input format of the HTTP path in `brain.py`: velocity as a float, HP / battery / temperature cast with `int()` (so 39.6 becomes 39), X included, device `Simulated-Device`.
-- **Spending is capped before every request**: a call that could break the call, token or dollar cap is not sent. The prompt-token bound is the UTF-8 byte count of the text plus a fixed 64-token allowance (a token covers at least one byte); the completion bound is 20. If the API ever reports more than the reserved bound, the run stops at once and is flagged `stopped_bound_violation`. Calls with unknown usage keep their full reservation.
-- Settings: temperature 0 (the `ask_agent` default both original call sites use), `max_completion_tokens=20`, **SDK retries disabled** (`max_retries=0`), a 60 s timeout, no retry of any kind in the harness. A failed call stays in the record and in the denominator.
+- **Spending is capped before every request**: a call that could break the call, token or dollar cap is not sent. The prompt-token bound is the UTF-8 byte count of the text plus a fixed 64-token allowance (a token covers at least one byte); the completion bound is 1024 (the `max_tokens` guard). If the API ever reports more than the reserved bound, the run stops at once and is flagged `stopped_bound_violation`. Calls with unknown usage keep their full reservation.
+- Settings: temperature 0 (the `ask_agent` default both original call sites use), `max_completion_tokens=20` as the original code sends it, **plus `max_tokens=1024` as a spending guard (the only change to the original request, see below)**, **SDK retries disabled** (`max_retries=0`), a 60 s timeout, no retry of any kind in the harness. A failed call stays in the record and in the denominator.
 - **Inputs:** the 200 telemetry rows of the archived `thesis-200/results.csv`, hashed. **Gold labels:** that file's `expected_label`, as it is (legacy labels).
 
 ## What is not measured, and what you may not say
@@ -22,9 +22,17 @@ Read this before quoting any number from a run. It is copied into every run dire
 - Tenant-Beta's labels (`HUMAN_DETECTED`, `STATIC_OBSTACLE`, `EMERGENCY`) are not measured: the input has no basis for them and there is no gold.
 - The accuracy figure is descriptive. It is not an acceptance metric and not the "X" of the resume line: X comes from the extended task on the frozen test set.
 
+## The served model is a reasoning model
+
+A real canary (`measured/20261107T043259Z_real_401c9ff8`) showed that the model behind the configured name thinks before it answers: 58 of 67 completion tokens were `reasoning_tokens`, and the original `max_completion_tokens=20` did not limit them. Consequences, all recorded in every run:
+
+- Cost and latency include the hidden reasoning. The report gives reasoning tokens separately.
+- The harness adds `max_tokens=1024` to every request so the output (reasoning plus text) is capped and the budget bound is real. Each call record carries `request_deviation`. If the reasoning ever exceeds the cap, the reply is cut off (`finish_reason: length`), counted as an invalid reply, and the number of such replies is reported; nothing is dropped.
+- This request is therefore **not byte-identical to what the original code sends**; the difference is one added spending guard.
+
 ## Model identity
 
-The configured name may be a retired alias that the provider serves with a newer model. The identity of a run is the `model` field the API returns for each call. If a run sees more than one value, `model_drift_flag` is set and the run must not be used for a before/after comparison.
+The configured name (`deepseek-v4-flash`) is a retired alias, and the API answers with another alias (`deepseek-flash`): **`response.model` cannot prove which version served a call.** The version of a run is the one the owner states when starting it (`--model-identity`, for example `DeepSeek-V4.1-Flash-1017`) and is recorded as such. A provider-side change during a run would not be visible, so runs must be short, their start and end times are recorded, and a before/after comparison is valid only between runs of the same stated version made close together in time. If `response.model` changes inside a run, `model_drift_flag` is set and the run must not be used for a comparison.
 
 ## Files in a run directory
 

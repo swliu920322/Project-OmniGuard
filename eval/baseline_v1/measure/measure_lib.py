@@ -21,6 +21,11 @@ ALLOWED_LABELS = ("CRITICAL_OBSTACLE", "NORMAL_NAV", "SENSOR_ERROR")
 CONDITIONS = ("B", "P")
 
 MAX_COMPLETION_TOKENS = 20  # what both original call sites pass to ask_agent
+# The real canary showed that the served model is a REASONING model: it ignored max_completion_tokens=20
+# (67 completion tokens, 58 of them reasoning). max_tokens does cap reasoning plus text, so the runner adds
+# it to every request as a spending guard. It is the only change to the original request, and it is recorded.
+SAFETY_MAX_TOKENS = 1024
+OUTPUT_TOKEN_BOUND = SAFETY_MAX_TOKENS  # reserved output tokens per call; checked against the reported usage
 TEMPERATURE = 0.0  # ask_agent's default, which both original call sites use
 # Allowance for the chat template's special tokens and role markers (begin/end markers, one per message).
 # The real overhead is a few tokens; this is deliberately generous, and the runner checks the API's
@@ -267,6 +272,12 @@ def parse_label(reply: str | None) -> str | None:
     return reply.strip().upper()
 
 
+def reasoning_tokens(usage: dict | None) -> int | None:
+    details = (usage or {}).get("completion_tokens_details") or {}
+    value = details.get("reasoning_tokens")
+    return value if isinstance(value, int) else None
+
+
 def contains_sensor_error(reply: str | None) -> bool:
     """brain.py's rule (lines 109 and 305): a substring test on the upper-cased reply."""
     return reply is not None and "SENSOR_ERROR" in reply.upper()
@@ -311,6 +322,10 @@ def summarize(records: list[dict], rows: list[dict]) -> dict:
         usage = [r["usage"]["total_tokens"] for r in recs if r.get("usage") and r["usage"].get("total_tokens") is not None]
         entry["tokens_reported"] = sum(usage)
         entry["calls_without_usage"] = len(recs) - len(usage)
+        entry["finish_reasons"] = {k: sum(1 for r in recs if r.get("finish_reason") == k) for k in sorted({r.get("finish_reason") for r in recs if r.get("finish_reason")})}
+        entry["truncated_replies"] = sum(1 for r in recs if r.get("finish_reason") == "length")
+        entry["completion_tokens_reported"] = sum(r["usage"]["completion_tokens"] for r in recs if isinstance((r.get("usage") or {}).get("completion_tokens"), int))
+        entry["reasoning_tokens_reported"] = sum(reasoning_tokens(r.get("usage")) or 0 for r in recs)
         by_cond[cond] = entry
 
     # Rows whose legacy label disagrees with the 30 cm safety rule: tagged critical but >= 30 cm.

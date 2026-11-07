@@ -11,8 +11,8 @@
       "output_usd_per_mtok": "1.20",
       "source": "REHEARSAL PLACEHOLDER: not a real price"
     },
-    "tokens_committed": 49498,
-    "usd_committed": "0.015975"
+    "tokens_committed": 77552,
+    "usd_committed": "0.049640"
   },
   "calls_recorded": 400,
   "calls_without_usable_usage": 3,
@@ -27,6 +27,7 @@
       },
       "calls_started": 200,
       "calls_without_usage": 1,
+      "completion_tokens_reported": 12675,
       "confusion_legacy_gold_x_outcome": {
         "CRITICAL_OBSTACLE": {
           "CRITICAL_OBSTACLE": 37,
@@ -40,10 +41,14 @@
           "SENSOR_ERROR": 51
         }
       },
+      "finish_reasons": {
+        "stop": 200
+      },
       "models_seen": [
         "fake-model-1",
         "fake-model-1-b"
       ],
+      "reasoning_tokens_reported": 11940,
       "rows_reaching_router": {
         "accuracy": null,
         "correct": 169,
@@ -52,61 +57,73 @@
         "n": 172
       },
       "substring_sensor_error_replies": 52,
-      "tokens_reported": 31545
+      "tokens_reported": 43623,
+      "truncated_replies": 0
     },
     "P": {
       "all_rows_started": {
         "accuracy": null,
-        "correct": 197,
+        "correct": 196,
         "failed_calls": 2,
-        "invalid_replies": 0,
+        "invalid_replies": 1,
         "n": 200
       },
       "calls_started": 200,
       "calls_without_usage": 2,
+      "completion_tokens_reported": 13558,
       "confusion_legacy_gold_x_outcome": {
         "CRITICAL_OBSTACLE": {
           "CRITICAL_OBSTACLE": 37,
           "NORMAL_NAV": 1
         },
         "NORMAL_NAV": {
-          "NORMAL_NAV": 111
+          "INVALID": 1,
+          "NORMAL_NAV": 110
         },
         "SENSOR_ERROR": {
           "ERROR": 2,
           "SENSOR_ERROR": 49
         }
       },
+      "finish_reasons": {
+        "length": 1,
+        "stop": 197
+      },
       "models_seen": [
         "fake-model-1",
         "fake-model-1-b"
       ],
+      "reasoning_tokens_reported": 12844,
       "rows_reaching_router": {
         "accuracy": null,
-        "correct": 171,
+        "correct": 170,
         "failed_calls": 0,
-        "invalid_replies": 0,
+        "invalid_replies": 1,
         "n": 172
       },
       "substring_sensor_error_replies": 49,
-      "tokens_reported": 16816
+      "tokens_reported": 29780,
+      "truncated_replies": 1
     }
   },
   "distinct_response_models": [
     "fake-model-1",
     "fake-model-1-b"
   ],
-  "ended_at": "2026-11-07T04:25:20.572117Z",
+  "ended_at": "2026-11-07T04:38:37.282370Z",
   "in_flight_at_interruption": null,
   "interruption": null,
   "is_measurement": false,
   "legacy_label_rows_critical_at_or_above_30cm": 11,
   "mode": "dry-run",
   "model_drift_flag": true,
+  "model_identity_stated_by_owner": "REHEARSAL: fake model",
   "planned_calls": 400,
+  "reasoning_tokens_reported": 24784,
   "requests_that_reached_the_client": 400,
-  "run_id": "20261107T042520Z_dry-run_8cf38604",
+  "run_id": "20261107T043836Z_dry-run_eff34fdb",
   "status": "completed",
   "stop_reason": "completed all planned calls",
-  "usd_from_reported_usage": "0.015580"
+  "truncated_replies": 1,
+  "usd_from_reported_usage": "0.045631"
 }

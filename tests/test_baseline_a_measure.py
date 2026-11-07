@@ -307,7 +307,7 @@ def test_dry_run_stops_before_the_call_cap(tmp_path):
 
 
 def test_dry_run_stops_before_the_token_cap(tmp_path):
-    proc, runs = run_cli(tmp_path, "--limit", "10", "--max-tokens", "1500")  # settled usage accumulates until a worst case no longer fits
+    proc, runs = run_cli(tmp_path, "--limit", "10", "--max-tokens", "3000")  # settled usage accumulates until a worst case (about 1500) no longer fits
     assert proc.returncode == 0, proc.stderr
     records, summary, _ = read_run(runs[0])
     assert 0 < len(records) < 20 and "token cap" in summary["stop_reason"]
@@ -337,7 +337,7 @@ def test_two_runs_never_share_a_directory(tmp_path):
     assert len(second) == 2 and first[0] in second
 
 
-REAL_FLAGS = ["--mode", "real", "--authorized-by", "x", "--usd-cap", "1", "--max-calls", "4", "--max-tokens", "1000",
+REAL_FLAGS = ["--mode", "real", "--authorized-by", "x", "--model-identity", "test-model", "--usd-cap", "1", "--max-calls", "4", "--max-tokens", "1000",
               "--price-input-per-mtok", "0.3", "--price-output-per-mtok", "1.2", "--price-source", "test"]
 
 
@@ -353,6 +353,7 @@ def without(flags, name):
         (REAL_FLAGS, {}),  # everything given, but no environment switch
         (without(REAL_FLAGS, "--usd-cap"), {"BASELINE_A_AUTHORIZED": "yes"}),  # no dollar cap
         (without(REAL_FLAGS, "--price-source"), {"BASELINE_A_AUTHORIZED": "yes"}),
+        (without(REAL_FLAGS, "--model-identity"), {"BASELINE_A_AUTHORIZED": "yes"}),  # the version must be stated
         (without(REAL_FLAGS, "--price-output-per-mtok"), {"BASELINE_A_AUTHORIZED": "yes"}),
         (["--mode", "real", *without(REAL_FLAGS[2:], "--usd-cap"), "--usd-cap", "-1"], {"BASELINE_A_AUTHORIZED": "yes"}),
         (["--mode", "real", *without(REAL_FLAGS[2:], "--usd-cap"), "--usd-cap", "abc"], {"BASELINE_A_AUTHORIZED": "yes"}),
@@ -402,6 +403,46 @@ def test_missing_usage_is_recorded_and_keeps_its_budget(tmp_path):
     assert proc.returncode == 0 and len(records) == 12
     assert summary["calls_without_usable_usage"] == 2
     assert Decimal(summary["budget"]["usd_committed"]) > Decimal(summary["usd_from_reported_usage"])  # the two unknowns stay booked
+
+
+# ---------------------------------------------------------------- the reasoning-model finding
+def test_every_request_carries_the_spending_guard_and_says_so(tmp_path):
+    proc, runs = run_cli(tmp_path, "--limit", "6")
+    records, summary, config = read_run(runs[0])
+    ok = [r for r in records if r["request"]]
+    assert ok and all(r["request"]["max_tokens"] == L.SAFETY_MAX_TOKENS == 1024 for r in ok)
+    assert all(r["request"]["max_completion_tokens"] == 20 for r in ok)  # the original parameter is still sent
+    assert all(r["request_deviation"] == {"added": {"max_tokens": 1024}} for r in ok)
+    assert config["request_settings"]["max_tokens_spending_guard"] == 1024 and config["budget"]["output_token_bound"] == 1024
+
+
+def test_reasoning_tokens_are_recorded_and_do_not_break_the_bound(tmp_path):
+    """The fake, like the real model, ignores max_completion_tokens=20: 60+ completion tokens must be normal."""
+    proc, runs = run_cli(tmp_path, "--limit", "10", "--fault-plan", "none")
+    records, summary, _ = read_run(runs[0])
+    assert proc.returncode == 0 and summary["status"] == "completed"
+    assert all(r["usage"]["completion_tokens"] > 20 for r in records)
+    assert all(r["reasoning_tokens"] and r["reasoning_tokens"] <= r["usage"]["completion_tokens"] for r in records)
+    assert summary["reasoning_tokens_reported"] == sum(r["reasoning_tokens"] for r in records) > 0
+
+
+def test_a_reply_cut_off_by_the_guard_is_kept_and_counted_wrong(tmp_path):
+    proc, runs = run_cli(tmp_path, "--limit", "10", "--fault-plan", json.dumps({"3": "truncate"}))
+    records, summary, _ = read_run(runs[0])
+    cut = [r for r in records if r["truncated"]]
+    assert proc.returncode == 0 and len(cut) == 1 and len(records) == 20
+    assert cut[0]["finish_reason"] == "length" and cut[0]["reply"] == "" and cut[0]["usage"]["completion_tokens"] == 1024
+    assert summary["truncated_replies"] == 1
+    cond = summary["conditions"][cut[0]["condition"]]
+    assert cond["truncated_replies"] == 1 and cond["all_rows_started"]["invalid_replies"] >= 1  # in the denominator, wrong
+
+
+def test_the_model_version_is_the_owners_statement_not_the_alias(tmp_path):
+    proc, runs = run_cli(tmp_path, "--limit", "4", "--model-identity", "DeepSeek-V4.1-Flash-1017")
+    _, summary, config = read_run(runs[0])
+    assert config["model"]["identity_stated_by_owner"] == "DeepSeek-V4.1-Flash-1017"
+    assert "alias" in config["model"]["identity_note"] and summary["model_identity_stated_by_owner"] == "DeepSeek-V4.1-Flash-1017"
+    assert summary["distinct_response_models"] == ["fake-model-1"]  # what the API says is only an alias
 
 
 # ---------------------------------------------------------------- an interruption keeps the evidence
