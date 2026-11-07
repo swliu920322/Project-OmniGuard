@@ -1,0 +1,8 @@
+{
+  "state": "revision2 blind labels sealed before full review",
+  "count": 24,
+  "results_sha256": "e6e855f7edd715ddf22b4f5d1890ddad8c4d5631b80e7925c0a36d2bb7076793",
+  "input_packet_sha256": "234f1c43c3173cefdcb54ca061ab07914ad4987a3a4e3db2c0560227e841383e",
+  "candidate_commitment_commit": "5e6d121",
+  "labels_in_repository": false
+}
