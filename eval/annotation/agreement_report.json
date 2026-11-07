@@ -1,0 +1,21 @@
+{
+ "blind_sample": {
+  "disagreements": [],
+  "items": 33,
+  "kappa": 1.0,
+  "kappa_note": null,
+  "n": 33,
+  "raw_agreement": 1.0,
+  "sample_fraction": 0.34375
+ },
+ "limits": "AI annotation and AI review; both sessions can share misreadings",
+ "review": {
+  "change_rate": 0.0,
+  "changed_ids": [],
+  "items_reviewed": 96,
+  "note": "a change rate, not an agreement figure: the reviewer saw the initial label",
+  "status_changed": 0
+ },
+ "review_file_problems": [],
+ "to_owner": []
+}

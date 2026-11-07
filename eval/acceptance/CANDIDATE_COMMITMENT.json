@@ -1,0 +1,44 @@
+{
+  "status": "candidate_not_frozen",
+  "spec_version": "1.0",
+  "author_context": "fresh session; specification files only; no dev samples or predictions read",
+  "records": 300,
+  "primary_counts": {
+    "CRITICAL_OBSTACLE": 50,
+    "OVERHEAT": 50,
+    "LOW_HEALTH": 50,
+    "LOW_BATTERY": 50,
+    "OVERSPEED": 50,
+    "NORMAL_NAV": 50
+  },
+  "noted_records": 72,
+  "note_status_counts": {
+    "AFFIRMED_CURRENT": 12,
+    "NEGATED": 12,
+    "HISTORICAL": 12,
+    "HYPOTHETICAL": 12,
+    "UNCERTAIN": 12,
+    "IRRELEVANT": 12
+  },
+  "families": 34,
+  "blind_sample_count": 24,
+  "blind_seed": 20261107,
+  "sha256": {
+    "acceptance-v1.candidate.jsonl": "d7e8bb9eca65db8d8f123d2a1e7473f5e8fdbc8ec1a68bc97b79d99be4124d0a",
+    "blind-inputs-24.jsonl": "ad39f41c5e2e66f46e5c939f721c02225261895790748eeab54671a6e4247912",
+    "blind-selection-commitment.json": "aba720f3ca00eeca58d2eefe41242a5f127bede8b44b87da3ffc9f3539198e09",
+    "review-inputs-72.jsonl": "d88ab5b957e40d1e56e505ecb6ccd096f0a5bdba5fbe5915707b4efe74f4215c",
+    "author-labels-isolated.json": "adb6fe422ad458f9b269039ba062b847da9648da9b782f5385f9f08b578de56f",
+    "generate.py": "97b11273706f3ea28a4696faaad3f28a7c2bf48beff3be16aa74b654f21709e2",
+    "family-manifest.json": "67d65be1199b1e7882fc48d0ea8614c7ecb9794113a466f3774994d51b8b7f53"
+  },
+  "pending": [
+    "blind annotation and seal",
+    "full note review",
+    "cross-set overlap audit",
+    "dispute adjudication if needed",
+    "formal freeze"
+  ],
+  "model_calls": 0,
+  "labels_and_inputs_in_repository": false
+}
