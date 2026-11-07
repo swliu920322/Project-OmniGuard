@@ -1,0 +1,41 @@
+{
+  "budget": {
+    "calls_started": 4,
+    "max_calls": 180,
+    "max_tokens": 500000,
+    "max_usd": "1",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "1",
+      "output_usd_per_mtok": "1",
+      "source": "rehearsal values: not a real price"
+    },
+    "tokens_committed": 8605,
+    "usd_committed": "0.008605"
+  },
+  "calls_recorded": 4,
+  "calls_without_usable_usage": 1,
+  "distinct_response_models": [
+    "fake-model-b"
+  ],
+  "ended_at": "2026-11-07T06:53:04.873804Z",
+  "interruption": {
+    "message": "scripted Ctrl+C",
+    "type": "KeyboardInterrupt"
+  },
+  "is_canary": false,
+  "is_measurement": false,
+  "metrics_withheld": "dry run with a fake client: no accuracy or safety figure is published for it",
+  "mode": "dry-run",
+  "model_drift_flag": false,
+  "model_identity_stated_by_owner": "REHEARSAL: fake model",
+  "parse_errors": {},
+  "planned_calls": 180,
+  "reasoning_tokens_reported": 270,
+  "requests_that_reached_the_client": 4,
+  "run_id": "20261107T065304Z_dry-run_01c588b1",
+  "status": "interrupted",
+  "stop_reason": "interrupted: KeyboardInterrupt: scripted Ctrl+C",
+  "truncated_replies": 0,
+  "usd_from_reported_usage": "0.003435"
+}
