@@ -1,0 +1,83 @@
+{
+  "version": "acceptance-v1",
+  "state": "frozen_data_not_evaluated",
+  "frozen_at_utc": "2026-11-07T11:10:09.780677+00:00",
+  "spec_version": "1.0",
+  "N": 6,
+  "M": 300,
+  "class_counts": {
+    "CRITICAL_OBSTACLE": 50,
+    "OVERHEAT": 50,
+    "LOW_HEALTH": 50,
+    "LOW_BATTERY": 50,
+    "OVERSPEED": 50,
+    "NORMAL_NAV": 50
+  },
+  "noted_records": 72,
+  "note_status_counts": {
+    "AFFIRMED_CURRENT": 12,
+    "NEGATED": 12,
+    "HISTORICAL": 12,
+    "HYPOTHETICAL": 12,
+    "UNCERTAIN": 12,
+    "IRRELEVANT": 12
+  },
+  "families": 34,
+  "stress_records": 55,
+  "stress_type_counts": {
+    "1": 5,
+    "2": 5,
+    "3": 5,
+    "4": 5,
+    "5": 5,
+    "6": 5,
+    "7": 5,
+    "8": 5,
+    "9": 5,
+    "10": 5,
+    "11": 5
+  },
+  "sha256": {
+    "test_set.jsonl": "68e08ed9003d40a9d2ca212253367ab369ea30ab0eeb5a1e2fd2ecf19a12e6d9",
+    "stress_cases.jsonl": "dc888af048f9a195a7a7b2b39203c3542a0bd9d02188c80187a51940394b468b",
+    "spec_SHA256SUMS": "4ee9b7901a3199bb98d37fde57eb18242960f7deb0a48429a3d85b4c6121cacb",
+    "blind_results": "e6e855f7edd715ddf22b4f5d1890ddad8c4d5631b80e7925c0a36d2bb7076793",
+    "full_note_review": "9eb3945f9522eef4e1c898f9d7607ca855f8ddb2a1cb985764dd4ee3e1faf401",
+    "semantic_overlap_audit": "5a1608fdcb326ef7c889249f03eb968e3770a04c4b050346d2b1d402a175b92c",
+    "stress_blind_results": "16065ef8fe732d5a0223cba82d6853d02be65730a031337146a6ea5280da9330",
+    "stress_full_review": "dd66d30ccd3393e5348e545eecd08f97c8a74d6a4ee9ec0f911132263f3ef19d"
+  },
+  "annotation": {
+    "method": "AI annotation and AI review; not human expert gold",
+    "blind_sample": {
+      "n": 24,
+      "raw_agreement": 1.0,
+      "kappa": 1.0,
+      "kappa_note": null,
+      "disagreements": []
+    },
+    "full_review_records": 72,
+    "note_status_changes": 0,
+    "owner_disputes": [],
+    "stress_notes_independently_annotated_and_reviewed": 20
+  },
+  "cross_set_audit": {
+    "exact_input_comparisons": 81300,
+    "exact_duplicates": 0,
+    "families_semantically_audited": 34,
+    "notes_rewritten_before_evaluation": 14,
+    "remaining_specific_scenario_overlap_flags": 0,
+    "shared_specification_anchors": "Mandatory threshold equality/adjacent values and physical gate points are shared by design; different numerical backgrounds do not make these independent semantic scenarios."
+  },
+  "limitations": [
+    "300 records form 34 conservative families, not 300 independent scenarios",
+    "Synthetic simulation conventions and AI labels, not production data or expert truth",
+    "No model predictions or R1/R2 results used to create or revise test data",
+    "Test data and labels remain outside repository; only counts and hashes published"
+  ],
+  "model_calls_for_this_work": 0,
+  "baseline_B_prompt_sha256": "9247896719b66e139d0155f6f48716805805e6ba3ceec356c8264ee2b3d4a609",
+  "formal_metrics": "not measured",
+  "X": null,
+  "Y": null
+}

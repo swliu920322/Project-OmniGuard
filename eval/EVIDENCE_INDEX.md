@@ -1,6 +1,6 @@
 # Evidence index (framework, status of 2026-11-07)
 
-A map from each claim to the file that proves it. **Empty cells are empty on purpose: nothing unfinished is written as a conclusion.** The path a reader should be able to follow is: README claim -> evaluation report -> data version and code commit -> per-record raw results. For the formal numbers that path does not exist yet, because the independent test set does not exist yet.
+A map from each claim to the file that proves it. **Empty cells are empty on purpose: nothing unfinished is written as a conclusion.** The path a reader should be able to follow is: README claim -> evaluation report -> data version and code commit -> per-record raw results. The independent test data is now frozen; formal model evaluation and its raw results are still pending. See `acceptance/FROZEN_MANIFEST.json`.
 
 Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Each gate below is "passed", "not passed" or "waived with a reason" at the deadline; waived is not passed.
 
@@ -8,8 +8,8 @@ Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Ea
 
 | Field | Value now | What fixes it |
 |---|---|---|
-| 覆盖【N】类意图 | 6 candidate classes (spec 1.0) | the pre-freeze review confirms the six; not frozen yet |
-| 【M】条评测集 | not defined | the size of the **frozen independent test set** (target 300, floor 30 per class); dev set (180), stress cases (66) and public examples are reported separately and are not M |
+| 覆盖【N】类意图 | 6 state-routing classes, spec 1.0 | data frozen in `acceptance/FROZEN_MANIFEST.json`; this is not a claim that model quality has passed |
+| 【M】条评测集 | 300 frozen independent test records, 50 per class | 34 conservative families, not 300 independent scenarios; 55 independent stress cases are separate from M. Dev records, dev stress and public examples are also separate |
 | 识别准确率从【X%】 | not measured | baseline B on the frozen test set |
 | 提升至【Y%】 | not measured | the optimised version on the same frozen test set; written only if the improvement is reliable. The dev set is already at 97.2 % for B (5 provider errors, every returned reply correct), so there may be little to improve on this kind of data |
 
@@ -21,8 +21,8 @@ Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Ea
 | Baseline A measured (descriptive only, not a start of "improvement") | done | harness `f5e0763`; runs `78906f0` (400 calls); canary `9cdad69`; first canary that stopped on a bound violation `588231e` |
 | Label specification 1.0, input contract, data plan, annotation protocol | done | `2ac27c6`, `eval/spec/` (manifest `SHA256SUMS`) |
 | Dev set, 180 records, regenerable | done | `35914f2`, `eval/dev/` |
-| **Independent frozen test set** with a hash commitment | **not done** | made by the acceptance session; only its hash and counts come to this repository |
-| Blind annotation (sealed) and full review of the note statuses | **not done** | tools and rehearsal materials `2243bee`, `eval/annotation/`; needs a session that has not seen the labels |
+| **Independent frozen test set** with a hash commitment | done, data only | `acceptance/FROZEN_MANIFEST.json`; inputs and labels held outside the repository; no formal model run yet |
+| Blind annotation (sealed) and full review of the note statuses | done | Dev: 33/96 blind, 96 reviewed, `annotation/agreement_report.json`. Final test: 24/72 blind before full review, all 72 reviewed; 20 stress notes independently annotated and reviewed. AI annotation, not expert truth. See frozen manifest |
 | Accuracy, per-class P/R/F1, macro-F1, confusion matrix, 95 % intervals on the test set | **not done** | evaluator ready (`eval/baseline_b/evaluate.py`); needs the test set and an authorised run |
 
 ## Gate 2: stress and limits
@@ -33,7 +33,7 @@ Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Ea
 | Behaviour of the decision path against a lax or wrong model, fake dependencies | done | `tests/test_stress_dev.py`, `tests/test_extended_endpoint.py`; backend `6aa7824` |
 | R1/R2 rule controls on dev material | done, offline | `2243bee`, `eval/dev/rule_control/` |
 | Stress cases with a **real model** | **not done** | needs an authorised run |
-| Test-side stress cases (written by the acceptance session) | **not done** | |
+| Test-side stress cases (written by the acceptance session) | done, data only | 55 cases, 11 types x 5; frozen manifest; real-model stress validation still pending |
 
 ## Gate 3: reproducibility
 
