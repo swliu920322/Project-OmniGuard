@@ -9,6 +9,7 @@ import json
 import os
 import subprocess
 import sys
+from decimal import Decimal
 
 import pytest
 
@@ -22,6 +23,7 @@ def _load(name):
     sys.path.insert(0, MEASURE)
     spec = importlib.util.spec_from_file_location(name, os.path.join(MEASURE, f"{name}.py"))
     module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module  # dataclasses look the module up by name
     spec.loader.exec_module(module)
     return module
 
@@ -90,31 +92,91 @@ def test_plan_order_interleaves_and_alternates_who_goes_first():
 
 
 # ---------------------------------------------------------------- budget is checked before sending
-def test_budget_guard_stops_before_the_call_cap_is_exceeded():
-    guard = L.BudgetGuard(max_calls=2, max_tokens=10_000)
+def pricing(inp="1", out="1"):
+    return L.Pricing(Decimal(inp), Decimal(out), "test")
+
+
+def guard(max_calls=100, max_tokens=10_000, max_usd="100", **kw):
+    return L.BudgetGuard(max_calls, max_tokens, Decimal(max_usd), kw.get("pricing", pricing()))
+
+
+@pytest.mark.parametrize("good", ["1", "0.5", "  2.50 ", "0.0001"])
+def test_parse_usd_accepts_positive_amounts(good):
+    assert L.parse_usd(good) > 0
+
+
+@pytest.mark.parametrize("bad", ["", "abc", "0", "-1", "nan", "inf", "-inf", "1e999999", "1000.01", "1e400", None])
+def test_parse_usd_rejects_everything_else(bad):
+    with pytest.raises(ValueError):
+        L.parse_usd(bad)
+
+
+def test_input_bound_is_the_byte_count_plus_the_template_allowance():
+    assert L.input_token_upper_bound("a" * 100, "b" * 50) == 150 + L.CHAT_OVERHEAD_TOKENS
+    # a multi-byte character can never be counted as fewer tokens than it has bytes... in the worst case
+    assert L.input_token_upper_bound("你好", "") == 6 + L.CHAT_OVERHEAD_TOKENS
+    assert L.input_token_upper_bound("", "") == L.CHAT_OVERHEAD_TOKENS
+
+
+def test_call_cap_stops_before_sending():
+    g = guard(max_calls=2)
     for _ in range(2):
-        guard.before(50)
-        guard.settle(50, 40)
+        g.settle(g.reserve(10, 5), {"prompt_tokens": 8, "completion_tokens": 2})
     with pytest.raises(L.BudgetExceeded, match="call cap"):
-        guard.before(50)
-    assert guard.calls_started == 2  # the refused call was not counted as started
+        g.reserve(10, 5)
+    assert g.calls_started == 2  # the refused call was not counted as started
 
 
-def test_budget_guard_token_cap_uses_the_worst_case_and_failures_do_not_free_budget():
-    guard = L.BudgetGuard(max_calls=100, max_tokens=100)
-    guard.before(60)
-    guard.settle(60, None)  # a failed call: usage unknown, the reservation stays
-    assert guard.tokens_committed == 60
+def test_token_cap_counts_the_worst_case_of_the_next_call():
+    g = guard(max_tokens=100)
+    g.settle(g.reserve(40, 10), {"prompt_tokens": 30, "completion_tokens": 5})  # settled down to 35
+    assert g.tokens_committed == 35
+    g.reserve(40, 10)  # 35 + 50 = 85 <= 100, now reserved and not yet settled
     with pytest.raises(L.BudgetExceeded, match="token cap"):
-        guard.before(60)  # 60 + 60 > 100
-    guard.before(40)
-    guard.settle(40, 10)  # a successful call is settled down to its real usage
-    assert guard.tokens_committed == 70
+        g.reserve(40, 10)  # 85 + 50 > 100
 
 
-def test_estimate_is_pessimistic():
-    est = L.estimate_tokens("a" * 300, "b" * 300)
-    assert est == 200 + L.REQUEST_OVERHEAD_TOKENS + L.MAX_COMPLETION_TOKENS
+def test_usd_cap_refuses_a_call_that_could_not_be_afforded_and_sends_nothing():
+    g = guard(max_usd="0.0001", pricing=pricing("1000", "1000"))  # US$1000 per million tokens: 530 tokens = US$0.53
+    with pytest.raises(L.BudgetExceeded, match="usd cap"):
+        g.reserve(500, 20)
+    assert g.calls_started == 0 and g.usd_committed == 0
+
+
+def test_usd_cap_accumulates_across_calls():
+    g = guard(max_usd="0.01", pricing=pricing("10", "10"))  # US$10 per million: 100 tokens = US$0.001
+    sent = 0
+    with pytest.raises(L.BudgetExceeded, match="usd cap"):
+        while True:
+            resv = g.reserve(80, 20)  # worst case US$0.001
+            g.settle(resv, {"prompt_tokens": 80, "completion_tokens": 20})  # uses all of it
+            sent += 1
+    assert sent == 10 and g.usd_committed <= Decimal("0.01")
+
+
+def test_actual_usage_above_the_reservation_is_booked_and_stops_the_run():
+    """The reviewer's reproduction: cap 100, reserve 90, the API reports 120."""
+    g = guard(max_tokens=100)
+    resv = g.reserve(70, 20)  # 90 tokens
+    with pytest.raises(L.BoundViolation):
+        g.settle(resv, {"prompt_tokens": 100, "completion_tokens": 20})  # 120
+    assert g.tokens_committed == 120  # the overrun is on the books as it really was
+
+
+def test_completion_above_its_bound_is_a_violation_too():
+    g = guard()
+    resv = g.reserve(50, 20)
+    with pytest.raises(L.BoundViolation):
+        g.settle(resv, {"prompt_tokens": 10, "completion_tokens": 21})
+
+
+@pytest.mark.parametrize("usage", [None, {}, {"total_tokens": 30}, {"prompt_tokens": 10}])
+def test_unknown_usage_keeps_the_full_reservation(usage):
+    g = guard()
+    resv = g.reserve(50, 20)
+    before = (g.tokens_committed, g.usd_committed)
+    g.settle(resv, usage)
+    assert (g.tokens_committed, g.usd_committed) == before == (70, resv.usd)
 
 
 # ---------------------------------------------------------------- scoring keeps failures in the denominator
@@ -245,7 +307,7 @@ def test_dry_run_stops_before_the_call_cap(tmp_path):
 
 
 def test_dry_run_stops_before_the_token_cap(tmp_path):
-    proc, runs = run_cli(tmp_path, "--limit", "10", "--max-tokens", "400")  # room for about two calls
+    proc, runs = run_cli(tmp_path, "--limit", "10", "--max-tokens", "1500")  # settled usage accumulates until a worst case no longer fits
     assert proc.returncode == 0, proc.stderr
     records, summary, _ = read_run(runs[0])
     assert 0 < len(records) < 20 and "token cap" in summary["stop_reason"]
@@ -275,11 +337,27 @@ def test_two_runs_never_share_a_directory(tmp_path):
     assert len(second) == 2 and first[0] in second
 
 
+REAL_FLAGS = ["--mode", "real", "--authorized-by", "x", "--usd-cap", "1", "--max-calls", "4", "--max-tokens", "1000",
+              "--price-input-per-mtok", "0.3", "--price-output-per-mtok", "1.2", "--price-source", "test"]
+
+
+def without(flags, name):
+    i = flags.index(name)
+    return flags[:i] + flags[i + 2:]
+
+
 @pytest.mark.parametrize(
     "extra,env_extra",
     [
         (["--mode", "real"], {}),  # no authorisation at all
-        (["--mode", "real", "--authorized-by", "x", "--usd-cap", "1", "--max-calls", "4", "--max-tokens", "1000"], {}),  # no env switch
+        (REAL_FLAGS, {}),  # everything given, but no environment switch
+        (without(REAL_FLAGS, "--usd-cap"), {"BASELINE_A_AUTHORIZED": "yes"}),  # no dollar cap
+        (without(REAL_FLAGS, "--price-source"), {"BASELINE_A_AUTHORIZED": "yes"}),
+        (without(REAL_FLAGS, "--price-output-per-mtok"), {"BASELINE_A_AUTHORIZED": "yes"}),
+        (["--mode", "real", *without(REAL_FLAGS[2:], "--usd-cap"), "--usd-cap", "-1"], {"BASELINE_A_AUTHORIZED": "yes"}),
+        (["--mode", "real", *without(REAL_FLAGS[2:], "--usd-cap"), "--usd-cap", "abc"], {"BASELINE_A_AUTHORIZED": "yes"}),
+        (["--mode", "dry-run", "--usd-cap", "0"], {}),
+        (["--mode", "dry-run", "--price-input-per-mtok", "nan"], {}),
         (["--mode", "dry-run"], {"IotHubServiceConnectionString": "HostName=x"}),  # could reach a device
         (["--mode", "dry-run"], {"COSMOS_KEY": "k"}),
     ],
@@ -287,6 +365,60 @@ def test_two_runs_never_share_a_directory(tmp_path):
 def test_refusals_happen_before_any_output_or_network(tmp_path, extra, env_extra):
     proc, runs = run_cli(tmp_path, *extra, env_extra=env_extra)
     assert proc.returncode == 2 and runs == []
+
+
+# ---------------------------------------------------------------- money, end to end
+def test_a_dollar_cap_below_one_call_sends_nothing(tmp_path):
+    proc, runs = run_cli(tmp_path, "--limit", "4", "--usd-cap", "0.000001")
+    records, summary, config = read_run(runs[0])
+    assert proc.returncode == 0 and records == []
+    assert summary["requests_that_reached_the_client"] == 0 and "usd cap" in summary["stop_reason"]
+    assert config["budget"]["max_usd"] == "0.000001" and config["budget"]["pricing"]["source"].startswith("REHEARSAL")
+
+
+def test_the_dollar_cap_stops_a_run_part_way(tmp_path):
+    proc, runs = run_cli(tmp_path, "--limit", "40", "--usd-cap", "0.2", "--price-input-per-mtok", "100", "--price-output-per-mtok", "100")
+    records, summary, _ = read_run(runs[0])
+    assert proc.returncode == 0 and 0 < len(records) < 80 and "usd cap" in summary["stop_reason"]
+    assert Decimal(summary["budget"]["usd_committed"]) <= Decimal("0.2")
+    assert summary["requests_that_reached_the_client"] == len(records)
+
+
+# ---------------------------------------------------------------- a wrong bound stops the run
+@pytest.mark.parametrize("fault", ["usage_over", "long_reply"])
+def test_a_usage_bound_violation_stops_at_once_and_is_flagged(tmp_path, fault):
+    proc, runs = run_cli(tmp_path, "--limit", "20", "--fault-plan", json.dumps({"3": fault}))
+    records, summary, _ = read_run(runs[0])
+    assert proc.returncode == 3
+    assert summary["status"] == "stopped_bound_violation" and "bound violated" in summary["stop_reason"]
+    assert len(records) == 3 and summary["requests_that_reached_the_client"] == 3  # nothing was sent after it
+    assert summary["is_measurement"] is False
+    assert L.verify_run_dir(str(runs[0])) == []
+
+
+def test_missing_usage_is_recorded_and_keeps_its_budget(tmp_path):
+    proc, runs = run_cli(tmp_path, "--limit", "6", "--fault-plan", json.dumps({"2": "no_usage", "4": "timeout"}))
+    records, summary, _ = read_run(runs[0])
+    assert proc.returncode == 0 and len(records) == 12
+    assert summary["calls_without_usable_usage"] == 2
+    assert Decimal(summary["budget"]["usd_committed"]) > Decimal(summary["usd_from_reported_usage"])  # the two unknowns stay booked
+
+
+# ---------------------------------------------------------------- an interruption keeps the evidence
+@pytest.mark.parametrize("fault,code", [("interrupt", 130), ("sigterm", 130)])
+def test_an_interruption_is_sealed_with_the_request_that_was_in_flight(tmp_path, fault, code):
+    proc, runs = run_cli(tmp_path, "--limit", "20", "--fault-plan", json.dumps({"5": fault}))
+    assert proc.returncode == code, proc.stderr
+    records, summary, config = read_run(runs[0])
+    assert summary["status"] == "interrupted" and summary["interruption"]["type"] == "KeyboardInterrupt"
+    assert len(records) == 5 and records[-1]["status"] == "in_flight_at_interruption"
+    assert records[-1]["error"]["type"] == "KeyboardInterrupt" and records[-1]["reserved"]["input_bound"] > 0
+    assert summary["in_flight_at_interruption"] == records[-1]["seq"] == 4
+    # the four finished calls were settled to real usage; the fifth keeps its whole reservation
+    finished = sum(r["usage"]["total_tokens"] for r in records[:4])
+    assert summary["budget"]["tokens_committed"] == finished + records[-1]["reserved"]["input_bound"] + records[-1]["reserved"]["output_bound"]
+    assert summary["budget"]["calls_started"] == 5 and summary["is_measurement"] is False
+    assert (runs[0] / "report.md").exists() and L.verify_run_dir(str(runs[0])) == []
 
 
 def test_verify_cli_detects_tampering(tmp_path):

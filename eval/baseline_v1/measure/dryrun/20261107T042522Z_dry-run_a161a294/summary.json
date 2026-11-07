@@ -1,0 +1,96 @@
+{
+  "accuracy_withheld": "dry run with a fake client: accuracy is deliberately not reported",
+  "budget": {
+    "calls_started": 3,
+    "max_calls": 400,
+    "max_tokens": 150000,
+    "max_usd": "1.00",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.30",
+      "output_usd_per_mtok": "1.20",
+      "source": "REHEARSAL PLACEHOLDER: not a real price"
+    },
+    "tokens_committed": 10000246,
+    "usd_committed": "3.000082"
+  },
+  "calls_recorded": 3,
+  "calls_without_usable_usage": 0,
+  "conditions": {
+    "B": {
+      "all_rows_started": {
+        "accuracy": null,
+        "correct": 1,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 1
+      },
+      "calls_started": 1,
+      "calls_without_usage": 0,
+      "confusion_legacy_gold_x_outcome": {
+        "CRITICAL_OBSTACLE": {
+          "CRITICAL_OBSTACLE": 1
+        }
+      },
+      "models_seen": [
+        "fake-model-1"
+      ],
+      "rows_reaching_router": {
+        "accuracy": null,
+        "correct": 1,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 1
+      },
+      "substring_sensor_error_replies": 0,
+      "tokens_reported": 158
+    },
+    "P": {
+      "all_rows_started": {
+        "accuracy": null,
+        "correct": 2,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 2
+      },
+      "calls_started": 2,
+      "calls_without_usage": 0,
+      "confusion_legacy_gold_x_outcome": {
+        "CRITICAL_OBSTACLE": {
+          "CRITICAL_OBSTACLE": 1
+        },
+        "SENSOR_ERROR": {
+          "SENSOR_ERROR": 1
+        }
+      },
+      "models_seen": [
+        "fake-model-1"
+      ],
+      "rows_reaching_router": {
+        "accuracy": null,
+        "correct": 1,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 1
+      },
+      "substring_sensor_error_replies": 1,
+      "tokens_reported": 10000088
+    }
+  },
+  "distinct_response_models": [
+    "fake-model-1"
+  ],
+  "ended_at": "2026-11-07T04:25:23.074605Z",
+  "in_flight_at_interruption": null,
+  "interruption": null,
+  "is_measurement": false,
+  "legacy_label_rows_critical_at_or_above_30cm": 0,
+  "mode": "dry-run",
+  "model_drift_flag": false,
+  "planned_calls": 20,
+  "requests_that_reached_the_client": 3,
+  "run_id": "20261107T042522Z_dry-run_a161a294",
+  "status": "stopped_bound_violation",
+  "stop_reason": "bound violated by call #2: reported usage (10000000 prompt + 3 completion tokens) is above the reserved bound (285 + 20)",
+  "usd_from_reported_usage": "3.000082"
+}

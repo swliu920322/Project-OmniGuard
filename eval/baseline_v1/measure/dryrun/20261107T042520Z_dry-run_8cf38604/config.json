@@ -2,22 +2,30 @@
   "authorization": null,
   "baseline_commit": "a58b1258280567d3061973197151a0c917276fd8",
   "budget": {
-    "chars_per_token_assumed": 3,
+    "input_token_bound": "UTF-8 bytes of system + user text + 64 (each token covers at least one byte)",
     "max_calls": 400,
-    "max_tokens": 150000
+    "max_tokens": 150000,
+    "max_usd": "1.00",
+    "on_violation": "stop at once, status stopped_bound_violation, exit code 3",
+    "output_token_bound": 20,
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.30",
+      "output_usd_per_mtok": "1.20",
+      "source": "REHEARSAL PLACEHOLDER: not a real price"
+    }
   },
   "environment": {
-    "forbidden_env_set": [],
     "llm_env_names_set": [],
     "openai_sdk": "3.46.0",
     "platform": "macOS-15.7.3-arm64-arm-64bit-Mach-O",
     "python": "3.13.7"
   },
   "harness": {
-    "SCOPE.md": "6d4c2478d029df8bd9ee918a9342cff9fcc0c7dd9d031b5946c26aefbfb89896",
-    "fake_client.py": "06d19ccad289825672b6f732a4aab5a0289b9ff701ab58e119b39e8ac1e76237",
-    "measure_lib.py": "9d17ce5192c61982ee3c79fff2c1540ee84e7645a1fc1c94be7d0b352798da50",
-    "run_baseline_a.py": "bd69446e7588f0ce139d9c6c52794c158ae088d7498f7024f0f7eb1889e8e766"
+    "SCOPE.md": "0d74f8ff8721f7dc478debe2a70dce1bc9c1afa02df9f189354753a138bd6eb3",
+    "fake_client.py": "fe3ac1908eaaf1500528b2cda286f0fef5a9c1921672d49388bd09324c2afed2",
+    "measure_lib.py": "0bfb4065e17cbfe78c731a19932661dbe68d374f7bc6e7c7817abf0543689f08",
+    "run_baseline_a.py": "8ce58144ce80794ed958cd640a6cb956e5ecc3ed060feb02a6020c5087a11aa5"
   },
   "inputs": {
     "csv": "src/cloud-orchestrator/embodied_brain/benchmark_results/runs/2026-07-16-thesis-200/results.csv",
@@ -47,7 +55,7 @@
       "text": "Classify telemetry into: [CRITICAL_OBSTACLE, NORMAL_NAV, SENSOR_ERROR]. Return ONLY the classification string."
     }
   },
-  "repo_head": "d5ffbcbcd1a2deda4125cd755ee0abc129ff509e",
+  "repo_head": "dff902d8428180163267e9032fa9acb051485e5a",
   "request_settings": {
     "ask_agent_cache_ttl_s": 0,
     "max_completion_tokens": 20,
@@ -56,7 +64,7 @@
     "sdk_timeout_s": 60.0,
     "temperature": 0.0
   },
-  "run_id": "20261107T041628Z_dry-run_1db40821",
+  "run_id": "20261107T042520Z_dry-run_8cf38604",
   "source": {
     "file_sha256": {
       "src/cloud-orchestrator/embodied_brain/benchmark.py": "a61177f18101cb7096602d33f05145231cd18a732608525d70e00d78157d16dc",
@@ -71,7 +79,7 @@
     "kind": "worktree",
     "verified_against": "eval/baseline_v1/SHA256SUMS"
   },
-  "started_at": "2026-11-07T04:16:28.515024Z",
+  "started_at": "2026-11-07T04:25:20.180537Z",
   "tag": "eval-baseline-v1",
   "tag_object": "abd84e0451a49af1e49e454aba51cf66bd9b70c5"
 }

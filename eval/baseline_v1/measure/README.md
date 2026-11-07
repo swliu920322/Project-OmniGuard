@@ -15,7 +15,7 @@ Measures the **original router** (tag `eval-baseline-v1`, commit `a58b125`) on 2
 ```bash
 python eval/baseline_v1/measure/run_baseline_a.py            # restores the tag in a temporary git worktree
 python eval/baseline_v1/measure/run_baseline_a.py --verify eval/baseline_v1/measure/dryrun/<run id>
-python -m pytest tests/test_baseline_a_measure.py            # 24 offline tests
+python -m pytest tests/test_baseline_a_measure.py            # offline tests
 ```
 
 The rehearsal blocks sockets, so a stray real call fails loudly. Its fake model follows a scripted fault plan (a 429, a timeout, a malformed reply, an empty reply, a missing usage field, a model switch at request 330) so that every failure path is exercised.
@@ -26,7 +26,11 @@ The rehearsal blocks sockets, so a stray real call fails loudly. Its fake model 
 |---|---|
 | SDK retries off | the client is wrapped with `with_options(max_retries=0, timeout=60)` and the run aborts if that cannot be confirmed; recorded as `sdk_max_retries` |
 | Full response kept | `calls.jsonl` stores the whole `model_dump()` of every response, the kept headers, usage, finish reason and latency |
-| Budget checked **before** sending | `BudgetGuard.before()` runs ahead of each call; a call that could break a cap is never sent; failed calls keep their worst-case reservation |
+| Calls, tokens and dollars capped **before** sending | `BudgetGuard.reserve()` books the worst case ahead of each call and refuses if any of the three caps would break. The dollar cap needs prices (`--price-input-per-mtok`, `--price-output-per-mtok`, `--price-source`), recorded in `config.json`; the input price is applied to every prompt token |
+| Token bound with a stated basis | prompt tokens <= UTF-8 bytes of the text + 64 (a token covers at least one byte); completion <= 20. The API's reported usage is checked against it after every call |
+| A wrong bound stops the run | if reported usage exceeds the reservation the overrun is booked as it was and the run stops with `stopped_bound_violation` (exit code 3) |
+| Unknown usage keeps the reservation | a failed call, a missing usage field or an interrupted request never frees budget |
+| Interruption keeps the evidence | Ctrl+C, SIGTERM or a crash seal the run as `interrupted` / `crashed`: the in-flight request is recorded with its reservation, the summary and `SHA256SUMS` are written, the temporary worktree is removed |
 | Interleaved conditions | `plan_order()`: B and P alternate per row, and who goes first alternates by row |
 | Scope stated | `SCOPE.md` is copied into every run and hashed in `config.json` |
 | Failures stay in the record | an error becomes a line with `error` set; it counts as wrong in the denominator; no harness retry |
@@ -40,9 +44,12 @@ Do not run this without the explicit spending cap from the owner. It is shown so
 
 ```bash
 export BASELINE_A_AUTHORIZED=yes          # second switch; a real run refuses without it
+# prices: copy them from the provider's price page and say where and when (the cache-miss input price)
 export LLM_PROVIDER=deepseek OPENAI_BASE_URL=https://api.deepseek.com OPENAI_API_KEY=... OPENAI_MODEL_NAME=...
 python eval/baseline_v1/measure/run_baseline_a.py --mode real \
-  --authorized-by "<who>" --usd-cap "<amount as given>" --max-calls 400 --max-tokens 150000
+  --authorized-by "<who>" --usd-cap "<positive amount in USD>" \
+  --price-input-per-mtok "<USD per million>" --price-output-per-mtok "<USD per million>" \
+  --price-source "<page and date>" --max-calls 400 --max-tokens 150000
 ```
 
 A real run also requires a clean tracked working tree, and records `pip freeze`, the SDK version and the model string the API returns for each call.

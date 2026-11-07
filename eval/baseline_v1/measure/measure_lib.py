@@ -11,7 +11,9 @@ import json
 import math
 import os
 import secrets
+from dataclasses import dataclass
 from datetime import datetime, timezone
+from decimal import Decimal, InvalidOperation
 
 ALLOWED_LABELS = ("CRITICAL_OBSTACLE", "NORMAL_NAV", "SENSOR_ERROR")
 
@@ -20,8 +22,10 @@ CONDITIONS = ("B", "P")
 
 MAX_COMPLETION_TOKENS = 20  # what both original call sites pass to ask_agent
 TEMPERATURE = 0.0  # ask_agent's default, which both original call sites use
-CHARS_PER_TOKEN = 3  # deliberately pessimistic, only used for the pre-request budget check
-REQUEST_OVERHEAD_TOKENS = 8  # chat-format overhead added to every estimate
+# Allowance for the chat template's special tokens and role markers (begin/end markers, one per message).
+# The real overhead is a few tokens; this is deliberately generous, and the runner checks the API's
+# reported prompt_tokens against the bound after every call.
+CHAT_OVERHEAD_TOKENS = 64
 SDK_TIMEOUT_S = 60.0
 
 # If any of these is set, the run refuses to start: they would let the original code reach real
@@ -112,47 +116,146 @@ class BudgetExceeded(Exception):
         self.reason = reason
 
 
-def estimate_tokens(system_prompt: str, user_input: str, max_completion_tokens: int = MAX_COMPLETION_TOKENS) -> int:
-    """Worst-case tokens for one call: pessimistic input estimate + the completion cap."""
-    chars = len(system_prompt) + len(user_input)
-    return math.ceil(chars / CHARS_PER_TOKEN) + REQUEST_OVERHEAD_TOKENS + max_completion_tokens
+class BoundViolation(Exception):
+    """The API reported more usage than the bound we reserved: the budget model is wrong."""
+
+    def __init__(self, reason: str):
+        super().__init__(reason)
+        self.reason = reason
+
+
+def input_token_upper_bound(system_prompt: str, user_input: str) -> int:
+    """An upper bound on the prompt tokens of one call, with a stated assumption.
+
+    Assumption: every token covers at least one byte of the text, which holds for byte-level BPE
+    tokenizers, so tokens <= UTF-8 bytes. Template and special tokens are covered by a fixed
+    allowance (CHAT_OVERHEAD_TOKENS). It is not a guess about typical text: it is the worst case.
+    The runner compares the API's reported prompt_tokens with this bound after every call and
+    stops the run, flagged, if it is ever exceeded.
+    """
+    return len(system_prompt.encode("utf-8")) + len(user_input.encode("utf-8")) + CHAT_OVERHEAD_TOKENS
+
+
+MAX_PLAUSIBLE_USD = Decimal(1000)  # a cap or a per-million price above this is a typo here, and would void the cap
+
+
+def parse_usd(text) -> Decimal:
+    """A finite amount above zero and not absurdly large, in US dollars, or ValueError."""
+    try:
+        value = Decimal(str(text).strip())
+    except (InvalidOperation, ValueError) as exc:
+        raise ValueError(f"not a number: {text!r}") from exc
+    if not value.is_finite() or value <= 0:
+        raise ValueError(f"must be a finite amount above zero: {text!r}")
+    if value > MAX_PLAUSIBLE_USD:
+        raise ValueError(f"above the sanity ceiling of {MAX_PLAUSIBLE_USD}: {text!r}")
+    return value
+
+
+@dataclass(frozen=True)
+class Pricing:
+    """USD per million tokens. The input rate is applied to EVERY prompt token (cache-miss price,
+    the highest), so cache hits can only make the real bill lower."""
+
+    input_per_mtok: Decimal
+    output_per_mtok: Decimal
+    source: str
+
+    @property
+    def input_per_token(self) -> Decimal:
+        return self.input_per_mtok / Decimal(1_000_000)
+
+    @property
+    def output_per_token(self) -> Decimal:
+        return self.output_per_mtok / Decimal(1_000_000)
+
+    def cost(self, prompt_tokens: int, completion_tokens: int) -> Decimal:
+        return prompt_tokens * self.input_per_token + completion_tokens * self.output_per_token
+
+    def as_dict(self) -> dict:
+        return {
+            "input_usd_per_mtok": str(self.input_per_mtok),
+            "output_usd_per_mtok": str(self.output_per_mtok),
+            "source": self.source,
+            "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+        }
+
+
+@dataclass(frozen=True)
+class Reservation:
+    """What one call may use at most. Held until the call settles; kept for good if it never does."""
+
+    input_bound: int
+    output_bound: int
+    usd: Decimal
+
+    @property
+    def tokens(self) -> int:
+        return self.input_bound + self.output_bound
 
 
 class BudgetGuard:
-    """Hard caps on the number of requests and on tokens, checked before each request.
+    """Hard caps on requests, tokens and dollars, all checked before a request is sent.
 
-    Finished calls count with the token usage the API reported; calls that failed (usage unknown)
-    count with their worst-case estimate, so a failure never frees budget.
+    reserve() books the worst case for the call about to be sent. settle() replaces that booking
+    with what the API reported, or keeps it when nothing was reported (a failed call, a missing
+    usage field, an interrupted run), so unknown usage never frees budget. If the reported usage
+    is higher than the booking, the bound was wrong: the overrun is booked as it really was and
+    BoundViolation is raised so the run stops at once.
     """
 
-    def __init__(self, max_calls: int, max_tokens: int):
+    def __init__(self, max_calls: int, max_tokens: int, max_usd: Decimal, pricing: Pricing):
         self.max_calls = max_calls
         self.max_tokens = max_tokens
+        self.max_usd = max_usd
+        self.pricing = pricing
         self.calls_started = 0
         self.tokens_committed = 0
+        self.usd_committed = Decimal(0)
 
-    def before(self, worst_case_tokens: int) -> None:
+    def reserve(self, input_bound: int, output_bound: int) -> Reservation:
+        usd = input_bound * self.pricing.input_per_token + output_bound * self.pricing.output_per_token
+        resv = Reservation(input_bound, output_bound, usd)
         if self.calls_started + 1 > self.max_calls:
             raise BudgetExceeded(f"call cap {self.max_calls} reached")
-        if self.tokens_committed + worst_case_tokens > self.max_tokens:
+        if self.tokens_committed + resv.tokens > self.max_tokens:
             raise BudgetExceeded(
                 f"token cap {self.max_tokens} would be exceeded "
-                f"({self.tokens_committed} committed + {worst_case_tokens} worst case for the next call)"
+                f"({self.tokens_committed} committed + {resv.tokens} worst case for the next call)"
+            )
+        if self.usd_committed + usd > self.max_usd:
+            raise BudgetExceeded(
+                f"usd cap {self.max_usd} would be exceeded "
+                f"({self.usd_committed:.6f} committed + {usd:.6f} worst case for the next call)"
             )
         self.calls_started += 1
-        self.tokens_committed += worst_case_tokens  # reserved until the real usage is known
+        self.tokens_committed += resv.tokens
+        self.usd_committed += usd
+        return resv
 
-    def settle(self, reserved: int, actual_total_tokens: int | None) -> None:
-        """Replace the reservation with the reported usage, if the API reported one."""
-        if actual_total_tokens is not None:
-            self.tokens_committed += actual_total_tokens - reserved
+    def settle(self, resv: Reservation, usage: dict | None) -> None:
+        prompt = (usage or {}).get("prompt_tokens")
+        completion = (usage or {}).get("completion_tokens")
+        if not isinstance(prompt, int) or not isinstance(completion, int):
+            return  # nothing reliable reported: the reservation stays
+        actual_usd = self.pricing.cost(prompt, completion)
+        self.tokens_committed += (prompt + completion) - resv.tokens
+        self.usd_committed += actual_usd - resv.usd
+        if prompt > resv.input_bound or completion > resv.output_bound or actual_usd > resv.usd:
+            raise BoundViolation(
+                f"reported usage ({prompt} prompt + {completion} completion tokens) is above the reserved bound "
+                f"({resv.input_bound} + {resv.output_bound})"
+            )
 
     def snapshot(self) -> dict:
         return {
             "max_calls": self.max_calls,
             "max_tokens": self.max_tokens,
+            "max_usd": str(self.max_usd),
             "calls_started": self.calls_started,
             "tokens_committed": self.tokens_committed,
+            "usd_committed": f"{self.usd_committed:.6f}",
+            "pricing": self.pricing.as_dict(),
         }
 
 

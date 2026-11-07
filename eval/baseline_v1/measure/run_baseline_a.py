@@ -2,11 +2,14 @@
 """Baseline A measurement: the original router, restored from the tag eval-baseline-v1.
 
 Default mode is a DRY RUN with a fake client (no network, no cost). A real run needs --mode real,
-explicit caps, a recorded authorisation and BASELINE_A_AUTHORIZED=yes in the environment.
+explicit caps, prices, a recorded authorisation and BASELINE_A_AUTHORIZED=yes in the environment.
 Read SCOPE.md first: it says what is and is not measured.
 
     python eval/baseline_v1/measure/run_baseline_a.py                       # offline rehearsal
     python eval/baseline_v1/measure/run_baseline_a.py --verify <run dir>    # re-check a run's hashes
+
+Exit codes: 0 finished (or stopped by a cap before sending), 1 crash or failed hash check,
+2 refused to start, 3 the usage bound was violated, 130 interrupted.
 """
 from __future__ import annotations
 
@@ -16,11 +19,13 @@ import os
 import platform
 import re
 import shutil
+import signal
 import socket
 import subprocess
 import sys
 import tempfile
 import time
+from decimal import Decimal
 from importlib import metadata
 from urllib.parse import urlparse
 
@@ -41,6 +46,8 @@ SOURCE_CHECKS = (
     "src/cloud-orchestrator/llm_provider.py",
     "src/cloud-orchestrator/openai_config.py",
 )
+# A rehearsal needs numbers to exercise the dollar cap; these are placeholders, never real prices.
+REHEARSAL_PRICING = {"usd_cap": "1.00", "input": "0.30", "output": "1.20", "source": "REHEARSAL PLACEHOLDER: not a real price"}
 
 
 def git(repo: str, *args: str) -> str:
@@ -59,6 +66,11 @@ def block_network() -> None:
 
     socket.socket.connect = deny  # type: ignore[assignment]
     socket.create_connection = deny  # type: ignore[assignment]
+
+
+def raise_interrupt(signum, _frame):
+    """SIGTERM is handled like Ctrl+C, so the evidence gathered so far is sealed, not lost."""
+    raise KeyboardInterrupt(f"signal {signum}")
 
 
 def archive_hashes(repo: str) -> dict[str, str]:
@@ -137,7 +149,7 @@ class RecordingClient:
                 resp = completions.create(**kwargs)
             cap["response"] = to_dict(resp)
             return resp
-        except BaseException as exc:  # recorded, then re-raised to the caller
+        except BaseException as exc:  # recorded, then re-raised to the caller (Ctrl+C included)
             cap["error"] = {
                 "type": type(exc).__name__,
                 "module": type(exc).__module__,
@@ -163,7 +175,6 @@ def pip_freeze() -> str:
 def build_record(seq, row_index, cond, row, system, user, reply, capture, exc) -> dict:
     resp = (capture or {}).get("response") or {}
     choice = (resp.get("choices") or [{}])[0]
-    usage = resp.get("usage")
     return {
         "seq": seq,
         "row_index": row_index,
@@ -182,7 +193,7 @@ def build_record(seq, row_index, cond, row, system, user, reply, capture, exc) -
         "response_full": resp or None,
         "response_model": resp.get("model"),
         "finish_reason": choice.get("finish_reason"),
-        "usage": usage,
+        "usage": resp.get("usage"),
         "reply": reply,
         "parsed_label": L.parse_label(reply),
         "error": (capture or {}).get("error") or ({"type": type(exc).__name__, "message": str(exc)[:500]} if exc else None),
@@ -191,17 +202,25 @@ def build_record(seq, row_index, cond, row, system, user, reply, capture, exc) -
 
 def write_report(run_dir: str, config: dict, summary: dict) -> None:
     fake = config["mode"] == "dry-run"
+    b = summary["budget"]
     lines = ["# Baseline A measurement report", ""]
     if fake:
         lines += ["> **DRY RUN WITH A FAKE CLIENT. Nothing here measures any model.** It only shows that the harness works.", ""]
     lines += [
         f"- Run: `{config['run_id']}`, mode `{config['mode']}`, status **{summary['status']}**",
         f"- Source: `{config['source']['kind']}` at tag `{TAG}` (commit `{BASE_COMMIT[:7]}`)",
-        f"- Calls started: {summary['budget']['calls_started']} of {summary['budget']['max_calls']} allowed; "
-        f"tokens committed: {summary['budget']['tokens_committed']} of {summary['budget']['max_tokens']}",
+        f"- Calls started: {b['calls_started']} of {b['max_calls']} allowed; tokens booked: {b['tokens_committed']} of {b['max_tokens']}; "
+        f"US$ booked: {b['usd_committed']} of {b['max_usd']}" + (" (rehearsal rates)" if fake else ""),
+        f"- Spend implied by the usage the API reported: US$ {summary['usd_from_reported_usage']}; calls with no usable usage: {summary['calls_without_usable_usage']}",
         f"- Stop reason: {summary['stop_reason']}",
         f"- Models reported by the API: {summary['distinct_response_models'] or 'none'}"
         + ("  **(more than one: the model changed during the run)**" if summary["model_drift_flag"] else ""),
+    ]
+    if summary.get("interruption"):
+        lines.append(f"- **Interrupted**: {summary['interruption']['type']}: {summary['interruption']['message']}")
+    if summary.get("in_flight_at_interruption"):
+        lines.append("- A request was in flight at the interruption; it is recorded and its budget stays booked.")
+    lines += [
         "",
         "Scope: see `SCOPE.md` in this directory. Router stage only, two conditions, legacy gold labels, not the production pipeline.",
         "",
@@ -221,6 +240,27 @@ def write_report(run_dir: str, config: dict, summary: dict) -> None:
     open(os.path.join(run_dir, "report.md"), "w", encoding="utf-8").write("\n".join(lines) + "\n")
 
 
+def resolve_budget(args, real: bool):
+    """Parse and validate the money settings. Returns (usd_cap, pricing) or prints why not."""
+    if real:
+        missing = [n for n in ("usd_cap", "price_input_per_mtok", "price_output_per_mtok", "price_source", "authorized_by", "max_calls", "max_tokens")
+                   if not getattr(args, n)]
+        if missing:
+            print("a real run needs: " + ", ".join("--" + m.replace("_", "-") for m in missing), file=sys.stderr)
+            return None
+    try:
+        cap = L.parse_usd(args.usd_cap or REHEARSAL_PRICING["usd_cap"])
+        pricing = L.Pricing(
+            L.parse_usd(args.price_input_per_mtok or REHEARSAL_PRICING["input"]),
+            L.parse_usd(args.price_output_per_mtok or REHEARSAL_PRICING["output"]),
+            args.price_source or REHEARSAL_PRICING["source"],
+        )
+    except ValueError as exc:
+        print(f"invalid money setting: {exc}", file=sys.stderr)
+        return None
+    return cap, pricing
+
+
 def run(args) -> int:
     repo = repo_root()
     real = args.mode == "real"
@@ -229,10 +269,11 @@ def run(args) -> int:
         if os.environ.get(name):
             print(f"refusing to run: environment variable {name} is set (could reach devices or storage)", file=sys.stderr)
             return 2
+    money = resolve_budget(args, real)
+    if money is None:
+        return 2
+    usd_cap, pricing = money
     if real:
-        if not (args.authorized_by and args.usd_cap and args.max_calls and args.max_tokens):
-            print("a real run needs --authorized-by, --usd-cap, --max-calls and --max-tokens", file=sys.stderr)
-            return 2
         if os.environ.get("BASELINE_A_AUTHORIZED") != "yes":
             print("a real run also needs BASELINE_A_AUTHORIZED=yes in the environment", file=sys.stderr)
             return 2
@@ -243,11 +284,11 @@ def run(args) -> int:
         block_network()
     max_calls = args.max_calls or 400
     max_tokens = args.max_tokens or 150_000
+    signal.signal(signal.SIGTERM, raise_interrupt)
 
     out_root = args.out_root or os.path.join(repo, "eval/baseline_v1", "measured" if real else "measure/dryrun")
     os.makedirs(out_root, exist_ok=True)
     source_root, cleanup, source_info = restore_source(args.source, repo)
-    run_dir = None
     try:
         source_hashes = verify_source(source_root, repo)
         rows = L.load_rows(os.path.join(source_root, CSV_REL), args.limit)
@@ -265,27 +306,26 @@ def run(args) -> int:
         if real:
             inner = U.get_llm_client()  # original code builds the client from the environment
             limited = inner.with_options(max_retries=0, timeout=L.SDK_TIMEOUT_S)
-            if getattr(limited, "max_retries", None) != 0:
-                raise SystemExit("could not confirm that SDK retries are disabled")
-            client = RecordingClient(limited)
         else:
-            sys.path.insert(0, HERE)
             from fake_client import FakeClient
 
-            faults = {} if args.fault_plan == "none" else None
-            fake = FakeClient(faults=faults)
-            limited = fake.with_options(max_retries=0, timeout=L.SDK_TIMEOUT_S)
-            if limited.max_retries != 0:
-                raise SystemExit("could not confirm that SDK retries are disabled")
-            client = RecordingClient(limited)
+            if args.fault_plan == "none":
+                faults = {}
+            elif args.fault_plan == "default":
+                faults = None
+            else:
+                faults = {int(k): v for k, v in json.loads(args.fault_plan).items()}
+            limited = FakeClient(faults=faults).with_options(max_retries=0, timeout=L.SDK_TIMEOUT_S)
             U._llm_config = U.get_llm_config("BRAIN")
+        if getattr(limited, "max_retries", None) != 0:
+            raise SystemExit("could not confirm that SDK retries are disabled")
+        client = RecordingClient(limited)
         U.get_llm_client = lambda: client
         cfg = U._llm_config or U.get_llm_config("BRAIN")
 
         run_dir = L.make_run_dir(out_root, args.mode)
         run_id = os.path.basename(run_dir)
-        scope_path = os.path.join(HERE, "SCOPE.md")
-        shutil.copy(scope_path, os.path.join(run_dir, "SCOPE.md"))
+        shutil.copy(os.path.join(HERE, "SCOPE.md"), os.path.join(run_dir, "SCOPE.md"))
         config = {
             "run_id": run_id,
             "mode": args.mode,
@@ -320,47 +360,77 @@ def run(args) -> int:
                 "ask_agent_cache_ttl_s": U.ASK_AGENT_CACHE_TTL,
                 "order": "B and P interleaved per row; the condition that goes first alternates by row",
             },
-            "budget": {"max_calls": max_calls, "max_tokens": max_tokens, "chars_per_token_assumed": L.CHARS_PER_TOKEN},
-            "authorization": {"authorized_by": args.authorized_by, "usd_cap": args.usd_cap} if real else None,
+            "budget": {
+                "max_calls": max_calls,
+                "max_tokens": max_tokens,
+                "max_usd": str(usd_cap),
+                "pricing": pricing.as_dict(),
+                "input_token_bound": f"UTF-8 bytes of system + user text + {L.CHAT_OVERHEAD_TOKENS} (each token covers at least one byte)",
+                "output_token_bound": L.MAX_COMPLETION_TOKENS,
+                "on_violation": "stop at once, status stopped_bound_violation, exit code 3",
+            },
+            "authorization": {"authorized_by": args.authorized_by, "usd_cap_as_given": args.usd_cap} if real else None,
             "environment": {
                 "python": sys.version.split()[0],
                 "platform": platform.platform(),
-                "openai_sdk": metadata.version("openai") if _has("openai") else None,
+                "openai_sdk": _version("openai"),
                 "llm_env_names_set": sorted(k for k in os.environ if k.startswith(("LLM_", "OPENAI_", "AZURE_OPENAI_", "BRAIN_"))),
-                "forbidden_env_set": [],
             },
         }
         L.write_json(os.path.join(run_dir, "config.json"), config)
         open(os.path.join(run_dir, "pip_freeze.txt"), "w", encoding="utf-8").write(pip_freeze())
 
-        guard = L.BudgetGuard(max_calls, max_tokens)
-        records, stop_reason = [], "completed all planned calls"
+        guard = L.BudgetGuard(max_calls, max_tokens, usd_cap, pricing)
         plan = L.plan_order(len(rows))
-        with open(os.path.join(run_dir, "calls.jsonl"), "w", encoding="utf-8") as calls_file:
+        records: list[dict] = []
+        status, stop_reason, interruption, inflight = "completed", "completed all planned calls", None, None
+        calls_file = open(os.path.join(run_dir, "calls.jsonl"), "w", encoding="utf-8")
+
+        def write_record(rec: dict) -> None:
+            records.append(rec)
+            calls_file.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
+            calls_file.flush()
+
+        try:
             for seq, row_index, cond in plan:
                 row, system = rows[row_index], prompts[cond]
                 user = L.build_input(cond, row)
-                worst = L.estimate_tokens(system, user)
-                try:
-                    guard.before(worst)  # checked BEFORE the request is sent
+                try:  # checked BEFORE the request is sent
+                    resv = guard.reserve(L.input_token_upper_bound(system, user), L.MAX_COMPLETION_TOKENS)
                 except L.BudgetExceeded as exc:
-                    stop_reason = f"stopped before sending call #{seq}: {exc.reason}"
+                    status, stop_reason = "stopped_early", f"stopped before sending call #{seq}: {exc.reason}"
                     break
+                inflight = (seq, row_index, cond, row, system, user, resv)
                 before = client.requests_made
-                reply, exc_caught, client.capture = None, None, None
+                reply, call_exc, client.capture = None, None, None
                 try:
                     reply = U.ask_agent(system, user, max_completion_tokens=L.MAX_COMPLETION_TOKENS)
-                except Exception as exc:  # noqa: BLE001 - recorded, never swallowed silently
-                    exc_caught = exc
+                except Exception as exc:  # noqa: BLE001 - an API failure is recorded, never swallowed silently
+                    call_exc = exc
                 if client.requests_made != before + 1:
                     raise SystemExit(f"call #{seq}: expected exactly one request, saw {client.requests_made - before}")
-                record = build_record(seq, row_index, cond, row, system, user, reply, client.capture, exc_caught)
-                total = (record["usage"] or {}).get("total_tokens")
-                guard.settle(worst, total)
-                records.append(record)
-                calls_file.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
-                calls_file.flush()
+                record = build_record(seq, row_index, cond, row, system, user, reply, client.capture, call_exc)
+                write_record(record)
+                inflight = None
+                try:
+                    guard.settle(resv, record["usage"])
+                except L.BoundViolation as exc:
+                    status, stop_reason = "stopped_bound_violation", f"bound violated by call #{seq}: {exc.reason}"
+                    break
+        except BaseException as exc:  # Ctrl+C, SIGTERM, SystemExit or a bug: seal what exists
+            interruption = {"type": type(exc).__name__, "message": str(exc)[:500]}
+            status = "interrupted" if isinstance(exc, KeyboardInterrupt) else "crashed"
+            stop_reason = f"{status}: {interruption['type']}: {interruption['message']}"
+            if inflight is not None:
+                seq, row_index, cond, row, system, user, resv = inflight
+                rec = build_record(seq, row_index, cond, row, system, user, None, client.capture, exc)
+                rec["status"] = "in_flight_at_interruption"
+                rec["reserved"] = {"input_bound": resv.input_bound, "output_bound": resv.output_bound, "usd": str(resv.usd)}
+                write_record(rec)  # its reservation stays booked: usage unknown is never free
+        finally:
+            calls_file.close()
 
+        usable = [r for r in records if isinstance((r.get("usage") or {}).get("prompt_tokens"), int) and isinstance((r.get("usage") or {}).get("completion_tokens"), int)]
         summary = L.summarize(records, rows)
         if not real:
             # The fake model's answers are not a measurement, so no accuracy is published for it.
@@ -372,13 +442,17 @@ def run(args) -> int:
             {
                 "run_id": run_id,
                 "mode": args.mode,
-                "is_measurement": real and stop_reason.startswith("completed"),
-                "status": "completed" if stop_reason.startswith("completed") else "stopped_early",
+                "is_measurement": real and status == "completed",
+                "status": status,
                 "stop_reason": stop_reason,
+                "interruption": interruption,
+                "in_flight_at_interruption": next((r["seq"] for r in records if r.get("status") == "in_flight_at_interruption"), None),
                 "planned_calls": len(plan),
                 "calls_recorded": len(records),
                 "requests_that_reached_the_client": client.requests_made,
                 "budget": guard.snapshot(),
+                "usd_from_reported_usage": f"{sum((pricing.cost(r['usage']['prompt_tokens'], r['usage']['completion_tokens']) for r in usable), Decimal(0)):.6f}",
+                "calls_without_usable_usage": len(records) - len(usable),
                 "ended_at": L.utc_now(),
             }
         )
@@ -387,19 +461,20 @@ def run(args) -> int:
         L.write_sha256sums(run_dir)
         problems = L.verify_run_dir(run_dir)
         print(f"run directory: {run_dir}")
-        print(f"calls recorded: {len(records)} / planned {len(plan)}; status: {summary['status']}; {stop_reason}")
+        print(f"calls recorded: {len(records)} / planned {len(plan)}; status: {status}; {stop_reason}")
         print("hash verification:", "OK" if not problems else problems)
-        return 0 if not problems else 1
+        if problems:
+            return 1
+        return {"interrupted": 130, "crashed": 1, "stopped_bound_violation": 3}.get(status, 0)
     finally:
         cleanup()
 
 
-def _has(module: str) -> bool:
+def _version(package: str):
     try:
-        metadata.version(module)
-        return True
+        return metadata.version(package)
     except metadata.PackageNotFoundError:
-        return False
+        return None
 
 
 def main(argv=None) -> int:
@@ -410,9 +485,12 @@ def main(argv=None) -> int:
     p.add_argument("--limit", type=int, help="use only the first N rows (rehearsal only)")
     p.add_argument("--max-calls", type=int)
     p.add_argument("--max-tokens", type=int)
+    p.add_argument("--usd-cap", help="hard spending cap in US dollars, a positive number")
+    p.add_argument("--price-input-per-mtok", help="USD per million prompt tokens (use the cache-miss price)")
+    p.add_argument("--price-output-per-mtok", help="USD per million completion tokens")
+    p.add_argument("--price-source", help="where the prices came from and when (recorded in config.json)")
     p.add_argument("--authorized-by")
-    p.add_argument("--usd-cap")
-    p.add_argument("--fault-plan", choices=("default", "none"), default="default", help="dry-run only")
+    p.add_argument("--fault-plan", default="default", help="dry-run only: default | none | a JSON object {request number: fault}")
     p.add_argument("--verify", metavar="RUN_DIR", help="re-check the hashes of an existing run directory")
     args = p.parse_args(argv)
     if args.verify:

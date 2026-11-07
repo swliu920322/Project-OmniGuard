@@ -4,9 +4,18 @@
     "calls_started": 400,
     "max_calls": 400,
     "max_tokens": 150000,
-    "tokens_committed": 48740
+    "max_usd": "1.00",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.30",
+      "output_usd_per_mtok": "1.20",
+      "source": "REHEARSAL PLACEHOLDER: not a real price"
+    },
+    "tokens_committed": 49498,
+    "usd_committed": "0.015975"
   },
   "calls_recorded": 400,
+  "calls_without_usable_usage": 3,
   "conditions": {
     "B": {
       "all_rows_started": {
@@ -87,14 +96,17 @@
     "fake-model-1",
     "fake-model-1-b"
   ],
-  "ended_at": "2026-11-07T04:16:28.892269Z",
+  "ended_at": "2026-11-07T04:25:20.572117Z",
+  "in_flight_at_interruption": null,
+  "interruption": null,
   "is_measurement": false,
   "legacy_label_rows_critical_at_or_above_30cm": 11,
   "mode": "dry-run",
   "model_drift_flag": true,
   "planned_calls": 400,
   "requests_that_reached_the_client": 400,
-  "run_id": "20261107T041628Z_dry-run_1db40821",
+  "run_id": "20261107T042520Z_dry-run_8cf38604",
   "status": "completed",
-  "stop_reason": "completed all planned calls"
+  "stop_reason": "completed all planned calls",
+  "usd_from_reported_usage": "0.015580"
 }

@@ -1,0 +1,85 @@
+{
+  "authorization": null,
+  "baseline_commit": "a58b1258280567d3061973197151a0c917276fd8",
+  "budget": {
+    "input_token_bound": "UTF-8 bytes of system + user text + 64 (each token covers at least one byte)",
+    "max_calls": 400,
+    "max_tokens": 150000,
+    "max_usd": "1.00",
+    "on_violation": "stop at once, status stopped_bound_violation, exit code 3",
+    "output_token_bound": 20,
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.30",
+      "output_usd_per_mtok": "1.20",
+      "source": "REHEARSAL PLACEHOLDER: not a real price"
+    }
+  },
+  "environment": {
+    "llm_env_names_set": [],
+    "openai_sdk": "3.46.0",
+    "platform": "macOS-15.7.3-arm64-arm-64bit-Mach-O",
+    "python": "3.13.7"
+  },
+  "harness": {
+    "SCOPE.md": "0d74f8ff8721f7dc478debe2a70dce1bc9c1afa02df9f189354753a138bd6eb3",
+    "fake_client.py": "fe3ac1908eaaf1500528b2cda286f0fef5a9c1921672d49388bd09324c2afed2",
+    "measure_lib.py": "0bfb4065e17cbfe78c731a19932661dbe68d374f7bc6e7c7817abf0543689f08",
+    "run_baseline_a.py": "8ce58144ce80794ed958cd640a6cb956e5ecc3ed060feb02a6020c5087a11aa5"
+  },
+  "inputs": {
+    "csv": "src/cloud-orchestrator/embodied_brain/benchmark_results/runs/2026-07-16-thesis-200/results.csv",
+    "csv_sha256": "e55866dc792ed6f8908f63a9cce4052462bcfa974f1641457aea7d25b3daf608",
+    "rows_used": 10,
+    "sample_input_B": "Telemetry: Distance: 6cm, Velocity: 1.98m/s, HP: 58, Battery: 39.6%, Temp: 39.7C.",
+    "sample_input_P": "Telemetry: Distance: 6cm, X: 67.7, Velocity: 1.98m/s, HP: 58, Battery: 39%, Temp: 39C, Device: Simulated-Device."
+  },
+  "is_measurement": false,
+  "mode": "dry-run",
+  "model": {
+    "api_key_present": false,
+    "configured_model_name": "deepseek-chat",
+    "endpoint_host": "api.deepseek.com",
+    "provider": "OPENAI_COMPATIBLE",
+    "real_model_is_the_response_model_field": true
+  },
+  "prompts": {
+    "B": {
+      "chars": 361,
+      "sha256": "33752eecc3e68d96f638ce557f5869bafca7e62e10228e9604c5fa8fdc1b130f",
+      "text": "You are an intent classifier for an AGV fleet. Classify the telemetry into exactly one label:\n- CRITICAL_OBSTACLE: obstacle is dangerously close, immediate action required\n- NORMAL_NAV: normal navigation, no immediate danger\n- SENSOR_ERROR: sensor readings indicate malfunction (battery critical, overheating, low HP)\n\nRespond with ONLY the label, nothing else."
+    },
+    "P": {
+      "chars": 110,
+      "sha256": "7048389d098f9d144a85a9c32bb2f86c1f10090925a8f02fed285d210ade3c7d",
+      "text": "Classify telemetry into: [CRITICAL_OBSTACLE, NORMAL_NAV, SENSOR_ERROR]. Return ONLY the classification string."
+    }
+  },
+  "repo_head": "dff902d8428180163267e9032fa9acb051485e5a",
+  "request_settings": {
+    "ask_agent_cache_ttl_s": 0,
+    "max_completion_tokens": 20,
+    "order": "B and P interleaved per row; the condition that goes first alternates by row",
+    "sdk_max_retries": 0,
+    "sdk_timeout_s": 60.0,
+    "temperature": 0.0
+  },
+  "run_id": "20261107T042522Z_dry-run_a161a294",
+  "source": {
+    "file_sha256": {
+      "src/cloud-orchestrator/embodied_brain/benchmark.py": "a61177f18101cb7096602d33f05145231cd18a732608525d70e00d78157d16dc",
+      "src/cloud-orchestrator/embodied_brain/benchmark_results/runs/2026-07-16-thesis-200/results.csv": "e55866dc792ed6f8908f63a9cce4052462bcfa974f1641457aea7d25b3daf608",
+      "src/cloud-orchestrator/embodied_brain/brain.py": "ab1052f0496bb49d58ec852dff6640ee5ff3554b709bcf5607eb91397f7c8e22",
+      "src/cloud-orchestrator/embodied_brain/utils.py": "8e84e0746a3e8df5a21eed79f639731ab0b997101a3d44aba98566ec419912e8",
+      "src/cloud-orchestrator/llm_provider.py": "1d93cbf0f2991f57444654b87c815b915db6e30cf52f370155957ded2e8b3e64",
+      "src/cloud-orchestrator/openai_config.py": "d0eacf8cb585db01840b4a7f9637a097aedf4ebcb9181e9717f0a7e226aefc56",
+      "src/cloud-orchestrator/scenario_registry.json": "e8bd83acbb8e50e25bdb99c67177470f1bfb7668288f0f4c7a94b530dae36adc"
+    },
+    "head": "a58b1258280567d3061973197151a0c917276fd8",
+    "kind": "worktree",
+    "verified_against": "eval/baseline_v1/SHA256SUMS"
+  },
+  "started_at": "2026-11-07T04:25:22.754334Z",
+  "tag": "eval-baseline-v1",
+  "tag_object": "abd84e0451a49af1e49e454aba51cf66bd9b70c5"
+}

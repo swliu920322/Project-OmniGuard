@@ -7,7 +7,9 @@ about any real model.
 """
 from __future__ import annotations
 
+import os
 import re
+import signal
 
 
 class RateLimitError(Exception):
@@ -21,6 +23,13 @@ class APITimeoutError(Exception):
 
 
 # Scripted faults, keyed by the 1-based number of the request that reaches the fake.
+#   rate_limit / timeout   the call raises, like the SDK's errors
+#   malformed / empty      the reply is not a label
+#   no_usage               the response carries no usage field
+#   usage_over             the reported prompt tokens are far above any sane bound
+#   long_reply             the reply and completion tokens are far above max_completion_tokens
+#   interrupt              Ctrl+C arrives while the request is in flight (KeyboardInterrupt)
+#   sigterm                the process receives SIGTERM while the request is in flight
 DEFAULT_FAULTS = {
     7: "rate_limit",
     15: "timeout",
@@ -126,6 +135,10 @@ class FakeClient:
             raise RateLimitError("fake 429: rate limit exceeded (scripted fault)")
         if fault == "timeout":
             raise APITimeoutError("fake timeout (scripted fault)")
+        if fault == "interrupt":
+            raise KeyboardInterrupt("scripted Ctrl+C")
+        if fault == "sigterm":
+            os.kill(os.getpid(), signal.SIGTERM)  # the runner turns this into KeyboardInterrupt
         content = _toy_rule(kwargs["messages"][-1]["content"])
         if fault == "malformed":
             content = "The label is SENSOR_ERROR, because the battery looks low."
@@ -135,5 +148,10 @@ class FakeClient:
         usage = {"prompt_tokens": prompt_tokens, "completion_tokens": 3, "total_tokens": prompt_tokens + 3}
         if fault == "no_usage":
             usage = None
+        elif fault == "usage_over":
+            usage = {"prompt_tokens": 10_000_000, "completion_tokens": 3, "total_tokens": 10_000_003}
+        elif fault == "long_reply":
+            content = "SENSOR_ERROR " * 200
+            usage = {"prompt_tokens": prompt_tokens, "completion_tokens": 500, "total_tokens": prompt_tokens + 500}
         model = self.model + "-b" if (self.switch_model and n >= MODEL_SWITCH_AT) else self.model
         return _Response(content, model, usage, n)

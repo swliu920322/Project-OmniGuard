@@ -1,0 +1,79 @@
+{
+  "accuracy_withheld": "dry run with a fake client: accuracy is deliberately not reported",
+  "budget": {
+    "calls_started": 0,
+    "max_calls": 400,
+    "max_tokens": 150000,
+    "max_usd": "0.000001",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.30",
+      "output_usd_per_mtok": "1.20",
+      "source": "REHEARSAL PLACEHOLDER: not a real price"
+    },
+    "tokens_committed": 0,
+    "usd_committed": "0.000000"
+  },
+  "calls_recorded": 0,
+  "calls_without_usable_usage": 0,
+  "conditions": {
+    "B": {
+      "all_rows_started": {
+        "accuracy": null,
+        "correct": 0,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 0
+      },
+      "calls_started": 0,
+      "calls_without_usage": 0,
+      "confusion_legacy_gold_x_outcome": {},
+      "models_seen": [],
+      "rows_reaching_router": {
+        "accuracy": null,
+        "correct": 0,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 0
+      },
+      "substring_sensor_error_replies": 0,
+      "tokens_reported": 0
+    },
+    "P": {
+      "all_rows_started": {
+        "accuracy": null,
+        "correct": 0,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 0
+      },
+      "calls_started": 0,
+      "calls_without_usage": 0,
+      "confusion_legacy_gold_x_outcome": {},
+      "models_seen": [],
+      "rows_reaching_router": {
+        "accuracy": null,
+        "correct": 0,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 0
+      },
+      "substring_sensor_error_replies": 0,
+      "tokens_reported": 0
+    }
+  },
+  "distinct_response_models": [],
+  "ended_at": "2026-11-07T04:25:21.812840Z",
+  "in_flight_at_interruption": null,
+  "interruption": null,
+  "is_measurement": false,
+  "legacy_label_rows_critical_at_or_above_30cm": 0,
+  "mode": "dry-run",
+  "model_drift_flag": false,
+  "planned_calls": 8,
+  "requests_that_reached_the_client": 0,
+  "run_id": "20261107T042521Z_dry-run_81bf63a0",
+  "status": "stopped_early",
+  "stop_reason": "stopped before sending call #0: usd cap 0.000001 would be exceeded (0.000000 committed + 0.000176 worst case for the next call)",
+  "usd_from_reported_usage": "0.000000"
+}
