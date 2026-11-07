@@ -13,27 +13,32 @@ Read this before claiming that anything "reproduces". There are three levels, an
 ## Requirements
 
 - Python 3.10 or newer (the recorded runs used 3.11.9 and `openai` 2.41.1 on macOS); `git`.
-- A virtual environment with the backend requirements: `python -m venv .venv && .venv/bin/pip install -r src/cloud-orchestrator/requirements.txt pytest`.
+- A virtual environment with the backend requirements: `python3 -m venv .venv && .venv/bin/pip install -r src/cloud-orchestrator/requirements.txt pytest`.
+- A POSIX shell with `sh` and `shasum` (macOS or Linux). The commands were run on macOS only; Windows is untested (use WSL).
 - For levels 2 and 3 only: an OpenAI-compatible endpoint. The recorded runs used `LLM_PROVIDER=deepseek`, `OPENAI_BASE_URL=https://api.deepseek.com`, `OPENAI_API_KEY=<yours>`, `OPENAI_MODEL_NAME=deepseek-v4-flash`. The provider answers with an alias (`deepseek-flash`) and may have changed the model since; state the model identity you believe you are using with `--model-identity` and treat it as unverified. Never commit or paste the key.
 
 ## Level 1: offline walkthrough (free)
 
-Run these on `main`: the published results (`eval/formal/results/`) and this guide were added after the tag. The frozen code is unchanged since the tag, which the first command checks.
+Run these on `main`, **from the repository root** (the paths are relative). The published results (`eval/formal/results/`) and this guide were added after the tag. The frozen code is unchanged since the tag, which the first command checks. `OUT` below is a scratch directory of your choice; `mktemp -d` makes a private one.
+
+```bash
+OUT=$(mktemp -d)
+```
 
 ```bash
 git diff --stat eval-formal-v1 HEAD -- src eval/formal/run_formal.py eval/formal/CODE_FREEZE.json eval/baseline_b eval/spec eval/acceptance eval/dev   # prints nothing: code, prompt, specification and data manifests are the frozen ones
-.venv/bin/python -m pytest tests -q  # about 390 tests (the tag itself has fewer: later ones check the documents), no network, no key
+.venv/bin/python -m pytest tests -q  # 395 passed at commit 3db72fa (the tag itself has fewer: later tests check the documents), no network, no key
 sh eval/baseline_v1/verify.sh        # the archived original implementation matches its hashes
 (cd eval/formal/results && shasum -a 256 -c SHA256SUMS)     # the published formal results are intact
 .venv/bin/python eval/formal/run_formal.py plan             # requests, token and cost bounds, from the manifest alone
-.venv/bin/python eval/baseline_b/run_dev_eval.py --mode dry-run --fault-plan none --out-root /tmp/omniguard-dryrun   # fake client, sockets blocked, metrics withheld on purpose
+.venv/bin/python eval/baseline_b/run_dev_eval.py --mode dry-run --fault-plan none --out-root "$OUT/dryrun"   # fake client, sockets blocked, metrics withheld on purpose
 .venv/bin/python eval/formal/run_formal.py run --suite main --mode dry-run --skip-freeze-check \
     --data eval/dev/dev_set.jsonl --expect-sha256 "$(shasum -a 256 eval/dev/dev_set.jsonl | cut -d' ' -f1)" \
-    --private-out /tmp/omniguard-private --public-out /tmp/omniguard-public --max-calls 180
+    --private-out "$OUT/private" --public-out "$OUT/public" --max-calls 180
 ```
 The last command runs the formal runner end to end on the public dev set with a fake model: it checks the hash first, scores with the frozen scorer, writes the private run directory and the aggregate-only public summary. A fake model proves the pipeline, never a model.
 
-Expected output: `hash verification: OK` from each command; a private run directory under `/tmp/omniguard-private` and an aggregate-only public summary with `metrics_withheld`. (Without `--fault-plan none` the baseline-B dry run deliberately stops at its call 51 on a scripted bound violation, to rehearse the guard.)
+Expected output: `hash verification: OK` from each command; a private run directory under `$OUT/private` and an aggregate-only public summary with `metrics_withheld`. (Without `--fault-plan none` the baseline-B dry run deliberately stops at its call 51 on a scripted bound violation, to rehearse the guard; it exits with code 3 and still ends with `hash verification: OK`, so a script that treats any non-zero exit as failure will flag it.)
 
 ## Level 2: real run on the public dev set (a few cents)
 

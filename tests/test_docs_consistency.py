@@ -7,7 +7,7 @@ import subprocess
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VER = json.loads((ROOT / "eval/formal/results/VERIFICATION.json").read_text())
 DOCS = ["README.md", "README_zh.md", "eval/report.md", "eval/EVIDENCE_INDEX.md", "eval/LIMITATIONS.md", "eval/REPRODUCE.md", "eval/ORAL_CARDS_zh.md",
-        "docs/evidence/README.md", "eval/formal/FORMAL_PLAN.md", "docs/architecture/README.md", "ARCHITECTURE.md", "eval/REPRODUCE_TEST_PROMPT.md"]
+        "docs/evidence/README.md", "eval/formal/FORMAL_PLAN.md", "docs/architecture/README.md", "ARCHITECTURE.md", "eval/REPRODUCE_TEST_PROMPT.md", "eval/reproduction_logs/2026-11-07-gemini-level1.md"]
 TEXT = {d: (ROOT / d).read_text() for d in DOCS}
 
 
@@ -85,6 +85,15 @@ def test_the_reproduction_guide_runs_level_one_on_main_and_the_real_run_from_the
 
 
 def test_the_stranger_test_prompt_forbids_private_data_model_calls_and_repairs():
-    t = TEXT["eval/REPRODUCE_TEST_PROMPT.md"]
+    t = TEXT["eval/REPRODUCE_TEST_PROMPT.md", "eval/reproduction_logs/2026-11-07-gemini-level1.md"]
     for needle in ("不得调用任何模型 API", "/private/tmp", "OmniGuard-private", "不要“修”问题", "不要编造", "10 分钟", "不要写“已验收”"):
         assert needle in t, needle
+
+
+def test_the_reproduction_guide_carries_the_fixes_from_the_stranger_rehearsal():
+    r = TEXT["eval/REPRODUCE.md"]
+    assert "python3 -m venv .venv" in r and "from the repository root" in r and "OUT=$(mktemp -d)" in r and "/tmp/omniguard" not in r
+    assert "exits with code 3" in r and "395 passed at commit 3db72fa" in r and "Windows is untested" in r
+    log = TEXT["eval/reproduction_logs/2026-11-07-gemini-level1.md"]
+    assert "self-reported" in log and "not the human stranger" in log and "verbatim and unedited" in log and "395 passed" in log
+    assert "level 1 only" in TEXT["eval/EVIDENCE_INDEX.md"] and "not a human" in TEXT["eval/EVIDENCE_INDEX.md"]
