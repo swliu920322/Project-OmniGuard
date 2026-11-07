@@ -1,0 +1,12 @@
+# Azure Functions runtime (func.AsgiFunctionApp)
+azure-functions
+# One LLM client for OpenAI, Azure OpenAI and DeepSeek (see llm_provider.py)
+openai>=1.56.0
+# HTTP API for the embodied_brain routes
+fastapi
+# Sends cloud-to-device messages to IoT Hub (embodied_brain/utils.py); IoT path only
+requests
+# Optional device-twin storage: only imported when COSMOS_ENDPOINT and COSMOS_KEY are set
+azure-cosmos
+# Removed: azure-storage-blob, azure-identity, azure-ai-projects, python-dotenv (their features left this repo)
+# Device simulator dependencies live in edge-simulator/requirements.txt
