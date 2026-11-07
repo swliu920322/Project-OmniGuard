@@ -6,7 +6,7 @@ import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VER = json.loads((ROOT / "eval/formal/results/VERIFICATION.json").read_text())
-DOCS = ["README.md", "README_zh.md", "eval/report.md", "eval/EVIDENCE_INDEX.md", "eval/LIMITATIONS.md", "eval/REPRODUCE.md", "eval/ORAL_CARDS_zh.md",
+DOCS = ["README.md", "README_zh.md", "eval/report.md", "eval/EVIDENCE_INDEX.md", "eval/LIMITATIONS.md", "eval/REPRODUCE.md", "eval/ORAL_CARDS_zh.md", "eval/LATENCY_COST.md", "eval/ORAL_EXPLAINED_zh.md",
         "docs/evidence/README.md", "eval/formal/FORMAL_PLAN.md", "docs/architecture/README.md", "ARCHITECTURE.md", "eval/REPRODUCE_TEST_PROMPT.md", "eval/reproduction_logs/2026-11-07-gemini-level1.md", "eval/reproduction_logs/2026-11-07-gemini-level1-round2.md"]
 TEXT = {d: (ROOT / d).read_text() for d in DOCS}
 
@@ -51,9 +51,9 @@ def test_every_relative_link_in_the_public_documents_points_to_a_file_that_exist
             assert (base / target).exists(), (name, target)
 
 
-def test_the_oral_cards_have_twelve_questions_with_four_lines_each():
+def test_the_oral_cards_have_fifteen_questions_with_four_lines_each():
     cards = re.split(r"\n## \d+\. ", TEXT["eval/ORAL_CARDS_zh.md"])[1:]
-    assert len(cards) == 12
+    assert len(cards) == 15
     for c in cards:
         body = [ln for ln in c.split("\n")[1:] if ln.strip() and not ln.startswith("---") and not ln.startswith("**不要说")]
         assert [ln[0] for ln in body[:4]] == ["①", "②", "③", "④"], c[:40]
