@@ -1,0 +1,125 @@
+{
+  "budget": {
+    "calls_started": 400,
+    "max_calls": 400,
+    "max_tokens": 150000,
+    "max_usd": "0.50",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.3333334",
+      "output_usd_per_mtok": "1.3333334",
+      "source": "DeepSeek price table (CNY), Flash peak-hour rates, 6.0 CNY/USD, owner-provided 2026-11-07"
+    },
+    "tokens_committed": 112180,
+    "usd_committed": "0.097173"
+  },
+  "calls_recorded": 400,
+  "calls_without_usable_usage": 0,
+  "conditions": {
+    "B": {
+      "all_rows_started": {
+        "accuracy": 0.965,
+        "correct": 193,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 200
+      },
+      "calls_started": 200,
+      "calls_without_usage": 0,
+      "completion_tokens_reported": 14189,
+      "confusion_legacy_gold_x_outcome": {
+        "CRITICAL_OBSTACLE": {
+          "CRITICAL_OBSTACLE": 31,
+          "NORMAL_NAV": 7
+        },
+        "NORMAL_NAV": {
+          "NORMAL_NAV": 111
+        },
+        "SENSOR_ERROR": {
+          "SENSOR_ERROR": 51
+        }
+      },
+      "finish_reasons": {
+        "stop": 200
+      },
+      "models_seen": [
+        "deepseek-flash"
+      ],
+      "reasoning_tokens_reported": 12947,
+      "rows_reaching_router": {
+        "accuracy": 0.9593,
+        "correct": 165,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 172
+      },
+      "substring_sensor_error_replies": 51,
+      "tokens_reported": 44389,
+      "truncated_replies": 0
+    },
+    "P": {
+      "all_rows_started": {
+        "accuracy": 0.78,
+        "correct": 156,
+        "failed_calls": 0,
+        "invalid_replies": 12,
+        "n": 200
+      },
+      "calls_started": 200,
+      "calls_without_usage": 0,
+      "completion_tokens_reported": 45591,
+      "confusion_legacy_gold_x_outcome": {
+        "CRITICAL_OBSTACLE": {
+          "CRITICAL_OBSTACLE": 35,
+          "INVALID": 3
+        },
+        "NORMAL_NAV": {
+          "NORMAL_NAV": 111
+        },
+        "SENSOR_ERROR": {
+          "CRITICAL_OBSTACLE": 13,
+          "INVALID": 9,
+          "NORMAL_NAV": 19,
+          "SENSOR_ERROR": 10
+        }
+      },
+      "finish_reasons": {
+        "length": 9,
+        "stop": 191
+      },
+      "models_seen": [
+        "deepseek-flash"
+      ],
+      "reasoning_tokens_reported": 44296,
+      "rows_reaching_router": {
+        "accuracy": 0.8488,
+        "correct": 146,
+        "failed_calls": 0,
+        "invalid_replies": 7,
+        "n": 172
+      },
+      "substring_sensor_error_replies": 10,
+      "tokens_reported": 67791,
+      "truncated_replies": 9
+    }
+  },
+  "distinct_response_models": [
+    "deepseek-flash"
+  ],
+  "ended_at": "2026-11-07T05:08:00.114652Z",
+  "in_flight_at_interruption": null,
+  "interruption": null,
+  "is_measurement": true,
+  "legacy_label_rows_critical_at_or_above_30cm": 11,
+  "mode": "real",
+  "model_drift_flag": false,
+  "model_identity_stated_by_owner": "DeepSeek-V4.1-Flash-1017 (owner-stated, actual version unverified)",
+  "planned_calls": 400,
+  "reasoning_tokens_reported": 57243,
+  "requests_that_reached_the_client": 400,
+  "run_id": "20261107T045641Z_real_db062c4f",
+  "status": "completed",
+  "stop_reason": "completed all planned calls",
+  "truncated_replies": 9,
+  "usd_from_reported_usage": "0.097173"
+}
