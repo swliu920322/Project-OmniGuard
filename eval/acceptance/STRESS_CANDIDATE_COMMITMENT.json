@@ -1,0 +1,25 @@
+{
+  "state": "candidate_not_frozen",
+  "records": 55,
+  "counts_per_type": {
+    "1": 5,
+    "2": 5,
+    "3": 5,
+    "4": 5,
+    "5": 5,
+    "6": 5,
+    "7": 5,
+    "8": 5,
+    "9": 5,
+    "10": 5,
+    "11": 5
+  },
+  "note_annotation_selection": "all 20 valid notes will be independently annotated before initial labels are shown",
+  "sha256": {
+    "stress-v1.candidate.jsonl": "dc888af048f9a195a7a7b2b39203c3542a0bd9d02188c80187a51940394b468b",
+    "stress-note-review-inputs.jsonl": "1e77a69951118ab3d973de52059bdb3ceddc66ff06b16035a0551bca355eb8ea",
+    "coverage.json": "ef1fa0549973155b246efac333d6f3c3d72897aad7447d6b5f40169b5ba86a1d"
+  },
+  "model_calls": 0,
+  "sample_content_in_repository": false
+}
