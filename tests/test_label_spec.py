@@ -325,3 +325,42 @@ def test_public_examples_are_checked_against_a_set_by_normalised_text():
     texts = [{"text": R.render_telemetry(e["input"], e["note"])} for e in EXAMPLES]
     assert F.cross_duplicates(texts[:3], [{"text": texts[1]["text"].upper()}]) == [(1, 0)]
     assert F.cross_duplicates(texts, [{"text": "something else entirely"}]) == []
+
+
+# --- blind-sample helpers --------------------------------------------------------------------------------------------
+
+_a = importlib.util.spec_from_file_location("annotation", SPEC / "annotation.py")
+A = importlib.util.module_from_spec(_a)
+_a.loader.exec_module(A)
+
+
+def _notes(per_status):
+    return {f"{s}-{i}": s for s, n in per_status.items() for i in range(n)}
+
+
+def test_blind_sample_is_stratified_seeded_and_at_least_thirty_percent_with_four_per_status():
+    initial = _notes({s: 12 for s in R.NOTE_STATUSES})                      # the 72-note test case
+    out = A.stratified_sample(initial, R.NOTE_STATUSES)
+    assert out == A.stratified_sample(initial, R.NOTE_STATUSES)             # deterministic
+    assert out["seed"] == A.SAMPLE_SEED and out["actual_fraction"] >= 0.30
+    assert all(v["sampled"] >= 4 and v["sampled"] / v["total"] >= 0.30 for v in out["per_status"].values())
+    assert out["actual_fraction"] < 1.0                                    # not the whole set, so the review stays separate
+    assert set(out["ids"]) <= set(initial) and len(out["ids"]) == len(set(out["ids"]))
+    assert A.stratified_sample(initial, R.NOTE_STATUSES, seed=1)["ids"] != out["ids"]
+
+
+def test_a_status_with_fewer_than_four_notes_is_taken_whole_and_reported():
+    initial = _notes({"AFFIRMED_CURRENT": 20, "NEGATED": 3})
+    out = A.stratified_sample(initial, R.NOTE_STATUSES)
+    assert out["short_statuses"] == ["NEGATED"] or "NEGATED" in out["short_statuses"]
+    assert out["per_status"]["NEGATED"] == {"sampled": 3, "total": 3} and out["per_status"]["AFFIRMED_CURRENT"]["sampled"] == 6
+    assert out["per_status"]["HISTORICAL"] == {"sampled": 0, "total": 0}
+
+
+def test_kappa_and_the_agreement_report_say_so_when_kappa_is_undefined():
+    assert A.cohen_kappa(["a", "b", "a", "b"], ["a", "b", "a", "b"]) == 1.0
+    assert A.cohen_kappa(["a", "a"], ["a", "a"]) is None and A.cohen_kappa([], []) is None
+    rep = A.agreement_report({"n1": "NEGATED", "n2": "NEGATED"}, {"n1": "NEGATED", "n2": "NEGATED"})
+    assert rep["raw_agreement"] == 1.0 and rep["kappa"] is None and "undefined" in rep["kappa_note"]
+    rep = A.agreement_report({"n1": "NEGATED", "n2": "HISTORICAL", "n3": "NEGATED"}, {"n1": "NEGATED", "n2": "NEGATED"})
+    assert rep["n"] == 2 and rep["disagreements"] == [{"id": "n2", "initial": "HISTORICAL", "blind": "NEGATED"}]

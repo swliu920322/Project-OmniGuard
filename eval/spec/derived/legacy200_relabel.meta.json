@@ -1,7 +1,7 @@
 {
  "source": "eval/baseline_v1/original/src/cloud-orchestrator/embodied_brain/benchmark_results/runs/2026-07-16-thesis-200/results.csv",
  "source_sha256": "e55866dc792ed6f8908f63a9cce4052462bcfa974f1641457aea7d25b3daf608",
- "spec_version": "0.4-candidate",
+ "spec_version": "1.0",
  "rows": 200,
  "note": "derived view; the source is never modified"
 }

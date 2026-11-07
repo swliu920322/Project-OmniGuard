@@ -2,14 +2,14 @@
 
 Experimental conventions for a cloud-edge AGV *simulation*; none of the thresholds, priorities or
 dispositions claims to come from real industrial equipment. The code labels a record from its numbers
-(and, for the note layer, from a human-annotated note status) so a gold label never depends on an LLM.
+(and, for the note layer, from an AI-annotated and AI-reviewed note status) so a gold label never depends on an LLM.
 Thresholds live in THRESHOLDS: changing one is a new spec version.
 """
 from __future__ import annotations
 
 import re
 
-SPEC_VERSION = "0.4-candidate"
+SPEC_VERSION = "1.0"
 MAX_NOTE_CHARS = 500  # a longer note is out of contract (INVALID_INPUT), not truncated
 FAULTS = ("TIMEOUT", "RATE_LIMIT", "API_ERROR")  # interface faults: no reply at all
 
@@ -40,7 +40,7 @@ LEGACY3 = {"CRITICAL_OBSTACLE": "CRITICAL_OBSTACLE", "NORMAL_NAV": "NORMAL_NAV",
            "LOW_BATTERY": "SENSOR_ERROR", "OVERHEAT": "SENSOR_ERROR", "LOW_HEALTH": "SENSOR_ERROR",
            "OVERSPEED": None}  # the old task had no such class: excluded from the compatibility check
 
-# Human-annotated status of an operator note about "a person or obstacle ahead" (the only topic).
+# Annotated status (AI annotation and AI review) of an operator note about "a person or obstacle ahead" (the only topic).
 NOTE_STATUSES = ["AFFIRMED_CURRENT", "NEGATED", "HISTORICAL", "HYPOTHETICAL", "UNCERTAIN", "IRRELEVANT"]
 NOTE_RISK_STATUSES = ("AFFIRMED_CURRENT", "UNCERTAIN")  # these add CRITICAL_OBSTACLE (an uncertain report halts: conservative)
 # Clause combination, strictest first. A clause about the CURRENT state outranks one about the past, a condition or an

@@ -1,6 +1,6 @@
 # Data grouping and quantity plan (a plan: nothing is generated, nothing is frozen)
 
-Applies to spec `0.4-candidate`. Synthetic samples of a simulation; they are never described as production data. Numbers are targets to be confirmed at the pre-freeze review.
+Applies to spec `1.0`. Synthetic samples of a simulation; they are never described as production data. Numbers are targets to be confirmed at the pre-freeze review.
 
 ## 1. Who makes what
 
@@ -28,7 +28,7 @@ A **family** is one base scenario with all its numeric variants, paraphrases and
 |---|---:|---:|---|
 | Dev | 30 | 180 | |
 | Frozen test | target 50, floor 30 | 300 | below 30 in any class that item fails; a shortfall against the target is disclosed. With 30 per class one error moves recall by 3.3 points, so uncertainty is reported |
-| Stress | >= 5 per type | >= 55 | 9 content types + 2 interface faults, section 5 |
+| Stress | >= 5 per type | >= 55 | 9 content types + 2 injected interface faults, section 5; types 1, 2, 9 and group B are not sent to the model for scoring |
 | Noted records inside dev | | >= 60 | >= 10 per note status |
 | Noted records inside test | | >= 72 | >= 12 per status, each split across English, Chinese and mixed (>= 4 each) |
 
@@ -60,7 +60,7 @@ A class is the **primary**, so a record fits a class only if no higher-priority 
 
 ## 5. Stress types (each >= 5 records, two groups)
 
-**Group A: content stress** (the model is called)
+**Group A: content stress.** Types 1, 2 and 9 test the input check, which runs in code **before any model call**: those records are rejected without calling the model (expected HALT, reported as their own rows). Types 3 to 8 are sent to the model and scored like any other record.
 
 | # | Type | Expected behaviour |
 |---|---|---|
@@ -81,7 +81,7 @@ A class is the **primary**, so a record fits a class only if no higher-priority 
 | 10 | **Timeout** | HALT (`TIMEOUT`); counted as a failure in the denominator, not retried away |
 | 11 | **Rate limit** | HALT (`RATE_LIMIT`); same |
 
-Group B is not part of the accuracy figures; it is reported as its own rows. No chatbot is built to satisfy a stress type.
+**Group B is injected on purpose and reported in its own rows, never mixed into the classification accuracy.** Timeouts and rate limits that happen *by themselves* during a real evaluation run are different: they stay in the accuracy denominator and count as wrong (LABEL_SPEC section 4). No chatbot is built to satisfy a stress type.
 
 ## 6. Procedure and commitments
 

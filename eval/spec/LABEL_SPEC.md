@@ -1,8 +1,8 @@
 # Label specification — AGV telemetry state recognition and routing
 
-**Version 0.4-candidate (freeze candidate after the second GPT review). Not frozen. Nothing here has been measured; no model was called.**
+**Version 1.0 (formal specification: technical design closed after three GPT reviews). The test data is NOT frozen and nothing here has been measured; no model was called.**
 Executable form: `reference_labeler.py`. Public boundary examples: `ambiguous_examples.json` (all shown in section 11).
-Changes from 0.3: a noted record whose reply has a missing or null `note_status` now HALTs (no judgement is never read as no risk); `floor_override` is defined exactly; interface faults and note-length limits are part of the contract; stress and coverage requirements corrected in `DATA_PLAN.md`; family split algorithm (`family.py`) and `ANNOTATION_PROTOCOL.md` added.
+Changes from 0.4: protocol wording only. The blind annotation is sealed before the reviewer sees any label (`ANNOTATION_PROTOCOL.md`); the blind sample is stratified, at least 30 % and 4 per status, seeded; injected interface faults are reported apart from classification and real faults stay in the denominator; INVALID_INPUT is rejected before any model call; gold statuses are called AI annotation and AI review.
 
 ## 0. Positioning
 
@@ -55,7 +55,7 @@ Equality is never a violation: 30 cm, 60 °C, 2.5 m/s, 20 % and 50 HP are normal
 | Layer | Content | Produced by | Scored how |
 |---|---|---|---|
 | **1. Telemetry risks** | `risk_set` from the numbers (`risk_set()`) | **code**, deterministically. Also the gold for telemetry. | Not scored on the model; it is the floor the action is built on. |
-| **2. Note event** | status of the operator note: `AFFIRMED_CURRENT`, `NEGATED`, `HISTORICAL`, `HYPOTHETICAL`, `UNCERTAIN`, `IRRELEVANT` | **model** outputs `note_status`; **humans** annotate the gold | `note_status` accuracy and per-status recall on noted records only; reported **separately**, never mixed into the main accuracy |
+| **2. Note event** | status of the operator note: `AFFIRMED_CURRENT`, `NEGATED`, `HISTORICAL`, `HYPOTHETICAL`, `UNCERTAIN`, `IRRELEVANT` | **model** outputs `note_status`; **AI annotation and AI review** produce the gold (`ANNOTATION_PROTOCOL.md`) | `note_status` accuracy and per-status recall on noted records only; reported **separately**, never mixed into the main accuracy |
 | **3a. Final primary route** | one of the six classes | **model** outputs `primary`; **code** computes the gold from layers 1 and 2 (`compose()`) | **main metric**: accuracy, per-class P/R/F1, macro-F1, confusion matrix; N counts these |
 | **3b. Executed action** | one resolved action (section 5) | **code**, from layer 1 plus the model's `note_status`, plus the model's `primary` if it is stricter | safety metrics: `missed_halt` (gold halts, executed does not), `needless_halt` (executed halts, gold does not), `floor_override` (the code corrected the model) |
 
@@ -70,8 +70,8 @@ The model replies **once** with a fixed JSON object `{"primary": ..., "note_stat
 
 No model output can remove a risk. HALT, with no model risk counted, in each of these cases:
 
-- the input is out of contract (`INVALID_INPUT`), including a note over 500 characters;
-- the interface failed (`TIMEOUT`, `RATE_LIMIT`, `API_ERROR`): no reply exists; the call stays in the denominator as a failure;
+- the input is out of contract (`INVALID_INPUT`), including a note over 500 characters; this is checked by code **before any model call**, so such records never reach the model;
+- the interface failed (`TIMEOUT`, `RATE_LIMIT`, `API_ERROR`): no reply exists. **A fault that happens during a real evaluation run stays in the accuracy denominator and counts as wrong**; a fault that is *injected on purpose* as a stress test is reported in its own rows and never mixed into the classification accuracy;
 - the reply is unparseable, has a label or status outside the enums, **has no `note_status` (missing or null) although the record has a note**, or has a `note_status` although the record has none (`PARSE_FAILURE`). "No judgement given" is never read as "no risk" (tested);
 - the emergency-stop flag is set (above everything else).
 
@@ -124,7 +124,7 @@ An optional free-text `note`, in English, Chinese or mixed, may report **one top
 
 **Source disagreement.** When the note and the telemetry point different ways (an affirmed or uncertain report with clear telemetry; a negation with close-range telemetry) the record is flagged `source_disagreement`. It is not called a factual contradiction: the two sources may observe different ranges. The stricter reading always wins (N01, N04).
 
-A note can add a risk and can **never remove one**, cannot lift a telemetry limit, and is not a conversation. Gold `note_status` is human-annotated (per clause, then combined); the gold route for noted records is composed by code.
+A note can add a risk and can **never remove one**, cannot lift a telemetry limit, and is not a conversation. Gold `note_status` comes from AI annotation and AI review (per clause, then combined; no claim of human expert labels); the gold route for noted records is composed by code.
 
 **D2 stop-loss:** if this specification and an independent test set are not frozen by the D2 gate, the product is telemetry-only and the missing note capability is recorded as not delivered.
 
@@ -215,4 +215,4 @@ Checked by `tests/test_label_spec.py` against `reference_labeler.py`. E = teleme
 
 - Review of the R1 word and cue lists by the acceptance session (accepted as a simple baseline with its disclosed limits; not to be extended just to remove public errors).
 - Family split and quantities: `DATA_PLAN.md` and `family.py` (algorithm and checks written, nothing generated).
-- Annotation of the gold note statuses: `ANNOTATION_PROTOCOL.md` (AI annotation and AI review; the owner only rules on disputes).
+- Annotation of the gold note statuses: `ANNOTATION_PROTOCOL.md` (AI annotation and AI review; blind sample sealed before the review; the owner only rules on disputes). Procedure only: no data exists yet, and the independent test set with its hash commitment is still to be made by the acceptance session (D2).
