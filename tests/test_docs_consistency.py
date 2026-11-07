@@ -7,7 +7,7 @@ import subprocess
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VER = json.loads((ROOT / "eval/formal/results/VERIFICATION.json").read_text())
 DOCS = ["README.md", "README_zh.md", "eval/report.md", "eval/EVIDENCE_INDEX.md", "eval/LIMITATIONS.md", "eval/REPRODUCE.md", "eval/ORAL_CARDS_zh.md",
-        "docs/evidence/README.md", "eval/formal/FORMAL_PLAN.md", "docs/architecture/README.md", "ARCHITECTURE.md"]
+        "docs/evidence/README.md", "eval/formal/FORMAL_PLAN.md", "docs/architecture/README.md", "ARCHITECTURE.md", "eval/REPRODUCE_TEST_PROMPT.md"]
 TEXT = {d: (ROOT / d).read_text() for d in DOCS}
 
 
@@ -76,3 +76,15 @@ def test_the_formal_tag_points_where_the_report_says():
     out = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "eval-formal-v1^{commit}"], capture_output=True, text=True)
     if out.returncode == 0:                                                                          # tags are not part of every archive of the repository
         assert out.stdout.strip().startswith("fec6acf")
+
+
+def test_the_reproduction_guide_runs_level_one_on_main_and_the_real_run_from_the_tag_worktree():
+    r = TEXT["eval/REPRODUCE.md"]
+    assert "Run these on `main`" in r and "git worktree add ../omniguard-formal eval-formal-v1" in r and "git diff --stat eval-formal-v1 HEAD" in r
+    assert "git checkout eval-formal-v1" not in r                                                   # the tag does not contain the results or this guide
+
+
+def test_the_stranger_test_prompt_forbids_private_data_model_calls_and_repairs():
+    t = TEXT["eval/REPRODUCE_TEST_PROMPT.md"]
+    for needle in ("不得调用任何模型 API", "/private/tmp", "OmniGuard-private", "不要“修”问题", "不要编造", "10 分钟", "不要写“已验收”"):
+        assert needle in t, needle

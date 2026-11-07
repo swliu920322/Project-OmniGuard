@@ -18,9 +18,11 @@ Read this before claiming that anything "reproduces". There are three levels, an
 
 ## Level 1: offline walkthrough (free)
 
+Run these on `main`: the published results (`eval/formal/results/`) and this guide were added after the tag. The frozen code is unchanged since the tag, which the first command checks.
+
 ```bash
-git checkout eval-formal-v1          # the frozen code (commit fec6acf); main may contain later documentation only
-.venv/bin/python -m pytest tests -q  # several hundred tests, no network, no key
+git diff --stat eval-formal-v1 HEAD -- src eval/formal/run_formal.py eval/formal/CODE_FREEZE.json eval/baseline_b eval/spec eval/acceptance eval/dev   # prints nothing: code, prompt, specification and data manifests are the frozen ones
+.venv/bin/python -m pytest tests -q  # about 390 tests (the tag itself has fewer: later ones check the documents), no network, no key
 sh eval/baseline_v1/verify.sh        # the archived original implementation matches its hashes
 (cd eval/formal/results && shasum -a 256 -c SHA256SUMS)     # the published formal results are intact
 .venv/bin/python eval/formal/run_formal.py plan             # requests, token and cost bounds, from the manifest alone
@@ -50,7 +52,7 @@ The run needs a clean tracked working tree and writes a sealed directory under `
 
 Only possible with the files `test_set.jsonl` and `stress_cases.jsonl` whose SHA-256 equal the ones in the manifest (`68e08ed9…` and `dc888af0…`), obtained from their custodian. The custodian holds them outside the repository; do not ask the tuning side for them.
 
-1. Check out the tag: `git checkout eval-formal-v1` (commit `fec6acf`). A real run refuses a dirty tree, a changed frozen file or a tag that does not point at the current commit.
+1. Check out the tag in its own worktree: `git worktree add ../omniguard-formal eval-formal-v1` and work there (commit `fec6acf`). A real run requires `HEAD` to be the tagged commit, so it cannot be started from `main`; it also refuses a dirty tree and a changed frozen file. The published `eval/formal/results/` does not exist at the tag: give `--public-out` a directory of your own.
 2. `run_formal.py check-format --acceptance-dir <private dir>` (counts and hashes only, prints no record), then `plan --acceptance-dir <private dir>` for exact numbers.
 3. Set the credentials as above and `BASELINE_B_AUTHORIZED=yes`; choose your own caps. The programme used: 2 health-canary calls, 2 x 300 main calls, at most 40 stress calls; caps US$0.57, 642 calls, 1,320,000 tokens in total; it cost about **US$0.285** (634 API requests, 630,792 tokens) at the configured conservative rates, an estimate and not a bill.
 4. `run_formal.py run --suite main --twice --mode real --acceptance-dir <dir> --frozen-tag eval-formal-v1 --private-out <dir outside the repo> --public-out eval/formal/results ...` (money options as in [formal/FORMAL_PLAN.md](formal/FORMAL_PLAN.md) section 5), then `--suite stress` the same way. Outputs: the **private** run directories (full inputs and replies; keep them out of git) and, in `--public-out`, aggregate-only summaries and `reproducibility_*.json`.

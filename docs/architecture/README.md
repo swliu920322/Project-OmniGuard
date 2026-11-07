@@ -17,10 +17,10 @@ What it shows: browser-side edge computing (Next.js dashboard as a front end and
 How to read it today:
 
 - The **WebGPU timings** (15 ms, 1.2 m at 0.5 m/s) and the Kinematic-Token relation are simulation parameters and a model, not measured results (see the [evidence policy](../evidence/README.md)).
-- The figure draws Azure OpenAI behind a private endpoint in the storage subnet. The Bicep snapshot defines **three** private endpoints (Key Vault, Blob storage, Cosmos DB) and takes Azure OpenAI as parameters only (the key is stored as a Key Vault secret). The application now also supports DeepSeek and other OpenAI-compatible providers through `LLM_PROVIDER`, called over their public HTTPS endpoints.
+- **LLM provider.** The design has always had a provider adapter (`llm_provider.py`): Azure OpenAI and OpenAI from the start, and now DeepSeek and other OpenAI-compatible endpoints, selected with `LLM_PROVIDER`. The figure draws Azure OpenAI behind a private endpoint in the storage subnet; the Bicep snapshot defines **three** private endpoints (Key Vault, Blob storage, Cosmos DB) and takes Azure OpenAI as parameters only (the key is stored as a Key Vault secret). The other providers are called over their public HTTPS endpoints.
 - The figure draws IoT Hub in its own subnet; the Bicep snapshot creates IoT Hub and the device provisioning service without a subnet or private endpoint and passes their connection strings to the backend as secrets.
 - The Router's "intent class (<= 20 tokens)" is the original three-label router. A six-route extended router exists as an opt-in tenant (see the [architecture document](../../ARCHITECTURE.md) section 4.2.1); this figure was not redrawn for it.
-- Cosmos DB and IoT Hub are optional in the current code: the IoT trigger registers only when its connection string is set, and Cosmos failures do not stop the simulator.
+- **Cosmos DB (device twins) and IoT Hub (telemetry in, cloud-to-device out) are part of the designed architecture and of the Bicep snapshot**; that they are not used in the current runs does not make them absent from the design. Per the project owner the IoT path was tested locally, and no cloud-side test result is preserved here. At run time the simulator and the evaluation need neither (the IoT trigger registers only when its connection string is set; Cosmos failures do not stop the simulator), so the evaluation results do not exercise them.
 
 ## Reference topology as defined by the Bicep snapshot
 
