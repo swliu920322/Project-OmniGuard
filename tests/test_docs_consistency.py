@@ -7,7 +7,7 @@ import subprocess
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VER = json.loads((ROOT / "eval/formal/results/VERIFICATION.json").read_text())
 DOCS = ["README.md", "README_zh.md", "eval/report.md", "eval/EVIDENCE_INDEX.md", "eval/LIMITATIONS.md", "eval/REPRODUCE.md", "eval/ORAL_CARDS_zh.md",
-        "docs/evidence/README.md", "eval/formal/FORMAL_PLAN.md", "docs/architecture/README.md", "ARCHITECTURE.md", "eval/REPRODUCE_TEST_PROMPT.md", "eval/reproduction_logs/2026-11-07-gemini-level1.md"]
+        "docs/evidence/README.md", "eval/formal/FORMAL_PLAN.md", "docs/architecture/README.md", "ARCHITECTURE.md", "eval/REPRODUCE_TEST_PROMPT.md", "eval/reproduction_logs/2026-11-07-gemini-level1.md", "eval/reproduction_logs/2026-11-07-gemini-level1-round2.md"]
 TEXT = {d: (ROOT / d).read_text() for d in DOCS}
 
 
@@ -97,3 +97,10 @@ def test_the_reproduction_guide_carries_the_fixes_from_the_stranger_rehearsal():
     log = TEXT["eval/reproduction_logs/2026-11-07-gemini-level1.md"]
     assert "self-reported" in log and "not the human stranger" in log and "verbatim and unedited" in log and "395 passed" in log
     assert "level 1 only" in TEXT["eval/EVIDENCE_INDEX.md"] and "not a human" in TEXT["eval/EVIDENCE_INDEX.md"]
+
+
+def test_round_two_log_is_saved_verbatim_and_its_limits_are_stated():
+    t = TEXT["eval/reproduction_logs/2026-11-07-gemini-level1-round2.md"]
+    for needle in ("verbatim and unedited", "Self-reported", "not the human stranger", "Less complete than the prompt asked for", "1 分 48 秒", "396 passed"):
+        assert needle in t, needle
+    assert "two AI-agent rehearsals" in TEXT["eval/EVIDENCE_INDEX.md"]

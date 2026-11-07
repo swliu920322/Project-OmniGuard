@@ -41,7 +41,7 @@ Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Ea
 |---|---|---|
 | One-command evaluation, caps and sealed run directories | done for the dev set | `eval/baseline_b/README.md` |
 | Two independent runs on the frozen test set: agreement >= 98 %, accuracy difference <= 2 points | passed | primary and note agreement both 100%, accuracy difference 0 points; comparison JSON in `formal/results/` |
-| A stranger reproduces it from the README with real credentials in 10 minutes | **not done** (materials prepared; one AI-agent rehearsal of level 1 done) | [REPRODUCE.md](REPRODUCE.md); rehearsal: an AI agent with no history completed level 1 in 2 min 32 s on commit `3db72fa` and reported five documentation issues, all fixed ([log](reproduction_logs/2026-11-07-gemini-level1.md); self-reported, level 1 only, not a human, and nothing of the formal numbers was reproduced). The formal numbers also need the private files, so a clone alone cannot reproduce them |
+| A stranger reproduces it from the README with real credentials in 10 minutes | **not done** (materials prepared; two AI-agent rehearsals of level 1 done) | [REPRODUCE.md](REPRODUCE.md); rehearsal: an AI agent with no history completed level 1 in 2 min 32 s on commit `3db72fa` and reported five documentation issues, all fixed ([round 1](reproduction_logs/2026-11-07-gemini-level1.md)); round 2 on commit `4604b67` ran the corrected guide cleanly in 1 min 48 s ([round 2](reproduction_logs/2026-11-07-gemini-level1-round2.md), a thinner report). Both are self-reported, level 1 only, not a human, and nothing of the formal numbers was reproduced). The formal numbers also need the private files, so a clone alone cannot reproduce them |
 
 ## Gate 4: it can be explained
 
