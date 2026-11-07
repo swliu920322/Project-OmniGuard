@@ -63,11 +63,16 @@ def test_the_instructions_forbid_peeking_and_state_every_rule():
     assert not any(row["input_text"] in text for row in PACKET)
 
 
-def test_nothing_labelled_is_in_the_repository_material_yet():
-    assert not (ANN / "sealed").exists()
+def test_the_review_packet_with_the_initial_labels_is_never_in_the_repository_and_a_seal_if_present_is_intact():
     for f in ANN.iterdir():
         if f.is_file() and f.suffix in (".json", ".jsonl", ".md", ".py") and f.name != "packets.py":
             assert "initial_note_status" not in f.read_text(), f.name
+    seal = ANN / "sealed" / "BLIND_SEALED.json"
+    if seal.exists():                                                                              # the custodian has sealed the independent blind results
+        rec = json.loads(seal.read_text())
+        assert rec["results_sha256"] == P.sha256_file(ANN / "sealed" / "blind_results.jsonl") and rec["sample_ids_sha256"] == SAMPLE["ids_sha256"]
+        lines = [json.loads(x) for x in (ANN / "sealed" / "blind_results.jsonl").read_text().splitlines()]
+        assert P.validate_results(lines, SAMPLE["ids"]) == []
 
 
 def _good_results(sample_ids, its):

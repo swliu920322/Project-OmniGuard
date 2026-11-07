@@ -27,7 +27,7 @@ python eval/baseline_b/run_dev_eval.py --verify <run dir>
 | Canary `--limit 2` | 2 | does the model obey the JSON contract, how many reasoning tokens |
 | Full dev run | 180 | one request per dev record, in file order |
 
-Prices as authorised for baseline A (US$ per million tokens, Flash peak rate, the highest, applied to every prompt token): input 0.3333334, output 1.3333334. Prompt 2,975 bytes; per-call input bound 3,114 to 3,215 tokens (UTF-8 bytes + 64), output bound 2,048. **Worst case if every call used its whole bound: 933,535 tokens, about US$0.68.** The guard books the worst case per call and settles to the reported usage, so real spend is far lower; my estimate, from the baseline-A run (400 short calls cost US$0.097) and this prompt's size, is roughly US$0.10 to 0.25 for the 180 calls, **an estimate, not a guarantee**.
+Prices as authorised for baseline A (US$ per million tokens, Flash peak rate, the highest, applied to every prompt token): input 0.3333334, output 1.3333334. Prompt 2,976 bytes; per-call input bound 3,114 to 3,215 tokens (UTF-8 bytes + 64), output bound 2,048. **Worst case if every call used its whole bound: 933,535 tokens, about US$0.68.** The guard books the worst case per call and settles to the reported usage, so real spend is far lower; my estimate, from the baseline-A run (400 short calls cost US$0.097) and this prompt's size, is roughly US$0.10 to 0.25 for the 180 calls, **an estimate, not a guarantee**.
 
 **Combined ceiling for both runs, not per run: at most 182 calls, US$0.50 and 500,000 tokens in total.** To make that true the two runs get sub-caps that add up to it:
 

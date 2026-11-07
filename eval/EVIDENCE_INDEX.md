@@ -68,6 +68,10 @@ Costs are computed at the conservative configured rates (Flash peak rate, applie
 
 Baseline B calls: 192 (the 2 + 2 failed canary calls, 6 diagnostic calls, 2 canary calls, 180 dev-run calls). Baseline A calls: 403.
 
+## Formal evaluation entry
+
+Prepared offline: `eval/formal/` (`FORMAL_PLAN.md`, `ACCEPTANCE_FORMAT.md`, `run_formal.py`, `CODE_FREEZE.json`). Baseline B-1.0 and R1/R2 on the frozen test set, two independent runs and the stress suite; budget listed offline. **No real run exists yet**; the freeze tag, the owner's authorisation of the caps and the custodian's runs are pending.
+
 ## Code and tests
 
 Backend extended router and its endpoint flow: `01d4ce4`, `c6f85a2`, `6aa7824` (`src/cloud-orchestrator/router_v2/`, `embodied_brain/extended.py`; tests with fake dependencies). Nothing in the backend path has been run against a real model with the new prompt except the baseline-B dev run, which used the evaluation runner, not the HTTP endpoint. The whole suite: `python -m pytest tests` (335 tests at the time of writing).
