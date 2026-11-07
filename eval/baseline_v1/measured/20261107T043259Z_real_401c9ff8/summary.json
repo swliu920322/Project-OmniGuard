@@ -1,0 +1,86 @@
+{
+  "budget": {
+    "calls_started": 1,
+    "max_calls": 400,
+    "max_tokens": 150000,
+    "max_usd": "0.50",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.3333334",
+      "output_usd_per_mtok": "1.3333334",
+      "source": "DeepSeek price table pasted by the owner on 2026-11-07 (CNY per million tokens). Flash column (left); cache-miss input and output at the PEAK-hour rate (2.0 / 8.0 CNY) although the owner says the run is off-peak (1.0 / 4.0 CNY): conservative. Converted at 6.0 CNY per USD, below the market rate, so the USD cost is overstated."
+    },
+    "tokens_committed": 218,
+    "usd_committed": "0.000140"
+  },
+  "calls_recorded": 1,
+  "calls_without_usable_usage": 0,
+  "conditions": {
+    "B": {
+      "all_rows_started": {
+        "accuracy": 1.0,
+        "correct": 1,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 1
+      },
+      "calls_started": 1,
+      "calls_without_usage": 0,
+      "confusion_legacy_gold_x_outcome": {
+        "CRITICAL_OBSTACLE": {
+          "CRITICAL_OBSTACLE": 1
+        }
+      },
+      "models_seen": [
+        "deepseek-flash"
+      ],
+      "rows_reaching_router": {
+        "accuracy": 1.0,
+        "correct": 1,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 1
+      },
+      "substring_sensor_error_replies": 0,
+      "tokens_reported": 218
+    },
+    "P": {
+      "all_rows_started": {
+        "accuracy": null,
+        "correct": 0,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 0
+      },
+      "calls_started": 0,
+      "calls_without_usage": 0,
+      "confusion_legacy_gold_x_outcome": {},
+      "models_seen": [],
+      "rows_reaching_router": {
+        "accuracy": null,
+        "correct": 0,
+        "failed_calls": 0,
+        "invalid_replies": 0,
+        "n": 0
+      },
+      "substring_sensor_error_replies": 0,
+      "tokens_reported": 0
+    }
+  },
+  "distinct_response_models": [
+    "deepseek-flash"
+  ],
+  "ended_at": "2026-11-07T04:33:02.774041Z",
+  "in_flight_at_interruption": null,
+  "interruption": null,
+  "is_measurement": false,
+  "legacy_label_rows_critical_at_or_above_30cm": 0,
+  "mode": "real",
+  "model_drift_flag": false,
+  "planned_calls": 2,
+  "requests_that_reached_the_client": 1,
+  "run_id": "20261107T043259Z_real_401c9ff8",
+  "status": "stopped_bound_violation",
+  "stop_reason": "bound violated by call #0: reported usage (151 prompt + 67 completion tokens) is above the reserved bound (506 + 20)",
+  "usd_from_reported_usage": "0.000140"
+}
