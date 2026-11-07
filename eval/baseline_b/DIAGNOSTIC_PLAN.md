@@ -4,7 +4,7 @@ Status: offline preparation only. **No model was called for this plan.** Baselin
 
 ## 1. What is known
 
-- Two baseline-B canaries (`runs/20261107T071745Z_real_ef50e6ae`, `runs/20261107T072708Z_real_55c6fa87`), 2 calls each: all four returned HTTP 500 `Internal Server Error` with no reply and no usage. The second sent the same body as the first.
+- Two baseline-B canaries (`runs/20261107T071745Z_real_ef50e6ae`, `runs/20261107T072708Z_real_55c6fa87`), 2 calls each (DEV-001 and DEV-002): all four returned HTTP 500 `Internal Server Error` with no reply and no usage. Both runs sent the same two request bodies (checked), one per dev record; the two bodies differ from each other in the input.
 - Booked (worst-case reservations; the real cost is unknown because no usage came back): 20,888 tokens, US$0.015154. Calls so far: 4.
 - The baseline-A canary (`measured/20261107T045607Z_real_bb1f4b4e`) and its 400-call run succeeded earlier the same day (about 04:56 UTC). A past success does not show that the service is healthy now.
 
@@ -16,7 +16,7 @@ Status: offline preparation only. **No model was called for this plan.** Baselin
 | model string sent | deepseek-v4-flash | deepseek-v4-flash |
 | client class | openai.OpenAI(base_url, api_key) via llm_provider (restored original code) | openai.OpenAI(base_url, api_key) built directly |
 | SDK retries / timeout | 0 / 60.0 s | 0 / 60.0 s |
-| openai SDK version | 2.41.1 | not recorded in the B config; installed now: 2.41.1 |
+| openai SDK version | 2.41.1 (recorded) | NOT recorded in the B runs. Installed now: 2.41.1 (the same virtualenv was used by command, so the same version is likely, but that is an inference, not a record) |
 | python / platform | 3.11.9 / macOS-15.7.3-arm64-arm-64bit | 3.11.9 / macOS-15.7.3-arm64-arm-64bit |
 | request keys | max_completion_tokens, max_tokens, messages, model, temperature | max_tokens, messages, model, temperature |
 | temperature | 0.0 | 0.0 |
@@ -27,7 +27,7 @@ Status: offline preparation only. **No model was called for this plan.** Baselin
 | user input bytes / non-ASCII | 81 / False | 145 / True |
 | reasoning / thinking switch sent | none (provider default) | none (provider default) |
 
-The client, endpoint, model string, retries, timeout, SDK and Python are the same; only the B config did not record the SDK version. The differences are in the **request body**: `max_completion_tokens` (20 vs absent), `max_tokens` (1024 vs 2048), the system prompt size (361 vs 2,976 bytes) and a user input with a Chinese note. That is what the six steps separate.
+Endpoint, model string, retries, timeout and Python are the same in the records, and the client class is the same (`OpenAI(base_url, api_key)`, checked in `llm_provider.py` at tag `a58b125`, line 146); the SDK version of the B runs is the one thing that is only inferred. The differences are in the **request body**: `max_completion_tokens` (20 vs absent), `max_tokens` (1024 vs 2048), the system prompt size (361 vs 2,976 bytes) and a user input with a Chinese note. That is what the six steps separate. Step 5 reproduces DEV-001's body; DEV-002's body (a different note) is not tested separately, which is a limit of the plan.
 
 ## 3. Read-only checks made on 2026-11-07 (no model call)
 
@@ -59,7 +59,7 @@ The order is adaptive: if a step in 2 to 5 fails, the later changes are skipped 
 
 ## 5. Offline verification already done
 
-12 tests (`tests/test_diagnose_500.py`): one change per step; step 1 is the A request and step 5 the failed B request; no model, thinking or prompt change; the adaptive order; the worst case fits; stop and skip behaviour; caps; refusal without authorisation, clean tree or money settings; no sockets in dry-run. Three fake-client rehearsals in `diagnostics/dryrun/`.
+16 tests (`tests/test_diagnose_500.py`): one change per step; step 1 is the A request and step 5 the failed B request; no model, thinking or prompt change; the adaptive order; the worst case fits; stop and skip behaviour; caps; a Ctrl+C or SIGTERM while a request is in flight is recorded as `in_flight_at_interruption` with its reservation, the budget keeps it and the run is sealed (exit 130); refusal without authorisation, clean tree or money settings; no sockets in dry-run. Four fake-client rehearsals in `diagnostics/dryrun/`.
 
 ## 6. Budget and the authorisation needed
 

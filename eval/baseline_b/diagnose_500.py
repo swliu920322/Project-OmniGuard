@@ -118,7 +118,7 @@ def difference_table() -> str:
         ("model string sent", a["model"], b["model"]),
         ("client class", "openai.OpenAI(base_url, api_key) via llm_provider (restored original code)", "openai.OpenAI(base_url, api_key) built directly"),
         ("SDK retries / timeout", f"{ca['request_settings']['sdk_max_retries']} / {ca['request_settings']['sdk_timeout_s']} s", f"{cb['request_settings']['sdk_max_retries']} / {cb['request_settings']['sdk_timeout_s']} s"),
-        ("openai SDK version", ca["environment"]["openai_sdk"], f"not recorded in the B config; installed now: {metadata.version('openai')}"),
+        ("openai SDK version", ca["environment"]["openai_sdk"], f"NOT recorded in the B runs. Installed now: {metadata.version('openai')} (the same virtualenv was used by command, so the same version is likely, but that is an inference, not a record)"),
         ("python / platform", f"{ca['environment']['python']} / {ca['environment']['platform']}", f"{cb['environment']['python']} / {cb['environment']['platform']}"),
         ("request keys", ", ".join(sorted(a)), ", ".join(sorted(b))),
         ("temperature", a["temperature"], b["temperature"]),
@@ -171,8 +171,13 @@ class FakeDiagClient:
 
     def _create(self, **kw):
         self.n += 1
-        if self.plan.get(self.n, 200) != 200:
-            raise FakeInternalServerError(f"fake {self.plan[self.n]} (scripted)")
+        v = self.plan.get(self.n, 200)
+        if v == "interrupt":
+            raise KeyboardInterrupt("scripted Ctrl+C")
+        if v == "sigterm":
+            os.kill(os.getpid(), signal.SIGTERM)  # the runner turns this into KeyboardInterrupt
+        if v != 200:
+            raise FakeInternalServerError(f"fake {v} (scripted)")
         usage = {"prompt_tokens": 100, "completion_tokens": 60, "total_tokens": 160}
         d = {"id": f"fake-{self.n}", "model": "fake-model", "usage": usage,
              "choices": [{"index": 0, "finish_reason": "stop", "message": {"role": "assistant", "content": "NORMAL_NAV"}}]}
@@ -232,7 +237,7 @@ def run(args) -> int:
         if steps[0]["request"]["model"] != model_env:
             raise SystemExit(f"the configured model {model_env!r} differs from the reference request's {steps[0]['request']['model']!r}; refusing to change the model")
     else:
-        inner, base_url = FakeDiagClient({int(k): int(v) for k, v in json.loads(args.fake_plan).items()}).with_options(max_retries=0, timeout=L.SDK_TIMEOUT_S), ""
+        inner, base_url = FakeDiagClient({int(k): (int(v) if str(v).isdigit() else v) for k, v in json.loads(args.fake_plan).items()}).with_options(max_retries=0, timeout=L.SDK_TIMEOUT_S), ""
     if getattr(inner, "max_retries", None) != 0:
         raise SystemExit("could not confirm that SDK retries are disabled")
 
@@ -257,7 +262,7 @@ def run(args) -> int:
     }
     L.write_json(os.path.join(run_dir, "config.json"), config)
     guard = L.BudgetGuard(max_calls, max_tokens, usd_cap, pricing)
-    records, results, status, stop_reason, last, interruption = [], {}, "completed", "plan finished", 0, None
+    records, results, status, stop_reason, last, interruption, inflight = [], {}, "completed", "plan finished", 0, None, None
     f = open(os.path.join(run_dir, "calls.jsonl"), "w", encoding="utf-8")
     try:
         while True:
@@ -270,6 +275,7 @@ def run(args) -> int:
             except L.BudgetExceeded as exc:
                 status, stop_reason = "stopped_early", f"stopped before step {nxt}: {exc.reason}"
                 break
+            inflight = (nxt, s, resv, L.utc_now())  # from here until the record is written, an interruption leaves a started request
             cap = send(inner, copy.deepcopy(s["request"]))
             rec = {"step": nxt, "change": s["change"], "request": s["request"], "started_at": cap["started_at"], "ended_at": cap["ended_at"],
                    "http_status": cap.get("http_status"), "headers": cap.get("headers"), "response_full": cap.get("response"), "error": cap.get("error"),
@@ -277,6 +283,7 @@ def run(args) -> int:
             records.append(rec)
             f.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
             f.flush()
+            inflight = None
             results[nxt], last = rec["result"]["ok"], nxt
             try:
                 guard.settle(resv, (cap.get("response") or {}).get("usage"))
@@ -287,12 +294,22 @@ def run(args) -> int:
         interruption = {"type": type(exc).__name__, "message": str(exc)[:500]}
         status = "interrupted" if isinstance(exc, KeyboardInterrupt) else "crashed"
         stop_reason = f"{status}: {interruption['type']}: {interruption['message']}"
+        if inflight is not None:  # a request was started and never returned: keep it, with its reservation (usage unknown is never free)
+            st, s_, resv_, t_start = inflight
+            rec = {"step": st, "change": s_["change"], "request": s_["request"], "started_at": t_start, "ended_at": L.utc_now(),
+                   "status": "in_flight_at_interruption", "http_status": None, "headers": None, "response_full": None,
+                   "error": {"type": type(exc).__name__, "message": str(exc)[:500]},
+                   "reserved": {"input_bound": resv_.input_bound, "output_bound": resv_.output_bound, "usd": str(resv_.usd)},
+                   "result": {"ok": False, "http_status": None, "finish_reason": None, "usage": None, "latency_ms": None}}
+            records.append(rec)
+            f.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
     finally:
         f.close()
     summary = {
         "run_id": config["run_id"], "mode": args.mode, "status": status, "stop_reason": stop_reason, "interruption": interruption,
-        "is_baseline_result": False, "calls_made": len(records), "budget": guard.snapshot(),
-        "per_step": {str(r["step"]): {"change": r["change"], **r["result"]} for r in records},
+        "is_baseline_result": False, "calls_made": len(records), "in_flight_step": next((r["step"] for r in records if r.get("status") == "in_flight_at_interruption"), None),
+        "budget": guard.snapshot(),
+        "per_step": {str(r["step"]): {"change": r["change"], **r["result"], **({"status": r["status"]} if r.get("status") else {})} for r in records},
         "steps_skipped": [s["step"] for s in steps if s["step"] not in {r["step"] for r in records}],
         "reading": "A step that fails right after steps that passed is a CORRELATION with its change, not a proven cause. If step 1 fails, or step 6 fails after earlier passes, the service state is implicated, not the request.",
         "ended_at": L.utc_now(),

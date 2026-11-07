@@ -12,7 +12,7 @@
       "source": "rehearsal values: not a real price"
     }
   },
-  "difference_table": "| Item | baseline-A canary (200 OK, 2 calls) | baseline-B canaries (HTTP 500, 4 calls in 2 runs) |\n|---|---|---|\n| endpoint host | api.deepseek.com | api.deepseek.com |\n| model string sent | deepseek-v4-flash | deepseek-v4-flash |\n| client class | openai.OpenAI(base_url, api_key) via llm_provider (restored original code) | openai.OpenAI(base_url, api_key) built directly |\n| SDK retries / timeout | 0 / 60.0 s | 0 / 60.0 s |\n| openai SDK version | 2.41.1 | not recorded in the B config; installed now: 2.41.1 |\n| python / platform | 3.11.9 / macOS-15.7.3-arm64-arm-64bit | 3.11.9 / macOS-15.7.3-arm64-arm-64bit |\n| request keys | max_completion_tokens, max_tokens, messages, model, temperature | max_tokens, messages, model, temperature |\n| temperature | 0.0 | 0.0 |\n| max_completion_tokens | 20 | <absent> |\n| max_tokens | 1024 | 2048 |\n| messages | 2 | 2 |\n| system prompt bytes | 361 | 2976 |\n| user input bytes / non-ASCII | 81 / False | 145 / True |\n| reasoning / thinking switch sent | none (provider default) | none (provider default) |",
+  "difference_table": "| Item | baseline-A canary (200 OK, 2 calls) | baseline-B canaries (HTTP 500, 4 calls in 2 runs) |\n|---|---|---|\n| endpoint host | api.deepseek.com | api.deepseek.com |\n| model string sent | deepseek-v4-flash | deepseek-v4-flash |\n| client class | openai.OpenAI(base_url, api_key) via llm_provider (restored original code) | openai.OpenAI(base_url, api_key) built directly |\n| SDK retries / timeout | 0 / 60.0 s | 0 / 60.0 s |\n| openai SDK version | 2.41.1 | NOT recorded in the B runs. Installed now: 2.41.1 (the same virtualenv was used by command, so the same version is likely, but that is an inference, not a record) |\n| python / platform | 3.11.9 / macOS-15.7.3-arm64-arm-64bit | 3.11.9 / macOS-15.7.3-arm64-arm-64bit |\n| request keys | max_completion_tokens, max_tokens, messages, model, temperature | max_tokens, messages, model, temperature |\n| temperature | 0.0 | 0.0 |\n| max_completion_tokens | 20 | <absent> |\n| max_tokens | 1024 | 2048 |\n| messages | 2 | 2 |\n| system prompt bytes | 361 | 2976 |\n| user input bytes / non-ASCII | 81 / False | 145 / True |\n| reasoning / thinking switch sent | none (provider default) | none (provider default) |",
   "environment": {
     "endpoint_host": null,
     "openai_sdk": "2.41.1",
@@ -32,9 +32,9 @@
       "eval/baseline_b/runs/20261107T072708Z_real_55c6fa87"
     ]
   },
-  "repo_head": "cecf8b4e8b656ed2637a35b8af167b5657382f40",
+  "repo_head": "993a0b05d4014f2d76aa652acc25e9ceadb4948a",
   "rules": "one change at a time; step 1 failing stops the run; a failure in 2..5 skips to step 6; no model, reasoning-mode or prompt change; retries off",
-  "run_id": "20261107T073544Z_dry-run_e663953e",
+  "run_id": "20261107T074239Z_dry-run_051ec520",
   "sources_retrieved_2026_11_07": [
     [
       "Chat Completions API (parameters, model values, max_tokens)",
@@ -53,7 +53,7 @@
       "https://status.deepseek.com/"
     ]
   ],
-  "started_at": "2026-11-07T07:35:44.342982Z",
+  "started_at": "2026-11-07T07:42:39.510789Z",
   "steps": [
     {
       "change": "none: replay of a request that succeeded in the baseline-A canary",

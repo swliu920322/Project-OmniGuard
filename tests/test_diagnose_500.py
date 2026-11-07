@@ -109,3 +109,33 @@ def test_the_difference_table_is_built_from_the_recorded_runs():
     t = D.difference_table()
     for needle in ("max_completion_tokens | 20 | <absent>", "max_tokens | 1024 | 2048", "2.41.1", "api.deepseek.com"):
         assert needle in t
+
+
+def test_ctrl_c_in_flight_is_recorded_with_its_reservation_and_sealed():
+    code, run, s = _dry({3: "interrupt"})
+    assert code == 130 and s["status"] == "interrupted" and s["in_flight_step"] == 3
+    assert s["calls_made"] == 3 and s["budget"]["calls_started"] == 3 and s["steps_skipped"] == [4, 5, 6]
+    last = json.loads((run / "calls.jsonl").read_text().splitlines()[-1])
+    assert last["status"] == "in_flight_at_interruption" and last["step"] == 3 and last["request"] == STEPS[2]["request"]
+    assert last["reserved"]["output_bound"] == STEPS[2]["request"]["max_tokens"] and last["error"]["type"] == "KeyboardInterrupt"
+    assert last["response_full"] is None and last["result"]["ok"] is False
+    assert s["per_step"]["3"]["status"] == "in_flight_at_interruption"
+    # the in-flight reservation stays booked: usage unknown is never free (steps 1 and 2 settle to tiny real usage)
+    assert s["budget"]["tokens_committed"] >= 2 * 160 + sum(last["reserved"][k] for k in ("input_bound", "output_bound"))
+    assert D.L.verify_run_dir(str(run)) == []
+
+
+def test_sigterm_in_flight_is_handled_like_ctrl_c():
+    code, run, s = _dry({2: "sigterm"})
+    assert code == 130 and s["status"] == "interrupted" and s["in_flight_step"] == 2 and s["calls_made"] == 2
+    assert D.L.verify_run_dir(str(run)) == []
+
+
+def test_an_interruption_between_requests_leaves_no_phantom_in_flight_record():
+    code, run, s = _dry({})
+    assert s["in_flight_step"] is None and all("status" not in r for r in s["per_step"].values())
+
+
+def test_the_difference_table_does_not_claim_a_recorded_sdk_version_for_the_b_runs():
+    t = D.difference_table()
+    assert "NOT recorded in the B runs" in t and "an inference, not a record" in t

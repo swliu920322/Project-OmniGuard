@@ -14,7 +14,8 @@
     "usd_committed": "0.001530"
   },
   "calls_made": 1,
-  "ended_at": "2026-11-07T07:35:44.383394Z",
+  "ended_at": "2026-11-07T07:42:39.689951Z",
+  "in_flight_step": null,
   "interruption": null,
   "is_baseline_result": false,
   "mode": "dry-run",
@@ -29,7 +30,7 @@
     }
   },
   "reading": "A step that fails right after steps that passed is a CORRELATION with its change, not a proven cause. If step 1 fails, or step 6 fails after earlier passes, the service state is implicated, not the request.",
-  "run_id": "20261107T073544Z_dry-run_e663953e",
+  "run_id": "20261107T074239Z_dry-run_00b58dbe",
   "status": "completed",
   "steps_skipped": [
     2,

@@ -1,0 +1,101 @@
+{
+  "budget": {
+    "calls_started": 6,
+    "max_calls": 6,
+    "max_tokens": 35000,
+    "max_usd": "1",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "1",
+      "output_usd_per_mtok": "1",
+      "source": "rehearsal values: not a real price"
+    },
+    "tokens_committed": 960,
+    "usd_committed": "0.000960"
+  },
+  "calls_made": 6,
+  "ended_at": "2026-11-07T07:42:39.549038Z",
+  "in_flight_step": null,
+  "interruption": null,
+  "is_baseline_result": false,
+  "mode": "dry-run",
+  "per_step": {
+    "1": {
+      "change": "none: replay of a request that succeeded in the baseline-A canary",
+      "finish_reason": "stop",
+      "http_status": null,
+      "latency_ms": 0.0,
+      "ok": true,
+      "usage": {
+        "completion_tokens": 60,
+        "prompt_tokens": 100,
+        "total_tokens": 160
+      }
+    },
+    "2": {
+      "change": "max_tokens 1024 -> 2048",
+      "finish_reason": "stop",
+      "http_status": null,
+      "latency_ms": 0.0,
+      "ok": true,
+      "usage": {
+        "completion_tokens": 60,
+        "prompt_tokens": 100,
+        "total_tokens": 160
+      }
+    },
+    "3": {
+      "change": "remove max_completion_tokens (20)",
+      "finish_reason": "stop",
+      "http_status": null,
+      "latency_ms": 0.0,
+      "ok": true,
+      "usage": {
+        "completion_tokens": 60,
+        "prompt_tokens": 100,
+        "total_tokens": 160
+      }
+    },
+    "4": {
+      "change": "system prompt: the baseline-A one-liner -> B-1.0",
+      "finish_reason": "stop",
+      "http_status": null,
+      "latency_ms": 0.0,
+      "ok": true,
+      "usage": {
+        "completion_tokens": 60,
+        "prompt_tokens": 100,
+        "total_tokens": 160
+      }
+    },
+    "5": {
+      "change": "user input: the baseline-A telemetry line -> the baseline-B canary input (DEV-001, with a Chinese note)",
+      "finish_reason": "stop",
+      "http_status": null,
+      "latency_ms": 0.0,
+      "ok": true,
+      "usage": {
+        "completion_tokens": 60,
+        "prompt_tokens": 100,
+        "total_tokens": 160
+      }
+    },
+    "6": {
+      "change": "none: replay of step 1, to see whether the service state changed meanwhile",
+      "finish_reason": "stop",
+      "http_status": null,
+      "latency_ms": 0.0,
+      "ok": true,
+      "usage": {
+        "completion_tokens": 60,
+        "prompt_tokens": 100,
+        "total_tokens": 160
+      }
+    }
+  },
+  "reading": "A step that fails right after steps that passed is a CORRELATION with its change, not a proven cause. If step 1 fails, or step 6 fails after earlier passes, the service state is implicated, not the request.",
+  "run_id": "20261107T074239Z_dry-run_051ec520",
+  "status": "completed",
+  "steps_skipped": [],
+  "stop_reason": "plan finished"
+}
