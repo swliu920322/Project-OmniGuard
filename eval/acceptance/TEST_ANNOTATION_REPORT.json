@@ -1,0 +1,22 @@
+{
+  "blind_sample": {
+    "n": 24,
+    "raw_agreement": 1.0,
+    "kappa": 1.0,
+    "kappa_note": null,
+    "disagreements": []
+  },
+  "review": {
+    "items": 72,
+    "status_changes": 0,
+    "changed_ids": [],
+    "note": "full review after initial labels were shown; not blind"
+  },
+  "to_owner": [],
+  "review_sha256": "4337eeab871acc8c0173124da951b5cd31cd7d7394243f3e98489b00e90bbebb",
+  "labels_in_repository": false,
+  "limits": [
+    "AI annotation and review, not expert truth",
+    "300 records in 34 families; records are not all independent scenarios"
+  ]
+}

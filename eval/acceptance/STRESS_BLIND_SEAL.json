@@ -1,0 +1,8 @@
+{
+  "state": "all 20 valid stress notes independently annotated before review",
+  "count": 20,
+  "results_sha256": "16065ef8fe732d5a0223cba82d6853d02be65730a031337146a6ea5280da9330",
+  "input_sha256": "1e77a69951118ab3d973de52059bdb3ceddc66ff06b16035a0551bca355eb8ea",
+  "candidate_commitment_commit": "3a06ebe",
+  "labels_in_repository": false
+}
