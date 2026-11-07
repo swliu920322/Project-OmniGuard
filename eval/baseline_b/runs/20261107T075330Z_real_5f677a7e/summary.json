@@ -1,0 +1,337 @@
+{
+  "budget": {
+    "calls_started": 2,
+    "max_calls": 2,
+    "max_tokens": 20000,
+    "max_usd": "0.05",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.3333334",
+      "output_usd_per_mtok": "1.3333334",
+      "source": "DeepSeek price table (CNY), Flash peak-hour rates, 6.0 CNY/USD, owner-provided 2026-11-07"
+    },
+    "tokens_committed": 2094,
+    "usd_committed": "0.001035"
+  },
+  "calls_recorded": 2,
+  "calls_without_usable_usage": 0,
+  "distinct_response_models": [
+    "deepseek-flash"
+  ],
+  "ended_at": "2026-11-07T07:53:35.143381Z",
+  "interruption": null,
+  "is_canary": true,
+  "is_measurement": false,
+  "metrics": {
+    "context_invalid": 0,
+    "finish_reasons": {
+      "stop": 2
+    },
+    "legacy3_view": {
+      "accuracy": null,
+      "ci95_wilson": null,
+      "correct": 0,
+      "n": 0,
+      "note": "an extra compatibility view, not the main metric; OVERSPEED records and noted records are excluded"
+    },
+    "not_started": 0,
+    "not_started_note": "records never sent (the run stopped first) are reported here and are NOT in any denominator; a started request without a result is INTERRUPTED and counts as wrong",
+    "note_status": {
+      "accuracy": 1.0,
+      "ci95_wilson": [
+        0.3424,
+        1.0
+      ],
+      "correct": 2,
+      "mistakes": [],
+      "n": 2,
+      "per_status_recall": {
+        "AFFIRMED_CURRENT": {
+          "recall": null,
+          "support": 0
+        },
+        "HISTORICAL": {
+          "recall": null,
+          "support": 0
+        },
+        "HYPOTHETICAL": {
+          "recall": 1.0,
+          "support": 1
+        },
+        "IRRELEVANT": {
+          "recall": 1.0,
+          "support": 1
+        },
+        "NEGATED": {
+          "recall": null,
+          "support": 0
+        },
+        "UNCERTAIN": {
+          "recall": null,
+          "support": 0
+        }
+      }
+    },
+    "outcomes": {
+      "LOW_BATTERY": 1,
+      "LOW_HEALTH": 1
+    },
+    "primary": {
+      "all_started": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.3424,
+          1.0
+        ],
+        "confusion_gold_x_outcome": {
+          "LOW_BATTERY": {
+            "LOW_BATTERY": 1
+          },
+          "LOW_HEALTH": {
+            "LOW_HEALTH": 1
+          }
+        },
+        "correct": 2,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 0.3333,
+        "n": 2,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "LOW_BATTERY": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "LOW_HEALTH": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "NORMAL_NAV": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERHEAT": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERSPEED": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          }
+        }
+      },
+      "noted": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.3424,
+          1.0
+        ],
+        "confusion_gold_x_outcome": {
+          "LOW_BATTERY": {
+            "LOW_BATTERY": 1
+          },
+          "LOW_HEALTH": {
+            "LOW_HEALTH": 1
+          }
+        },
+        "correct": 2,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 0.3333,
+        "n": 2,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "LOW_BATTERY": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "LOW_HEALTH": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "NORMAL_NAV": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERHEAT": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERSPEED": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          }
+        }
+      },
+      "rows_reaching_router": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.3424,
+          1.0
+        ],
+        "confusion_gold_x_outcome": {
+          "LOW_BATTERY": {
+            "LOW_BATTERY": 1
+          },
+          "LOW_HEALTH": {
+            "LOW_HEALTH": 1
+          }
+        },
+        "correct": 2,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 0.3333,
+        "n": 2,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "LOW_BATTERY": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "LOW_HEALTH": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 1
+          },
+          "NORMAL_NAV": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERHEAT": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERSPEED": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          }
+        }
+      },
+      "telemetry_only": {
+        "accuracy": null,
+        "ci95_wilson": null,
+        "confusion_gold_x_outcome": {},
+        "correct": 0,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": null,
+        "n": 0,
+        "per_class": {
+          "CRITICAL_OBSTACLE": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "LOW_BATTERY": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "LOW_HEALTH": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "NORMAL_NAV": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERHEAT": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          },
+          "OVERSPEED": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": null,
+            "support": 0
+          }
+        }
+      }
+    },
+    "records_in_set": 2,
+    "records_started": 2,
+    "safety": {
+      "executed_motion": {
+        "HALT": 1,
+        "MOVE": 1
+      },
+      "fault_halts": 0,
+      "floor_override": 0,
+      "floor_override_rate": 0.0,
+      "missed_halt": 0,
+      "missed_halt_ids": [],
+      "n": 2,
+      "needless_halt": 0,
+      "parse_failure_halts": 0
+    }
+  },
+  "mode": "real",
+  "model_drift_flag": false,
+  "model_identity_stated_by_owner": "DeepSeek-V4.1-Flash-1017 (owner-stated, actual version unverified)",
+  "not_started": 0,
+  "parse_errors": {},
+  "planned_calls": 2,
+  "reasoning_tokens_reported": 293,
+  "requests_that_reached_the_client": 2,
+  "run_id": "20261107T075330Z_real_5f677a7e",
+  "status": "completed",
+  "stop_reason": "completed all planned calls",
+  "truncated_replies": 0,
+  "usd_from_reported_usage": "0.001035"
+}
