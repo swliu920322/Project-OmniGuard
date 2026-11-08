@@ -6,7 +6,7 @@ import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VER = json.loads((ROOT / "eval/formal/results/VERIFICATION.json").read_text())
-DOCS = ["README.md", "README_zh.md", "eval/report.md", "eval/EVIDENCE_INDEX.md", "eval/LIMITATIONS.md", "eval/REPRODUCE.md", "eval/ORAL_CARDS_zh.md", "eval/LATENCY_COST.md", "eval/ORAL_EXPLAINED_zh.md",
+DOCS = ["README.md", "README_zh.md", "eval/report.md", "eval/EVIDENCE_INDEX.md", "eval/LIMITATIONS.md", "eval/REPRODUCE.md", "eval/ORAL_CARDS_zh.md", "eval/LATENCY_COST.md", "eval/LATENCY_EVIDENCE.md", "eval/ORAL_EXPLAINED_zh.md",
         "docs/evidence/README.md", "eval/formal/FORMAL_PLAN.md", "docs/architecture/README.md", "ARCHITECTURE.md", "eval/REPRODUCE_TEST_PROMPT.md", "eval/reproduction_logs/2026-11-07-gemini-level1.md", "eval/reproduction_logs/2026-11-07-gemini-level1-round2.md"]
 TEXT = {d: (ROOT / d).read_text() for d in DOCS}
 
