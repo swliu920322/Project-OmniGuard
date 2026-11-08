@@ -4,7 +4,7 @@
 
 OmniGuard 包含模拟 AGV 仪表盘、三级云端 Agent 流水线、Azure 基础设施模板和可追溯的 benchmark 结果。它是研究与工程验证项目，不是经过安全认证的实体机器人控制产品。
 
-[English](README.md) · [系统架构](ARCHITECTURE.md) · [文档入口](docs/README.md) · [证据规则](docs/evidence/README.md) · [路由评测报告](eval/report.md) · [路由证据索引](eval/EVIDENCE_INDEX.md)
+[English](README.md) · [系统架构](ARCHITECTURE.md) · [文档入口](docs/README.md) · [证据规则](docs/evidence/README.md) · [路由评测报告](eval/report.md) · [路由证据索引](eval/EVIDENCE_INDEX.md) · [评测目录导航](eval/README.md)
 
 ## 仓库包含什么
 

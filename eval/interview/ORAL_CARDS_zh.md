@@ -1,97 +1,99 @@
 # 口述四行卡（评测体系部分）
 
+先讲项目起点与延迟证据，再用本页回答评测追问：[面试讲述稿](INTERVIEW_STORY_zh.md)。它记录了本人确认的动机、30 秒与两分钟讲法、现有证据和待补的个人分工；延迟计时以 [LATENCY_EVIDENCE.md](../LATENCY_EVIDENCE.md) 为准。
+
 用途：被随机问到评测体系的任何一题时，按同一个结构回答。每题固定四行（共 15 题）：①一句话回答　②证据文件及定位　③数字、样本量与适用范围（适用时说明区间）　④哪里会错或仍未验证。
 
-状态：材料已备好；**口述验收尚未进行，由本人完成，不由任何会话代替。** 数字全部来自 [report.md](report.md) 和 `formal/results/`，没有的数字不说。统一前提（任何一题都要带）：合成数据；300 条是 34 个家族；AI 标注加 AI 复核，不是专家金标；模型版本未验证；没有优化版，Y 没有测。
+状态：材料已备好；**口述验收尚未进行，由本人完成，不由任何会话代替。** 数字全部来自 [report.md](../report.md) 和 `formal/results/`，没有的数字不说。统一前提（任何一题都要带）：合成数据；300 条是 34 个家族；AI 标注加 AI 复核，不是专家金标；模型版本未验证；没有优化版，Y 没有测。
 
 ## 1. 为什么是六类，新增一类怎么办？
 ① 六类来自旧的三类：旧的 `SENSOR_ERROR` 混了低电量、过热、低健康三种原因，处置不同，所以拆开；再加超速，一共六类（含正常）。
-② [spec/LABEL_SPEC.md](spec/LABEL_SPEC.md) 第 3 节（类别与阈值）、第 6 节（优先级）、第 9 节（为什么没有第七类）。
-③ 冻结测试集 300 条，每类 50 条（[acceptance/FROZEN_MANIFEST.json](acceptance/FROZEN_MANIFEST.json) 的 `class_counts`）；新类的门槛是“定义清楚、能独立标注、处置不同、样本够”四条同时满足。
+② [spec/LABEL_SPEC.md](../spec/LABEL_SPEC.md) 第 3 节（类别与阈值）、第 6 节（优先级）、第 9 节（为什么没有第七类）。
+③ 冻结测试集 300 条，每类 50 条（[acceptance/FROZEN_MANIFEST.json](../acceptance/FROZEN_MANIFEST.json) 的 `class_counts`）；新类的门槛是“定义清楚、能独立标注、处置不同、样本够”四条同时满足。
 ④ 阈值 20 和 50、优先级、动作都是仿真的实验约定，不是行业数据；新增一类会改变规范版本，需要重新生成样本、重新标注、重新冻结，旧测试集不能直接沿用，也不能拿旧成绩和新成绩比。
 
 ## 2. 为什么叫状态路由，而不是普通聊天意图识别？
 ① 输入是结构化遥测（距离、速度、健康值、电量、温度），输出是处置路由；备注只允许报告“前方有人或障碍”这一个话题，没有对话。
-② [spec/LABEL_SPEC.md](spec/LABEL_SPEC.md) 开头“意图”一节和第 2 节输入契约、第 8 节备注规则；急停见第 7 节。
+② [spec/LABEL_SPEC.md](../spec/LABEL_SPEC.md) 开头“意图”一节和第 2 节输入契约、第 8 节备注规则；急停见第 7 节。
 ③ 6 类路由、72 条带备注记录（每个备注状态 12 条）、急停是独立的布尔标志，不从文字里识别。
 ④ 它不覆盖自由对话、指令理解或多轮交互；“意图”这个词只在“选哪条处置路径”的意义上成立。
 
 ## 3. 为什么不全部用 if-else？哪些由代码判断，哪些需要模型理解？
-① 数值判断全部由代码做（阈值、物理门控、急停、动作合成、动作契约）；模型只做一件事：读懂那句可选备注，给出路由和备注状态。备注里“前方有人或障碍”的说法可以是中英混合、带错别字、多分句、否定、过去式、假设，关键词规则很难穷举，这才是用模型的理由。
-② 规则：[../src/cloud-orchestrator/router_v2/rules.py](../src/cloud-orchestrator/router_v2/rules.py)；对照：[report.md](report.md)“同集规则对照”表；备注规则 [spec/LABEL_SPEC.md](spec/LABEL_SPEC.md) 第 8 节；旧注释的准确读法见 [LIMITATIONS.md](LIMITATIONS.md) 第 20 条。
-③ 只含遥测的记录上，规则按构造就能还原金标（开发集 108/108），所以这部分既不需要也不该交给模型；带备注的 72 条上，B-1.0 为 72/72，关键词规则 R1 为 23/72、R2 为 15/72。
+① 执行所需的数值风险下限、物理门控、急停、动作合成和动作契约由代码确定；实际模型也接收遥测，输出路由和备注状态。模型主要的语言价值是读懂可选备注：中英混合、错别字、多分句、否定、过去式和假设等表达，是关键词规则难以穷举的部分。
+② 规则：[../src/cloud-orchestrator/router_v2/rules.py](../../src/cloud-orchestrator/router_v2/rules.py)；对照：[report.md](../report.md)“同集规则对照”表；备注规则 [spec/LABEL_SPEC.md](../spec/LABEL_SPEC.md) 第 8 节；旧注释的准确读法见 [LIMITATIONS.md](../LIMITATIONS.md) 第 20 条。
+③ 只含遥测的记录上，规则按构造就能还原金标（开发集 108/108），因此不能用这部分证明模型相对规则的必要性；带备注的 72 条上，备注状态 B-1.0 为 72/72，关键词规则 R1 为 23/72、R2 为 15/72。
 ④ 备注话题很窄、数据模板化，所以 LLM 的优势在这批数据上只体现在备注状态。代码能保证的是：模型不能解除代码识别出的遥测风险和急停限制；做不到的是仅来自备注的风险（遥测正常、备注说有人）完全靠模型读对，读错就可能漏停。`extended.py` 里“只能让结果更严”的旧注释说得比这更宽，以本卡为准。
 
 ## 4. 测试集怎么制作、冻结、隔离，会不会泄漏？
 ① 由独立的验收会话制作和复核，数据和标签放在仓库之外，仓库只存哈希；调参的会话没有读过它，B-1.0 的提示词在测试集制作前就已冻结。
-② [acceptance/README.md](acceptance/README.md)、[acceptance/FROZEN_MANIFEST.json](acceptance/FROZEN_MANIFEST.json)（`cross_set_audit`、`sha256`、`limitations`）、[spec/ANNOTATION_PROTOCOL.md](spec/ANNOTATION_PROTOCOL.md)。
+② [acceptance/README.md](../acceptance/README.md)、[acceptance/FROZEN_MANIFEST.json](../acceptance/FROZEN_MANIFEST.json)（`cross_set_audit`、`sha256`、`limitations`）、[spec/ANNOTATION_PROTOCOL.md](../spec/ANNOTATION_PROTOCOL.md)。
 ③ 300 条、34 个家族；跨集审计做了 81,300 次精确输入比对，重复 0；语义审计后重写了 14 条相近备注并重新盲标；72 条备注中盲标抽样 24 条，全量 72 条复核，无改标。
 ④ 隔离靠流程，不是技术强制；盲标和复核都是 AI 会话，可能有相同的误读；规范规定的阈值等号和相邻值是开发集与测试集共有的，不是新颖场景。
 
 ## 5. 除了 accuracy，为什么还看 P/R/F1 和混淆矩阵？R1 的 14 次漏停是怎么来的？
 ① 准确率会掩盖方向：把危险误判成正常（漏停）和把正常误判成危险（误停）代价完全不同，所以看每类召回、精确率和混淆矩阵。R1 的漏停只可能出在带备注的记录上（只含遥测时它按构造与金标一致），最可能的机制是：它用话题词表找“人、障碍”等词，一个分句里一个话题词都没有就判成 IRRELEVANT，备注里的风险就没被加进去，遥测又是正常的，于是该停的没停。
-② [report.md](report.md)“同集规则对照”和“错误分析”表；R1 的写法 [spec/rule_control.py](spec/rule_control.py) 的 `note_status_r1()`（无话题词 → `IRRELEVANT`）；每跑的完整混淆矩阵在 `formal/results/<run>/public_summary.json`；评分代码 `baseline_b/evaluate.py`。
+② [report.md](../report.md)“同集规则对照”和“错误分析”表；R1 的写法 [spec/rule_control.py](../spec/rule_control.py) 的 `note_status_r1()`（无话题词 → `IRRELEVANT`）；每跑的完整混淆矩阵在 `formal/results/<run>/public_summary.json`；评分代码 `baseline_b/evaluate.py`。
 ③ B-1.0 两跑六类各 50 条全部正确，对角线六格均为 50。R1 为 281/300，14 次漏停、3 次误停；R2 为 280/300，10 次漏停、6 次误停。R1 的备注状态错误里，“应当停车”的两种状态被判成 IRRELEVANT 共 15 条（AFFIRMED_CURRENT 9、UNCERTAIN 6），这些备注误判可能解释漏停，具体对应关系尚未核实；假设和过去式被判成 IRRELEVANT 的 23 条（12 + 11）状态错了，但那两种状态本来就不触发停车，所以不造成漏停。
 ④ 15 与 14 没有逐条核对，不能说“吻合”或已证明因果：逐条对应在私有数据里，我没有读，所以不说哪几条、具体是哪些词。公开能说的原因只有词表没有命中话题词；开发集披露过的另外两种失败是主语带不过去（“刚才有人，现在走了”）和错别字使关键词失效，不能说它们解释了测试集上的 14 次。模型这一轮 P/R/F1 全是 1.0，没有错误方向可分析；区间 98.74%–100% 按记录计，未按家族校正。
 
 ## 6. 为什么没有“准确率从 X 提升至 Y”？规则对照和优化前后有什么区别？
 ① 因为只有一个固定的提示词 B-1.0，没有优化版，没有“后”。规则对照是**同一份数据、同一个评分器上的另一个系统**，优化前后是**同一个系统改了之后的变化**，两者不能互相代替。
-② 旧基线 [baseline_v1/MANIFEST.md](baseline_v1/MANIFEST.md) 和 [baseline_v1/measured/INDEX.md](baseline_v1/measured/INDEX.md)；规则 [../docs/evidence/README.md](../docs/evidence/README.md)“Not allowed”一条；[LIMITATIONS.md](LIMITATIONS.md) 第 5 条；对照表见 [report.md](report.md)“同集规则对照”。
+② 旧基线 [baseline_v1/MANIFEST.md](../baseline_v1/MANIFEST.md) 和 [baseline_v1/measured/INDEX.md](../baseline_v1/measured/INDEX.md)；规则 [../docs/evidence/README.md](../../docs/evidence/README.md)“Not allowed”一条；[LIMITATIONS.md](../LIMITATIONS.md) 第 5 条；对照表见 [report.md](../report.md)“同集规则对照”。
 ③ 规则对照：B-1.0 300/300，R1 281/300，R2 280/300，三者在同一份冻结测试集上；历史 94.19%（200 条中 172 条可解析）和 90.38%（60 条中 52 条）是旧三类标签；2026-11-07 对原实现的重测是 96.5% 和 78.0%（旧标签、只测 Router 阶段）；新的 300/300 是六类、新标签、新题库。
 ④ R1/R2 是我们自己写的弱基线，词表有披露的缺陷，所以“比规则好”只说明这个关键词写法不够，不能推出“LLM 一般比规则好”；如果将来真做了优化版，必须在新的、没接触过的测试集上做，不能用本测试集。
 
 ## 7. 为什么 300 条不等于 300 个独立场景？
 ① 按数据方案的定义，一个家族是同一基础场景及其数值变体、改写和翻译；300 条属于 34 个保守家族；规范强制的阈值等号、相邻值和物理门控点本身就是共享的。
-② [acceptance/FROZEN_MANIFEST.json](acceptance/FROZEN_MANIFEST.json)（`families`、`limitations`、`shared_specification_anchors`）、[spec/DATA_PLAN.md](spec/DATA_PLAN.md) 第 2 节家族定义。
-③ 300 条、34 个家族、每类 50；报告里的 Wilson 区间 98.74%–100% 是按记录算的，没有按家族做聚类校正，所以比真实不确定性窄。
+② [acceptance/FROZEN_MANIFEST.json](../acceptance/FROZEN_MANIFEST.json)（`families`、`limitations`、`shared_specification_anchors`）、[spec/DATA_PLAN.md](../spec/DATA_PLAN.md) 第 2 节家族定义。
+③ 300 条、34 个家族、每类 50；报告里的 Wilson 区间 98.74%–100% 是按记录算的，没有按家族做聚类校正，可能低估不确定性。
 ④ 不能说“300 个独立场景”或“覆盖了真实世界的 300 种情况”；样本存在家族相关性，记录级 Wilson 区间未做聚类校正，可能低估不确定性；有效样本量未估计，不能说“更接近 34”。
 
 ## 8. 超时、限流、解析失败怎么计分？兜底保证到哪一步？
 ① 计分上一律算错并留在分母里，不重试、不剔除；动作上一律停车。兜底保证的是“拿不到可用回复就停”，不是“所有风险都能发现”。
-② 计分政策：[formal/FORMAL_PLAN.md](formal/FORMAL_PLAN.md) 第 2 节；代码 `baseline_b/evaluate.py` 的 `usable()` 与 `outcome()`；兜底 `router_v2/rules.py` 的 `execute()`；压力汇总 [report.md](report.md)“压力验证”；旧注释的准确读法 [LIMITATIONS.md](LIMITATIONS.md) 第 20 条。
+② 计分政策：[formal/FORMAL_PLAN.md](../formal/FORMAL_PLAN.md) 第 2 节；代码 `baseline_b/evaluate.py` 的 `usable()` 与 `outcome()`；兜底 `router_v2/rules.py` 的 `execute()`；压力汇总 [report.md](../report.md)“压力验证”；旧注释的准确读法 [LIMITATIONS.md](../LIMITATIONS.md) 第 20 条。
 ③ 开发集 180 条里有 5 次服务端错误（4 次 500、1 次 503），按错误计，准确率 175/180；正式阶段 634 次 API 请求全部有用量记录，没有接口错误；压力集中 10 个注入的超时和限流在离线验证，全部停车；13 个非法输入在代码里拒绝，不到达模型。
 ④ 兜底管不到的：仅来自备注的风险被模型读错时会漏停（R1 的 14 次漏停说明这种漏法存在，模型一轮没出现不等于不存在）。注入故障不等于真实故障；输入检查类用例不发请求，不能证明服务不稳定时的行为；扩展租户的 HTTP 流程只用假依赖测过，没有对真实模型端到端跑过。
 
 ## 9. temperature=0 为什么仍不能保证确定性？
 ① 请求里发了 `temperature=0`，但提供方的推理模式默认开启，文档说该模式下温度不生效，所以我只能说“参数固定为 0”，不能说“温度被控制了”。
-② [baseline_b/DIAGNOSTIC_PLAN.md](baseline_b/DIAGNOSTIC_PLAN.md) 第 3 节（官方文档来源与检索日期）、[LIMITATIONS.md](LIMITATIONS.md) 第 7 条、[report.md](report.md)“范围与版本”。
+② [baseline_b/DIAGNOSTIC_PLAN.md](../baseline_b/DIAGNOSTIC_PLAN.md) 第 3 节（官方文档来源与检索日期）、[LIMITATIONS.md](../LIMITATIONS.md) 第 7 条、[report.md](../report.md)“范围与版本”。
 ③ 实际的可复现证据来自两次独立运行：主类和备注状态一致率各 100%，准确率差 0 个百分点；门槛是一致率不低于 98%、差不超过 2 个百分点。
 ④ 两次一致只对这批数据和这一天的服务成立；模型版本只是所有者声明，API 只返回别名 `deepseek-flash`，服务端改版我看不见。
 
 ## 10. 换模型怎么比较？
 ① 不同模型可以在同一提示词、同一份冻结测试集、同一计分政策下横向比较各自的数字；“复现一致”只能用同一模型的两次重复运行来证明，不能把不同模型之间的比较说成复现。
-② `formal/run_formal.py` 的 `compare_runs()`（要求模型一致，只检查同一模型的重复运行，不用于证明跨模型“复现”）与 [formal/FORMAL_PLAN.md](formal/FORMAL_PLAN.md) 第 2 节；返回别名检查与漂移标志在 [report.md](report.md) 的版本说明里。
+② `formal/run_formal.py` 的 `compare_runs()`（要求模型一致，只检查同一模型的重复运行，不用于证明跨模型“复现”）与 [formal/FORMAL_PLAN.md](../formal/FORMAL_PLAN.md) 第 2 节；返回别名检查与漂移标志在 [report.md](../report.md) 的版本说明里。
 ③ 比较前强制核对：目录校验、完成状态、覆盖完整、数据、提示词、规范、代码、模型配置、声明身份、请求参数、计分政策和唯一的返回别名都一致，否则拒绝比较；同一份数据、同样的评分器，才有可比性。
 ④ 一个新模型会让这份测试集变成“已接触”，若根据它的错误再调提示词，需要换一份没接触过的测试集；不同模型的成本、延迟和推理 token 不能用一个准确率概括。
 
 ## 11. 本轮压力测试覆盖什么，不能证明什么？
 ① 覆盖 11 种类型，每种 5 例，共 55 例：越界与缺字段、边界、多风险、来源不一致、错别字与中英混合、多分句、提示词注入、空与超长输入、注入的超时和限流。
-② [report.md](report.md)“压力验证”表、[formal/ACCEPTANCE_FORMAT.md](formal/ACCEPTANCE_FORMAT.md)、`formal/results/…stress_real…/public_summary.json`。
+② [report.md](../report.md)“压力验证”表、[formal/ACCEPTANCE_FORMAT.md](../formal/ACCEPTANCE_FORMAT.md)、`formal/results/…stress_real…/public_summary.json`。
 ③ 32 次真实模型请求，13 个非法输入在代码里拒绝，10 个注入故障离线验证；未观察到漏停、误停或模型错误。
 ④ 注入文字有限，通过不等于通用安全；它测的是决策函数，不是 HTTP 端点对真实模型的完整流程；也没有实体机器人，`goal=CHARGER` 只是结构化目标，不证明到达充电位。
 
 ## 12. 两次满分能证明什么？为什么不能证明生产可靠或真实车辆安全？
 ① 能证明的很窄：在这批合成数据、规范 1.0、这一天的服务上，B-1.0 与规范一致，两次独立运行一致。不能证明生产可靠或车辆安全，因为数据是按自己的规范写的合成数据，而且提示词把规则写得很完整，模型接近满分，这个测试集几乎拉不开差距。
-② [LIMITATIONS.md](LIMITATIONS.md)（第 2、3、4、10、11、13、18 条）、[acceptance/FROZEN_MANIFEST.json](acceptance/FROZEN_MANIFEST.json) 的 `limitations`。
-③ 300 条属于 34 个家族；两跑 300/300；开发集上也只有服务端错误，没有分类错误；规则对照的错误方向见 [report.md](report.md)“错误分析”。
+② [LIMITATIONS.md](../LIMITATIONS.md)（第 2、3、4、10、11、13、18 条）、[acceptance/FROZEN_MANIFEST.json](../acceptance/FROZEN_MANIFEST.json) 的 `limitations`。
+③ 300 条属于 34 个家族；两跑 300/300；开发集上也只有服务端错误，没有分类错误；规则对照的错误方向见 [report.md](../report.md)“错误分析”。
 ④ 没有观察到模型错误不等于不存在；标签是 AI 标注加 AI 复核；没有真实数据、真实机器人（急停只是布尔标志，`goal=CHARGER` 不证明到达）、HTTP 端点对真实模型的端到端、第三方复现；不能写生产准确率，也不能写提升。
 
 
 ## 13. 相比原来的三类路由演示，这次具体做成了什么？
 ① 把一个三类路由的演示，做成了可以复核的评测体系：六类状态路由加六种备注状态的规范 1.0；一条从输入检查到动作契约的决策流程（只对 `Tenant-Alpha-Extended` 开启）；开发集和压力集；由独立会话制作并冻结的 300 条测试集和 55 例压力集；固定提示词两次独立运行；同集规则对照；冻结哈希和独立复核。
-② [../README.md](../README.md)“State routing and its evaluation”；[EVIDENCE_INDEX.md](EVIDENCE_INDEX.md)；[spec/LABEL_SPEC.md](spec/LABEL_SPEC.md)；[report.md](report.md)；原实现存档 [baseline_v1/MANIFEST.md](baseline_v1/MANIFEST.md)。
+② [../README.md](../../README.md)“State routing and its evaluation”；[EVIDENCE_INDEX.md](../EVIDENCE_INDEX.md)；[spec/LABEL_SPEC.md](../spec/LABEL_SPEC.md)；[report.md](../report.md)；原实现存档 [baseline_v1/MANIFEST.md](../baseline_v1/MANIFEST.md)。
 ③ 旧：三类标签，原实现只测 Router 阶段重测为 96.5% 和 78.0%（旧标签）；新：六类，开发集 180 + 压力 66，冻结测试 300 + 压力 55，正式阶段 634 次 API 请求、约 US$0.285（估算，不是账单）。
 ④ 没做的：优化版（所以没有 Y）、专家金标、真实机器人、HTTP 端点对真实模型的端到端、第三方复现；数字只说明这批合成数据在这套规范下的表现。
 
 ## 14. Azure 架构里，哪些有 Bicep 或代码，哪些本地测过，哪些有云端验证？
 ① 按证据强度分三层：**有定义**（Bicep），**有实现**（代码），**本地测过**（假依赖测试或所有者说本地跑过）；**云端验证**只有论文期间部署过一次的说法，环境已销毁，仓库里没有保留部署输出。
-② Bicep：`.azure/main.bicep`、`nested-infra.bicep`、`compute-module.bicep`、`network-rules.json`；说明与图：[../docs/architecture/README.md](../docs/architecture/README.md)；代码：`src/cloud-orchestrator/llm_provider.py`（Azure OpenAI/OpenAI/DeepSeek 适配器）、`embodied_brain/utils.py`（Cosmos）、`function_app.py`（IoT 触发）、`edge-simulator/device_mock.py`。
+② Bicep：`.azure/main.bicep`、`nested-infra.bicep`、`compute-module.bicep`、`network-rules.json`；说明与图：[../docs/architecture/README.md](../../docs/architecture/README.md)；代码：`src/cloud-orchestrator/llm_provider.py`（Azure OpenAI/OpenAI/DeepSeek 适配器）、`embodied_brain/utils.py`（Cosmos）、`function_app.py`（IoT 触发）、`edge-simulator/device_mock.py`。
 ③ Bicep 定义了 hub-spoke 虚拟网络、两个 NSG、三个私有终结点（Key Vault、Blob、Cosmos）、托管标识、容器应用、IoT Hub、Cosmos DB；本地测试用假模型和假 Cosmos（`tests/test_llm_provider.py`、`test_extended_endpoint.py`、`test_utils.py`）。
 ④ 没有云端验证结果可出示：不能说“已在 Azure 上验证”；Bicep 现在是否仍能 what-if 通过没有检查；IoT 路径只是所有者说本地测过；图 3.1 与 Bicep 在细节上不一致（私有终结点的数量、IoT 的子网），以 Bicep 为准；评测结果不依赖任何云资源。
 
 ## 15. 我个人做了哪些判断，AI 协助完成了哪些工作？
 ① 按已知事实分：我定边界、授权和取舍，实现和独立验收由不同的 AI 会话完成，我要能解释每个决定的原因；不报“AI 占多少比例”，因为没有统计。
-② [../docs/evidence/README.md](../docs/evidence/README.md)、[EVIDENCE_INDEX.md](EVIDENCE_INDEX.md)、[acceptance/README.md](acceptance/README.md)、[reproduction_logs/](reproduction_logs/)；工作协议和预算授权在对话记录里，仓库里只留了结果。
+② [../docs/evidence/README.md](../../docs/evidence/README.md)、[EVIDENCE_INDEX.md](../EVIDENCE_INDEX.md)、[acceptance/README.md](../acceptance/README.md)、[reproduction_logs/](../reproduction_logs)；工作协议和预算授权在对话记录里，仓库里只留了结果。
 ③ 本人：决定把项目收敛为 AGV 仿真并保留 Azure 整体方案、简历数字一律实测后再填、每次真实调用都由本人授权并设上限（正式阶段总上限 US$0.57，实际约 US$0.285）、公开清理先不做（“过程比结果更重要”）、保管私有数据包。实施会话（Claude）：规范、开发集、基线 B 提示词与评分器、正式运行器、`router_v2` 与扩展租户、测试、文档。验收会话（GPT）：制作并冻结测试集、盲标与复核、正式结果的独立核对。Gemini：两轮陌生人复现演练和本卡的通俗讲解材料。
 ④ 我不掌握也没有写的：论文期间原始实现（三类路由、前端、Azure 部署）里 AI 参与了多少、哪些是我自己写的——**待本人补充**，没补之前口述时不要给细节；演练不是真人陌生人复现，口述验收尚未由本人完成。
 

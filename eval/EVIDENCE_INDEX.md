@@ -45,11 +45,13 @@ Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Ea
 
 ## Gate 4: it can be explained
 
+Start with the owner's confirmed motivation and the timing/evaluation distinction: [interview narrative](interview/INTERVIEW_STORY_zh.md). This is a learning and speaking guide, not a new experiment or proof that the owner independently wrote every component. Oral acceptance remains pending.
+
 | Item | Status | Evidence |
 |---|---|---|
 | Real errors with counts and raw examples | no model errors observed in this formal set | no five model-error categories can be invented; actual rule-control error directions are in `report.md`, examples stay private. Dev provider failures remain preserved separately |
 | Limitations | written | [LIMITATIONS.md](LIMITATIONS.md) (20 items; item 20 explains the old "only stricter" comment in `extended.py`) |
-| Four-line cards | written | [ORAL_CARDS_zh.md](ORAL_CARDS_zh.md) (15 cards); plain-language companion [ORAL_EXPLAINED_zh.md](ORAL_EXPLAINED_zh.md); latency and cost evidence [LATENCY_COST.md](LATENCY_COST.md), timing code and simulated-vs-measured values [LATENCY_EVIDENCE.md](LATENCY_EVIDENCE.md) (formal latency not yet computed: fields listed for the custodian) |
+| Four-line cards | written | [ORAL_CARDS_zh.md](interview/ORAL_CARDS_zh.md) (15 cards); plain-language companion [ORAL_EXPLAINED_zh.md](interview/ORAL_EXPLAINED_zh.md); latency and cost evidence [LATENCY_COST.md](LATENCY_COST.md), timing code and simulated-vs-measured values [LATENCY_EVIDENCE.md](LATENCY_EVIDENCE.md) (formal latency not yet computed: fields listed for the custodian) |
 | Oral check, three random questions | **not done** | to be done by the owner; no session can stand in |
 
 ## Real model runs and their cost

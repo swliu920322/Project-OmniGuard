@@ -4,7 +4,7 @@ Cloud-edge safety research platform for studying where AI agents can—and canno
 
 OmniGuard combines a simulated AGV dashboard, a three-stage cloud agent pipeline, Azure infrastructure templates, and reproducible benchmark archives. It is a research and engineering demonstrator, not a certified robot-control product.
 
-[中文说明](README_zh.md) · [Architecture](ARCHITECTURE.md) · [Documentation](docs/README.md) · [Evidence policy](docs/evidence/README.md) · [Router evaluation report](eval/report.md) · [Router evidence index](eval/EVIDENCE_INDEX.md)
+[中文说明](README_zh.md) · [Architecture](ARCHITECTURE.md) · [Documentation](docs/README.md) · [Evidence policy](docs/evidence/README.md) · [Router evaluation report](eval/report.md) · [Router evidence index](eval/EVIDENCE_INDEX.md) · [Evaluation directory guide](eval/README.md)
 
 ## What this repository contains
 
