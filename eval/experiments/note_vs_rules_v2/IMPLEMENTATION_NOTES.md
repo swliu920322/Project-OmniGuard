@@ -38,3 +38,7 @@ Date 2026-11-09. Scope of this commit series: P0 and P1 of [PLAN.md](PLAN.md). O
 - The earlier interview material in the working tree (modified or untracked files outside this directory) is not touched and not part of these commits.
 - `tests/test_docs_consistency.py` is modified in the working tree by the earlier round; it is not touched here. The new tests live in `tests/test_note_vs_rules_v2.py`.
 - No key is read or printed. `/private/tmp` and `OmniGuard-private` are not accessed.
+
+## 5. Status at the end of P1
+
+Done offline: R3 (draft + 2 logged revisions, frozen as the candidate), development evaluation, the wrapper `run_note_compare.py` with `plan`, `check-data`, `freeze`, `run`, `check-health`, `analyze`, the note-first analysis, 42 targeted tests, the author brief and the custodian guide, `V2_FREEZE.json` (scheme commitment). Not done by design: the independent test (P2), a price check, any budget, any model call. See [HANDOFF_TO_GPT.md](HANDOFF_TO_GPT.md).

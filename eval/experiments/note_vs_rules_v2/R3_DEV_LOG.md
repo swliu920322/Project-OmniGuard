@@ -66,7 +66,7 @@ Result on the development pool: **R3 141/142 = 0.9930** (dev 72/72, boundary 15/
 - no place semantics: a person or object mentioned somewhere other than the way ahead is a report unless one of the two narrow guards fires (X-35, H-26);
 - word lists were written by one author; the vocabulary is the author's, in two languages; Chinese has no typo tolerance;
 - an unsettled sentence is given a status (the rule must return one) and carries a flag in `explain()`; it is not removed;
-- disputed examples that the specification cannot settle: X-37 to X-40 and H-10, H-20 (`dev_extra.jsonl`, `dev_holdout.jsonl`, `disputed: true`).
+- disputed examples that the specification cannot settle: X-36 to X-39 and H-10, H-20 (`dev_extra.jsonl`, `dev_holdout.jsonl`, `disputed: true`).
 
 ## Not a claim
 
