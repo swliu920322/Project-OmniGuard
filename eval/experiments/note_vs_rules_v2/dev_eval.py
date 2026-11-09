@@ -107,12 +107,26 @@ def evaluate(rows: list[dict]) -> dict:
     return out
 
 
+def holdout_pool() -> tuple[list[dict], list[dict]]:
+    """dev_holdout.jsonl: written before any R3 revision, run once after the rule was frozen (never used to change the rule)."""
+    rows, disputed = [], []
+    for line in (HERE / "dev_holdout.jsonl").read_text(encoding="utf-8").splitlines():
+        r = json.loads(line)
+        (disputed if r["disputed"] else rows).append({"source": "holdout", "id": r["id"], "note": r["note"], "gold": r["note_status"], "kind": None, "family": None})
+    return rows, disputed
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--label", default=R3.VERSION)
     ap.add_argument("--write", action="store_true", help="write dev_runs/<label>.json")
+    ap.add_argument("--holdout", action="store_true", help="score dev_holdout.jsonl instead of the development pool")
     a = ap.parse_args()
-    rows, disputed, meta = load_pool()
+    if a.holdout:
+        rows, disputed = holdout_pool()
+        meta = {"pool": "dev_holdout.jsonl", "holdout_sha256": sha(HERE / "dev_holdout.jsonl")}
+    else:
+        rows, disputed, meta = load_pool()
     res = evaluate(rows)
     rep = {"label": a.label, "r3_version": R3.VERSION, "r3_sha256": sha(HERE / "r3.py"), "files_sha256": {k: sha(ROOT / v) for k, v in FILES.items()},
            "pool_size": len(rows), **meta, "disputed_not_scored": disputed, "systems": res,

@@ -33,3 +33,41 @@ Result on the development pool (142 distinct notes): R1 118/142, R2 51/142, **R3
 3. One edit of tolerance for the longer path words (aisle, corridor, passage; at least five letters, "isle" does not count) (fixes X-31).
 
 Result: **R3 139/142** (dev 72/72, boundary 15/15, stress 20/20, extra 32/35). Remaining errors: X-33, X-34, X-35 (the three false-positive counterexamples below).
+
+## Revision 2 (v2): two limited "not ahead" guards, then frozen as the candidate
+
+`r3.py` sha256 `07ef3a74…` (`dev_runs/v2.json`). This was the last revision the plan allows.
+
+1. A clause that mentions a person or object **in a room that is not the path** (room, office, canteen, 休息室, 办公室 ...) with no word for the way ahead is not read as a report (fixes X-34).
+2. A clause with a **clock time or date** ("6 pm", "18:00", 明天) and **no word of presence** (is, standing, blocking, 站, 挡 ...) and no word for the way ahead is not read as a report (fixes X-33). Both guards are narrow on purpose: a mention with "ahead", a path word, or a presence word stays a report, because a missed halt is the more costly error.
+
+Result on the development pool: **R3 141/142 = 0.9930** (dev 72/72, boundary 15/15, stress 20/20, extra 34/35); R1 118/142, R2 51/142 on the same pool. Remaining error: X-35 "请联系机器人维护人员。" (a request that mentions maintenance personnel; the rule cannot tell that they are not ahead, and excluding 人员 would hide a real "工作人员在通道里"). It stays as a disclosed false positive.
+
+**These dev figures are optimistic.** The author read the public notes before drafting, wrote the extra rows, and revised on their errors. Only the holdout below was kept out of every revision.
+
+### Holdout (written before revision 1, run once after revision 2, no change afterwards)
+
+`dev_holdout.jsonl` sha256 `da4ef91c…`, 28 scored rows (2 disputed rows listed, not scored). **R3 24/28 = 0.8571**, R1 18/28, R2 9/28 (`dev_runs/holdout_v2.json`). One missed halt by note and two needless halts for R3. R3 errors, kept as they are:
+
+| Id | Gold | R3 | Reading |
+|---|---|---|---|
+| H-04 "Earlier today a worker stood right there." | HISTORICAL | AFFIRMED_CURRENT | "stood" is a past verb with no past cue word; the rule has no verb tense |
+| H-09 "前面的路已经被清理干净了。" | NEGATED | IRRELEVANT | "干净" is not in the clear-path words |
+| H-21 "Cargo has been stacked in the aisle since yesterday." | AFFIRMED_CURRENT | HISTORICAL | a state that began in the past and still holds; the rule reads "yesterday" as a past cue. **This is a missed halt.** |
+| H-26 "仓库二楼有工人在打扫。" | IRRELEVANT | AFFIRMED_CURRENT | workers elsewhere; the rule cannot place "2nd floor" as not ahead |
+
+## What R3 is, in size and dependencies
+
+234 lines of Python, 36 word lists with 314 entries in all, standard library only (`re`, `unicodedata`, `pathlib`, `sys`) plus the frozen `reference_labeler` and the marker split of `rule_control`. No model, no network, no sentence table, no id lookup. Two explicit revisions after the draft.
+
+## Known limits (not fixed, disclosed)
+
+- no verb tense: past events without a past cue word are read as current (H-04), and a present state that began in the past is read as past (H-21);
+- no place semantics: a person or object mentioned somewhere other than the way ahead is a report unless one of the two narrow guards fires (X-35, H-26);
+- word lists were written by one author; the vocabulary is the author's, in two languages; Chinese has no typo tolerance;
+- an unsettled sentence is given a status (the rule must return one) and carries a flag in `explain()`; it is not removed;
+- disputed examples that the specification cannot settle: X-37 to X-40 and H-10, H-20 (`dev_extra.jsonl`, `dev_holdout.jsonl`, `disputed: true`).
+
+## Not a claim
+
+Nothing here shows that R3 is the best rule one could write, nor how it behaves on the independent test; it is a documented effort of two revisions, frozen before any test exists.

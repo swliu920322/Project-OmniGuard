@@ -1,0 +1,305 @@
+{
+ "disputed_not_scored": [
+  {
+   "family": null,
+   "gold": "UNCERTAIN",
+   "id": "H-10",
+   "kind": null,
+   "note": "前方有个纸箱，不太确定是不是挡路。",
+   "source": "holdout"
+  },
+  {
+   "family": null,
+   "gold": "UNCERTAIN",
+   "id": "H-20",
+   "kind": null,
+   "note": "刚刚有人在路口，现在好像没人了。",
+   "source": "holdout"
+  }
+ ],
+ "files_sha256": {
+  "boundary": "1e67e6a697212d21098be61f56249dffa0233db236654a1736cb803404567e7c",
+  "dev": "bad376fce65d0b71b65dfd727843ccb6c70f2fed3a5b54fafe3515b5c6727d79",
+  "extra": "f6573a682a2a66bb491dd66f234799f8f6377b5f1d7cbff5aca7055d697c988e",
+  "stress": "459e5dcbe8e3728b863af9e1c235924a6da0ff63fe4eaaee4c92d13fcb630c29"
+ },
+ "holdout_sha256": "da4ef91c8bdf4533b783b5cd9959a6f9b3e1058709711720bf2fbf968653c345",
+ "label": "holdout_v2",
+ "note": "development material only; the extra rows are AI-labelled and unreviewed; author had read the public dev notes before drafting v0",
+ "pool": "dev_holdout.jsonl",
+ "pool_size": 28,
+ "r3_sha256": "07ef3a7403548c6b350bb2d73e8b8868a9ce153bbdcd2aca37004c7b58e89879",
+ "r3_version": "v2",
+ "systems": {
+  "R1": {
+   "accuracy": 0.6429,
+   "by_extra_kind": {},
+   "by_source": {
+    "holdout": "18/28"
+   },
+   "correct": 18,
+   "missed_halt_by_note": 2,
+   "mistakes": [
+    {
+     "gold": "NEGATED",
+     "got": "IRRELEVANT",
+     "id": "H-02",
+     "note": "The corridor is empty.",
+     "source": "holdout"
+    },
+    {
+     "gold": "HYPOTHETICAL",
+     "got": "IRRELEVANT",
+     "id": "H-05",
+     "note": "Wait if anyone is crossing.",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "IRRELEVANT",
+     "id": "H-09",
+     "note": "前面的路已经被清理干净了。",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "HISTORICAL",
+     "id": "H-11",
+     "note": "刚才叉车挡住了通道，现在已经开走了。",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "IRRELEVANT",
+     "id": "H-15",
+     "note": "No pedestrians in sight.",
+     "source": "holdout"
+    },
+    {
+     "gold": "AFFIRMED_CURRENT",
+     "got": "HISTORICAL",
+     "id": "H-16",
+     "note": "There was a worker there, and he is still there.",
+     "source": "holdout"
+    },
+    {
+     "gold": "AFFIRMED_CURRENT",
+     "got": "IRRELEVANT",
+     "id": "H-23",
+     "note": "Forklift ahead, please wait.",
+     "source": "holdout"
+    },
+    {
+     "gold": "HYPOTHETICAL",
+     "got": "IRRELEVANT",
+     "id": "H-25",
+     "note": "If the lane is free, proceed at normal speed.",
+     "source": "holdout"
+    },
+    {
+     "gold": "IRRELEVANT",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-26",
+     "note": "仓库二楼有工人在打扫。",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "IRRELEVANT",
+     "id": "H-29",
+     "note": "托盘不在通道里了。",
+     "source": "holdout"
+    }
+   ],
+   "n": 28,
+   "needless_halt_by_note": 1
+  },
+  "R2": {
+   "accuracy": 0.3214,
+   "by_extra_kind": {},
+   "by_source": {
+    "holdout": "9/28"
+   },
+   "correct": 9,
+   "missed_halt_by_note": 1,
+   "mistakes": [
+    {
+     "gold": "NEGATED",
+     "got": "IRRELEVANT",
+     "id": "H-02",
+     "note": "The corridor is empty.",
+     "source": "holdout"
+    },
+    {
+     "gold": "UNCERTAIN",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-03",
+     "note": "Someone might step out from behind the shelf.",
+     "source": "holdout"
+    },
+    {
+     "gold": "HISTORICAL",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-04",
+     "note": "Earlier today a worker stood right there.",
+     "source": "holdout"
+    },
+    {
+     "gold": "HYPOTHETICAL",
+     "got": "IRRELEVANT",
+     "id": "H-05",
+     "note": "Wait if anyone is crossing.",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-06",
+     "note": "Nobody around.",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "IRRELEVANT",
+     "id": "H-09",
+     "note": "前面的路已经被清理干净了。",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-11",
+     "note": "刚才叉车挡住了通道，现在已经开走了。",
+     "source": "holdout"
+    },
+    {
+     "gold": "HYPOTHETICAL",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-12",
+     "note": "万一有箱子掉到路上，请立即停车。",
+     "source": "holdout"
+    },
+    {
+     "gold": "UNCERTAIN",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-14",
+     "note": "Possibly a box fell off the cart.",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "IRRELEVANT",
+     "id": "H-15",
+     "note": "No pedestrians in sight.",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-19",
+     "note": "I have not seen anyone in the aisle today.",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-22",
+     "note": "无人。",
+     "source": "holdout"
+    },
+    {
+     "gold": "AFFIRMED_CURRENT",
+     "got": "IRRELEVANT",
+     "id": "H-23",
+     "note": "Forklift ahead, please wait.",
+     "source": "holdout"
+    },
+    {
+     "gold": "HYPOTHETICAL",
+     "got": "IRRELEVANT",
+     "id": "H-25",
+     "note": "If the lane is free, proceed at normal speed.",
+     "source": "holdout"
+    },
+    {
+     "gold": "IRRELEVANT",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-26",
+     "note": "仓库二楼有工人在打扫。",
+     "source": "holdout"
+    },
+    {
+     "gold": "UNCERTAIN",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-27",
+     "note": "A box or maybe a person is in the way.",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-28",
+     "note": "There's no one there anymore.",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "IRRELEVANT",
+     "id": "H-29",
+     "note": "托盘不在通道里了。",
+     "source": "holdout"
+    },
+    {
+     "gold": "HISTORICAL",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-30",
+     "note": "Observed a person earlier; will recheck.",
+     "source": "holdout"
+    }
+   ],
+   "n": 28,
+   "needless_halt_by_note": 9
+  },
+  "R3": {
+   "accuracy": 0.8571,
+   "by_extra_kind": {},
+   "by_source": {
+    "holdout": "24/28"
+   },
+   "correct": 24,
+   "missed_halt_by_note": 1,
+   "mistakes": [
+    {
+     "gold": "HISTORICAL",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-04",
+     "note": "Earlier today a worker stood right there.",
+     "source": "holdout"
+    },
+    {
+     "gold": "NEGATED",
+     "got": "IRRELEVANT",
+     "id": "H-09",
+     "note": "前面的路已经被清理干净了。",
+     "source": "holdout"
+    },
+    {
+     "gold": "AFFIRMED_CURRENT",
+     "got": "HISTORICAL",
+     "id": "H-21",
+     "note": "Cargo has been stacked in the aisle since yesterday.",
+     "source": "holdout"
+    },
+    {
+     "gold": "IRRELEVANT",
+     "got": "AFFIRMED_CURRENT",
+     "id": "H-26",
+     "note": "仓库二楼有工人在打扫。",
+     "source": "holdout"
+    }
+   ],
+   "n": 28,
+   "needless_halt_by_note": 2
+  }
+ }
+}

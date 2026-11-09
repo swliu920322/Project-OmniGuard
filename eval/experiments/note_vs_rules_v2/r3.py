@@ -29,7 +29,7 @@ sys.path.insert(0, str(ROOT / "eval/spec"))
 import reference_labeler as R  # noqa: E402
 import rule_control as C  # noqa: E402  (only split_note: the marker split, shared with R1/R2)
 
-VERSION = "v1"
+VERSION = "v2"
 
 # ---- lexicons -------------------------------------------------------------------------------------------------------------------
 TOPIC_EN = {"person", "persons", "people", "worker", "workers", "human", "humans", "someone", "somebody", "anyone", "anybody", "pedestrian",
@@ -73,6 +73,14 @@ FUZZY_TOPIC = {"person", "worker", "pallet", "someone", "somebody", "anyone", "a
 FUZZY_NEG = {"nobody", "nothing", "without", "cleared"}
 FUZZY_HYP_UNC = {"possibly", "perhaps", "unsure", "uncertain", "probably", "suspect", "unclear"}
 
+# v2: a mention that is not "ahead": in a room that is not the path, or a schedule with no word of presence
+OFF_PATH_EN = {"room", "office", "canteen", "cafeteria", "storeroom", "restroom", "breakroom"}
+OFF_PATH_ZH = ("休息室", "办公室", "食堂", "库房", "会议室")
+AHEAD_EN = {"ahead", "front"}
+AHEAD_ZH = ("前方", "前面", "面前", "跟前")
+SCHEDULE = re.compile(r"\d{1,2}\s?(?:am|pm)\b|\d{1,2}:\d{2}|\bnoon\b|\btomorrow\b|\btonight\b|o'clock|点|明天|今晚|下午|上午")
+PRESENCE_EN = {"is", "are", "standing", "stands", "sitting", "lying", "blocking", "blocked", "parked", "stuck", "crossing", "walking"}
+PRESENCE_ZH = ("正", "站", "挡", "堵", "停着", "躺")
 IDENTIFIER = re.compile(r"\b[a-z0-9]+(?:_[a-z0-9]+)+\b")                    # NORMAL_NAV, critical_obstacle: names, not words of the note
 INVERTED_CONDITION = re.compile(r"^\s*(?:and |also )?should\b")                # "Should a worker appear, slow down."
 FUZZY_PATH = {"aisle", "corridor", "passage"}
@@ -154,6 +162,17 @@ def _is_topic(clause: str) -> bool:
     return path and clear                                    # "the aisle is clear": a statement about the path ahead
 
 
+def _not_ahead(clause: str) -> bool:
+    """True for a clause that mentions the topic but is plainly not a report about the way ahead (v2 guards, both limited on purpose)."""
+    toks = set(_tokens(clause))
+    ahead = bool(toks & AHEAD_EN) or _has_zh(clause, AHEAD_ZH) or any(_is_path_token(t) for t in toks) or _has_zh(clause, PATH_ZH)
+    if ahead:
+        return False
+    in_room = bool(toks & OFF_PATH_EN) or "store room" in clause or "break room" in clause or _has_zh(clause, OFF_PATH_ZH)
+    scheduled = bool(SCHEDULE.search(clause)) and not (toks & PRESENCE_EN) and not _has_zh(clause, PRESENCE_ZH)
+    return in_room or scheduled
+
+
 def _carry_ok(clause: str) -> bool:
     """A short clause with a departure / continuation cue and no topic word of its own."""
     toks = _tokens(clause)
@@ -185,6 +204,9 @@ def explain(note: str | None) -> dict:
     clauses, last_topic, found = [], False, []
     for c in split_clauses(note):
         topic = _is_topic(c)
+        if topic and _not_ahead(c):
+            clauses.append({"text": c, "status": None, "flags": ["not_ahead_guard"]})
+            continue
         carried = False
         if not topic and last_topic and _carry_ok(c):
             topic, carried = True, True
