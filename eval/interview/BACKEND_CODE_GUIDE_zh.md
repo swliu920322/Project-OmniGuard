@@ -2,6 +2,10 @@
 
 更新：2026-11-08。按当前源码核对，仅作阅读说明，不修改冻结源码。先理解调用关系，再读细节。定位用文件、函数名和当前行号；后续代码改动时以函数名为准。
 
+初次读代码，先看 [中文入门例子与字段表](START_HERE_zh.md)。本页反复出现的字段对应：`primary`＝主要状态，`risk_set`＝全部风险清单，`note_status`＝对备注的判断，`action`＝动作决定。例：障碍、过热、低电量同时存在，主要状态可只写障碍，但动作要保留停车、冷却要求和回充待办。
+
+概念与架构取舍配套读 [Agent、意图与路由](AGENT_INTENT_DESIGN_zh.md)：本页讲代码在哪里，配套说明讲为何不能把状态类别数等同于 Agent 数。
+
 ## 1. 三个概念先分开
 
 - **三个 Agent 角色**：Router 判断状态，Safety 再审规则，Compiler 生成动作。这是代码组织的顺序调用，不是三个模型自己讨论，也不是已训练的三个专用模型。
@@ -78,6 +82,8 @@ prediction, err = P.parse_reply(reply.content)  # 141：把回复读成两个合
 
 没有备注时 `note_status` 必须是 `null`。有备注却给 `null`、多键、重复键、围栏或说明文字等会被拒绝；检查分布在 [parse_reply()](../../src/cloud-orchestrator/router_v2/prompt.py#L73) 与 [execute()](../../src/cloud-orchestrator/router_v2/rules.py#L200)。`decide()` 还要求 `finish_reason == "stop"`，截断回复不能当有效答案。
 
+中文读法：`null` 是“没有填写”，本例因没有备注而留空；`finish_reason` 是服务结束回复的原因，`stop` 在这里表示正常结束，**不是车的停车动作**。程序另生成的 `{"action":"stop"}` 才表示停车命令。两处用了同一个英文词，含义不同。
+
 ## 5. 三个 Agent 怎么组合？
 
 读 [extended.py](../../src/cloud-orchestrator/embodied_brain/extended.py#L113) 的 113–171 行：
@@ -136,7 +142,7 @@ executed_primary = risks[0] if risks else "NORMAL_NAV"    # 主标签只是最�
 
 优先级为：障碍 > 过热 > 低健康 > 低电量 > 超速。优先级是实验约定，**只选主标签，不删除其他风险**。
 
-示意：距离 20 cm、温度 65℃、电量 15%，其余正常。即使模型只报障碍，代码仍保留过热和低电量。最终主类为障碍，动作 HALT，`holds` 保留 COOL，`deferred` 保留 RETURN_TO_CHARGE。不会同时发出“停车并立即移动去充电”的矛盾状态。
+示意：距离 20 cm、温度 65℃、电量 15%，其余正常。即使模型只报障碍，代码仍保留过热和低电量。最终主要状态为障碍，运动决定 HALT（停车），`holds`（保留的限制）里有 COOL（冷却要求），`deferred`（后续待办）里有 RETURN_TO_CHARGE（回充）。这是一次合成后的决定，不是已经依次执行三个任务。不会同时发出“停车并立即移动去充电”的矛盾状态。
 
 `compose()` 用遥测和给定备注状态生成参考标签；`execute()` 用模型预测合成实际决策。前者知道已标注的备注状态，后者只知道模型的备注判断，不能认为代码能独立发现所有备注风险。
 

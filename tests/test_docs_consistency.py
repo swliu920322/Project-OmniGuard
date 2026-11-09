@@ -6,7 +6,7 @@ import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VER = json.loads((ROOT / "eval/formal/results/VERIFICATION.json").read_text())
-DOCS = ["eval/README.md", "eval/interview/README.md", "eval/interview/INTERVIEW_STORY_zh.md", "eval/interview/BACKEND_CODE_GUIDE_zh.md", "README.md", "README_zh.md", "eval/report.md", "eval/EVIDENCE_INDEX.md", "eval/LIMITATIONS.md", "eval/REPRODUCE.md", "eval/interview/ORAL_CARDS_zh.md", "eval/LATENCY_COST.md", "eval/LATENCY_EVIDENCE.md", "eval/interview/ORAL_EXPLAINED_zh.md",
+DOCS = ["eval/README.md", "eval/interview/README.md", "eval/interview/START_HERE_zh.md", "eval/interview/INTERVIEW_STORY_zh.md", "eval/interview/BACKEND_CODE_GUIDE_zh.md", "eval/interview/AGENT_INTENT_DESIGN_zh.md", "eval/interview/BUSINESS_HARNESS_zh.md", "README.md", "README_zh.md", "eval/report.md", "eval/EVIDENCE_INDEX.md", "eval/LIMITATIONS.md", "eval/REPRODUCE.md", "eval/interview/ORAL_CARDS_zh.md", "eval/LATENCY_COST.md", "eval/LATENCY_EVIDENCE.md", "eval/interview/ORAL_EXPLAINED_zh.md",
         "docs/evidence/README.md", "eval/formal/FORMAL_PLAN.md", "docs/architecture/README.md", "ARCHITECTURE.md", "eval/REPRODUCE_TEST_PROMPT.md", "eval/reproduction_logs/2026-11-07-gemini-level1.md", "eval/reproduction_logs/2026-11-07-gemini-level1-round2.md"]
 TEXT = {d: (ROOT / d).read_text() for d in DOCS}
 
