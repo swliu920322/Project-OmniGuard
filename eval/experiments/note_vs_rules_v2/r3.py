@@ -29,7 +29,7 @@ sys.path.insert(0, str(ROOT / "eval/spec"))
 import reference_labeler as R  # noqa: E402
 import rule_control as C  # noqa: E402  (only split_note: the marker split, shared with R1/R2)
 
-VERSION = "v0"
+VERSION = "v1"
 
 # ---- lexicons -------------------------------------------------------------------------------------------------------------------
 TOPIC_EN = {"person", "persons", "people", "worker", "workers", "human", "humans", "someone", "somebody", "anyone", "anybody", "pedestrian",
@@ -73,6 +73,9 @@ FUZZY_TOPIC = {"person", "worker", "pallet", "someone", "somebody", "anyone", "a
 FUZZY_NEG = {"nobody", "nothing", "without", "cleared"}
 FUZZY_HYP_UNC = {"possibly", "perhaps", "unsure", "uncertain", "probably", "suspect", "unclear"}
 
+IDENTIFIER = re.compile(r"\b[a-z0-9]+(?:_[a-z0-9]+)+\b")                    # NORMAL_NAV, critical_obstacle: names, not words of the note
+INVERTED_CONDITION = re.compile(r"^\s*(?:and |also )?should\b")                # "Should a worker appear, slow down."
+FUZZY_PATH = {"aisle", "corridor", "passage"}
 CLAUSE_PUNCT = re.compile(r"[;!?,，；。！？、:：]|(?<!\d)\.(?!\d)")
 CLAUSE_CONTRAST = re.compile(r"\b(?:but|however|although|though|yet)\b|\band (?:now|then|currently)\b|但是|但|然而|不过|可是|而现在|虽然")
 
@@ -108,7 +111,15 @@ def _fuzzy_in(token: str, exact: set, fuzzy: set) -> bool:
 
 
 def _tokens(clause: str) -> list[str]:
+    clause = IDENTIFIER.sub(" ", clause)
     return re.findall(r"[a-z]+(?:'[a-z]+)?", clause.replace("n't", "nt").replace("'", ""))
+
+
+def _is_path_token(token: str) -> bool:
+    """Path words, with one edit of tolerance for the longer ones (aisle, corridor, passage); 'isle' is too short to count."""
+    if token in PATH_EN:
+        return True
+    return len(token) >= 5 and token not in NOT_TYPOS and any(token[0] == w[0] and abs(len(token) - len(w)) <= 1 and _osa(token, w) <= 1 for w in FUZZY_PATH)
 
 
 def _has_phrase(clause: str, phrases) -> bool:
@@ -138,7 +149,7 @@ def _is_topic(clause: str) -> bool:
     zh = _strip_zh_not_topic(clause)
     if any(_fuzzy_in(t, TOPIC_EN, FUZZY_TOPIC) for t in toks) or _has_phrase(clause, TOPIC_EN_PHRASES) or _has_zh(zh, TOPIC_ZH):
         return True
-    path = any(t in PATH_EN for t in toks) or _has_zh(clause, PATH_ZH)
+    path = any(_is_path_token(t) for t in toks) or _has_zh(clause, PATH_ZH)
     clear = any(t in CLEAR_EN for t in toks) or _has_zh(clause, CLEAR_ZH)
     return path and clear                                    # "the aisle is clear": a statement about the path ahead
 
@@ -153,7 +164,7 @@ def _carry_ok(clause: str) -> bool:
 def _status(clause: str) -> tuple[str, list[str]]:
     toks = _tokens(clause)
     flags = []
-    if any(_fuzzy_in(t, HYP_EN, set()) for t in toks) or _has_phrase(clause, HYP_EN_PHRASES) or _has_zh(clause, HYP_ZH):
+    if any(_fuzzy_in(t, HYP_EN, set()) for t in toks) or _has_phrase(clause, HYP_EN_PHRASES) or _has_zh(clause, HYP_ZH) or INVERTED_CONDITION.match(clause):
         return "HYPOTHETICAL", flags
     if any(_fuzzy_in(t, UNC_EN, FUZZY_HYP_UNC) for t in toks) or _has_phrase(clause, UNC_EN_PHRASES) or _has_zh(clause, UNC_ZH):
         return "UNCERTAIN", flags

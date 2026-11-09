@@ -23,3 +23,13 @@ Result on the development pool (142 distinct notes): R1 118/142, R2 51/142, **R3
 | X-33 "Maintenance staff arrive at 6 pm." | IRRELEVANT | AFFIRMED_CURRENT | a schedule that mentions people is read as a report |
 | X-34 "The box of spare parts is in the store room." | IRRELEVANT | AFFIRMED_CURRENT | a box in a room that is not the path |
 | X-35 "请联系机器人维护人员。" | IRRELEVANT | AFFIRMED_CURRENT | 维护人员 contains 人 |
+
+## Revision 1 (v1): three generic fixes for the v0 errors that were bugs or plain gaps
+
+`r3.py` sha256 `16d83d69…` (`dev_runs/v1.json`).
+
+1. Identifiers such as `NORMAL_NAV` or `critical_obstacle` are removed before words are read (fixes STR-08-5).
+2. An inverted condition at the start of a clause ("Should a worker appear, ...") is a condition (fixes X-07). It is deliberately limited to the clause start: "you should slow down, a worker is ahead" stays a report.
+3. One edit of tolerance for the longer path words (aisle, corridor, passage; at least five letters, "isle" does not count) (fixes X-31).
+
+Result: **R3 139/142** (dev 72/72, boundary 15/15, stress 20/20, extra 32/35). Remaining errors: X-33, X-34, X-35 (the three false-positive counterexamples below).
