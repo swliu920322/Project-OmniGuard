@@ -1,0 +1,30 @@
+{"basis": "present obstacle", "disputed": false, "id": "H-01", "note": "A pallet jack is sitting in the middle of the lane.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "path stated empty", "disputed": false, "id": "H-02", "note": "The corridor is empty.", "note_status": "NEGATED"}
+{"basis": "might", "disputed": false, "id": "H-03", "note": "Someone might step out from behind the shelf.", "note_status": "UNCERTAIN"}
+{"basis": "earlier today", "disputed": false, "id": "H-04", "note": "Earlier today a worker stood right there.", "note_status": "HISTORICAL"}
+{"basis": "condition", "disputed": false, "id": "H-05", "note": "Wait if anyone is crossing.", "note_status": "HYPOTHETICAL"}
+{"basis": "nobody", "disputed": false, "id": "H-06", "note": "Nobody around.", "note_status": "NEGATED"}
+{"basis": "schedule, not the topic", "disputed": false, "id": "H-07", "note": "Visitors are touring the loading area at 2 pm.", "note_status": "IRRELEVANT"}
+{"basis": "present pedestrian", "disputed": false, "id": "H-08", "note": "前方通道有行人通过。", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "path cleaned: clear now", "disputed": false, "id": "H-09", "note": "前面的路已经被清理干净了。", "note_status": "NEGATED"}
+{"basis": "present box, doubt about blocking", "disputed": true, "id": "H-10", "note": "前方有个纸箱，不太确定是不是挡路。", "note_status": "UNCERTAIN"}
+{"basis": "past blockage, now gone", "disputed": false, "id": "H-11", "note": "刚才叉车挡住了通道，现在已经开走了。", "note_status": "NEGATED"}
+{"basis": "万一 condition", "disputed": false, "id": "H-12", "note": "万一有箱子掉到路上，请立即停车。", "note_status": "HYPOTHETICAL"}
+{"basis": "present person", "disputed": false, "id": "H-13", "note": "A person is standing behind the yellow line ahead.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "possibly", "disputed": false, "id": "H-14", "note": "Possibly a box fell off the cart.", "note_status": "UNCERTAIN"}
+{"basis": "none in sight", "disputed": false, "id": "H-15", "note": "No pedestrians in sight.", "note_status": "NEGATED"}
+{"basis": "past mention, present continuation", "disputed": false, "id": "H-16", "note": "There was a worker there, and he is still there.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "present workers", "disputed": false, "id": "H-17", "note": "Heads up: workers on the road ahead.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "present blockage", "disputed": false, "id": "H-18", "note": "The road ahead is blocked by a fallen crate.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "none seen", "disputed": false, "id": "H-19", "note": "I have not seen anyone in the aisle today.", "note_status": "NEGATED"}
+{"basis": "hedged absence now", "disputed": true, "id": "H-20", "note": "刚刚有人在路口，现在好像没人了。", "note_status": "UNCERTAIN"}
+{"basis": "present state that began yesterday", "disputed": false, "id": "H-21", "note": "Cargo has been stacked in the aisle since yesterday.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "no one", "disputed": false, "id": "H-22", "note": "无人。", "note_status": "NEGATED"}
+{"basis": "present forklift", "disputed": false, "id": "H-23", "note": "Forklift ahead, please wait.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "not the topic", "disputed": false, "id": "H-24", "note": "Don't stop for the shift change announcement.", "note_status": "IRRELEVANT"}
+{"basis": "condition", "disputed": false, "id": "H-25", "note": "If the lane is free, proceed at normal speed.", "note_status": "HYPOTHETICAL"}
+{"basis": "workers elsewhere, not ahead", "disputed": false, "id": "H-26", "note": "仓库二楼有工人在打扫。", "note_status": "IRRELEVANT"}
+{"basis": "maybe", "disputed": false, "id": "H-27", "note": "A box or maybe a person is in the way.", "note_status": "UNCERTAIN"}
+{"basis": "no one now", "disputed": false, "id": "H-28", "note": "There's no one there anymore.", "note_status": "NEGATED"}
+{"basis": "not in the lane now", "disputed": false, "id": "H-29", "note": "托盘不在通道里了。", "note_status": "NEGATED"}
+{"basis": "earlier", "disputed": false, "id": "H-30", "note": "Observed a person earlier; will recheck.", "note_status": "HISTORICAL"}

@@ -1,0 +1,39 @@
+{"basis": "states a present obstacle", "disputed": false, "family": "obstacle-present", "id": "X-01", "kind": "regular", "note": "There is a forklift parked in the aisle.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "a past event with 'ago'", "disputed": false, "family": "person-past", "id": "X-02", "kind": "regular", "note": "Someone walked past a minute ago.", "note_status": "HISTORICAL"}
+{"basis": "says nobody is there now", "disputed": false, "family": "person-absent", "id": "X-03", "kind": "regular", "note": "I can see nobody in the corridor.", "note_status": "NEGATED"}
+{"basis": "path stated free", "disputed": false, "family": "path-clear", "id": "X-04", "kind": "regular", "note": "Corridor ahead is free of boxes.", "note_status": "NEGATED"}
+{"basis": "'right now' present", "disputed": false, "family": "person-present", "id": "X-05", "kind": "regular", "note": "Pedestrian crossing right now.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "hedged ('looks like')", "disputed": false, "family": "obstacle-hedged", "id": "X-06", "kind": "regular", "note": "Looks like a pallet is in the way.", "note_status": "UNCERTAIN"}
+{"basis": "inverted conditional, no 'if'", "disputed": false, "family": "condition-inverted", "id": "X-07", "kind": "scope", "note": "Should a worker appear, slow down.", "note_status": "HYPOTHETICAL"}
+{"basis": "past then departure: not there now", "disputed": false, "family": "person-moved", "id": "X-08", "kind": "scope", "note": "The worker was blocking the aisle but moved away.", "note_status": "NEGATED"}
+{"basis": "states a present blockage", "disputed": false, "family": "obstacle-present", "id": "X-09", "kind": "regular", "note": "The lane is blocked by a box.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "double negation of the topic", "disputed": false, "family": "person-absent", "id": "X-10", "kind": "regular", "note": "No obstacles, no people.", "note_status": "NEGATED"}
+{"basis": "terse present report", "disputed": false, "family": "obstacle-present", "id": "X-11", "kind": "regular", "note": "Box in lane ahead!", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "nothing in the way", "disputed": false, "family": "path-clear", "id": "X-12", "kind": "regular", "note": "Nothing in the way.", "note_status": "NEGATED"}
+{"basis": "past removal, current clear", "disputed": false, "family": "path-clear-after-past", "id": "X-13", "kind": "scope", "note": "A pallet was removed from the path earlier, the path is clear now.", "note_status": "NEGATED"}
+{"basis": "present obstacle", "disputed": false, "family": "obstacle-present", "id": "X-14", "kind": "regular", "note": "通道里有叉车停着。", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "好像 hedges", "disputed": false, "family": "person-hedged", "id": "X-15", "kind": "regular", "note": "前面好像有个人。", "note_status": "UNCERTAIN"}
+{"basis": "now, none", "disputed": false, "family": "path-clear", "id": "X-16", "kind": "regular", "note": "现在车道上没有任何障碍。", "note_status": "NEGATED"}
+{"basis": "'still there' after a past mention: present", "disputed": false, "family": "person-still", "id": "X-17", "kind": "carry", "note": "刚才有工人经过，现在还在通道里。", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "要是 condition", "disputed": false, "family": "condition", "id": "X-18", "kind": "regular", "note": "要是前面有人，请先停下。", "note_status": "HYPOTHETICAL"}
+{"basis": "did not see anyone", "disputed": false, "family": "person-absent", "id": "X-19", "kind": "regular", "note": "没看到有人。", "note_status": "NEGATED"}
+{"basis": "the blockage is stated; the doubt is about its cause", "disputed": false, "family": "obstacle-present-cause-hedged", "id": "X-20", "kind": "scope", "note": "通道被堵住了，大概是货物倒了。", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "yesterday", "disputed": false, "family": "obstacle-past", "id": "X-21", "kind": "regular", "note": "昨天通道里堆过货物。", "note_status": "HISTORICAL"}
+{"basis": "past absence, present presence", "disputed": false, "family": "person-now", "id": "X-22", "kind": "scope", "note": "之前没人，现在有人站在路口。", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "cargo cleared away, path clear", "disputed": false, "family": "removed-clear", "id": "X-23", "kind": "scope", "note": "货物已经清走了，路径畅通。", "note_status": "NEGATED"}
+{"basis": "mixed-language present", "disputed": false, "family": "person-present", "id": "X-24", "kind": "regular", "note": "aisle 里有 pedestrian。", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "past then departure", "disputed": false, "family": "obstacle-gone", "id": "X-25", "kind": "carry", "note": "forklift 刚才在 lane 里，现在已经 gone。", "note_status": "NEGATED"}
+{"basis": "如果 condition", "disputed": false, "family": "condition", "id": "X-26", "kind": "regular", "note": "如果 worker 出现请报告", "note_status": "HYPOTHETICAL"}
+{"basis": "可能 hedges", "disputed": false, "family": "person-hedged", "id": "X-27", "kind": "regular", "note": "可能 someone 站在 path 上", "note_status": "UNCERTAIN"}
+{"basis": "typo in a long word", "disputed": false, "family": "obstacle-typo", "id": "X-28", "kind": "typo", "note": "A pallet is blockng the path.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "transposition typo in 'perhaps'", "disputed": false, "family": "person-hedged-typo", "id": "X-29", "kind": "typo", "note": "Prehaps a worker is ahead.", "note_status": "UNCERTAIN"}
+{"basis": "one deleted letter", "disputed": false, "family": "person-typo", "id": "X-30", "kind": "typo", "note": "Wokers are in the lane.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "typo in a short path word", "disputed": false, "family": "path-typo", "id": "X-31", "kind": "typo", "note": "The aislle is clear.", "note_status": "NEGATED"}
+{"basis": "'persona' and 'night' are one edit from 'person' and 'might'", "disputed": false, "family": "not-a-typo", "id": "X-32", "kind": "counterexample", "note": "Update the persona settings for the night shift.", "note_status": "IRRELEVANT"}
+{"basis": "people mentioned in a schedule, not ahead", "disputed": false, "family": "staff-schedule", "id": "X-33", "kind": "counterexample", "note": "Maintenance staff arrive at 6 pm.", "note_status": "IRRELEVANT"}
+{"basis": "a box that is not an obstacle ahead", "disputed": false, "family": "box-storage", "id": "X-34", "kind": "counterexample", "note": "The box of spare parts is in the store room.", "note_status": "IRRELEVANT"}
+{"basis": "'机器人' contains 人; 维护人员 is not ahead", "disputed": false, "family": "robot-staff", "id": "X-35", "kind": "counterexample", "note": "请联系机器人维护人员。", "note_status": "IRRELEVANT"}
+{"basis": "a question with explicit uncertainty", "disputed": true, "family": "question-hedged", "id": "X-36", "kind": "scope", "note": "Is the aisle clear? Not sure.", "note_status": "UNCERTAIN"}
+{"basis": "a warning about people near a dock: ahead or not is not stated", "disputed": true, "family": "warning-not-ahead", "id": "X-37", "kind": "scope", "note": "Please be careful of workers near the dock.", "note_status": "AFFIRMED_CURRENT"}
+{"basis": "a past event that implies absence now", "disputed": true, "family": "departure-past", "id": "X-38", "kind": "scope", "note": "The worker left the aisle two minutes ago.", "note_status": "HISTORICAL"}
+{"basis": "boxes that are part of the wall", "disputed": true, "family": "box-fixed", "id": "X-39", "kind": "scope", "note": "Don't worry about the boxes, they are fixed to the wall.", "note_status": "IRRELEVANT"}
