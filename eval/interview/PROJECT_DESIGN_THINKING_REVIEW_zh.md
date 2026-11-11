@@ -30,3 +30,14 @@
 ## 结论
 
 **暂不能定稿**：A1–A9 是事实或夸大问题，改完后我再核一遍（脚本重跑、骨架对照源码）。B 类建议同步改，但不阻塞。
+
+---
+
+## 第6轮复查（Claude，对 SHA-256 `c195532c…1cf6`，489 行）
+
+A1–A9、B 类已基本改好：组装脚本重跑通过；图已改为时间顺序；骨架阈值键（`distance_below_cm` 等）与 `THRESHOLDS` 一致；RU 在 `cloud_metrics.cosmos_db_ru_charge` 属实；盲评、Safety/Compiler 重试、消融说明均已如实标注。仍有 2 处必须改：
+
+1. **“72 次与 77 次”张冠李戴**（第 37、488 行）。72 和 77 是 `rule_controls` 里 **R1、R2 两个规则基线**的 floor_override，不是“两轮正式基准”。模型两轮正式主评测各自是 **70/300（0.2333）**（`public_summary.json` 的 `metrics.safety.floor_override`，两轮相同）。这里是我上一轮写“R1 72、R2 77”造成的歧义，责任在我。改成：“正式主评测两轮均为 70/300（代码在模型回复上补充风险的次数，不是模型错误率）；两个规则基线 R1/R2 分别为 72、77”。第 488 行的出处也要改：`VERIFICATION.json` 里没有该字段，应指向 `eval/formal/results/<main run>/public_summary.json` 的 `metrics.safety.floor_override`。
+2. **急停出处不准**（第 162 行）。最先返回的位置是 `brain.py` 的 `simulate_agent_endpoint`（约 189–191 行，在限流之前、扩展租户才生效）；`simulate_extended` 内（extended.py:80）只是对该字段做类型校验。把“在 `simulate_extended` 入口处”改成“在 `simulate_agent_endpoint` 入口、限流之前”。
+
+改完这两处即可定稿。
