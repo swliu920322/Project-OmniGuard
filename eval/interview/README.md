@@ -39,7 +39,7 @@
 - [复现指南](../REPRODUCE.md)：免费离线验证与付费模型运行的区别。
 - [eval目录说明](../README.md)：规范、开发数据、冻结清单、运行产物的用途。
 
-第二轮实验的[计划](../experiments/note_vs_rules_v2/PLAN.md)与[实施记录](../experiments/note_vs_rules_v2/IMPLEMENTATION_NOTES.md)另行保留；已有开发实现，成绩按该轮实际证据核对，不与旧300条混用，也不作为学会当前项目的前提。
+第二轮实验已完成：[计划](../experiments/note_vs_rules_v2/PLAN.md)、[实施记录](../experiments/note_vs_rules_v2/IMPLEMENTATION_NOTES.md)、[结果](../experiments/note_vs_rules_v2/RESULTS.md)与[原件和复算说明](../experiments/note_vs_rules_v2/evidence/README.md)；成绩按该轮实际证据核对，不与旧300条混用，也不作为学会当前项目的前提。
 
 ## 本次删并与以后怎么维护
 
