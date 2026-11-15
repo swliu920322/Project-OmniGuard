@@ -556,6 +556,19 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 **证据与范围：** [代码阅读地图](BACKEND_CODE_GUIDE_zh.md)、[extended.py](../../src/cloud-orchestrator/embodied_brain/extended.py)、[前端请求函数](../../src/client-edge/src/app/dashboard/live/lib/simulation.ts)。正式 300 条主要测 Router 与决定逻辑，HTTP 完整路径用假模型和假依赖测试；不能把两者合起来说成真实模型端到端已验证。IoT Hub 是另一路旧接入，不等于扩展路径已接 MQTT 黑板或 ROS 2。
 
 > **练习检查：** 画出 HTTP 输入→急停／输入预检→外部依赖→Router→风险合成→必要的 Safety／Compiler→动作校验，说明哪些节点能提前返回。
+**“三个 Agent”与“几层”怎么对上（简历写“层”“接力”前先核对）：** 扩展路径一共 3 个模型角色和 3 个纯代码环节，不要把二者混成同一种“层”。
+
+| 环节 | 是否模型 | 位置 | 正式评测是否覆盖 |
+|---|---|---|---|
+| 输入预检（`precheck`／`check_input`） | 否 | `pipeline.py`、`rules.py` | 是（13 例本地拒绝） |
+| Router | 是 | `decide()` | 是（300 条主评测） |
+| 风险合成（`execute`，含 `gate`，在模型返回之后） | 否 | `rules.py` | 是（`floor_override` 70/300） |
+| Safety | 是 | `extended.py` | 否，只在假模型下测过 |
+| Compiler | 是 | `extended.py` | 否，只在假模型下测过 |
+| 动作校验（`validate_actions`） | 否 | `pipeline.py` | 假模型下测过 |
+
+“接力”不是每次三个都跑：Router 合成 HALT 就跳过后两个。300/300、70/300、55/55 这些数字只对应“预检＋Router＋风险合成”，不能说成三个 Agent 全链路已评测。简历若写“四层”，要说清是哪四层；仓库里没有这个词，这是本人草稿的分法，需自己列出并和上表对一遍。
+
 
 ---
 
@@ -627,6 +640,8 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 **追问“造题参考 prompt 吗”：** “测试按共同的业务规范制作，清单声明没有使用模型预测或 R1/R2 结果来制题或修题。但我没有逐条审计作者看过哪些材料，不能保证完全不知道提示词。任务本身就按同一套规则构造，仍可能偏容易。”不能把独立会话或哈希说成无污染的绝对证明。
 
 > **练习检查：** 用自己的话解释覆盖配额、家族相关性和 AI 标注局限，不把复核一致率当作真实业务正确率。
+**追问“300 条是调提示词之前还是之后冻结的？是留出集吗？”：** “提示词在测试集冻结之前已经定稿：`router_v2/prompt.py` 在 git 里只有一次提交（2026-11-07 17:41），测试集冻结提交在同日 19:10，清单里记录了提示词的 SHA-256。开发集那轮没有分类错误可供调参（97.2%，其余 5 次是接口错误，返回的回复全对），所以没有根据测试结果改过提示词。”边界要同时说：git 只能证明提交记录，看不到提交之前的草稿；不能保证造题的人没见过提示词；只验证了一个提示词版本和一个模型家族。**不要说成“开发集兼回归集”，也不要说成无污染的留出集。** 另外，第二轮的 R3 若将来在这 300 条上运行，这批数据对 R3 就不再是纯留出集。
+
 
 ---
 
@@ -676,6 +691,8 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 > **练习检查：** 指着结果表分别说清三个分母与指标。14 次漏停和 15 条备注误判尚未逐条对应；不要把候选解释说成已查明原因。
 
 ---
+**R1 的 19 条主类错误（来自第1跑公开摘要的混淆矩阵 `rule_controls.R1.primary.all_started`）：** 14 条是金标 CRITICAL_OBSTACLE 被判 NORMAL_NAV（即 14 次漏停）；3 条是 NORMAL_NAV 被判 CRITICAL_OBSTACLE（误停）；LOW_HEALTH、OVERHEAT 各 1 条被判 CRITICAL_OBSTACLE（类别混淆，车仍停车）。R1 备注状态的 49 个错误里有 39 个被判成 IRRELEVANT，符合关键词没命中的特征。但 14 次漏停逐条属于阈值、关键词还是语义，需要读私有逐条记录才能分，目前没分。因此只说“固定关键词规则在备注上漏停 14 次”，**不写“语义盲区”**。
+
 
 <a id="q14"></a>
 
@@ -694,6 +711,8 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 **推理怎么展开：** `55=13+10+32`。故意提供非法输入后被拒绝，是预期行为，不是模型答错。人为抛超时异常，不证明服务商真的发生过一次超时，更不证明断网时真车能及时停下。
 
 **错误处理例子：** 输入电量 150%→INVALID_INPUT；Router 回复带代码围栏或非正常结束→不可用回复；Compiler 返回 `move` 却缺速度→CONSTRAINT_VIOLATION。它们的来源不同，不要统一叫“模型幻觉”。
+**55 例的“通过”指什么：** 55/55 按预期完成（`stress.total`：`missed_halt`、`needless_halt`、`model_wrong_primary`、`model_unusable_replies`、`interface_errors`、`interrupted` 均为 0）。“通过”只表示没出现这些失败，不是 55 个独立场景，也不是对未测输入的保证；10 例注入故障是本地模拟，不是真实接口故障。
+
 
 **怎么证明：** [压力摘要](../formal/results/20261107T115548Z_stress_real_8352b4ff/public_summary.json) 的 `stress.total` 和 `stress.by_type`。具体类型名称和范围见[数据方案](../spec/DATA_PLAN.md)。本轮没发现失败，不能为满足“错误分析”而编造模型失败类型。
 
