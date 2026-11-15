@@ -106,7 +106,7 @@ eval/
 
 - [annotation/README.md](annotation/README.md) 与 `packets.py`：开发材料的盲标包、封存、放行和报告流程。
 - `ANNOTATOR_INSTRUCTIONS.md`、`blind_packet.jsonl`、`blind_sample.json`、`mapping.json`：标注规则、输入、抽样和匿名映射；`sealed/` 与 `agreement_report.json`：封存和复核产物。
-- 注意：`annotation/README.md` 里保留了制作材料时“尚未运行”的旧状态；当前是否完成要同时核对已有封存、报告和 [EVIDENCE_INDEX.md](EVIDENCE_INDEX.md)，不能只读那句旧状态。
+- 注意：`annotation/README.md` 的状态行已于 2026-11-15 更新为“步骤 2–6 已由 AI 会话执行（AI 标注、AI 复审）”；仍须同时核对封存、报告和 [EVIDENCE_INDEX.md](EVIDENCE_INDEX.md)，不能当作人工专家标签。
 - [acceptance/README.md](acceptance/README.md)：独立验收数据的保管与流程说明。
 - [FROZEN_MANIFEST.json](acceptance/FROZEN_MANIFEST.json)：最终测试数据哈希、数量、家族及局限；它是测前冻结承诺，测后不会为改状态而重写。
 - `CANDIDATE_COMMITMENT.json`、`REVISION2_COMMITMENT.json`、`STRESS_CANDIDATE_COMMITMENT.json`：数据冻结前的候选与修订承诺，不是新的正式成绩。
