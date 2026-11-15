@@ -1,7 +1,7 @@
 # Project OmniGuard Architecture
 
 Status: current architecture overview
-Last reviewed: 2026-10-14
+Last reviewed: 2026-11-14
 
 This document describes the system that exists in the repository and the boundary between implementation, simulation, infrastructure design, and research evidence. Historical plans and presentation language belong in docs/archive/, not here.
 
@@ -50,11 +50,11 @@ The frontend and backend can run locally. Azure resources are optional for brows
 
 ## 4. AGV decision pipeline
 
-The embodied-brain pipeline has four decision layers.
+The HTTP entry selects either the original tenant path or the opt-in six-class path. They share role names but differ in validation, physical-gate timing and output checks. The diagram in the [README](README.md) shows the extended path; the thesis sequence diagram describes the original one.
 
 ### 4.1 Deterministic physical pre-check
 
-Hard conditions such as depleted health or critically low battery are handled before an LLM call. This path is deterministic and should remain independent of model availability.
+In the original path, depleted health or critically low battery can stop processing before an LLM call. In the extended path, only the structured emergency-stop entry and invalid-input handling guarantee rejection before external calls. Its HP≤0 or battery<5% physical gate is applied inside `execute()` after the Router call. This is deterministic decision logic in the backend, not a deployed edge controller or a guarantee that the vehicle is already stopped.
 
 ### 4.2 Router Agent
 
@@ -89,7 +89,7 @@ The dashboard uses latency to illustrate the distance travelled before a decisio
 
     decision distance = speed × decision latency
 
-A token-oriented cloud estimate may further decompose latency into network, prompt-processing, and generation terms. This is a model, not a timing guarantee. The actual Python benchmark records observed stage and end-to-end latency from its configured provider.
+A token-oriented cloud estimate may further decompose latency into network, prompt-processing, and generation terms. This is a model, not a timing guarantee. The historical Python benchmark records stage durations; its `total_pipeline` is the sum of Router, Safety and Compiler call durations for full-flow cases only. It is not browser-to-backend round-trip time. See the [timing evidence](eval/LATENCY_EVIDENCE.md) for boundaries, denominators and simulated parameters.
 
 The architectural conclusion is deliberately narrow:
 
@@ -107,7 +107,7 @@ The Bicep modules describe a reference deployment containing:
 - Azure Container Apps compute;
 - virtual-network and subnet isolation;
 - managed identity and Key Vault integration;
-- private endpoints for selected data and AI services;
+- three private endpoints for Key Vault, Storage and Cosmos DB in the snapshot; Azure OpenAI is not defined behind an additional private endpoint there;
 - IoT Hub and data services where enabled;
 - frontend-to-backend routing through the application boundary.
 
@@ -155,14 +155,16 @@ Each run should preserve:
 
 The evidence index defines the allowed terminology. Historical summaries are preserved rather than silently recalculated with new definitions.
 
-## 10. Current measured results
+## 10. Measured results and their scope
 
-The canonical numbers are maintained in the benchmark results guide:
+The [formal state-routing report](eval/report.md) records two runs on the same 300 frozen synthetic records (34 families), each 300/300; R1/R2 on that set score 281/300 and 280/300. The 55 stress cases consist of 32 real model requests, 13 input rejections and 10 injected faults checked offline. These are Router/decision-function results under an experimental specification, not physical-robot or real-model HTTP end-to-end results.
 
-- 2026-07-16 historical run: 200 scenarios, 94.19% router accuracy on 172 parseable outputs, 39.5% early exit, 6.174-second mean end-to-end latency.
-- 2026-08-18 diagnostic run: 60 scenarios, 90.38% router accuracy on 52 parseable outputs, 9/14 recall under the legacy 5–50 cm critical label, all eight sub-30 cm cases caught and blocked, 41.67% early exit, 7.67-second median and 16.72-second mean latency.
+Historical timing is separate. The [benchmark archive guide](src/cloud-orchestrator/embodied_brain/benchmark_results/README.md) preserves:
 
-The historical and diagnostic numbers describe different runs and denominators. Neither should be substituted for the other.
+- 2026-07-16: 200 scenarios; 94.19% Router accuracy on 172 parseable outputs; 39.5% early exits. For 121 full-flow cases, the sum of the three model-call durations averages 6.174 seconds.
+- 2026-08-18: 60 scenarios; 90.38% Router accuracy on 52 parseable outputs; 9/14 recall under the legacy critical label, with all eight sub-30 cm cases blocked; 41.67% early exits. For 35 full-flow cases, the same timing measure has a 7.67-second median and 16.72-second mean.
+
+These runs use different tasks and conditions and do not establish an improvement trend. None measures browser round-trip time or a physical AGV's allowable response deadline.
 
 ## 11. Reliability rules
 
@@ -173,7 +175,21 @@ The historical and diagnostic numbers describe different runs and denominators. 
 - Final unsafe actions are counted separately from router errors.
 - Live-environment claims identify the tested environment and date.
 
-## 12. Repository decision records
+<a id="design-tradeoffs"></a>
+
+## 12. Three design trade-offs to inspect
+
+This is a reading guide to current implementation and evidence, not a claim that the owner independently made every original decision. Earlier ADRs describe choices at their own dates.
+
+| Choice in the implementation | Reason it serves | Cost or alternative | Evidence and unresolved question |
+|---|---|---|---|
+| **Model prediction plus code constraints** | The model judges the route and note semantics; code recomputes numerical risks, rejects unusable replies and validates final actions. A model cannot remove a known telemetry risk. | Numeric thresholds need no LLM. Rules or another classifier may suffice for notes; code cannot independently recover a note-only risk the model misses. | [Risk synthesis](src/cloud-orchestrator/router_v2/rules.py), [strict Router contract and action checks](src/cloud-orchestrator/router_v2/pipeline.py), [HTTP counterexample tests](tests/test_extended_endpoint.py). Real-model endpoint latency and physical stopping remain untested. |
+| **Fixed Router → Safety → Compiler workflow with early exits** | Roles and data handoffs are explicit; a halt skips downstream stages. Final action checks remain code-controlled. | Serial calls add waiting time and external failure points. One structured call followed by code validation is a plausible alternative. Safety and Compiler use the legacy helper and do not share every Router guarantee. | [HTTP orchestration](src/cloud-orchestrator/embodied_brain/extended.py), [timing boundaries](eval/LATENCY_EVIDENCE.md). No controlled single-call-versus-three-stage study establishes that the three-stage design is better. |
+| **Specification and held-out data frozen before formal scoring** | Fixed input, label and scoring rules make later changes detectable and keep development results separate from formal results. Two runs check repeatability; R1/R2 provide same-data controls. | The examples are synthetic, correlated by family and AI-labeled; freezing does not make them representative. Keeping records private prevents a public clone alone from reproducing formal scores. | [Specification](eval/spec/LABEL_SPEC.md), [frozen manifest](eval/acceptance/FROZEN_MANIFEST.json), [report](eval/report.md), [reproduction levels](eval/REPRODUCE.md). Stronger rules and real operational data would require their own evaluation. |
+
+For the corresponding functions and a free fake-model exercise, see the [code map](eval/interview/BACKEND_CODE_GUIDE_zh.md#offline-lab). The [owner's experience notes](eval/interview/INTERVIEW_STORY_zh.md) separate confirmed motivation from contributions still needing confirmation; the [interview handbook](eval/interview/INTERVIEW_DEEP_DRILL_zh.md#core-8) is preparation material, not additional experimental evidence.
+
+### Historical decision records
 
 ADRs under docs/adrs record why specific architecture choices were made. An accepted ADR is historical evidence of a decision, but code remains the authority for current implementation. If code intentionally supersedes an ADR, update its status and create a replacement decision where needed.
 

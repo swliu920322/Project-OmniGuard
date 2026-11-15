@@ -168,3 +168,69 @@ executed_primary = risks[0] if risks else "NORMAL_NAV"    # 主标签只是最�
 - [extended.py](../../src/cloud-orchestrator/embodied_brain/extended.py#L113)：`t1/t2/t3` 记录各阶段，`_respond()` 计算后端总耗时；它们不等于浏览器往返时间。完整口径见 [LATENCY_EVIDENCE.md](../LATENCY_EVIDENCE.md)。
 
 读完后先试着回答：请求靠什么进入六类路径？模型真正调用在哪？模型说正常而距离只有 20 cm 会怎样？同时低电量和过热会不会立即去充电？能解释这四题，再继续读旧路径和云资源代码。
+
+<a id="offline-lab"></a>
+
+## 10. 免费实操：先预测，再运行，再解释
+
+这是从旧设计长稿中保留并重新核对的实操内容，只调用真实的决策函数和假模型。它不经过HTTP端点、不读私有文件、不访问API，也不是新的模型评测。HTTP层的急停与零外部调用行为另看上表中的端点测试。
+
+从仓库根目录运行。这里仅用Python标准库与项目规则代码；`python3` 换成已有环境的Python也可以。先遮住预期结果，对每个场景预测：会不会调用模型，最后允许移动还是停车，为什么？
+
+```sh
+python3 - <<'PY'
+import json
+import sys
+sys.path.insert(0, 'src/cloud-orchestrator')
+from router_v2.pipeline import ModelReply, decide, validate_actions
+
+base = dict(distance_cm=100, velocity_ms=1, hp=100,
+            battery_pct=80, temperature_c=25)
+
+def run(name, rec, note=None, status=None, fault=None):
+    calls = []
+    def fake_model(system, user):
+        calls.append(user)
+        return ModelReply(
+            content=json.dumps(dict(primary='NORMAL_NAV', note_status=status)),
+            finish_reason='stop', fault=fault)
+    result = decide(rec, note, fake_model)
+    dec = result['executed']
+    print(name, 'calls=', len(calls), 'motion=', dec['action']['motion'],
+          'risks=', dec['risk_set'], 'reasons=', dec['action']['halt_reasons'])
+    return result
+
+multi = run('多风险但模型报正常',
+            dict(base, distance_cm=20, temperature_c=65, battery_pct=15))
+assert multi['executed']['action']['motion'] == 'HALT'
+assert set(multi['executed']['risk_set']) == {
+    'CRITICAL_OBSTACLE', 'OVERHEAT', 'LOW_BATTERY'}
+
+note_miss = run('备注风险被模型漏读', base, '前方有人', 'IRRELEVANT')
+assert note_miss['executed']['action']['motion'] == 'MOVE'
+invalid = run('缺少健康值', {k: v for k, v in base.items() if k != 'hp'})
+assert not invalid['model_called']
+assert invalid['executed']['action']['motion'] == 'HALT'
+failure = run('假模型报告超时', base, fault='TIMEOUT')
+assert failure['executed']['action']['motion'] == 'HALT'
+gated = run('HP为0的扩展Router', dict(base, hp=0))
+assert gated['model_called']  # 门控在execute内应用，不等于HTTP急停前置
+assert gated['executed']['action']['motion'] == 'HALT'
+
+violations = validate_actions([dict(action='move', speed=999)],
+                              multi['executed']['action'], target_speed=50)
+assert violations
+print('Compiler违规动作：', violations)
+PY
+```
+
+| 场景 | 预期 | 说明什么 |
+|---|---|---|
+| 多风险但模型报正常 | 调用一次，HALT，保留三个风险 | 数值风险由代码补回；模型原判断仍然错 |
+| 只有备注报告有人，模型判无关并报正常 | 调用一次，MOVE | 这是特意构造的漏停反例，代码不能独立读懂备注 |
+| 缺健康值 | 零模型调用，INVALID_INPUT并HALT | 严格输入校验在模型前 |
+| 假模型报告超时 | 一次假调用，TIMEOUT并HALT | 验证故障处理，不是实际等待60秒的超时实验 |
+| HP为0 | 调用一次后HALT | 证明扩展Router门控的实际顺序，不把旧注释当调用链 |
+| 给停车决定配move speed=999 | 违规列表非空 | 动作验证函数拒绝矛盾指令；实际HTTP回退由端点负责 |
+
+做完改变两个条件，再运行：把第一例温度改为60，过热风险应消失；把备注状态改成 `AFFIRMED_CURRENT`，第二例应转为HALT。解释哪一条规则改变了结果。最后关掉代码，用中文说出“模型判断→代码补风险→动作校验”的分工，就完成这次练习。

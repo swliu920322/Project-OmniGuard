@@ -1,10 +1,22 @@
 # Project OmniGuard
 
-Cloud-edge safety research platform for studying where AI agents can—and cannot—sit in a moving-machine control loop.
+Cloud-edge AGV simulation and AI state-routing evaluation: investigating cloud-model waiting time and the division between model predictions and code-enforced action constraints.
 
 OmniGuard combines a simulated AGV dashboard, a three-stage cloud agent pipeline, Azure infrastructure templates, and reproducible benchmark archives. It is a research and engineering demonstrator, not a certified robot-control product.
 
 [中文说明](README_zh.md) · [Architecture](ARCHITECTURE.md) · [Documentation](docs/README.md) · [Evidence policy](docs/evidence/README.md) · [Router evaluation report](eval/report.md) · [Router evidence index](eval/EVIDENCE_INDEX.md) · [Evaluation directory guide](eval/README.md)
+
+## Start here
+
+| Question | Read |
+|---|---|
+| What connects to what? | Extended-path diagram below → [Azure reference diagrams](docs/architecture/README.md) |
+| What was measured? | [Formal evaluation](eval/report.md); [timing evidence](eval/LATENCY_EVIDENCE.md) for latency |
+| Why these choices, and at what cost? | [Three design trade-offs](ARCHITECTURE.md#design-tradeoffs) |
+| Where is the implementation? | [Code map, Chinese](eval/interview/BACKEND_CODE_GUIDE_zh.md) → [model adapter and action validation](src/cloud-orchestrator/router_v2/pipeline.py) → [risk synthesis](src/cloud-orchestrator/router_v2/rules.py) → [HTTP tests](tests/test_extended_endpoint.py) |
+| What can I check without a key? | [Free offline walkthrough](eval/REPRODUCE.md#level-1-offline-walkthrough-free): code behavior and published-file integrity |
+
+For an interactive example, start the frontend locally and open `/dashboard/theorem`; change the configured latency and speed to observe simulated motion. `/dashboard/live` also needs a configured backend and may incur model-call charges when started. Neither browser view is a robot experiment or a reproduction of the formal six-class Router results.
 
 ## What this repository contains
 
@@ -18,25 +30,29 @@ OmniGuard combines a simulated AGV dashboard, a three-stage cloud agent pipeline
 
 The repository deliberately distinguishes implemented behavior, simulated parameters, measured results, and future proposals. See the [evidence policy](docs/evidence/README.md) before quoting a number.
 
-## System at a glance
+## Request flow: extended six-class HTTP path
 
-```text
-Telemetry / seeded scenario
-          |
-          v
-  physical pre-check
-          |
-          v
-  Router Agent -------- sensor error ------> stop
-          |
-          v
-  Safety Agent -------- policy block ------> safety override
-          |
-          v
-  Action Compiler -------------------------> structured action
+```mermaid
+flowchart TD
+    A[POST /api/simulate_agent] --> B{Extended tenant and emergency stop true?}
+    B -->|Yes| H[Return halt decision and reasons]
+    B -->|No| C[Rate limit and tenant routing]
+    C -->|Legacy| O[Original three-class or tenant-defined path]
+    C -->|Extended| D[Strict input validation]
+    D -->|Invalid| H
+    D -->|Valid| E[Best-effort Cosmos state access]
+    E --> F[Router model call and strict JSON parsing]
+    F --> G[execute merges risks and applies the physical gate]
+    G -->|HALT or unusable reply| H
+    G -->|Movement allowed| S[Safety review]
+    S -->|BLOCK| H
+    S -->|Not blocked| T[Compiler generates actions]
+    T --> U[Code checks action type speed angle and Router constraints]
+    U -->|Violation| H
+    U -->|Valid| V[Return actions and full decision evidence]
 ```
 
-The browser dashboard is a simulation. The Python benchmark calls the configured LLM provider. Azure resources are defined as code, but a checkout of this repository does not prove that a live environment is currently deployed.
+In the extended path, emergency stop and input validation precede external calls; the HP≤0 or battery<5% gate is applied by `execute()` after the Router returns. The legacy path has a pre-model physical check. Rate limiting may return 429. A returned halt decision does not establish that motion stopped while waiting or that a physical brake operated. Real-model evaluation covers the Router/decision function; complete HTTP tests use fake dependencies.
 
 ## Architecture diagrams
 
@@ -46,7 +62,7 @@ The Azure reference design is drawn three ways in [docs/architecture](docs/archi
 
 The Router stage has an extended, opt-in form with **six telemetry-state routes**: `CRITICAL_OBSTACLE`, `OVERHEAT`, `LOW_HEALTH`, `LOW_BATTERY`, `OVERSPEED`, `NORMAL_NAV`, plus an optional operator note that reports a person or obstacle ahead. It is state recognition and routing for a simulated AGV, not chat-style intent recognition. Every threshold, priority and action is an experimental convention of the simulation, not a standard or field data ([specification](eval/spec/LABEL_SPEC.md)).
 
-How one decision is made: code checks the input first (a missing, out-of-range or over-long input is a HALT that never reaches a model); the model answers with one strict JSON object (route and note status); code adds every telemetry risk the model did not name, applies the physical gate and the separate emergency-stop flag, and resolves **one** action (a halt beats any movement; charging and the speed cap become follow-ups). A model reply cannot lift a telemetry risk the code has found or the emergency stop; a risk that comes only from the note can still be missed if the model misreads it. Anything unusable halts the vehicle.
+How one decision is made: code checks the input first (a missing, out-of-range or over-long input is a HALT that never reaches a model); the model answers with one strict JSON object (route and note status); code adds every telemetry risk the model did not name, applies the physical gate and resolves **one** motion state. The separate emergency-stop flag is handled at the HTTP entry. When halted, charging and a speed cap on resumption remain deferred metadata; when movement is allowed, low battery can set a charger goal and overspeed imposes a current speed cap. A model reply cannot lift a telemetry risk the code has found or the emergency stop; a risk that comes only from the note can still be missed if the model misreads it. An unusable Router reply returns a halt decision.
 
 **Scope of the new route.** Only the opt-in tenant `Tenant-Alpha-Extended` (`router_mode: extended`) uses it, in the HTTP simulator endpoint. The original tenants, their prompts and the IoT Hub path are unchanged. `goal: CHARGER` is a structured goal; nothing checks that a vehicle reaches the charger.
 
@@ -56,14 +72,14 @@ How one decision is made: code checks the input first (a missing, out-of-range o
 |---|---|---|
 | Browser dashboard | Latency and clearance dynamics under configured parameters | Anything measured on a robot |
 | Real-model Router evaluation ([report](eval/report.md)) | Prompt B-1.0 on 300 frozen synthetic records and 55 stress cases, scored against rules written in the specification | Production accuracy, generalisation, robot safety |
-| HTTP flow with fake dependencies (`tests/test_extended_endpoint.py`) | The endpoint keeps the evaluation's constraints through Safety and Compiler: input check, emergency stop, action contract, retries off | A run of the endpoint against a real model |
+| HTTP flow with fake dependencies (`tests/test_extended_endpoint.py`) | The endpoint keeps the evaluation's constraints through Safety and Compiler: input check, emergency stop, action contract, Router retries off | A run of the endpoint against a real model |
 | Rule controls R1 / R2 | What fixed keyword rules do on the same records | An optimised-versus-baseline improvement |
 
 ### Formal result (tag `eval-formal-v1`, frozen data `acceptance-v1`)
 
 | | Result |
 |---|---|
-| Test set | 300 independent synthetic records, 50 per class, in **34 families** (not 300 independent scenarios); 72 carry an operator note. Labels are AI annotation with AI review, not expert truth. Inputs stay private; only hashes and counts are public |
+| Test set | 300 synthetic test records authored separately from the dev material, 50 per class, in **34 families** (not 300 independent scenarios); 72 carry an operator note. Labels are AI annotation with AI review, not expert truth. Inputs stay private; only hashes and counts are public |
 | Baseline B-1.0, two independent runs | each **300/300** correct, macro-F1 1.0, note status 72/72 each, no provider error, agreement between the runs 100 %. Record-level 95 % Wilson interval 98.74 %-100 % (not corrected for the 34 families) |
 | Rule controls on the same records | R1 281/300 (macro-F1 0.936, 14 missed halts, 3 needless), R2 280/300 (0.935, 10 missed, 6 needless); note status 23/72 and 15/72 |
 | Stress, 55 cases | 32 requests to the model, 13 invalid inputs rejected in code, 10 injected faults checked offline; no missed halt, needless halt or model error observed |
@@ -75,12 +91,12 @@ These numbers describe this synthetic data under this specification. They are no
 
 These two preserved runs predate the state-routing work. They used the original three labels, a different scenario generator and, for the 60-run, an unknown model, so **they are not the start of any "before / after" comparison with the results above**. They serve different purposes:
 
-| Run | Scenarios | Router accuracy | Critical recall | Early exit | End-to-end latency |
+| Run | Scenarios | Router accuracy | Critical recall | Early exit | Sum of three model-call durations, full-flow cases only |
 |---|---:|---:|---:|---:|---|
-| Historical thesis run, 2026-07-16 | 200 | 94.19% on 172 parseable router outputs | Not recoverable from the preserved summary | 39.5% | Mean 6.174 s |
-| Diagnostic run, 2026-08-18 | 60 | 90.38% on 52 parseable router outputs | 9/14 under the legacy 5–50 cm label; all 8 cases below 30 cm were caught and blocked | 41.67% | Median 7.67 s; mean 16.72 s; max 73.88 s |
+| Historical thesis run, 2026-07-16 | 200 | 94.19% on 172 parseable router outputs | Not recoverable from the preserved summary | 39.5% | n=121; mean 6.174 s |
+| Diagnostic run, 2026-08-18 | 60 | 90.38% on 52 parseable router outputs | 9/14 under the legacy 5–50 cm label; all 8 cases below 30 cm were caught and blocked | 41.67% | n=35; median 7.67 s, mean 16.72 s, max 73.89 s |
 
-These runs are not directly interchangeable. The diagnostic run exposed a long latency tail and five label-policy disagreements at 31–46 cm; all five still produced a final stop action. It should not be presented as a completed 200-scenario benchmark or as five demonstrated unsafe passes. Full provenance and metric definitions are in the [benchmark results guide](src/cloud-orchestrator/embodied_brain/benchmark_results/README.md).
+These durations cover only full-flow cases and exclude browser-to-application HTTP round trips, proxy and Cosmos processing; they are not end-to-end latency. Communication within each model API call is included in its stage timing. These runs are not directly interchangeable. The diagnostic run exposed a long latency tail and five label-policy disagreements at 31–46 cm; all five still produced a final stop action. It should not be presented as a completed 200-scenario benchmark or as five demonstrated unsafe passes. Full provenance and metric definitions are in the [benchmark results guide](src/cloud-orchestrator/embodied_brain/benchmark_results/README.md).
 
 ## Repository layout
 
@@ -117,7 +133,7 @@ Useful checks:
 
 ```bash
 make test
-make docs-test
+python3 -m pytest tests/test_docs_consistency.py -q
 ```
 
 Azure operations are documented in [docs/operations.md](docs/operations.md). Review the target subscription and parameters before running provisioning or destruction commands.

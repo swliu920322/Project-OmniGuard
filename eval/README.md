@@ -46,7 +46,7 @@
 ```text
 eval/
 ├── README.md                 本导航
-├── interview/                面试讲述、Agent 与意图设计、通俗解释、四行卡、代码地图
+├── interview/                学习路线、答题主手册、中文入门、代码地图与按需专题
 ├── report.md                 本轮正式评测结论
 ├── EVIDENCE_INDEX.md         结论到证据的索引、执行台账、验收状态
 ├── LIMITATIONS.md            已知局限与不能声称的结论
@@ -65,7 +65,7 @@ eval/
 └── reproduction_logs/       外部 AI 的离线复现预演记录
 ```
 
-本次只把四份学习／口述文档归入 `interview/`，证据文件仍在原位。旧提交里的路径可能不同；查历史时使用对应提交的目录。
+`interview/` 已按学习路线收拢为九份文件，重复讲稿与过时review已删并；职责见[学习目录](interview/README.md)。证据文件仍在原位，旧提交里的路径可能不同，查历史时使用对应提交的目录。
 
 ## 根目录每份文档负责什么
 

@@ -3,6 +3,9 @@
 > **文档状态**：融合日期 2026-11-10。**核心8问按分支逐项回答：答案、依据和结论性质分列，整题口述放在最后**；15问只作按需查询的细节库。
 > **核心依据**：[正式报告](../report.md)、[冻结清单](../acceptance/FROZEN_MANIFEST.json)、[延迟证据说明](../LATENCY_EVIDENCE.md) 及真实代码。未新增模型调用，未修改冻结题库或提示词。
 
+
+**怎样学这份材料：** 按[学习与内化路线](RECOMMEND_LEARNING_zh.md)推进。先自己回答核心八问中的一题，再查分支；看不懂字段补[中文例子](START_HERE_zh.md)，要验证行为看[代码地图与免费实操](BACKEND_CODE_GUIDE_zh.md#offline-lab)。本页是唯一答题主稿，15问拓展不要求顺序通读。
+
 ---
 
 ## 先用中文认清七个词
@@ -553,9 +556,6 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **例子：** Router 合成 HALT 后，Safety 与 Compiler 记为跳过；若允许继续，Compiler 返回超出速度上限的动作，也会被最终校验改为停车。
 
-**证据与范围：** [代码阅读地图](BACKEND_CODE_GUIDE_zh.md)、[extended.py](../../src/cloud-orchestrator/embodied_brain/extended.py)、[前端请求函数](../../src/client-edge/src/app/dashboard/live/lib/simulation.ts)。正式 300 条主要测 Router 与决定逻辑，HTTP 完整路径用假模型和假依赖测试；不能把两者合起来说成真实模型端到端已验证。IoT Hub 是另一路旧接入，不等于扩展路径已接 MQTT 黑板或 ROS 2。
-
-> **练习检查：** 画出 HTTP 输入→急停／输入预检→外部依赖→Router→风险合成→必要的 Safety／Compiler→动作校验，说明哪些节点能提前返回。
 **“三个 Agent”与“几层”怎么对上（简历写“层”“接力”前先核对）：** 扩展路径一共 3 个模型角色和 3 个纯代码环节，不要把二者混成同一种“层”。
 
 | 环节 | 是否模型 | 位置 | 正式评测是否覆盖 |
@@ -569,6 +569,9 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 “接力”不是每次三个都跑：Router 合成 HALT 就跳过后两个。300/300、70/300、55/55 这些数字只对应“预检＋Router＋风险合成”，不能说成三个 Agent 全链路已评测。简历若写“四层”，要说清是哪四层；仓库里没有这个词，这是本人草稿的分法，需自己列出并和上表对一遍。
 
+**证据与范围：** [代码阅读地图](BACKEND_CODE_GUIDE_zh.md)、[extended.py](../../src/cloud-orchestrator/embodied_brain/extended.py)、[前端请求函数](../../src/client-edge/src/app/dashboard/live/lib/simulation.ts)。正式 300 条主要测 Router 与决定逻辑，HTTP 完整路径用假模型和假依赖测试；不能把两者合起来说成真实模型端到端已验证。IoT Hub 是另一路旧接入，不等于扩展路径已接 MQTT 黑板或 ROS 2。
+
+> **练习检查：** 画出 HTTP 输入→急停／输入预检→外部依赖→Router→风险合成→必要的 Safety／Compiler→动作校验，说明哪些节点能提前返回。
 
 ---
 
@@ -637,11 +640,11 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **证据：** [数据方案](../spec/DATA_PLAN.md)、[标注协议](../spec/ANNOTATION_PROTOCOL.md)、[冻结清单](../acceptance/FROZEN_MANIFEST.json) 的 `class_counts`、`note_status_counts`、`families`、`annotation`。
 
+**追问“300 条是调提示词之前还是之后冻结的？是留出集吗？”：** “提示词在测试集冻结之前已经定稿：`router_v2/prompt.py` 在 git 里只有一次提交（2026-11-07 17:41），测试集冻结提交在同日 19:10，清单里记录了提示词的 SHA-256。开发集那轮没有分类错误可供调参（97.2%，其余 5 次是接口错误，返回的回复全对），所以没有根据测试结果改过提示词。”边界要同时说：git 只能证明提交记录，看不到提交之前的草稿；不能保证造题的人没见过提示词；只验证了一个提示词版本和一个模型家族。**不要说成“开发集兼回归集”，也不要说成无污染的留出集。** 另外，第二轮的 R3 若将来在这 300 条上运行，这批数据对 R3 就不再是纯留出集。
+
 **追问“造题参考 prompt 吗”：** “测试按共同的业务规范制作，清单声明没有使用模型预测或 R1/R2 结果来制题或修题。但我没有逐条审计作者看过哪些材料，不能保证完全不知道提示词。任务本身就按同一套规则构造，仍可能偏容易。”不能把独立会话或哈希说成无污染的绝对证明。
 
 > **练习检查：** 用自己的话解释覆盖配额、家族相关性和 AI 标注局限，不把复核一致率当作真实业务正确率。
-**追问“300 条是调提示词之前还是之后冻结的？是留出集吗？”：** “提示词在测试集冻结之前已经定稿：`router_v2/prompt.py` 在 git 里只有一次提交（2026-11-07 17:41），测试集冻结提交在同日 19:10，清单里记录了提示词的 SHA-256。开发集那轮没有分类错误可供调参（97.2%，其余 5 次是接口错误，返回的回复全对），所以没有根据测试结果改过提示词。”边界要同时说：git 只能证明提交记录，看不到提交之前的草稿；不能保证造题的人没见过提示词；只验证了一个提示词版本和一个模型家族。**不要说成“开发集兼回归集”，也不要说成无污染的留出集。** 另外，第二轮的 R3 若将来在这 300 条上运行，这批数据对 R3 就不再是纯留出集。
-
 
 ---
 
@@ -688,11 +691,11 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **追问“怎么会满分”：** “可能因为规则明确、合成题覆盖有限和对照较弱。满分没有暴露可学习的分类错误，所以没有制作优化版。下一轮计划只比较备注理解与更认真完善的规则；目前不预告赢家和成绩。”见[第二轮计划](../experiments/note_vs_rules_v2/PLAN.md)，具体执行状态另查该轮记录。
 
+**R1 的 19 条主类错误（来自第1跑公开摘要的混淆矩阵 `rule_controls.R1.primary.all_started`）：** 14 条是金标 CRITICAL_OBSTACLE 被判 NORMAL_NAV（即 14 次漏停）；3 条是 NORMAL_NAV 被判 CRITICAL_OBSTACLE（误停）；LOW_HEALTH、OVERHEAT 各 1 条被判 CRITICAL_OBSTACLE（类别混淆，车仍停车）。R1 备注状态的 49 个错误里有 39 个被判成 IRRELEVANT，符合关键词没命中的特征。但 14 次漏停逐条属于阈值、关键词还是语义，需要读私有逐条记录才能分，目前没分。因此只说“固定关键词规则在备注上漏停 14 次”，**不写“语义盲区”**。
+
 > **练习检查：** 指着结果表分别说清三个分母与指标。14 次漏停和 15 条备注误判尚未逐条对应；不要把候选解释说成已查明原因。
 
 ---
-**R1 的 19 条主类错误（来自第1跑公开摘要的混淆矩阵 `rule_controls.R1.primary.all_started`）：** 14 条是金标 CRITICAL_OBSTACLE 被判 NORMAL_NAV（即 14 次漏停）；3 条是 NORMAL_NAV 被判 CRITICAL_OBSTACLE（误停）；LOW_HEALTH、OVERHEAT 各 1 条被判 CRITICAL_OBSTACLE（类别混淆，车仍停车）。R1 备注状态的 49 个错误里有 39 个被判成 IRRELEVANT，符合关键词没命中的特征。但 14 次漏停逐条属于阈值、关键词还是语义，需要读私有逐条记录才能分，目前没分。因此只说“固定关键词规则在备注上漏停 14 次”，**不写“语义盲区”**。
-
 
 <a id="q14"></a>
 
@@ -708,11 +711,11 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 | 类型 10、11，注入超时与限流 | 10 例按预期停车，0 API 请求 | 用假故障检查处理路径 |
 | 类型 3–8 与类型 9 的合法部分 | 32 次真实请求 | 不可用回复、错主类、真实接口错误、漏停、误停均为 0 |
 
+**55 例的“通过”指什么：** 55/55 按预期完成（`stress.total`：`missed_halt`、`needless_halt`、`model_wrong_primary`、`model_unusable_replies`、`interface_errors`、`interrupted` 均为 0）。“通过”只表示没出现这些失败，不是 55 个独立场景，也不是对未测输入的保证；10 例注入故障是本地模拟，不是真实接口故障。
+
 **推理怎么展开：** `55=13+10+32`。故意提供非法输入后被拒绝，是预期行为，不是模型答错。人为抛超时异常，不证明服务商真的发生过一次超时，更不证明断网时真车能及时停下。
 
 **错误处理例子：** 输入电量 150%→INVALID_INPUT；Router 回复带代码围栏或非正常结束→不可用回复；Compiler 返回 `move` 却缺速度→CONSTRAINT_VIOLATION。它们的来源不同，不要统一叫“模型幻觉”。
-**55 例的“通过”指什么：** 55/55 按预期完成（`stress.total`：`missed_halt`、`needless_halt`、`model_wrong_primary`、`model_unusable_replies`、`interface_errors`、`interrupted` 均为 0）。“通过”只表示没出现这些失败，不是 55 个独立场景，也不是对未测输入的保证；10 例注入故障是本地模拟，不是真实接口故障。
-
 
 **怎么证明：** [压力摘要](../formal/results/20261107T115548Z_stress_real_8352b4ff/public_summary.json) 的 `stress.total` 和 `stress.by_type`。具体类型名称和范围见[数据方案](../spec/DATA_PLAN.md)。本轮没发现失败，不能为满足“错误分析”而编造模型失败类型。
 
@@ -880,6 +883,6 @@ PY
 
 日常先更新核心8问对应的回答、推理、例子与证据，再同步受影响的细节；不另建一套答案。已经解决的评语删掉；有新正式结果再更新数字，不另建平行答案。
 
-早期稿件与完整审阅可从 Git 提交 `3895efb` 查看，旧 review 路径只作跳转入口。未核实的个人贡献、真实硬件表现和逐条错误原因，不因整理完成而变成已验证事实。
+早期稿件与完整审阅可从 Git 提交 `3895efb` 查看，旧 review 已撤下，使用对应提交查看历史，不再保留跳转文件。未核实的个人贡献、真实硬件表现和逐条错误原因，不因整理完成而变成已验证事实。
 
 下一步按[学习与口述练习](RECOMMEND_LEARNING_zh.md)推进。正式证据仍以[报告](../report.md)、[延迟说明](../LATENCY_EVIDENCE.md)及[证据索引](../EVIDENCE_INDEX.md)为准；本次没有改变任何验收状态。
