@@ -1,0 +1,72 @@
+{
+  "authorization": {
+    "authorized_by": "owner explicit authorization in conversation 2026-11-15; exact wording in private authorization.json",
+    "usd_cap_as_given": "0.19"
+  },
+  "baseline": {
+    "name": "B",
+    "prompt_sha256": "9247896719b66e139d0155f6f48716805805e6ba3ceec356c8264ee2b3d4a609",
+    "prompt_version": "B-1.0"
+  },
+  "budget": {
+    "max_calls": 180,
+    "max_tokens": 380000,
+    "max_usd": "0.19",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.3333334",
+      "output_usd_per_mtok": "1.3333334",
+      "source": "Official DeepSeek Flash pricing checked 2026-11-15 https://api-docs.deepseek.com/quick_start/pricing/; conservative guard rates exceed official peak 0.30/1.20 USD per Mtok"
+    }
+  },
+  "code_freeze_sha256": "b33c68bc486106ca2a71cf112d30f3c0579efcabb8113e15d12b4ae848c8718f",
+  "code_hashes": {
+    "eval/baseline_b/evaluate.py": "0738e3f54be1340e9f1b658b4e008bbc2901f7688baf5b08b733d4655e5d3b18",
+    "eval/baseline_b/prompt_b.py": "48611f8a5d690dd68e1b751bffc6918fdfade0fe16ac29cd3e7e8e6ceb025b62",
+    "eval/baseline_b/run_dev_eval.py": "714f54fbba04180d268fc209458184b23a0ffc77024745cc68afb29344263d92",
+    "eval/baseline_v1/measure/measure_lib.py": "1491b76a7b62aa8b33907d14897a7352752876e93c4b0a297737c4df1c067bf5",
+    "eval/experiments/note_vs_rules_v2/note_analysis.py": "4d55639a4e7e01ebc93f82491a2c263397dfa8ffc67d18b10848407fc6f6a093",
+    "eval/experiments/note_vs_rules_v2/r3.py": "07ef3a7403548c6b350bb2d73e8b8868a9ce153bbdcd2aca37004c7b58e89879",
+    "eval/experiments/note_vs_rules_v2/run_note_compare.py": "45a51f581dc29df72873d49bce32402e791eddfb2701f8dab1f43e24e8a446f0",
+    "eval/formal/run_formal.py": "afecf5d3a8e2663145a693a2695924bb63bc7b6ce75da8758d76dc1f3afaf86c",
+    "eval/spec/SHA256SUMS": "4ee9b7901a3199bb98d37fde57eb18242960f7deb0a48429a3d85b4c6121cacb",
+    "eval/spec/reference_labeler.py": "489c1c252d5d14ecf28af06eeb734e33b1ddeaaafae34b9234dc605aef7827d2",
+    "eval/spec/rule_control.py": "22e0456bdc41f0b60cffa9a47ce6023ebe44151b85d43fe0bb95e2aa81b689dc",
+    "src/cloud-orchestrator/router_v2/pipeline.py": "55dddf702606ae8a49c3ed22c7065441647555e2f3a2f5f34c90ae84bd28f5e8",
+    "src/cloud-orchestrator/router_v2/prompt.py": "4f6eae88f33337c5116a46e36e7b5915945b02b6b62970b354131c3164392e68",
+    "src/cloud-orchestrator/router_v2/rules.py": "489c1c252d5d14ecf28af06eeb734e33b1ddeaaafae34b9234dc605aef7827d2"
+  },
+  "data_is_frozen_acceptance_file": false,
+  "dataset_sha256": {
+    "main": "6249acb7385857262942e746a91c55f19500f8be0905a7499ae2b25b580a1369",
+    "stress": null
+  },
+  "environment": {
+    "platform": "macOS-15.7.3-arm64-arm-64bit",
+    "python": "3.11.9"
+  },
+  "frozen_tag": "eval-note-v2-r3-final-20261115",
+  "is_canary": false,
+  "manifest_version": "acceptance-v1",
+  "mode": "real",
+  "model": {
+    "configured_model_name": "deepseek-flash",
+    "identity_stated_by_owner": "deepseek-flash; provider states DeepSeek-V4.1-Flash-1017; actual version not independently verified",
+    "note": "the API reports only an alias; temperature=0 is sent but the provider's default reasoning mode ignores it",
+    "unverified": true
+  },
+  "policy": "one request per record, no retry, failures count as wrong, no tuning on this run; record-level results stay private",
+  "repo_head": "1eddd79df16e5c55249f8bf5ba31efd6debf629a",
+  "request_settings": {
+    "local_result_cache": "none: the client is called directly for every record; ask_agent's cache is not used",
+    "max_tokens": 2048,
+    "sdk_max_retries": 0,
+    "sdk_timeout_s": 60.0,
+    "temperature": 0.0
+  },
+  "run_id": "20261115T152854Z_main_real_e5fd14c2",
+  "scoring_policy": "an error, an unusable or truncated reply and an interrupted request stay in the denominator and count as wrong; nothing is retried or dropped; primary route is the main metric, note_status is reported apart, a success-only accuracy may be shown next to the main figure and never instead of it",
+  "spec_version": "1.0",
+  "started_at": "2026-11-15T15:28:54.047323Z",
+  "suite": "main"
+}

@@ -1,0 +1,1541 @@
+{
+  "binding": {
+    "code_hashes": {
+      "eval/baseline_b/evaluate.py": "0738e3f54be1340e9f1b658b4e008bbc2901f7688baf5b08b733d4655e5d3b18",
+      "eval/baseline_b/prompt_b.py": "48611f8a5d690dd68e1b751bffc6918fdfade0fe16ac29cd3e7e8e6ceb025b62",
+      "eval/baseline_b/run_dev_eval.py": "714f54fbba04180d268fc209458184b23a0ffc77024745cc68afb29344263d92",
+      "eval/baseline_v1/measure/measure_lib.py": "1491b76a7b62aa8b33907d14897a7352752876e93c4b0a297737c4df1c067bf5",
+      "eval/experiments/note_vs_rules_v2/note_analysis.py": "4d55639a4e7e01ebc93f82491a2c263397dfa8ffc67d18b10848407fc6f6a093",
+      "eval/experiments/note_vs_rules_v2/r3.py": "07ef3a7403548c6b350bb2d73e8b8868a9ce153bbdcd2aca37004c7b58e89879",
+      "eval/experiments/note_vs_rules_v2/run_note_compare.py": "45a51f581dc29df72873d49bce32402e791eddfb2701f8dab1f43e24e8a446f0",
+      "eval/formal/run_formal.py": "afecf5d3a8e2663145a693a2695924bb63bc7b6ce75da8758d76dc1f3afaf86c",
+      "eval/spec/SHA256SUMS": "4ee9b7901a3199bb98d37fde57eb18242960f7deb0a48429a3d85b4c6121cacb",
+      "eval/spec/reference_labeler.py": "489c1c252d5d14ecf28af06eeb734e33b1ddeaaafae34b9234dc605aef7827d2",
+      "eval/spec/rule_control.py": "22e0456bdc41f0b60cffa9a47ce6023ebe44151b85d43fe0bb95e2aa81b689dc",
+      "src/cloud-orchestrator/router_v2/pipeline.py": "55dddf702606ae8a49c3ed22c7065441647555e2f3a2f5f34c90ae84bd28f5e8",
+      "src/cloud-orchestrator/router_v2/prompt.py": "4f6eae88f33337c5116a46e36e7b5915945b02b6b62970b354131c3164392e68",
+      "src/cloud-orchestrator/router_v2/rules.py": "489c1c252d5d14ecf28af06eeb734e33b1ddeaaafae34b9234dc605aef7827d2"
+    },
+    "data_sha256": "6249acb7385857262942e746a91c55f19500f8be0905a7499ae2b25b580a1369",
+    "data_stats": {
+      "duplicate_rendered_inputs": 0,
+      "exact_input_overlap_with_public_material": 0,
+      "exact_note_overlap_with_public_material": 0,
+      "families": 60,
+      "family_ids_shared_with_public_material": 0,
+      "gate_not_pass": 0,
+      "language_counts": {
+        "en": 60,
+        "mixed": 60,
+        "zh": 60
+      },
+      "largest_family": 3,
+      "longest_note_chars": 169,
+      "note_only_risk_on_non_stopping_risk_telemetry": 12,
+      "note_only_risk_on_normal_telemetry": 30,
+      "note_only_risk_records": 42,
+      "note_status_counts": {
+        "AFFIRMED_CURRENT": 30,
+        "HISTORICAL": 30,
+        "HYPOTHETICAL": 30,
+        "IRRELEVANT": 30,
+        "NEGATED": 30,
+        "UNCERTAIN": 30
+      },
+      "records": 180,
+      "status_x_language": {
+        "AFFIRMED_CURRENT|en": 10,
+        "AFFIRMED_CURRENT|mixed": 10,
+        "AFFIRMED_CURRENT|zh": 10,
+        "HISTORICAL|en": 10,
+        "HISTORICAL|mixed": 10,
+        "HISTORICAL|zh": 10,
+        "HYPOTHETICAL|en": 10,
+        "HYPOTHETICAL|mixed": 10,
+        "HYPOTHETICAL|zh": 10,
+        "IRRELEVANT|en": 10,
+        "IRRELEVANT|mixed": 10,
+        "IRRELEVANT|zh": 10,
+        "NEGATED|en": 10,
+        "NEGATED|mixed": 10,
+        "NEGATED|zh": 10,
+        "UNCERTAIN|en": 10,
+        "UNCERTAIN|mixed": 10,
+        "UNCERTAIN|zh": 10
+      },
+      "status_x_language_x_telemetry": {
+        "AFFIRMED_CURRENT|en|normal": 5,
+        "AFFIRMED_CURRENT|en|risk": 5,
+        "AFFIRMED_CURRENT|mixed|normal": 5,
+        "AFFIRMED_CURRENT|mixed|risk": 5,
+        "AFFIRMED_CURRENT|zh|normal": 5,
+        "AFFIRMED_CURRENT|zh|risk": 5,
+        "HISTORICAL|en|normal": 5,
+        "HISTORICAL|en|risk": 5,
+        "HISTORICAL|mixed|normal": 5,
+        "HISTORICAL|mixed|risk": 5,
+        "HISTORICAL|zh|normal": 5,
+        "HISTORICAL|zh|risk": 5,
+        "HYPOTHETICAL|en|normal": 5,
+        "HYPOTHETICAL|en|risk": 5,
+        "HYPOTHETICAL|mixed|normal": 5,
+        "HYPOTHETICAL|mixed|risk": 5,
+        "HYPOTHETICAL|zh|normal": 5,
+        "HYPOTHETICAL|zh|risk": 5,
+        "IRRELEVANT|en|normal": 5,
+        "IRRELEVANT|en|risk": 5,
+        "IRRELEVANT|mixed|normal": 5,
+        "IRRELEVANT|mixed|risk": 5,
+        "IRRELEVANT|zh|normal": 5,
+        "IRRELEVANT|zh|risk": 5,
+        "NEGATED|en|normal": 5,
+        "NEGATED|en|risk": 5,
+        "NEGATED|mixed|normal": 5,
+        "NEGATED|mixed|risk": 5,
+        "NEGATED|zh|normal": 5,
+        "NEGATED|zh|risk": 5,
+        "UNCERTAIN|en|normal": 5,
+        "UNCERTAIN|en|risk": 5,
+        "UNCERTAIN|mixed|normal": 5,
+        "UNCERTAIN|mixed|risk": 5,
+        "UNCERTAIN|zh|normal": 5,
+        "UNCERTAIN|zh|risk": 5
+      },
+      "status_x_telemetry": {
+        "AFFIRMED_CURRENT|normal": 15,
+        "AFFIRMED_CURRENT|risk": 15,
+        "HISTORICAL|normal": 15,
+        "HISTORICAL|risk": 15,
+        "HYPOTHETICAL|normal": 15,
+        "HYPOTHETICAL|risk": 15,
+        "IRRELEVANT|normal": 15,
+        "IRRELEVANT|risk": 15,
+        "NEGATED|normal": 15,
+        "NEGATED|risk": 15,
+        "UNCERTAIN|normal": 15,
+        "UNCERTAIN|risk": 15
+      }
+    },
+    "freeze_sha256": "d3afaf97a417b15e9a2d65c0b21174e6d4a5377f9ef27b4ef21d07f30d1276c5",
+    "mode": "real",
+    "prompt_sha256": "9247896719b66e139d0155f6f48716805805e6ba3ceec356c8264ee2b3d4a609",
+    "r3_version": "v2",
+    "run_calls_sha256": "090625b63538d45c53723a333055d456c25b6e01b36d3aa1ec38f8f1b709ece6",
+    "run_seal_verifies": true,
+    "run_summary_sha256": "155c98763293bfe4d6109cf29500a399ac3262708dcbaa4be7d5de99b5eed0e7"
+  },
+  "comparisons": {
+    "model_vs_R1": {
+      "note_accuracy_difference": {
+        "ci95_points": [
+          53.33,
+          71.67
+        ],
+        "difference_points": 62.78,
+        "families": 60,
+        "interval": "95% percentile",
+        "note": "estimates sampling uncertainty over families; it does not repair the representativeness of synthetic data",
+        "records": 180,
+        "resamples": 2000,
+        "seed": 20261109,
+        "unit": "family"
+      },
+      "paired": {
+        "both_correct": 59,
+        "both_wrong": 6,
+        "n": 180,
+        "only_first_correct": 114,
+        "only_second_correct": 1
+      }
+    },
+    "model_vs_R2": {
+      "note_accuracy_difference": {
+        "ci95_points": [
+          63.33,
+          82.78
+        ],
+        "difference_points": 73.33,
+        "families": 60,
+        "interval": "95% percentile",
+        "note": "estimates sampling uncertainty over families; it does not repair the representativeness of synthetic data",
+        "records": 180,
+        "resamples": 2000,
+        "seed": 20261109,
+        "unit": "family"
+      },
+      "paired": {
+        "both_correct": 41,
+        "both_wrong": 7,
+        "n": 180,
+        "only_first_correct": 132,
+        "only_second_correct": 0
+      }
+    },
+    "model_vs_R3": {
+      "note_accuracy_difference": {
+        "ci95_points": [
+          43.33,
+          63.33
+        ],
+        "difference_points": 53.33,
+        "families": 60,
+        "interval": "95% percentile",
+        "note": "estimates sampling uncertainty over families; it does not repair the representativeness of synthetic data",
+        "records": 180,
+        "resamples": 2000,
+        "seed": 20261109,
+        "unit": "family"
+      },
+      "paired": {
+        "both_correct": 75,
+        "both_wrong": 5,
+        "n": 180,
+        "only_first_correct": 98,
+        "only_second_correct": 2
+      }
+    }
+  },
+  "complete": true,
+  "completeness_note": "complete = the run finished and every record was started; a stopped or interrupted run is NOT a full result and its figures must not be quoted as one",
+  "headline": "note status accuracy (the main metric of this round); the primary route and the executed action are reported apart",
+  "local_rule_time": {
+    "R1": {
+      "max": 472.542,
+      "median": 77.541,
+      "n": 180,
+      "note": "local string processing on one machine; not the same kind of time as a model request",
+      "p95_nearest_rank": 125.792,
+      "total_ms": 15.411,
+      "unit_of_median_p95_max": "microseconds per record"
+    },
+    "R2": {
+      "max": 59.208,
+      "median": 30.25,
+      "n": 180,
+      "note": "local string processing on one machine; not the same kind of time as a model request",
+      "p95_nearest_rank": 49.042,
+      "total_ms": 5.884,
+      "unit_of_median_p95_max": "microseconds per record"
+    },
+    "R3": {
+      "max": 474.083,
+      "median": 64.041,
+      "n": 180,
+      "note": "local string processing on one machine; not the same kind of time as a model request",
+      "p95_nearest_rank": 293.833,
+      "total_ms": 19.09,
+      "unit_of_median_p95_max": "microseconds per record"
+    }
+  },
+  "model_cost_and_latency": {
+    "cost_note": "estimate at the configured rates (not a bill); a request with no reported usage keeps its worst-case reservation, which is an upper bound and not a spend, and is never counted as zero",
+    "latency_ms_all_requests": {
+      "max": 10885.4,
+      "median": 1750.05,
+      "n": 180,
+      "p95_nearest_rank": 3314.7
+    },
+    "latency_ms_successful_requests": {
+      "max": 10885.4,
+      "median": 1750.05,
+      "n": 180,
+      "p95_nearest_rank": 3314.7
+    },
+    "latency_note": "wall clock of one API request around the client call (network + service + hidden reasoning); not an HTTP business end-to-end latency and not comparable with local rule time",
+    "requests": 180,
+    "requests_with_reported_usage": 180,
+    "requests_without_reported_usage": 0,
+    "tokens_reported": {
+      "completion": 41848,
+      "prompt": 161642
+    },
+    "usd_from_reported_usage": 0.109678,
+    "usd_mean_per_request_with_usage": 0.000609,
+    "usd_reserved_for_requests_without_usage": 0.0
+  },
+  "model_started": 180,
+  "model_success_only": {
+    "ci95_wilson": [
+      0.9219,
+      0.981
+    ],
+    "n": 180,
+    "note": "among requests that returned a usable reply; shown NEXT TO the main figure, never instead of it",
+    "note_accuracy": 0.9611,
+    "note_correct": 173
+  },
+  "not_started": 0,
+  "records": 180,
+  "schemes": {
+    "R1": {
+      "not_started": 0,
+      "note_status": {
+        "accuracy": 0.3333,
+        "ci95_wilson": [
+          0.2686,
+          0.405
+        ],
+        "confusion_gold_x_outcome": {
+          "AFFIRMED_CURRENT": {
+            "AFFIRMED_CURRENT": 11,
+            "IRRELEVANT": 19
+          },
+          "HISTORICAL": {
+            "AFFIRMED_CURRENT": 5,
+            "HISTORICAL": 6,
+            "IRRELEVANT": 19
+          },
+          "HYPOTHETICAL": {
+            "AFFIRMED_CURRENT": 2,
+            "HISTORICAL": 1,
+            "HYPOTHETICAL": 4,
+            "IRRELEVANT": 23
+          },
+          "IRRELEVANT": {
+            "IRRELEVANT": 30
+          },
+          "NEGATED": {
+            "AFFIRMED_CURRENT": 6,
+            "HISTORICAL": 1,
+            "IRRELEVANT": 16,
+            "NEGATED": 7
+          },
+          "UNCERTAIN": {
+            "AFFIRMED_CURRENT": 7,
+            "HYPOTHETICAL": 2,
+            "IRRELEVANT": 17,
+            "NEGATED": 2,
+            "UNCERTAIN": 2
+          }
+        },
+        "correct": 60,
+        "macro_f1": 0.2954,
+        "mistakes": [
+          {
+            "count": 19,
+            "gold": "AFFIRMED_CURRENT",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 5,
+            "gold": "HISTORICAL",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 19,
+            "gold": "HISTORICAL",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 2,
+            "gold": "HYPOTHETICAL",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 1,
+            "gold": "HYPOTHETICAL",
+            "got": "HISTORICAL"
+          },
+          {
+            "count": 23,
+            "gold": "HYPOTHETICAL",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 6,
+            "gold": "NEGATED",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 1,
+            "gold": "NEGATED",
+            "got": "HISTORICAL"
+          },
+          {
+            "count": 16,
+            "gold": "NEGATED",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 7,
+            "gold": "UNCERTAIN",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 2,
+            "gold": "UNCERTAIN",
+            "got": "HYPOTHETICAL"
+          },
+          {
+            "count": 17,
+            "gold": "UNCERTAIN",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 2,
+            "gold": "UNCERTAIN",
+            "got": "NEGATED"
+          }
+        ],
+        "n": 180,
+        "per_status": {
+          "AFFIRMED_CURRENT": {
+            "f1": 0.3607,
+            "precision": 0.3548,
+            "recall": 0.3667,
+            "support": 30
+          },
+          "HISTORICAL": {
+            "f1": 0.3158,
+            "precision": 0.75,
+            "recall": 0.2,
+            "support": 30
+          },
+          "HYPOTHETICAL": {
+            "f1": 0.2222,
+            "precision": 0.6667,
+            "recall": 0.1333,
+            "support": 30
+          },
+          "IRRELEVANT": {
+            "f1": 0.3896,
+            "precision": 0.2419,
+            "recall": 1.0,
+            "support": 30
+          },
+          "NEGATED": {
+            "f1": 0.359,
+            "precision": 0.7778,
+            "recall": 0.2333,
+            "support": 30
+          },
+          "UNCERTAIN": {
+            "f1": 0.125,
+            "precision": 1.0,
+            "recall": 0.0667,
+            "support": 30
+          }
+        },
+        "per_status_recall": {
+          "AFFIRMED_CURRENT": {
+            "recall": 0.3667,
+            "support": 30
+          },
+          "HISTORICAL": {
+            "recall": 0.2,
+            "support": 30
+          },
+          "HYPOTHETICAL": {
+            "recall": 0.1333,
+            "support": 30
+          },
+          "IRRELEVANT": {
+            "recall": 1.0,
+            "support": 30
+          },
+          "NEGATED": {
+            "recall": 0.2333,
+            "support": 30
+          },
+          "UNCERTAIN": {
+            "recall": 0.0667,
+            "support": 30
+          }
+        }
+      },
+      "outcomes": {
+        "CRITICAL_OBSTACLE": 37,
+        "LOW_BATTERY": 19,
+        "LOW_HEALTH": 14,
+        "NORMAL_NAV": 77,
+        "OVERHEAT": 22,
+        "OVERSPEED": 11
+      },
+      "primary": {
+        "accuracy": 0.7278,
+        "ci95_wilson": [
+          0.6585,
+          0.7875
+        ],
+        "correct": 131,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 0.7748,
+        "n": 180
+      },
+      "records": 180,
+      "safety": {
+        "executed_motion": {
+          "HALT": 73,
+          "MOVE": 96,
+          "MOVE_LIMITED": 11
+        },
+        "fault_halts": 0,
+        "floor_override": 18,
+        "floor_override_rate": 0.1,
+        "missed_halt": 31,
+        "n": 180,
+        "needless_halt": 8,
+        "parse_failure_halts": 0
+      },
+      "started": 180,
+      "subsets": {
+        "language_en": {
+          "fault_halts": 0,
+          "missed_halt": 11,
+          "n": 60,
+          "needless_halt": 4,
+          "note_accuracy": 0.3333,
+          "note_correct": 20,
+          "parse_failure_halts": 0,
+          "primary_correct": 42
+        },
+        "language_mixed": {
+          "fault_halts": 0,
+          "missed_halt": 10,
+          "n": 60,
+          "needless_halt": 3,
+          "note_accuracy": 0.35,
+          "note_correct": 21,
+          "parse_failure_halts": 0,
+          "primary_correct": 41
+        },
+        "language_zh": {
+          "fault_halts": 0,
+          "missed_halt": 10,
+          "n": 60,
+          "needless_halt": 1,
+          "note_accuracy": 0.3167,
+          "note_correct": 19,
+          "parse_failure_halts": 0,
+          "primary_correct": 48
+        },
+        "note_only_risk": {
+          "fault_halts": 0,
+          "missed_halt": 31,
+          "n": 42,
+          "needless_halt": 0,
+          "note_accuracy": 0.1667,
+          "note_correct": 7,
+          "parse_failure_halts": 0,
+          "primary_correct": 11
+        },
+        "status_AFFIRMED_CURRENT": {
+          "fault_halts": 0,
+          "missed_halt": 14,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 0.3667,
+          "note_correct": 11,
+          "parse_failure_halts": 0,
+          "primary_correct": 12
+        },
+        "status_HISTORICAL": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 3,
+          "note_accuracy": 0.2,
+          "note_correct": 6,
+          "parse_failure_halts": 0,
+          "primary_correct": 26
+        },
+        "status_HYPOTHETICAL": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 2,
+          "note_accuracy": 0.1333,
+          "note_correct": 4,
+          "parse_failure_halts": 0,
+          "primary_correct": 28
+        },
+        "status_IRRELEVANT": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 1.0,
+          "note_correct": 30,
+          "parse_failure_halts": 0,
+          "primary_correct": 30
+        },
+        "status_NEGATED": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 3,
+          "note_accuracy": 0.2333,
+          "note_correct": 7,
+          "parse_failure_halts": 0,
+          "primary_correct": 25
+        },
+        "status_UNCERTAIN": {
+          "fault_halts": 0,
+          "missed_halt": 17,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 0.0667,
+          "note_correct": 2,
+          "parse_failure_halts": 0,
+          "primary_correct": 10
+        },
+        "telemetry_normal": {
+          "fault_halts": 0,
+          "missed_halt": 23,
+          "n": 90,
+          "needless_halt": 6,
+          "note_accuracy": 0.3,
+          "note_correct": 27,
+          "parse_failure_halts": 0,
+          "primary_correct": 61
+        },
+        "telemetry_with_risk": {
+          "fault_halts": 0,
+          "missed_halt": 8,
+          "n": 90,
+          "needless_halt": 2,
+          "note_accuracy": 0.3667,
+          "note_correct": 33,
+          "parse_failure_halts": 0,
+          "primary_correct": 70
+        }
+      }
+    },
+    "R2": {
+      "not_started": 0,
+      "note_status": {
+        "accuracy": 0.2278,
+        "ci95_wilson": [
+          0.1726,
+          0.2944
+        ],
+        "confusion_gold_x_outcome": {
+          "AFFIRMED_CURRENT": {
+            "AFFIRMED_CURRENT": 11,
+            "IRRELEVANT": 19
+          },
+          "HISTORICAL": {
+            "AFFIRMED_CURRENT": 11,
+            "IRRELEVANT": 19
+          },
+          "HYPOTHETICAL": {
+            "AFFIRMED_CURRENT": 7,
+            "IRRELEVANT": 23
+          },
+          "IRRELEVANT": {
+            "IRRELEVANT": 30
+          },
+          "NEGATED": {
+            "AFFIRMED_CURRENT": 14,
+            "IRRELEVANT": 16
+          },
+          "UNCERTAIN": {
+            "AFFIRMED_CURRENT": 13,
+            "IRRELEVANT": 17
+          }
+        },
+        "correct": 41,
+        "macro_f1": 0.1076,
+        "mistakes": [
+          {
+            "count": 19,
+            "gold": "AFFIRMED_CURRENT",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 11,
+            "gold": "HISTORICAL",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 19,
+            "gold": "HISTORICAL",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 7,
+            "gold": "HYPOTHETICAL",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 23,
+            "gold": "HYPOTHETICAL",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 14,
+            "gold": "NEGATED",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 16,
+            "gold": "NEGATED",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 13,
+            "gold": "UNCERTAIN",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 17,
+            "gold": "UNCERTAIN",
+            "got": "IRRELEVANT"
+          }
+        ],
+        "n": 180,
+        "per_status": {
+          "AFFIRMED_CURRENT": {
+            "f1": 0.2558,
+            "precision": 0.1964,
+            "recall": 0.3667,
+            "support": 30
+          },
+          "HISTORICAL": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": 0.0,
+            "support": 30
+          },
+          "HYPOTHETICAL": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": 0.0,
+            "support": 30
+          },
+          "IRRELEVANT": {
+            "f1": 0.3896,
+            "precision": 0.2419,
+            "recall": 1.0,
+            "support": 30
+          },
+          "NEGATED": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": 0.0,
+            "support": 30
+          },
+          "UNCERTAIN": {
+            "f1": 0.0,
+            "precision": null,
+            "recall": 0.0,
+            "support": 30
+          }
+        },
+        "per_status_recall": {
+          "AFFIRMED_CURRENT": {
+            "recall": 0.3667,
+            "support": 30
+          },
+          "HISTORICAL": {
+            "recall": 0.0,
+            "support": 30
+          },
+          "HYPOTHETICAL": {
+            "recall": 0.0,
+            "support": 30
+          },
+          "IRRELEVANT": {
+            "recall": 1.0,
+            "support": 30
+          },
+          "NEGATED": {
+            "recall": 0.0,
+            "support": 30
+          },
+          "UNCERTAIN": {
+            "recall": 0.0,
+            "support": 30
+          }
+        }
+      },
+      "outcomes": {
+        "CRITICAL_OBSTACLE": 60,
+        "LOW_BATTERY": 18,
+        "LOW_HEALTH": 10,
+        "NORMAL_NAV": 65,
+        "OVERHEAT": 19,
+        "OVERSPEED": 8
+      },
+      "primary": {
+        "accuracy": 0.6444,
+        "ci95_wilson": [
+          0.5722,
+          0.7107
+        ],
+        "correct": 116,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 0.6817,
+        "n": 180
+      },
+      "records": 180,
+      "safety": {
+        "executed_motion": {
+          "HALT": 89,
+          "MOVE": 83,
+          "MOVE_LIMITED": 8
+        },
+        "fault_halts": 0,
+        "floor_override": 29,
+        "floor_override_rate": 0.1611,
+        "missed_halt": 28,
+        "n": 180,
+        "needless_halt": 21,
+        "parse_failure_halts": 0
+      },
+      "started": 180,
+      "subsets": {
+        "language_en": {
+          "fault_halts": 0,
+          "missed_halt": 10,
+          "n": 60,
+          "needless_halt": 7,
+          "note_accuracy": 0.2333,
+          "note_correct": 14,
+          "parse_failure_halts": 0,
+          "primary_correct": 38
+        },
+        "language_mixed": {
+          "fault_halts": 0,
+          "missed_halt": 9,
+          "n": 60,
+          "needless_halt": 9,
+          "note_accuracy": 0.2333,
+          "note_correct": 14,
+          "parse_failure_halts": 0,
+          "primary_correct": 35
+        },
+        "language_zh": {
+          "fault_halts": 0,
+          "missed_halt": 9,
+          "n": 60,
+          "needless_halt": 5,
+          "note_accuracy": 0.2167,
+          "note_correct": 13,
+          "parse_failure_halts": 0,
+          "primary_correct": 43
+        },
+        "note_only_risk": {
+          "fault_halts": 0,
+          "missed_halt": 28,
+          "n": 42,
+          "needless_halt": 0,
+          "note_accuracy": 0.1667,
+          "note_correct": 7,
+          "parse_failure_halts": 0,
+          "primary_correct": 14
+        },
+        "status_AFFIRMED_CURRENT": {
+          "fault_halts": 0,
+          "missed_halt": 14,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 0.3667,
+          "note_correct": 11,
+          "parse_failure_halts": 0,
+          "primary_correct": 12
+        },
+        "status_HISTORICAL": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 7,
+          "note_accuracy": 0.0,
+          "note_correct": 0,
+          "parse_failure_halts": 0,
+          "primary_correct": 20
+        },
+        "status_HYPOTHETICAL": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 5,
+          "note_accuracy": 0.0,
+          "note_correct": 0,
+          "parse_failure_halts": 0,
+          "primary_correct": 23
+        },
+        "status_IRRELEVANT": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 1.0,
+          "note_correct": 30,
+          "parse_failure_halts": 0,
+          "primary_correct": 30
+        },
+        "status_NEGATED": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 9,
+          "note_accuracy": 0.0,
+          "note_correct": 0,
+          "parse_failure_halts": 0,
+          "primary_correct": 17
+        },
+        "status_UNCERTAIN": {
+          "fault_halts": 0,
+          "missed_halt": 14,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 0.0,
+          "note_correct": 0,
+          "parse_failure_halts": 0,
+          "primary_correct": 14
+        },
+        "telemetry_normal": {
+          "fault_halts": 0,
+          "missed_halt": 20,
+          "n": 90,
+          "needless_halt": 15,
+          "note_accuracy": 0.2111,
+          "note_correct": 19,
+          "parse_failure_halts": 0,
+          "primary_correct": 55
+        },
+        "telemetry_with_risk": {
+          "fault_halts": 0,
+          "missed_halt": 8,
+          "n": 90,
+          "needless_halt": 6,
+          "note_accuracy": 0.2444,
+          "note_correct": 22,
+          "parse_failure_halts": 0,
+          "primary_correct": 61
+        }
+      }
+    },
+    "R3": {
+      "not_started": 0,
+      "note_status": {
+        "accuracy": 0.4278,
+        "ci95_wilson": [
+          0.3578,
+          0.5008
+        ],
+        "confusion_gold_x_outcome": {
+          "AFFIRMED_CURRENT": {
+            "AFFIRMED_CURRENT": 17,
+            "HISTORICAL": 1,
+            "IRRELEVANT": 11,
+            "NEGATED": 1
+          },
+          "HISTORICAL": {
+            "AFFIRMED_CURRENT": 3,
+            "HISTORICAL": 10,
+            "IRRELEVANT": 17
+          },
+          "HYPOTHETICAL": {
+            "AFFIRMED_CURRENT": 4,
+            "HYPOTHETICAL": 5,
+            "IRRELEVANT": 21
+          },
+          "IRRELEVANT": {
+            "AFFIRMED_CURRENT": 2,
+            "IRRELEVANT": 28
+          },
+          "NEGATED": {
+            "AFFIRMED_CURRENT": 6,
+            "HISTORICAL": 1,
+            "IRRELEVANT": 9,
+            "NEGATED": 14
+          },
+          "UNCERTAIN": {
+            "AFFIRMED_CURRENT": 9,
+            "HYPOTHETICAL": 2,
+            "IRRELEVANT": 10,
+            "NEGATED": 6,
+            "UNCERTAIN": 3
+          }
+        },
+        "correct": 77,
+        "macro_f1": 0.4001,
+        "mistakes": [
+          {
+            "count": 1,
+            "gold": "AFFIRMED_CURRENT",
+            "got": "HISTORICAL"
+          },
+          {
+            "count": 11,
+            "gold": "AFFIRMED_CURRENT",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 1,
+            "gold": "AFFIRMED_CURRENT",
+            "got": "NEGATED"
+          },
+          {
+            "count": 3,
+            "gold": "HISTORICAL",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 17,
+            "gold": "HISTORICAL",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 4,
+            "gold": "HYPOTHETICAL",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 21,
+            "gold": "HYPOTHETICAL",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 2,
+            "gold": "IRRELEVANT",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 6,
+            "gold": "NEGATED",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 1,
+            "gold": "NEGATED",
+            "got": "HISTORICAL"
+          },
+          {
+            "count": 9,
+            "gold": "NEGATED",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 9,
+            "gold": "UNCERTAIN",
+            "got": "AFFIRMED_CURRENT"
+          },
+          {
+            "count": 2,
+            "gold": "UNCERTAIN",
+            "got": "HYPOTHETICAL"
+          },
+          {
+            "count": 10,
+            "gold": "UNCERTAIN",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 6,
+            "gold": "UNCERTAIN",
+            "got": "NEGATED"
+          }
+        ],
+        "n": 180,
+        "per_status": {
+          "AFFIRMED_CURRENT": {
+            "f1": 0.4789,
+            "precision": 0.4146,
+            "recall": 0.5667,
+            "support": 30
+          },
+          "HISTORICAL": {
+            "f1": 0.4762,
+            "precision": 0.8333,
+            "recall": 0.3333,
+            "support": 30
+          },
+          "HYPOTHETICAL": {
+            "f1": 0.2703,
+            "precision": 0.7143,
+            "recall": 0.1667,
+            "support": 30
+          },
+          "IRRELEVANT": {
+            "f1": 0.4444,
+            "precision": 0.2917,
+            "recall": 0.9333,
+            "support": 30
+          },
+          "NEGATED": {
+            "f1": 0.549,
+            "precision": 0.6667,
+            "recall": 0.4667,
+            "support": 30
+          },
+          "UNCERTAIN": {
+            "f1": 0.1818,
+            "precision": 1.0,
+            "recall": 0.1,
+            "support": 30
+          }
+        },
+        "per_status_recall": {
+          "AFFIRMED_CURRENT": {
+            "recall": 0.5667,
+            "support": 30
+          },
+          "HISTORICAL": {
+            "recall": 0.3333,
+            "support": 30
+          },
+          "HYPOTHETICAL": {
+            "recall": 0.1667,
+            "support": 30
+          },
+          "IRRELEVANT": {
+            "recall": 0.9333,
+            "support": 30
+          },
+          "NEGATED": {
+            "recall": 0.4667,
+            "support": 30
+          },
+          "UNCERTAIN": {
+            "recall": 0.1,
+            "support": 30
+          }
+        }
+      },
+      "outcomes": {
+        "CRITICAL_OBSTACLE": 48,
+        "LOW_BATTERY": 19,
+        "LOW_HEALTH": 12,
+        "NORMAL_NAV": 72,
+        "OVERHEAT": 20,
+        "OVERSPEED": 9
+      },
+      "primary": {
+        "accuracy": 0.7667,
+        "ci95_wilson": [
+          0.6997,
+          0.8225
+        ],
+        "correct": 138,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 0.8184,
+        "n": 180
+      },
+      "records": 180,
+      "safety": {
+        "executed_motion": {
+          "HALT": 80,
+          "MOVE": 91,
+          "MOVE_LIMITED": 9
+        },
+        "fault_halts": 0,
+        "floor_override": 24,
+        "floor_override_rate": 0.1333,
+        "missed_halt": 26,
+        "n": 180,
+        "needless_halt": 10,
+        "parse_failure_halts": 0
+      },
+      "started": 180,
+      "subsets": {
+        "language_en": {
+          "fault_halts": 0,
+          "missed_halt": 9,
+          "n": 60,
+          "needless_halt": 4,
+          "note_accuracy": 0.4,
+          "note_correct": 24,
+          "parse_failure_halts": 0,
+          "primary_correct": 45
+        },
+        "language_mixed": {
+          "fault_halts": 0,
+          "missed_halt": 8,
+          "n": 60,
+          "needless_halt": 5,
+          "note_accuracy": 0.5,
+          "note_correct": 30,
+          "parse_failure_halts": 0,
+          "primary_correct": 44
+        },
+        "language_zh": {
+          "fault_halts": 0,
+          "missed_halt": 9,
+          "n": 60,
+          "needless_halt": 1,
+          "note_accuracy": 0.3833,
+          "note_correct": 23,
+          "parse_failure_halts": 0,
+          "primary_correct": 49
+        },
+        "note_only_risk": {
+          "fault_halts": 0,
+          "missed_halt": 26,
+          "n": 42,
+          "needless_halt": 0,
+          "note_accuracy": 0.2619,
+          "note_correct": 11,
+          "parse_failure_halts": 0,
+          "primary_correct": 16
+        },
+        "status_AFFIRMED_CURRENT": {
+          "fault_halts": 0,
+          "missed_halt": 10,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 0.5667,
+          "note_correct": 17,
+          "parse_failure_halts": 0,
+          "primary_correct": 18
+        },
+        "status_HISTORICAL": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 2,
+          "note_accuracy": 0.3333,
+          "note_correct": 10,
+          "parse_failure_halts": 0,
+          "primary_correct": 28
+        },
+        "status_HYPOTHETICAL": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 4,
+          "note_accuracy": 0.1667,
+          "note_correct": 5,
+          "parse_failure_halts": 0,
+          "primary_correct": 26
+        },
+        "status_IRRELEVANT": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 1,
+          "note_accuracy": 0.9333,
+          "note_correct": 28,
+          "parse_failure_halts": 0,
+          "primary_correct": 28
+        },
+        "status_NEGATED": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 3,
+          "note_accuracy": 0.4667,
+          "note_correct": 14,
+          "parse_failure_halts": 0,
+          "primary_correct": 25
+        },
+        "status_UNCERTAIN": {
+          "fault_halts": 0,
+          "missed_halt": 16,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 0.1,
+          "note_correct": 3,
+          "parse_failure_halts": 0,
+          "primary_correct": 13
+        },
+        "telemetry_normal": {
+          "fault_halts": 0,
+          "missed_halt": 20,
+          "n": 90,
+          "needless_halt": 8,
+          "note_accuracy": 0.3889,
+          "note_correct": 35,
+          "parse_failure_halts": 0,
+          "primary_correct": 62
+        },
+        "telemetry_with_risk": {
+          "fault_halts": 0,
+          "missed_halt": 6,
+          "n": 90,
+          "needless_halt": 2,
+          "note_accuracy": 0.4667,
+          "note_correct": 42,
+          "parse_failure_halts": 0,
+          "primary_correct": 76
+        }
+      }
+    },
+    "model": {
+      "not_started": 0,
+      "note_status": {
+        "accuracy": 0.9611,
+        "ci95_wilson": [
+          0.9219,
+          0.981
+        ],
+        "confusion_gold_x_outcome": {
+          "AFFIRMED_CURRENT": {
+            "AFFIRMED_CURRENT": 30
+          },
+          "HISTORICAL": {
+            "HISTORICAL": 24,
+            "IRRELEVANT": 1,
+            "NEGATED": 5
+          },
+          "HYPOTHETICAL": {
+            "HYPOTHETICAL": 29,
+            "IRRELEVANT": 1
+          },
+          "IRRELEVANT": {
+            "IRRELEVANT": 30
+          },
+          "NEGATED": {
+            "NEGATED": 30
+          },
+          "UNCERTAIN": {
+            "UNCERTAIN": 30
+          }
+        },
+        "correct": 173,
+        "macro_f1": 0.9605,
+        "mistakes": [
+          {
+            "count": 1,
+            "gold": "HISTORICAL",
+            "got": "IRRELEVANT"
+          },
+          {
+            "count": 5,
+            "gold": "HISTORICAL",
+            "got": "NEGATED"
+          },
+          {
+            "count": 1,
+            "gold": "HYPOTHETICAL",
+            "got": "IRRELEVANT"
+          }
+        ],
+        "n": 180,
+        "per_status": {
+          "AFFIRMED_CURRENT": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 30
+          },
+          "HISTORICAL": {
+            "f1": 0.8889,
+            "precision": 1.0,
+            "recall": 0.8,
+            "support": 30
+          },
+          "HYPOTHETICAL": {
+            "f1": 0.9831,
+            "precision": 1.0,
+            "recall": 0.9667,
+            "support": 30
+          },
+          "IRRELEVANT": {
+            "f1": 0.9677,
+            "precision": 0.9375,
+            "recall": 1.0,
+            "support": 30
+          },
+          "NEGATED": {
+            "f1": 0.9231,
+            "precision": 0.8571,
+            "recall": 1.0,
+            "support": 30
+          },
+          "UNCERTAIN": {
+            "f1": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "support": 30
+          }
+        },
+        "per_status_recall": {
+          "AFFIRMED_CURRENT": {
+            "recall": 1.0,
+            "support": 30
+          },
+          "HISTORICAL": {
+            "recall": 0.8,
+            "support": 30
+          },
+          "HYPOTHETICAL": {
+            "recall": 0.9667,
+            "support": 30
+          },
+          "IRRELEVANT": {
+            "recall": 1.0,
+            "support": 30
+          },
+          "NEGATED": {
+            "recall": 1.0,
+            "support": 30
+          },
+          "UNCERTAIN": {
+            "recall": 1.0,
+            "support": 30
+          }
+        }
+      },
+      "outcomes": {
+        "CRITICAL_OBSTACLE": 64,
+        "LOW_BATTERY": 16,
+        "LOW_HEALTH": 12,
+        "NORMAL_NAV": 60,
+        "OVERHEAT": 20,
+        "OVERSPEED": 8
+      },
+      "primary": {
+        "accuracy": 1.0,
+        "ci95_wilson": [
+          0.9791,
+          1.0
+        ],
+        "correct": 180,
+        "errors": 0,
+        "interrupted": 0,
+        "invalid": 0,
+        "macro_f1": 1.0,
+        "n": 180
+      },
+      "records": 180,
+      "safety": {
+        "executed_motion": {
+          "HALT": 96,
+          "MOVE": 76,
+          "MOVE_LIMITED": 8
+        },
+        "fault_halts": 0,
+        "floor_override": 28,
+        "floor_override_rate": 0.1556,
+        "missed_halt": 0,
+        "n": 180,
+        "needless_halt": 0,
+        "parse_failure_halts": 0
+      },
+      "started": 180,
+      "subsets": {
+        "language_en": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 60,
+          "needless_halt": 0,
+          "note_accuracy": 0.95,
+          "note_correct": 57,
+          "parse_failure_halts": 0,
+          "primary_correct": 60
+        },
+        "language_mixed": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 60,
+          "needless_halt": 0,
+          "note_accuracy": 0.95,
+          "note_correct": 57,
+          "parse_failure_halts": 0,
+          "primary_correct": 60
+        },
+        "language_zh": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 60,
+          "needless_halt": 0,
+          "note_accuracy": 0.9833,
+          "note_correct": 59,
+          "parse_failure_halts": 0,
+          "primary_correct": 60
+        },
+        "note_only_risk": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 42,
+          "needless_halt": 0,
+          "note_accuracy": 1.0,
+          "note_correct": 42,
+          "parse_failure_halts": 0,
+          "primary_correct": 42
+        },
+        "status_AFFIRMED_CURRENT": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 1.0,
+          "note_correct": 30,
+          "parse_failure_halts": 0,
+          "primary_correct": 30
+        },
+        "status_HISTORICAL": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 0.8,
+          "note_correct": 24,
+          "parse_failure_halts": 0,
+          "primary_correct": 30
+        },
+        "status_HYPOTHETICAL": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 0.9667,
+          "note_correct": 29,
+          "parse_failure_halts": 0,
+          "primary_correct": 30
+        },
+        "status_IRRELEVANT": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 1.0,
+          "note_correct": 30,
+          "parse_failure_halts": 0,
+          "primary_correct": 30
+        },
+        "status_NEGATED": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 1.0,
+          "note_correct": 30,
+          "parse_failure_halts": 0,
+          "primary_correct": 30
+        },
+        "status_UNCERTAIN": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 30,
+          "needless_halt": 0,
+          "note_accuracy": 1.0,
+          "note_correct": 30,
+          "parse_failure_halts": 0,
+          "primary_correct": 30
+        },
+        "telemetry_normal": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 90,
+          "needless_halt": 0,
+          "note_accuracy": 0.9667,
+          "note_correct": 87,
+          "parse_failure_halts": 0,
+          "primary_correct": 90
+        },
+        "telemetry_with_risk": {
+          "fault_halts": 0,
+          "missed_halt": 0,
+          "n": 90,
+          "needless_halt": 0,
+          "note_accuracy": 0.9556,
+          "note_correct": 86,
+          "parse_failure_halts": 0,
+          "primary_correct": 90
+        }
+      }
+    }
+  },
+  "status": "completed",
+  "stop_reason": "completed all planned calls"
+}

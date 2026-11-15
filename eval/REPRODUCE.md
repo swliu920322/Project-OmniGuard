@@ -1,5 +1,7 @@
 # Reproducing the evaluation
 
+> 第二轮备注对照的最终原题及逐条回复已另行整理入仓，免费复算入口见 [第二轮原件说明](experiments/note_vs_rules_v2/evidence/README.md)。下文关于旧300条私有原件缺失的边界继续适用，不因第二轮交付而恢复。
+
 Read this before claiming that anything "reproduces". There are three levels, and only the first needs no private data and no money.
 
 | Level | Needs | What it proves |

@@ -1,0 +1,757 @@
+{
+  "cand_aff_02": {
+    "family_id": "cand_aff_02",
+    "note_status": "AFFIRMED_CURRENT",
+    "situation": "An electrician on a step ladder repairing overhead lighting/cable over the path",
+    "phenomenon": "动态作业进行时（人员登高占用行车路线）",
+    "record_ids": [
+      "cand_r2_004",
+      "cand_r2_005",
+      "cand_r2_006"
+    ],
+    "same_situation_rationale": "三语均陈述有一名电工正站在梯子上对上方线路进行检修，梯子和作业人员直接占据行车道垂直空间，属于正在进行的人员作业占用。"
+  },
+  "cand_aff_05": {
+    "family_id": "cand_aff_05",
+    "note_status": "AFFIRMED_CURRENT",
+    "situation": "Aisle cleared earlier, but handler just pushed wooden crates back into the road",
+    "phenomenon": "时间前后对比：过去清空但当前再现（当前状态胜出）",
+    "record_ids": [
+      "cand_r2_013",
+      "cand_r2_014",
+      "cand_r2_015"
+    ],
+    "same_situation_rationale": "三语均对比两个时间节点：前分句陈述刚才曾清空过，后分句陈述搬运工刚刚又推来木箱堆在道中；依照分句合并规则，当前阻碍事实覆盖过去清空状态。"
+  },
+  "cand_aff_06": {
+    "family_id": "cand_aff_06",
+    "note_status": "AFFIRMED_CURRENT",
+    "situation": "Technician walked into narrow passage and is still inside working",
+    "phenomenon": "承前省略与持续状态代词（代词及体标记词指示持续阻挡）",
+    "record_ids": [
+      "cand_r2_016",
+      "cand_r2_017",
+      "cand_r2_018"
+    ],
+    "same_situation_rationale": "三语均陈述检修人员先前走入狭窄通道，后分句通过代词/体标记（“还在里面/still inside”）确认其仍未离开，构成当前通道受阻事实。"
+  },
+  "cand_aff_07": {
+    "family_id": "cand_aff_07",
+    "note_status": "AFFIRMED_CURRENT",
+    "situation": "Dual obstacles: forklift parked and warehouse clerk standing together on track",
+    "phenomenon": "复合异构实体并列占道（设备与人员同时侵限）",
+    "record_ids": [
+      "cand_r2_019",
+      "cand_r2_020",
+      "cand_r2_021"
+    ],
+    "same_situation_rationale": "三语均通过并列连接词陈述行车道上同时存在静止小型叉车和站立核单人员，考查复合实体的联合肯定识别。"
+  },
+  "cand_aff_08": {
+    "family_id": "cand_aff_08",
+    "note_status": "AFFIRMED_CURRENT",
+    "situation": "Strong backlighting, but confirmed a maintenance worker crouching on driving line",
+    "phenomenon": "让步从句下的事实肯定（不利观察条件未否定事实）",
+    "record_ids": [
+      "cand_r2_022",
+      "cand_r2_023",
+      "cand_r2_024"
+    ],
+    "same_situation_rationale": "三语均由让步分句与主句构成：前分句交代逆光/不良视线，后分句明确断言确认有人蹲在行车线上；让步从句不影响主句的确凿肯定事实。"
+  },
+  "cand_aff_09": {
+    "family_id": "cand_aff_09",
+    "note_status": "AFFIRMED_CURRENT",
+    "situation": "SOP instruction accompanied by an actual active trailer blockage present now",
+    "phenomenon": "假定规程 + 伴随当前事实肯定（当前事实分句胜出）",
+    "record_ids": [
+      "cand_r2_025",
+      "cand_r2_026",
+      "cand_r2_027"
+    ],
+    "same_situation_rationale": "三语均包含规程提醒分句（遇障碍需减速停车）与事实分句（道口正停着未卸货拖车）；合并时事实分句优先于条件分句，整句归为当前肯定。"
+  },
+  "cand_unc_03": {
+    "family_id": "cand_unc_03",
+    "note_status": "UNCERTAIN",
+    "situation": "Dark patch on track, disjunction between overhead shadow and fallen carton",
+    "phenomenon": "威胁实体与虚影二选一析取（包含物理实体的存疑）",
+    "record_ids": [
+      "cand_r2_037",
+      "cand_r2_038",
+      "cand_r2_039"
+    ],
+    "same_situation_rationale": "三语均陈述路面有一处暗斑，表达在“上方阴影”与“掉落纸箱”之间的犹豫；因包含潜在物理阻碍且无法排除，依据约定 Q1 判定为 UNCERTAIN。"
+  },
+  "cand_unc_04": {
+    "family_id": "cand_unc_04",
+    "note_status": "UNCERTAIN",
+    "situation": "Suspicious blurry shape moving at far end of aisle, presence of actual person or obstacle unconfirmed.",
+    "phenomenon": "远端动态模糊未辨（距离过远无法确认为人或物）",
+    "record_ids": [
+      "cand_r2_040",
+      "cand_r2_041",
+      "cand_r2_042"
+    ],
+    "same_situation_rationale": "三语均陈述过道尽头疑似有模糊虚影晃动，并明确指出因距离过远无法证实是否真有人或障碍物占道，考查远距存在性存疑。"
+  },
+  "cand_unc_05": {
+    "family_id": "cand_unc_05",
+    "note_status": "UNCERTAIN",
+    "situation": "Aisle clear earlier, but noise heard around bend, suspecting goods stacked now",
+    "phenomenon": "时态对比引发的当前推测（过去清空 + 当前存疑）",
+    "record_ids": [
+      "cand_r2_043",
+      "cand_r2_044",
+      "cand_r2_045"
+    ],
+    "same_situation_rationale": "三语均对比过去与当前：前分句说明刚才清空，后分句陈述听见响动推测拐角可能堆料；当前存疑分句优先于过去分句，合并后为 UNCERTAIN。"
+  },
+  "cand_unc_06": {
+    "family_id": "cand_unc_06",
+    "note_status": "UNCERTAIN",
+    "situation": "Questioning tone whether a utility trolley is left on driving line",
+    "phenomenon": "疑问修辞句式表达路线存疑",
+    "record_ids": [
+      "cand_r2_046",
+      "cand_r2_047",
+      "cand_r2_048"
+    ],
+    "same_situation_rationale": "三语均使用疑问句形式询问正前方行车线上是否停着推车；疑问语气承载主观不确定性，指向路线潜在风险。"
+  },
+  "cand_unc_07": {
+    "family_id": "cand_unc_07",
+    "note_status": "UNCERTAIN",
+    "situation": "Vague pronoun indicating unidentified clutter across the road ahead",
+    "phenomenon": "泛指代词指涉不明存疑",
+    "record_ids": [
+      "cand_r2_049",
+      "cand_r2_050",
+      "cand_r2_051"
+    ],
+    "same_situation_rationale": "三语均缺乏具体货物名词，仅使用泛指代词（“有什么物件/something random”）并附带“好像/difficult to make out”表达主观存疑。"
+  },
+  "cand_unc_08": {
+    "family_id": "cand_unc_08",
+    "note_status": "UNCERTAIN",
+    "situation": "Forklift handling noise behind doorway, unsure if cargo spills into corridor",
+    "phenomenon": "间接感官线索推断路线占用存疑",
+    "record_ids": [
+      "cand_r2_052",
+      "cand_r2_053",
+      "cand_r2_054"
+    ],
+    "same_situation_rationale": "三语均陈述听到门后铲车作业声音，明确指出无法确认是否有货物侵入小车通道，构成基于间接听觉线索的存疑。"
+  },
+  "cand_unc_09": {
+    "family_id": "cand_unc_09",
+    "note_status": "UNCERTAIN",
+    "situation": "Yellow barrier roughly 50m ahead, too distant to confirm reality or illusion",
+    "phenomenon": "大距离估算下的目测辨识度存疑",
+    "record_ids": [
+      "cand_r2_055",
+      "cand_r2_056",
+      "cand_r2_057"
+    ],
+    "same_situation_rationale": "三语均标定约五十米大距离，陈述疑似看到黄色护栏，但由于视距超限无法确证，考查长距离目测存疑。"
+  },
+  "cand_unc_10": {
+    "family_id": "cand_unc_10",
+    "note_status": "UNCERTAIN",
+    "situation": "Hedging report of visitors wandering near guidance line with minor typo",
+    "phenomenon": "包含轻微同音/拼写笔误的存疑陈述",
+    "record_ids": [
+      "cand_r2_058",
+      "cand_r2_059",
+      "cand_r2_060"
+    ],
+    "same_situation_rationale": "三语均陈述疑似有人在路线附近走动被立柱遮挡无法确认，并带有轻微笔误（中文“好象/像”，英文“apperently”）；核心语用为存疑。"
+  },
+  "cand_neg_01": {
+    "family_id": "cand_neg_01",
+    "note_status": "NEGATED",
+    "situation": "Direct clear negation of any human or physical barrier ahead on track",
+    "phenomenon": "单一分句全盘否定（直接无人无障碍）",
+    "record_ids": [
+      "cand_r2_061",
+      "cand_r2_062",
+      "cand_r2_063"
+    ],
+    "same_situation_rationale": "三语均直接陈述正前方主行车道全线没有任何人员走动，地面无任何杂物障碍，基础语义清晰否定。"
+  },
+  "cand_neg_03": {
+    "family_id": "cand_neg_03",
+    "note_status": "NEGATED",
+    "situation": "Explicit check confirmed no forklift or vehicle parked in sector",
+    "phenomenon": "针对重点疑虑实体的排查排除",
+    "record_ids": [
+      "cand_r2_067",
+      "cand_r2_068",
+      "cand_r2_069"
+    ],
+    "same_situation_rationale": "三语均针对车辆/叉车等重点载具陈述排查结果，明确确认交汇扇区没有任何车辆停滞，排除特定风险。"
+  },
+  "cand_neg_05": {
+    "family_id": "cand_neg_05",
+    "note_status": "NEGATED",
+    "situation": "Sanitation sweep completed, zero residual debris along path ahead",
+    "phenomenon": "清理作业完成态引发的结果否定",
+    "record_ids": [
+      "cand_r2_073",
+      "cand_r2_074",
+      "cand_r2_075"
+    ],
+    "same_situation_rationale": "三语均陈述保洁推尘清扫动作刚闭环，直接结论为正前方路面上无任何遗留碎料，动作完成态导致无障碍否定。"
+  },
+  "cand_neg_06": {
+    "family_id": "cand_neg_06",
+    "note_status": "NEGATED",
+    "situation": "Goods neatly stacked outside yellow curb; driving route entirely clear",
+    "phenomenon": "空间划界否定：路径外有物但行车线内绝对无物",
+    "record_ids": [
+      "cand_r2_076",
+      "cand_r2_077",
+      "cand_r2_078"
+    ],
+    "same_situation_rationale": "三语均划分空间边界：警戒线外虽有货，但小车行驶标线内无任何阻挡；空间严格限定消除误报，归为 NEGATED。"
+  },
+  "cand_neg_07": {
+    "family_id": "cand_neg_07",
+    "note_status": "NEGATED",
+    "situation": "Both buffer bays 1 and 2 inspected, confirmed vacant and unoccupied",
+    "phenomenon": "承前复数指代全盘否定",
+    "record_ids": [
+      "cand_r2_079",
+      "cand_r2_080",
+      "cand_r2_081"
+    ],
+    "same_situation_rationale": "三语均指称前方两个停靠位，后半句以复数代词断言“均已空出、无人占用”，考查承前指代全盘否定。"
+  },
+  "cand_neg_08": {
+    "family_id": "cand_neg_08",
+    "note_status": "NEGATED",
+    "situation": "Temporary caution tape at crossing has been dismantled; passage restored",
+    "phenomenon": "原有临时管制措施解除宣告",
+    "record_ids": [
+      "cand_r2_082",
+      "cand_r2_083",
+      "cand_r2_084"
+    ],
+    "same_situation_rationale": "三语均陈述道口临时警戒警示带现已拆除，通道恢复正常通行无障碍，原有限定解除导致否定。"
+  },
+  "cand_his_01": {
+    "family_id": "cand_his_01",
+    "note_status": "HISTORICAL",
+    "situation": "Contractors laid temporary hoses across this crossing 40 minutes ago",
+    "phenomenon": "明确过去时间区间的外部施工作业记录",
+    "record_ids": [
+      "cand_r2_091",
+      "cand_r2_092",
+      "cand_r2_093"
+    ],
+    "same_situation_rationale": "三语均标定四十分钟前曾有外部队伍在道口铺设管道，纯过去时叙述，完全不提当前现状与清除动作，纯历史属性。"
+  },
+  "cand_his_02": {
+    "family_id": "cand_his_02",
+    "note_status": "HISTORICAL",
+    "situation": "Night handover log recorded pallet congestion in front of this slot",
+    "phenomenon": "上一班次交接日志客观记录回溯",
+    "record_ids": [
+      "cand_r2_094",
+      "cand_r2_095",
+      "cand_r2_096"
+    ],
+    "same_situation_rationale": "三语均引用昨夜班组交接记录陈述此处曾有托盘拥堵，属于历史日志陈述，无当前时态分句。"
+  },
+  "cand_his_04": {
+    "family_id": "cand_his_04",
+    "note_status": "HISTORICAL",
+    "situation": "Packaging staff sorted cartons strictly between 8 and 9 AM",
+    "phenomenon": "闭合过去时间段的作业陈述（时间区间已终结）",
+    "record_ids": [
+      "cand_r2_100",
+      "cand_r2_101",
+      "cand_r2_102"
+    ],
+    "same_situation_rationale": "三语均限定在早晨八点至九点整的闭合历史时间区间，陈述包装人员当时在此整理外箱，事件已过去。"
+  },
+  "cand_his_05": {
+    "family_id": "cand_his_05",
+    "note_status": "HISTORICAL",
+    "situation": "Red reflective fence erected here yesterday afternoon during audit",
+    "phenomenon": "历史日期标记的临时设施摆放记录",
+    "record_ids": [
+      "cand_r2_103",
+      "cand_r2_104",
+      "cand_r2_105"
+    ],
+    "same_situation_rationale": "三语均带有“昨天下午”的明确过去时间状语，陈述过去曾在此立起反光围栏，属于历史事件交代。"
+  },
+  "cand_his_06": {
+    "family_id": "cand_his_06",
+    "note_status": "HISTORICAL",
+    "situation": "Workers unboxed crates, inspected, and loaded them away earlier",
+    "phenomenon": "多动作链连续纯过去叙事",
+    "record_ids": [
+      "cand_r2_106",
+      "cand_r2_107",
+      "cand_r2_108"
+    ],
+    "same_situation_rationale": "三语均叙述先前工人拆箱、抽检、装运离开的完整连续过程，全篇使用过去时态，无当前状态结论。"
+  },
+  "cand_his_07": {
+    "family_id": "cand_his_07",
+    "note_status": "HISTORICAL",
+    "situation": "Automation technicians calibrated magnetic markers during previous window",
+    "phenomenon": "已结束的历史停机维保窗口记录",
+    "record_ids": [
+      "cand_r2_109",
+      "cand_r2_110",
+      "cand_r2_111"
+    ],
+    "same_situation_rationale": "三语均陈述在上一个已闭合的维保窗口期内技术员曾在线路校准地标，属于归档的历史维保信息。"
+  },
+  "cand_his_08": {
+    "family_id": "cand_his_08",
+    "note_status": "HISTORICAL",
+    "situation": "Test mannequin placed here during emergency evacuation drill earlier",
+    "phenomenon": "先前模拟消防演练事件陈述",
+    "record_ids": [
+      "cand_r2_112",
+      "cand_r2_113",
+      "cand_r2_114"
+    ],
+    "same_situation_rationale": "三语均陈述先前演练期间曾在此处放置假人测试模型，客观交代演练历史，未评价当前道路。"
+  },
+  "cand_hyp_01": {
+    "family_id": "cand_hyp_01",
+    "note_status": "HYPOTHETICAL",
+    "situation": "Emergency guidance: suspend travel if overhead fire sprinkler leaks onto line",
+    "phenomenon": "突发意外故障的标准 if-then 条件指令句",
+    "record_ids": [
+      "cand_r2_121",
+      "cand_r2_122",
+      "cand_r2_123"
+    ],
+    "same_situation_rationale": "三语均陈述纯假定前提与规程响应（如果上方喷淋漏水在行车线上，小车应暂停等待），无现场事实分句。"
+  },
+  "cand_hyp_03": {
+    "family_id": "cand_hyp_03",
+    "note_status": "HYPOTHETICAL",
+    "situation": "Rare contingency: hold stationary in the rare case pallet stacks tilt ahead",
+    "phenomenon": "低概率突发险情假定（万一/偶发条件）",
+    "record_ids": [
+      "cand_r2_127",
+      "cand_r2_128",
+      "cand_r2_129"
+    ],
+    "same_situation_rationale": "三语均设定偶发突发前提（万一货垛倾倒倾斜，小车应当驻车），属于低概率偶发条件假设。"
+  },
+  "cand_hyp_04": {
+    "family_id": "cand_hyp_04",
+    "note_status": "HYPOTHETICAL",
+    "situation": "Unless-exception: continue normal cruise unless flagman signals stop",
+    "phenomenon": "排除性条件句（除非……否则……）",
+    "record_ids": [
+      "cand_r2_130",
+      "cand_r2_131",
+      "cand_r2_132"
+    ],
+    "same_situation_rationale": "三语均采用排除条件句式：除非有安全员挥旗拦停，否则保持正常巡航；属于规则性排除条件设定。"
+  },
+  "cand_hyp_05": {
+    "family_id": "cand_hyp_05",
+    "note_status": "HYPOTHETICAL",
+    "situation": "Future timing condition: yield in advance if fire door opens at 2 PM with traffic",
+    "phenomenon": "面向未来时间锚点的条件假设",
+    "record_ids": [
+      "cand_r2_133",
+      "cand_r2_134",
+      "cand_r2_135"
+    ],
+    "same_situation_rationale": "三语均锚定未来时间点（两点钟大门开启若有车通过需礼让），针对未来潜在事件设立前置假定。"
+  },
+  "cand_hyp_06": {
+    "family_id": "cand_hyp_06",
+    "note_status": "HYPOTHETICAL",
+    "situation": "Zone boundary rule: sound buzzer and wait if workers spotted entering bay 3",
+    "phenomenon": "工区准入前置核验假定",
+    "record_ids": [
+      "cand_r2_136",
+      "cand_r2_137",
+      "cand_r2_138"
+    ],
+    "same_situation_rationale": "三语均陈述驶入特定重载工区时的前置规则：若发现有人员走动需鸣笛等待，属于区域边界行为准则。"
+  },
+  "cand_hyp_07": {
+    "family_id": "cand_hyp_07",
+    "note_status": "HYPOTHETICAL",
+    "situation": "Authorization logic: do not proceed if guard rail stands before signal",
+    "phenomenon": "调度授权与物理阻隔复合假定",
+    "record_ids": [
+      "cand_r2_139",
+      "cand_r2_140",
+      "cand_r2_141"
+    ],
+    "same_situation_rationale": "三语均陈述信号授权逻辑：在未收到放行信号前若有警戒杆不可驶入，属于操作许可前置假定。"
+  },
+  "cand_hyp_08": {
+    "family_id": "cand_hyp_08",
+    "note_status": "HYPOTHETICAL",
+    "situation": "Dual compound condition: suppose lighting fails and debris obstructs floor",
+    "phenomenon": "并列双条件复合假设",
+    "record_ids": [
+      "cand_r2_142",
+      "cand_r2_143",
+      "cand_r2_144"
+    ],
+    "same_situation_rationale": "三语均设定两个并列假定前提（照明失效且地面伴随杂物），规定原地待命响应，纯复合条件句。"
+  },
+  "cand_hyp_09": {
+    "family_id": "cand_hyp_09",
+    "note_status": "HYPOTHETICAL",
+    "situation": "Subjunctive guidance: retreat if oversized gantry crane enters this aisle",
+    "phenomenon": "虚拟/拟议情态规程陈述",
+    "record_ids": [
+      "cand_r2_145",
+      "cand_r2_146",
+      "cand_r2_147"
+    ],
+    "same_situation_rationale": "三语均使用虚拟或设想语气（若有大型天车拟进入通道，AGV应退至待命路），属于拟议工况规程。"
+  },
+  "cand_irr_02": {
+    "family_id": "cand_irr_02",
+    "note_status": "IRRELEVANT",
+    "situation": "Night administrative attendance roster and shift reporting in dispatch office",
+    "phenomenon": "调度室行政考勤与人员排班通报",
+    "record_ids": [
+      "cand_r2_154",
+      "cand_r2_155",
+      "cand_r2_156"
+    ],
+    "same_situation_rationale": "三语均陈述调度室内王工带班负责考勤统计，明确不涉及车间物理物流运送，纯行政人事信息。"
+  },
+  "cand_irr_03": {
+    "family_id": "cand_irr_03",
+    "note_status": "IRRELEVANT",
+    "situation": "Vehicle boot self-test completed; LiDAR and tire pressure sensors normal",
+    "phenomenon": "车辆本体传感器与固件自检报告",
+    "record_ids": [
+      "cand_r2_157",
+      "cand_r2_158",
+      "cand_r2_159"
+    ],
+    "same_situation_rationale": "三语均陈述激光雷达探头与轮压自检数值正常，属于车辆底层自检遥测日志，与行车道障碍无关。"
+  },
+  "cand_irr_05": {
+    "family_id": "cand_irr_05",
+    "note_status": "IRRELEVANT",
+    "situation": "Coating workshop central HVAC temperature maintained at 22C, fans normal",
+    "phenomenon": "车间厂房环境暖通与温湿度陈述",
+    "record_ids": [
+      "cand_r2_163",
+      "cand_r2_164",
+      "cand_r2_165"
+    ],
+    "same_situation_rationale": "三语均陈述涂装车间空调恒温二十二度与排风机运转正常，属于厂房基础设施环境状态，与道路无关。"
+  },
+  "cand_irr_06": {
+    "family_id": "cand_irr_06",
+    "note_status": "IRRELEVANT",
+    "situation": "Industrial wireless AP gateway latency averages 8ms, zero packet loss",
+    "phenomenon": "工业通信网络与总线信号健康度日志",
+    "record_ids": [
+      "cand_r2_166",
+      "cand_r2_167",
+      "cand_r2_168"
+    ],
+    "same_situation_rationale": "三语均陈述车间无线网关通信延迟平均八毫秒、零丢包，属于通信系统网络指标汇报，无道路实体。"
+  },
+  "cand_irr_07": {
+    "family_id": "cand_irr_07",
+    "note_status": "IRRELEVANT",
+    "situation": "Order slip 6088 entered into ERP system and paper invoices archived",
+    "phenomenon": "仓储物流 ERP 订单与纸质单据流水",
+    "record_ids": [
+      "cand_r2_169",
+      "cand_r2_170",
+      "cand_r2_171"
+    ],
+    "same_situation_rationale": "三语均陈述6088号物料单据已录入系统、纸质凭证已归档，属于纯信息流业务单据操作，无物理阻碍。"
+  },
+  "cand_irr_08": {
+    "family_id": "cand_irr_08",
+    "note_status": "IRRELEVANT",
+    "situation": "Shift changeover completed smoothly; wishing all staff a safe shift",
+    "phenomenon": "班组日常文明用语与交接关怀问候",
+    "record_ids": [
+      "cand_r2_172",
+      "cand_r2_173",
+      "cand_r2_174"
+    ],
+    "same_situation_rationale": "三语均表达交接班顺利完成、感谢师傅付出并祝工作平安，属于班前文明问候，无任何路线状态信息。"
+  },
+  "cand_irr_09": {
+    "family_id": "cand_irr_09",
+    "note_status": "IRRELEVANT",
+    "situation": "Spare battery packs inside detached southern electrical room are charged",
+    "phenomenon": "厂区远端独立配电室备件状态陈述",
+    "record_ids": [
+      "cand_r2_175",
+      "cand_r2_176",
+      "cand_r2_177"
+    ],
+    "same_situation_rationale": "三语均明确交代厂区最南端独立配电室内备用电池已充饱，地理位置远离物流干线，属于孤立配电信息。"
+  },
+  "cand_irr_10": {
+    "family_id": "cand_irr_10",
+    "note_status": "IRRELEVANT",
+    "situation": "Stamping crew 4 daily production tally reached today with minor typo",
+    "phenomenon": "带有轻微同音笔误的车间生产达标汇报",
+    "record_ids": [
+      "cand_r2_178",
+      "cand_r2_179",
+      "cand_r2_180"
+    ],
+    "same_situation_rationale": "三语均汇报冲压四组今日生产日报合格率达标，并带轻微笔误（中文“今大/天”，英文“complience”）；纯生产报工。"
+  },
+  "cand_aff_11": {
+    "family_id": "cand_aff_11",
+    "note_status": "AFFIRMED_CURRENT",
+    "situation": "A hydraulic scissor lift table is in the middle of the forward driving track and blocks the route.",
+    "phenomenon": "液压剪叉升降台占道的当前肯定陈述",
+    "record_ids": [
+      "cand_r2_rev1_014",
+      "cand_r2_rev1_028",
+      "cand_r2_rev1_037"
+    ],
+    "same_situation_rationale": "三语均明确报告本车前方路线中央有液压剪叉升降台并构成占道事实；不补入题面没有的施工用途或作业人员。",
+    "replaces_review_family_id": "F001",
+    "differentiation_rationale": "三语共同情形为路线中央的液压剪叉升降台占道；不依靠未在实际备注出现的施工背景区分家族。"
+  },
+  "cand_aff_12": {
+    "family_id": "cand_aff_12",
+    "note_status": "AFFIRMED_CURRENT",
+    "situation": "A broken steel strapping band coiled and protruding from a cargo bundle into the vehicle driving line.",
+    "phenomenon": "包装损毁钢带断裂弹地侵限（地面线状硬质异物占道）",
+    "record_ids": [
+      "cand_r2_rev1_004",
+      "cand_r2_rev1_012",
+      "cand_r2_rev1_043"
+    ],
+    "same_situation_rationale": "三语均陈述前方主干道路面上散落着断裂弹开的打包钢带，硬质金属条横在行车线上构成直接占道与扎胎险情。",
+    "replaces_review_family_id": "F004",
+    "differentiation_rationale": "三语均陈述前方主干道路面上散落着断裂弹开的打包钢带，硬质金属条横在行车线上构成直接占道与扎胎险情。"
+  },
+  "cand_aff_13": {
+    "family_id": "cand_aff_13",
+    "note_status": "AFFIRMED_CURRENT",
+    "situation": "An open maintenance floor trench with metal grille plate removed on the path ahead.",
+    "phenomenon": "地面基础设施检修地沟敞口（下陷式路面通行阻隔）",
+    "record_ids": [
+      "cand_r2_rev1_002",
+      "cand_r2_rev1_020",
+      "cand_r2_rev1_032"
+    ],
+    "same_situation_rationale": "三语均陈述正前方小车必经路线上的电缆地沟盖板被掀开，路面出现敞口地槽，属于严重的地面凹陷物理障碍事实。",
+    "replaces_review_family_id": "F010",
+    "differentiation_rationale": "三语均陈述正前方小车必经路线上的电缆地沟盖板被掀开，路面出现敞口地槽，属于严重的地面凹陷物理障碍事实。"
+  },
+  "cand_unc_11": {
+    "family_id": "cand_unc_11",
+    "note_status": "UNCERTAIN",
+    "situation": "Steam / vapor cloud venting from an overhead relief valve obscuring the track ahead, unsure if an obstacle is underneath.",
+    "phenomenon": "工业环境热蒸汽/雾气遮蔽视线（感知不确定性）",
+    "record_ids": [
+      "cand_r2_rev1_008",
+      "cand_r2_rev1_030",
+      "cand_r2_rev1_033"
+    ],
+    "same_situation_rationale": "三语均陈述正前方轨道被上方排出的蒸汽白雾严重笼罩，视线受阻导致无法确认雾气中是否有障碍物存在。",
+    "replaces_review_family_id": "F011",
+    "differentiation_rationale": "三语均陈述正前方轨道被上方排出的蒸汽白雾严重笼罩，视线受阻导致无法确认雾气中是否有障碍物存在。"
+  },
+  "cand_unc_12": {
+    "family_id": "cand_unc_12",
+    "note_status": "UNCERTAIN",
+    "situation": "Reversing warning beeps are heard around the blind corner ahead, while the view is blocked and it is unconfirmed whether a vehicle is entering the forward route.",
+    "phenomenon": "蜂鸣线索与视线受阻下的车辆风险存在存疑",
+    "record_ids": [
+      "cand_r2_rev1_009",
+      "cand_r2_rev1_026",
+      "cand_r2_rev1_040"
+    ],
+    "same_situation_rationale": "三语均陈述前方转弯盲区持续响起倒车蜂鸣声，但视线受立柱遮挡无法确认是否有设备占用通道，属于感知存疑。",
+    "replaces_review_family_id": "F012",
+    "differentiation_rationale": "三语均陈述前方转弯盲区持续响起倒车蜂鸣声，但视线受立柱遮挡无法确认是否有设备占用通道，属于感知存疑。"
+  },
+  "cand_neg_11": {
+    "family_id": "cand_neg_11",
+    "note_status": "NEGATED",
+    "situation": "Visual confirmation that the temporary hydraulic spill on the lane has been fully neutralized, washed away, and dried, leaving the road surface clean and open.",
+    "phenomenon": "化学/油品泄漏彻底中和清洗烘干（液体污染物理消除否定句）",
+    "record_ids": [
+      "cand_r2_rev1_005",
+      "cand_r2_rev1_015",
+      "cand_r2_rev1_022"
+    ],
+    "same_situation_rationale": "三语均确认前方路面早先泄漏的油污已完全被清理、冲洗并烘干，行车道表面完全干燥无任何残留障碍物。",
+    "replaces_review_family_id": "F022",
+    "differentiation_rationale": "三语均确认前方路面早先泄漏的油污已完全被清理、冲洗并烘干，行车道表面完全干燥无任何残留障碍物。"
+  },
+  "cand_neg_12": {
+    "family_id": "cand_neg_12",
+    "note_status": "NEGATED",
+    "situation": "The overhead industrial crane hoist hook that was lowered to ground level has been retracted to top dock height, clearing the ground driving clearance.",
+    "phenomenon": "垂直吊装机构复位消除占道风险（垂直净空恢复否定句）",
+    "record_ids": [
+      "cand_r2_rev1_007",
+      "cand_r2_rev1_019",
+      "cand_r2_rev1_023"
+    ],
+    "same_situation_rationale": "三语均确认前方原先垂落至地面的起重机吊钩已彻底升顶回位，地面行车路线垂直净空已完全恢复畅通。",
+    "replaces_review_family_id": "F024",
+    "differentiation_rationale": "三语均确认前方原先垂落至地面的起重机吊钩已彻底升顶回位，地面行车路线垂直净空已完全恢复畅通。"
+  },
+  "cand_neg_14": {
+    "family_id": "cand_neg_14",
+    "note_status": "NEGATED",
+    "situation": "Verification that the temporary grounding discharge cables across the track have been detached and stored, track is free of any wiring.",
+    "phenomenon": "跨轨临时放电线缆完全拆除盘卷（临时线缆清除否定句）",
+    "record_ids": [
+      "cand_r2_rev1_006",
+      "cand_r2_rev1_034",
+      "cand_r2_rev1_041"
+    ],
+    "same_situation_rationale": "三语均确认跨越正前方轨道的临时接地电缆已全数拆除收存，轨道上没有任何线缆阻隔通行。",
+    "replaces_review_family_id": "F030",
+    "differentiation_rationale": "三语均确认跨越正前方轨道的临时接地电缆已全数拆除收存，轨道上没有任何线缆阻隔通行。"
+  },
+  "cand_his_11": {
+    "family_id": "cand_his_11",
+    "note_status": "HISTORICAL",
+    "situation": "A flatbed transport dolly tipped sideways on the vehicle forward track earlier this morning, but operators uprighted and cleared it away forty minutes ago.",
+    "phenomenon": "前方正道侧翻事故已扶正清场（历史阻道事件自足终结）",
+    "record_ids": [
+      "cand_r2_rev1_011",
+      "cand_r2_rev1_016",
+      "cand_r2_rev1_036"
+    ],
+    "same_situation_rationale": "三语均明确陈述正前方行驶路线上早晨曾有平板拖车侧翻阻道，已于四十分钟前被扶正并彻底拖离路线，属于已终结的前方历史事件。",
+    "replaces_review_family_id": "F033",
+    "differentiation_rationale": "三语均明确陈述正前方行驶路线上早晨曾有平板拖车侧翻阻道，已于四十分钟前被扶正并彻底拖离路线，属于已终结的前方历史事件。"
+  },
+  "cand_his_12": {
+    "family_id": "cand_his_12",
+    "note_status": "HISTORICAL",
+    "situation": "A scaffolding support leg previously protruded into the vehicle forward line during morning construction, but the assembly was dismantled and hauled away before noon.",
+    "phenomenon": "脚手架伸入前方车道历史事实（施工侵限终结已移走）",
+    "record_ids": [
+      "cand_r2_rev1_018",
+      "cand_r2_rev1_035",
+      "cand_r2_rev1_045"
+    ],
+    "same_situation_rationale": "三语均陈述正前方行车道上午曾有脚手架底座支腿侵占路线，但整套结构已在中午前全部拆解清运走，属于已终结的前方历史障碍。",
+    "replaces_review_family_id": "F039",
+    "differentiation_rationale": "三语均陈述正前方行车道上午曾有脚手架底座支腿侵占路线，但整套结构已在中午前全部拆解清运走，属于已终结的前方历史障碍。"
+  },
+  "cand_his_13": {
+    "family_id": "cand_his_13",
+    "note_status": "HISTORICAL",
+    "situation": "An emergency fire drill was conducted across the vehicle forward lane two hours ago, during which fire hoses were stretched across the path; drill completed and hoses coiled away.",
+    "phenomenon": "消防演习水带跨路占用已撤除（演习活动完全收官）",
+    "record_ids": [
+      "cand_r2_rev1_025",
+      "cand_r2_rev1_031",
+      "cand_r2_rev1_039"
+    ],
+    "same_situation_rationale": "三语均陈述正前方主路线两小时前曾因消防演习铺设水带横跨轨道，演练已全线结束且水带已于当时全部卷起收存，属于已自足终结的前方历史占用事实。",
+    "replaces_review_family_id": "F040",
+    "differentiation_rationale": "三语均陈述正前方主路线两小时前曾因消防演习铺设水带横跨轨道，演练已全线结束且水带已于当时全部卷起收存，属于已自足终结的前方历史占用事实。"
+  },
+  "cand_hyp_11": {
+    "family_id": "cand_hyp_11",
+    "note_status": "HYPOTHETICAL",
+    "situation": "Safety procedure: if overhead condensation drips and accumulates into puddles deeper than five millimeters on the vehicle driving line, vehicle must pause and engage anti-skid mode.",
+    "phenomenon": "冷凝积水超标条件应对规程（前置假设条件句）",
+    "record_ids": [
+      "cand_r2_rev1_003",
+      "cand_r2_rev1_017",
+      "cand_r2_rev1_027"
+    ],
+    "same_situation_rationale": "三语均陈述安全作业规程：若正前方行驶线上冷凝水积水厚度超过五毫米，车辆必须就地停下并切入防滑保护模式；纯属前置条件假设。",
+    "replaces_review_family_id": "F050",
+    "differentiation_rationale": "三语均陈述安全作业规程：若正前方行驶线上冷凝水积水厚度超过五毫米，车辆必须就地停下并切入防滑保护模式；纯属前置条件假设。"
+  },
+  "cand_irr_11": {
+    "family_id": "cand_irr_11",
+    "note_status": "IRRELEVANT",
+    "situation": "IT server cluster room firmware upgrade completed; all rack cooling fans have switched to standard baseline RPM.",
+    "phenomenon": "异地网络与IT弱电机房固件升级通知（与地面行车完全无关）",
+    "record_ids": [
+      "cand_r2_rev1_001",
+      "cand_r2_rev1_010",
+      "cand_r2_rev1_029"
+    ],
+    "same_situation_rationale": "三语均陈述三楼独立弱电机房的服务器固件升级与风扇转速，完全属于物流IT系统管理日志，与地面车辆行进无关。",
+    "replaces_review_family_id": "F051",
+    "differentiation_rationale": "三语均陈述三楼独立弱电机房的服务器固件升级与风扇转速，完全属于物流IT系统管理日志，与地面车辆行进无关。"
+  },
+  "cand_irr_12": {
+    "family_id": "cand_irr_12",
+    "note_status": "IRRELEVANT",
+    "situation": "The automatic fire suppression nitrogen cylinder bank in Zone D mezzanine completed hydrostatic pressure certification; pressure gauge calibrated to normal level.",
+    "phenomenon": "夹层固定消防管网压力检测读数合规报告（无道路空间关联）",
+    "record_ids": [
+      "cand_r2_rev1_024",
+      "cand_r2_rev1_038",
+      "cand_r2_rev1_044"
+    ],
+    "same_situation_rationale": "三语均陈述D区独立夹层内气体灭火储气瓶组的水压检测与压力表读数，属于偏远固定消防设施维保，与地面车辆行进无关。",
+    "replaces_review_family_id": "F054",
+    "differentiation_rationale": "三语均陈述D区独立夹层内气体灭火储气瓶组的水压检测与压力表读数，属于偏远固定消防设施维保，与地面车辆行进无关。"
+  },
+  "cand_hyp_12": {
+    "family_id": "cand_hyp_12",
+    "note_status": "HYPOTHETICAL",
+    "situation": "Safety SOP: If the infrared perimeter light curtain at the forward intersection is continuously interrupted, the vehicle must decelerate and hold position.",
+    "phenomenon": "光电安全防护装置触发应对规程（红外光栅遮挡停等假设句）",
+    "record_ids": [
+      "cand_r2_rev2_001",
+      "cand_r2_rev2_002",
+      "cand_r2_rev2_003"
+    ],
+    "same_situation_rationale": "厂房安全作业规程：若正前方交叉道口的红外对射安全光幕被持续阻断触发报警，车辆必须减速并就地停等。",
+    "replaces_review_family_id": "F030",
+    "differentiation_rationale": "区别于松脱紧固件（F042）、冷凝水积水（cand_hyp_11）及货垛倾斜（F043），本情形考查特定光电安全光幕受遮挡时的条件应对规程。"
+  },
+  "cand_aff_14": {
+    "family_id": "cand_aff_14",
+    "note_status": "AFFIRMED_CURRENT",
+    "situation": "An articulated robotic feed arm has faulted and locked with its gripper extended across the vehicle track ahead.",
+    "phenomenon": "固定式自动化上料机械手越限急停锁死（刚性机械臂侵限占道）",
+    "record_ids": [
+      "cand_r2_rev2_004",
+      "cand_r2_rev2_005",
+      "cand_r2_rev2_008"
+    ],
+    "same_situation_rationale": "正前方自动上料工作站的机械臂发生故障急停锁定，夹爪悬伸在行车路线上方阻断通行。",
+    "replaces_review_family_id": "F002",
+    "differentiation_rationale": "区别于电工登梯（已淘汰F002）、剪刀式升降台（cand_aff_11）及地沟开盖（cand_aff_13），本情形考查自动化机械臂越限故障锁定造成的低空悬臂阻碍。"
+  },
+  "cand_neg_16": {
+    "family_id": "cand_neg_16",
+    "note_status": "NEGATED",
+    "situation": "The expandable roller conveyor across the aisle has been collapsed and pushed back into the side bay, leaving the transit lane entirely clear with no conveyor sections or legs remaining.",
+    "situation_zh": "此前横跨通道用于装卸作业的伸缩式节段滚筒输送机已全部折叠缩回并推入侧边停放槽位，行车通道内没有任何滚筒节段、机架或支撑脚残留阻碍。",
+    "phenomenon": "跨道伸缩式滚筒输送机折叠推回侧壁停靠槽位（活动装卸机械撤离车道否定句）",
+    "record_ids": [
+      "cand_r2_rev3_001",
+      "cand_r2_rev3_002",
+      "cand_r2_rev3_003"
+    ],
+    "same_situation_rationale": "三语均表述完全相同的具体物理情形：跨道伸缩式滚筒输送机在装卸结束后整机折叠缩回并推入侧壁停泊槽，前方行车路线上无任何活动滚筒或支架残留。zh、en 与 mixed 分别采用纯中文、纯英文与中英文工业术语自然混编，技术概念对齐且语义严格等价。",
+    "replaces_review_family_id": "F060",
+    "differentiation_rationale": "区别于柔性跨路线材盘卷（F051/cand_neg_14）、垂直吊具（cand_neg_12）及固定机械臂（cand_aff_14），本情形考查刚性伸缩滚筒输送机整机折叠推回侧槽后的通道无残留否定事实。"
+  }
+}

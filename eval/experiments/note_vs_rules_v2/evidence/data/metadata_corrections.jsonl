@@ -1,0 +1,6 @@
+{"family_id": "cand_aff_11", "field": "situation", "old": "A hydraulic scissor lift table deployed in the middle of the vehicle track for ceiling ductwork.", "new": "A hydraulic scissor lift table is in the middle of the forward driving track and blocks the route."}
+{"family_id": "cand_aff_11", "field": "phenomenon", "old": "高空风管安装移动升降平台地面占道（重型检修设备侵限事实句）", "new": "液压剪叉升降台占道的当前肯定陈述"}
+{"family_id": "cand_aff_11", "field": "same_situation_rationale", "old": "三语均陈述正前方行车路线中央架设了液压升降平台进行风管作业，车辆通道被完全阻断；直接断言现场重型检修设施占道事实。", "new": "三语均明确报告本车前方路线中央有液压剪叉升降台并构成占道事实；不补入题面没有的施工用途或作业人员。"}
+{"family_id": "cand_aff_11", "field": "differentiation_rationale", "old": "三语均陈述正前方行车路线中央架设了液压升降平台进行风管作业，车辆通道被完全阻断；直接断言现场重型检修设施占道事实。", "new": "三语共同情形为路线中央的液压剪叉升降台占道；不依靠未在实际备注出现的施工背景区分家族。"}
+{"family_id": "cand_unc_12", "field": "situation", "old": "A vibrating acoustic warning buzzer sounding around the blind corner ahead, but blind spot camera cannot confirm whether equipment is advancing.", "new": "Reversing warning beeps are heard around the blind corner ahead, while the view is blocked and it is unconfirmed whether a vehicle is entering the forward route."}
+{"family_id": "cand_unc_12", "field": "phenomenon", "old": "声学报警存在但视觉被拐角立柱遮挡（跨模态感知冲突与存疑）", "new": "蜂鸣线索与视线受阻下的车辆风险存在存疑"}

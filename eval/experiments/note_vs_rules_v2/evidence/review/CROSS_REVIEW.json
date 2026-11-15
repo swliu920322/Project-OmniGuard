@@ -1,0 +1,150 @@
+{
+  "role": "custodian; not an R3 developer; participated in data adjudication; post-unblinding review, not blind or expert labelling",
+  "data_sha256": "6249acb7385857262942e746a91c55f19500f8be0905a7499ae2b25b580a1369",
+  "calls_sha256": "090625b63538d45c53723a333055d456c25b6e01b36d3aa1ec38f8f1b709ece6",
+  "scores": {
+    "model": {
+      "n": 180,
+      "note_correct": 173,
+      "primary_correct": 180,
+      "missed_halt": 0,
+      "needless_halt": 0,
+      "note_only_n": 42,
+      "note_only_missed": 0
+    },
+    "R1": {
+      "n": 180,
+      "note_correct": 60,
+      "primary_correct": 131,
+      "missed_halt": 31,
+      "needless_halt": 8,
+      "note_only_n": 42,
+      "note_only_missed": 31
+    },
+    "R2": {
+      "n": 180,
+      "note_correct": 41,
+      "primary_correct": 116,
+      "missed_halt": 28,
+      "needless_halt": 21,
+      "note_only_n": 42,
+      "note_only_missed": 28
+    },
+    "R3": {
+      "n": 180,
+      "note_correct": 77,
+      "primary_correct": 138,
+      "missed_halt": 26,
+      "needless_halt": 10,
+      "note_only_n": 42,
+      "note_only_missed": 26
+    }
+  },
+  "paired_model_vs_r3": {
+    "both_correct": 75,
+    "model_only": 98,
+    "r3_only": 2,
+    "both_wrong": 5
+  },
+  "bootstrap": {
+    "seed": 20261109,
+    "resamples": 2000,
+    "families": 60,
+    "ci95_points": [
+      43.33,
+      63.33
+    ]
+  },
+  "r3_groups": {
+    "no_topic_clause": 68,
+    "topic_recognized_wrong_status": 35
+  },
+  "r3_wrong_by_language": {
+    "zh": 37,
+    "mixed": 30,
+    "en": 36
+  },
+  "r3_missed_halt_groups": {
+    "no_topic_clause|AFFIRMED_CURRENT|IRRELEVANT": 8,
+    "no_topic_clause|UNCERTAIN|IRRELEVANT": 8,
+    "topic_recognized_wrong_status|AFFIRMED_CURRENT|HISTORICAL": 1,
+    "topic_recognized_wrong_status|AFFIRMED_CURRENT|NEGATED": 1,
+    "topic_recognized_wrong_status|UNCERTAIN|HYPOTHETICAL": 2,
+    "topic_recognized_wrong_status|UNCERTAIN|NEGATED": 6
+  },
+  "r3_wrong_status_pairs": {
+    "AFFIRMED_CURRENT|HISTORICAL": 1,
+    "AFFIRMED_CURRENT|IRRELEVANT": 11,
+    "AFFIRMED_CURRENT|NEGATED": 1,
+    "HISTORICAL|AFFIRMED_CURRENT": 3,
+    "HISTORICAL|IRRELEVANT": 17,
+    "HYPOTHETICAL|AFFIRMED_CURRENT": 4,
+    "HYPOTHETICAL|IRRELEVANT": 21,
+    "IRRELEVANT|AFFIRMED_CURRENT": 2,
+    "NEGATED|AFFIRMED_CURRENT": 6,
+    "NEGATED|HISTORICAL": 1,
+    "NEGATED|IRRELEVANT": 9,
+    "UNCERTAIN|AFFIRMED_CURRENT": 9,
+    "UNCERTAIN|HYPOTHETICAL": 2,
+    "UNCERTAIN|IRRELEVANT": 10,
+    "UNCERTAIN|NEGATED": 6
+  },
+  "development": {
+    "n": 142,
+    "correct": 141,
+    "median_note_characters": 20.5,
+    "mean_r3_split_clauses": 1.4225
+  },
+  "test": {
+    "median_note_characters": 46.5,
+    "mean_r3_split_clauses": 2.0611,
+    "length_bins": {
+      "lt40": {
+        "n": 74,
+        "correct": 34
+      },
+      "40to69": {
+        "n": 43,
+        "correct": 19
+      },
+      "ge70": {
+        "n": 63,
+        "correct": 24
+      }
+    }
+  },
+  "sensitivity_only_not_official": {
+    "changed_records": 5,
+    "assumption": "HISTORICAL to NEGATED only for the five model-boundary disagreements; post-hoc diagnostic, no source edits",
+    "note_correct": {
+      "model": 178,
+      "R1": 59,
+      "R2": 41,
+      "R3": 75
+    }
+  },
+  "topic_family_sensitivity_not_official": {
+    "changed_records": 3,
+    "assumption": "interpret the entire leak-condition family as outside the person/obstacle topic in all languages; post-hoc diagnostic, no source edits",
+    "note_correct": {
+      "model": 172,
+      "R1": 63,
+      "R2": 44,
+      "R3": 80
+    }
+  },
+  "main_usage": {
+    "prompt": 161642,
+    "completion": 41848,
+    "reasoning_subset": 37879,
+    "total": 203490,
+    "usd_conservative": "0.109678"
+  },
+  "main_latency_ms": {
+    "median": 1750.0500000000002,
+    "p95_nearest_rank": 3314.7,
+    "max": 10885.4
+  },
+  "model_error_count": 7,
+  "cause_evidence_scope": "R3 groups verify executed control flow; lexical diversity vs length was not experimentally isolated"
+}

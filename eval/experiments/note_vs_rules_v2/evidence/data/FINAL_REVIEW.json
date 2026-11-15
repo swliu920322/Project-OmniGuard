@@ -1,0 +1,50 @@
+{
+  "schema": "omniguard-note-v2-revision3-final-review-v1",
+  "reviewed_at_utc": "2026-11-15T11:21:31.736522+00:00",
+  "semantic_and_family_review_complete": true,
+  "runtime_records": 180,
+  "family_groups": 60,
+  "largest_group": 3,
+  "runtime_label_changes": 0,
+  "runtime_text_changes": 0,
+  "incremental_records_reviewed": 7,
+  "additional_unchanged_issues_adjudicated": 1,
+  "additional_runtime_edits_required": 0,
+  "metadata_family_objects_corrected": 2,
+  "metadata_fields_corrected": 6,
+  "original_family_metadata_sha256": "5ed6784558e284204cc1e4d8732190171f53554e0ddcc488b1abf67253f88453",
+  "approved_family_metadata_sha256": "19defbd3e29210e0cfb17e12d4b49259a83129984b96fd4370fd506b8b8b425f",
+  "coverage_records": 105,
+  "coverage_families": 49,
+  "coverage_per_initial_status": {
+    "UNCERTAIN": 20,
+    "NEGATED": 17,
+    "HYPOTHETICAL": 15,
+    "AFFIRMED_CURRENT": 19,
+    "HISTORICAL": 19,
+    "IRRELEVANT": 15
+  },
+  "agreement_reporting": "52/54, 55/64, 17/21 and 7/7 remain historical separate cohorts; no pooled agreement",
+  "overlap_flags_adjudicated": 12,
+  "overlap_disposition": "retain basic negation coverage and declared shared/nearby patterns; no confirmed new specific-event duplication requiring withdrawal",
+  "limits": [
+    "Synthetic text plus telemetry; no field data, CV, physical safety or expert gold claim.",
+    "60 are declared semantic scenario groups, not proven statistically independent draws.",
+    "Common basic statuses and language patterns occur in public materials; no claim of unseen semantic patterns or absolute semantic isolation.",
+    "Text-only question interpretation is an adjudication under this experimental contract; a contextual alternative reading remains archived.",
+    "AI annotation, AI review and custodian adjudication are not human expert labels."
+  ],
+  "owner_custody_decision": {
+    "independent_media_backup": "deferred by owner on 2026-11-15",
+    "independent_media_requirement_is_current_blocker": false,
+    "existing_replica": "same-disk only",
+    "raw_data_in_git": false,
+    "remote_copy_of_raw_data_confirmed": false,
+    "publication_plan": "keep raw data private before/during test; after sealed run/review publish complete originals and per-record results in project and push when authorized",
+    "local_commit_is_not_off_device_backup": true
+  },
+  "frozen_scheme_files_unchanged": 14,
+  "new_paid_calls_authorized": false,
+  "formal_data_freeze_done": false,
+  "next_step": "Commit final data-hash commitment and auxiliary checker fixes, then verify clean state and prepare budget; owner deferred independent-media step"
+}

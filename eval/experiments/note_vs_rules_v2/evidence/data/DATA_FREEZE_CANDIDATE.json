@@ -1,0 +1,25 @@
+{
+  "schema": "omniguard-note-v2-data-freeze-candidate-v1",
+  "prepared_at_utc": "2026-11-15T11:21:31.736522+00:00",
+  "status": "final immutable bytes prepared; public hash commitment not yet committed",
+  "files": {
+    "test_set.jsonl": "6249acb7385857262942e746a91c55f19500f8be0905a7499ae2b25b580a1369",
+    "families.json": "19defbd3e29210e0cfb17e12d4b49259a83129984b96fd4370fd506b8b8b425f",
+    "annotation_rationales.jsonl": "2c6447bffa6c04998792b1bf49b61d59356c22c4d5024a386eb256b5130d9d21",
+    "record_adjudications.jsonl": "b8b1ba362e8380eba60c93aa63a19cfb549456b57260186ca7e05bad98c330b3",
+    "family_adjudications.jsonl": "687282d9ca94660adef1636ebcceafd00dec20f6db12eee4de1992c4cc430abf",
+    "metadata_corrections.jsonl": "28781bf1da5464a2b9aa519ac618387b6a3fe3dabff1c489543d0fc85b4f4f27",
+    "FINAL_REVIEW.json": "be8ee7807c05643cd4d0ace507c289f52140c7d8fd4627d63a663f79ac54018a",
+    "validator_source_snapshot.py": "48e1b285a25b9ddcb7c0bcaef6f9ea35fe9e14618342737ddc70b01af9773744",
+    "validator_tests_snapshot.py": "df92790e501b71184cfe4335b305956828494c4e78412ce956e44dd812dc5690"
+  },
+  "scheme_commitment_sha256": "d3afaf97a417b15e9a2d65c0b21174e6d4a5377f9ef27b4ef21d07f30d1276c5",
+  "review_input_commit": "567219a",
+  "blind_result_commit": "b8a49cb",
+  "raw_inputs_unchanged_from_blind_commitment": true,
+  "auxiliary_checker_base_commit": "98403f7",
+  "auxiliary_checker_working_tree_fixes_pending_commit": true,
+  "original_candidates_not_overwritten": true,
+  "owner_independent_media_deferral_recorded": true,
+  "data_freeze_not_active_until_commit_verified": true
+}
