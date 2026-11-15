@@ -1,5 +1,7 @@
 # 交给 Claude 的执行提示词
 
+> **2026-11-15 状态：本提示词对应的 P0/P1 已完成并已提交，仅作历史记录。** 其中“不读取 `/private/tmp`”等约束适用于当时的离线实施；之后旧私有数据已丢失，见 `eval/LIMITATIONS.md` 第 22 条。下一阶段（P2）见 `PLAN.md` 的阶段状态表和 `AUTHOR_BRIEF.md`、`CUSTODIAN_GUIDE.md`：作者先交家族与表达类型覆盖计划，核对后再制作测试。
+
 以下可整段转交。完整方案见 [PLAN.md](PLAN.md)。
 
 ---
