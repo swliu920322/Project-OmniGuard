@@ -1,0 +1,22 @@
+{
+ "passed": true,
+ "criteria": {
+  "directory_sealed_and_verifies": true,
+  "completed_two_calls_on_the_public_dev_file": true,
+  "no_api_error": true,
+  "finish_reason_stop": true,
+  "strict_output_and_note_compatible": true,
+  "output_within_the_limit": true,
+  "one_returned_alias_no_drift": true,
+  "request_parameters_match_the_frozen_configuration": true
+ },
+ "model_configuration": {
+  "configured_model_name": "deepseek-flash",
+  "identity_stated_by_owner": "deepseek-flash; provider states DeepSeek-V4.1-Flash-1017; actual version not independently verified",
+  "note": "the API reports only an alias; temperature=0 is sent but the provider's default reasoning mode ignores it",
+  "unverified": true
+ },
+ "returned_aliases": [
+  "deepseek-flash"
+ ]
+}

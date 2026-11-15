@@ -1,0 +1,231 @@
+{
+  "checks": {
+    "data_hash_matches": true,
+    "data_quota_passed": true,
+    "health_seal_valid": true,
+    "health_no_duplicate_ids": true,
+    "health_model_authorized": true,
+    "health_request_parameters": true,
+    "health_no_sdk_retries": true,
+    "health_passed": true,
+    "main_seal_valid": true,
+    "main_no_duplicate_ids": true,
+    "main_model_authorized": true,
+    "main_request_parameters": true,
+    "main_no_sdk_retries": true,
+    "main_exactly_covers_frozen_data": true,
+    "main_requests_match_frozen_input": true,
+    "offline_recomputed_scores_match": true,
+    "main_analysis_seal_valid": true,
+    "main_complete": true,
+    "aggregate_calls_within_182": true,
+    "aggregate_tokens_within_400000": true,
+    "aggregate_usd_within_020": true,
+    "no_key_in_saved_execution_files": true
+  },
+  "all_passed": true,
+  "total_calls": 182,
+  "total_tokens_booked": 205553,
+  "usd_booked_at_conservative_rates": "0.110672",
+  "source_archive_sha256": "7b5ea22f6e333289cdfe15ac916103b0e6f0d55e3faf60bff4a259b235ad210f",
+  "source_archive_bytes": 179805,
+  "main_run": "20261115T152854Z_main_real_e5fd14c2",
+  "same_disk_restore_verified": true,
+  "independent_media_backup": "owner deferred; not completed",
+  "cross_reviewer_post_run_review": "pending",
+  "returned_aliases": [
+    "deepseek-flash"
+  ],
+  "main_result": {
+    "R1": {
+      "note_correct": 60,
+      "note_n": 180,
+      "note_accuracy": 0.3333,
+      "note_macro_f1": 0.2954,
+      "primary_correct": 131,
+      "missed_halt": 31,
+      "needless_halt": 8,
+      "note_only_risk": {
+        "fault_halts": 0,
+        "missed_halt": 31,
+        "n": 42,
+        "needless_halt": 0,
+        "note_accuracy": 0.1667,
+        "note_correct": 7,
+        "parse_failure_halts": 0,
+        "primary_correct": 11
+      }
+    },
+    "R2": {
+      "note_correct": 41,
+      "note_n": 180,
+      "note_accuracy": 0.2278,
+      "note_macro_f1": 0.1076,
+      "primary_correct": 116,
+      "missed_halt": 28,
+      "needless_halt": 21,
+      "note_only_risk": {
+        "fault_halts": 0,
+        "missed_halt": 28,
+        "n": 42,
+        "needless_halt": 0,
+        "note_accuracy": 0.1667,
+        "note_correct": 7,
+        "parse_failure_halts": 0,
+        "primary_correct": 14
+      }
+    },
+    "R3": {
+      "note_correct": 77,
+      "note_n": 180,
+      "note_accuracy": 0.4278,
+      "note_macro_f1": 0.4001,
+      "primary_correct": 138,
+      "missed_halt": 26,
+      "needless_halt": 10,
+      "note_only_risk": {
+        "fault_halts": 0,
+        "missed_halt": 26,
+        "n": 42,
+        "needless_halt": 0,
+        "note_accuracy": 0.2619,
+        "note_correct": 11,
+        "parse_failure_halts": 0,
+        "primary_correct": 16
+      }
+    },
+    "model": {
+      "note_correct": 173,
+      "note_n": 180,
+      "note_accuracy": 0.9611,
+      "note_macro_f1": 0.9605,
+      "primary_correct": 180,
+      "missed_halt": 0,
+      "needless_halt": 0,
+      "note_only_risk": {
+        "fault_halts": 0,
+        "missed_halt": 0,
+        "n": 42,
+        "needless_halt": 0,
+        "note_accuracy": 1.0,
+        "note_correct": 42,
+        "parse_failure_halts": 0,
+        "primary_correct": 42
+      }
+    }
+  },
+  "comparisons": {
+    "model_vs_R1": {
+      "note_accuracy_difference": {
+        "ci95_points": [
+          53.33,
+          71.67
+        ],
+        "difference_points": 62.78,
+        "families": 60,
+        "interval": "95% percentile",
+        "note": "estimates sampling uncertainty over families; it does not repair the representativeness of synthetic data",
+        "records": 180,
+        "resamples": 2000,
+        "seed": 20261109,
+        "unit": "family"
+      },
+      "paired": {
+        "both_correct": 59,
+        "both_wrong": 6,
+        "n": 180,
+        "only_first_correct": 114,
+        "only_second_correct": 1
+      }
+    },
+    "model_vs_R2": {
+      "note_accuracy_difference": {
+        "ci95_points": [
+          63.33,
+          82.78
+        ],
+        "difference_points": 73.33,
+        "families": 60,
+        "interval": "95% percentile",
+        "note": "estimates sampling uncertainty over families; it does not repair the representativeness of synthetic data",
+        "records": 180,
+        "resamples": 2000,
+        "seed": 20261109,
+        "unit": "family"
+      },
+      "paired": {
+        "both_correct": 41,
+        "both_wrong": 7,
+        "n": 180,
+        "only_first_correct": 132,
+        "only_second_correct": 0
+      }
+    },
+    "model_vs_R3": {
+      "note_accuracy_difference": {
+        "ci95_points": [
+          43.33,
+          63.33
+        ],
+        "difference_points": 53.33,
+        "families": 60,
+        "interval": "95% percentile",
+        "note": "estimates sampling uncertainty over families; it does not repair the representativeness of synthetic data",
+        "records": 180,
+        "resamples": 2000,
+        "seed": 20261109,
+        "unit": "family"
+      },
+      "paired": {
+        "both_correct": 75,
+        "both_wrong": 5,
+        "n": 180,
+        "only_first_correct": 98,
+        "only_second_correct": 2
+      }
+    }
+  },
+  "model_cost_and_latency": {
+    "cost_note": "estimate at the configured rates (not a bill); a request with no reported usage keeps its worst-case reservation, which is an upper bound and not a spend, and is never counted as zero",
+    "latency_ms_all_requests": {
+      "max": 10885.4,
+      "median": 1750.05,
+      "n": 180,
+      "p95_nearest_rank": 3314.7
+    },
+    "latency_ms_successful_requests": {
+      "max": 10885.4,
+      "median": 1750.05,
+      "n": 180,
+      "p95_nearest_rank": 3314.7
+    },
+    "latency_note": "wall clock of one API request around the client call (network + service + hidden reasoning); not an HTTP business end-to-end latency and not comparable with local rule time",
+    "requests": 180,
+    "requests_with_reported_usage": 180,
+    "requests_without_reported_usage": 0,
+    "tokens_reported": {
+      "completion": 41848,
+      "prompt": 161642
+    },
+    "usd_from_reported_usage": 0.109678,
+    "usd_mean_per_request_with_usage": 0.000609,
+    "usd_reserved_for_requests_without_usage": 0.0
+  },
+  "model_note_mistakes": [
+    {
+      "count": 1,
+      "gold": "HISTORICAL",
+      "got": "IRRELEVANT"
+    },
+    {
+      "count": 5,
+      "gold": "HISTORICAL",
+      "got": "NEGATED"
+    },
+    {
+      "count": 1,
+      "gold": "HYPOTHETICAL",
+      "got": "IRRELEVANT"
+    }
+  ]
+}

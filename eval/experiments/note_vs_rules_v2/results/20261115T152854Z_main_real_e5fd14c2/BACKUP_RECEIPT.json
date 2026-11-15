@@ -1,0 +1,12 @@
+{
+  "archive_name": "authorized_note_v2_20261115T152848Z_verified.tar.gz",
+  "sha256": "3e5f2880e3e7f9e0661fb55f6fa8e1e44ef0dc1b5b74bc711993aba20a7898c0",
+  "bytes": 183549,
+  "payload_files": 48,
+  "restores": [
+    true,
+    true
+  ],
+  "same_disk_only": true,
+  "independent_media_backup": "owner deferred; not completed"
+}
