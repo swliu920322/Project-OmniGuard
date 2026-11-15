@@ -61,3 +61,7 @@ python3 eval/experiments/note_vs_rules_v2/audit_recompute.py \
 ### 后续保存决定：历史包体也随Git跟踪
 
 所有者随后明确要求归档不能只留在被忽略目录。原17个压缩包、17份校验单和4份手册／论文原件已按原字节另存至 [archive/](../archive/README.md)，由Git跟踪；原 `.local-archives/` 和Downloads副本均保留。现在不再只靠本机清单或哈希恢复历史。**本地提交后仍需推送，才能确认GitHub存在包体副本；远端备份状态不能由本地复制或提交代替。**
+
+### 已完成远端取回核验
+
+所有者授权推送后，已直接从GitHub新克隆确认17个归档包存在，archive 41项与evidence 28项哈希一致；见 [远端核验凭证](../results/20261115T152854Z_main_real_e5fd14c2/REMOTE_BACKUP_VERIFICATION.json)。早期“尚未推送”的记录为当时快照；原私有目录、本机副本和Downloads继续保留。没有新增模型请求，也不把字节核验称为真人陌生人验收。
