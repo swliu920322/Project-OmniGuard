@@ -10,7 +10,7 @@
 | [data/test_set.jsonl](data/test_set.jsonl) | 冻结的 180 条原始输入及标签；SHA-256 仍为 `6249acb7385857262942e746a91c55f19500f8be0905a7499ae2b25b580a1369` |
 | [data/families.json](data/families.json) | 最终派生修正的 60 个实验分组；不是已证明统计独立的实地场景 |
 | [data/annotation_rationales.jsonl](data/annotation_rationales.jsonl) | 原分句标注依据；保留原样，字段非空不证明语义正确，已知过于概括的依据见结果报告 |
-| `data/*adjudications.jsonl`、`metadata_corrections.jsonl`、`FINAL_REVIEW.json` | 最终裁决、元数据修正与制作终审；较早的候选／全部历史盲标原件仍在保管目录，本目录没有把历史记录冒充新盲标 |
+| `data/*adjudications.jsonl`、`metadata_corrections.jsonl`、`FINAL_REVIEW.json` | 最终裁决、元数据修正与制作终审；较早的候选／历史盲标原件另见上级archive中的累计制作包；本目录没有把历史记录冒充新盲标 |
 | [data/DATA_FREEZE_CANDIDATE.json](data/DATA_FREEZE_CANDIDATE.json) | 当时不可变的候选快照，含“待提交”等历史状态；最终激活由 `a65eb62` 字节承诺核验、执行标签和运行配置共同绑定，不回写此历史文件 |
 | [runs/health/20261115T152849Z_main_real_5a331f0f/](runs/health/20261115T152849Z_main_real_5a331f0f/) | 2 条公开开发材料健康检查的请求、回复、配置、用量及摘要，不计正式分数 |
 | [runs/main/20261115T152854Z_main_real_e5fd14c2/](runs/main/20261115T152854Z_main_real_e5fd14c2/) | 正式 180 条 `calls.jsonl`、`config.json`、`summary.json`、原封存清单；完整回复保留 reasoning 和结束原因 |
@@ -57,3 +57,7 @@ python3 eval/experiments/note_vs_rules_v2/audit_recompute.py \
 已核对其余包的文件内容被两个累计包覆盖，三个旧标注依据在累计制作包的 `archives/` 下保留。历史包不作为当前成绩入口，但继续保留原容器以对应旧哈希。`MANIFEST.json` 和本机 README 记录每份文件的用途、大小和哈希；缺配套校验单的两个运行包已在本机归档中补生成，未改原压缩包。
 
 本机归档清单 `MANIFEST.json` 的 SHA-256：`c8e140c5c3902bbe5dcaeb2a041c3b273ad14d4613c66d4abce2b7ad842efd70`。清单及包体被 Git 忽略；Git 中这条索引不能恢复本机归档，不代表已推送备份。
+
+### 后续保存决定：历史包体也随Git跟踪
+
+所有者随后明确要求归档不能只留在被忽略目录。原17个压缩包、17份校验单和4份手册／论文原件已按原字节另存至 [archive/](../archive/README.md)，由Git跟踪；原 `.local-archives/` 和Downloads副本均保留。现在不再只靠本机清单或哈希恢复历史。**本地提交后仍需推送，才能确认GitHub存在包体副本；远端备份状态不能由本地复制或提交代替。**

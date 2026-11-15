@@ -1,0 +1,259 @@
+{
+  "purpose": "Local same-disk archive, ignored by Git; original Downloads files unchanged",
+  "archives": 17,
+  "reference_documents": 4,
+  "files": [
+    {
+      "file": "history/OmniGuard-v2-candidate-review-20261115T062011Z.tar.gz",
+      "bytes": 129574,
+      "sha256": "db1715755b77f2b6be8ca9796f3d98bae6a25612c3c3e6d6e2f9eb4145c29770",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-candidate-review-20261115T070737Z.tar.gz",
+      "bytes": 339371,
+      "sha256": "c7ef10228aefb53a620e9758a05ae1cf8b1c0a6feaad9e5ec8b82bf911e1dc25",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision1-after-adjudication-20261115T085610Z.tar.gz",
+      "bytes": 574157,
+      "sha256": "55db19a36cacf847ffdbe2835869f10f4130b704a30ea04430b89cb3f2058422",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision1-after-blind-20261115T081839Z.tar.gz",
+      "bytes": 464738,
+      "sha256": "0824811a76c10787b250f8d01fda9e875876d3aec018cb98ea235cb6d537a7a3",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision1-after-blind-20261115T083542Z.tar.gz",
+      "bytes": 532475,
+      "sha256": "a03066509fb0f18c098c1b1829a0ef1512517d4371594e8e53dc9ef41d565b34",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision1-before-blind-20261115T073409Z.tar.gz",
+      "bytes": 417744,
+      "sha256": "40f9f4b74115db1e5d74def49524aadea8035507269008a21def495bca9d5d9c",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision2-after-adjudication-20261115T094252Z.tar.gz",
+      "bytes": 731458,
+      "sha256": "c00314f74534078366efc13a0827e7079ffc7589f1032bdb72b3860db2ed8605",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision2-after-blind-20261115T092058Z.tar.gz",
+      "bytes": 652068,
+      "sha256": "bc1b764cddc26418e109aeb6ec1cd7726a94afe7f9a49dee712547995b762f51",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision2-after-review-20261115T093513Z.tar.gz",
+      "bytes": 709130,
+      "sha256": "e168904fdd9e9be0aea10f87ee538ca8ba8c1e8986832dc05f9be2263bd800ca",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision2-before-blind-20261115T091155Z.tar.gz",
+      "bytes": 646246,
+      "sha256": "90ea2a9b453d406fae4a3cfb5113dea2af81ac19fd68197b5259b1d99b569b08",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision3-after-blind-20261115T103955Z.tar.gz",
+      "bytes": 821957,
+      "sha256": "f085629b37c779680ccc0e5dd81398d35c15b53c15dbc059b1b80a83c71596cc",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision3-after-review-20261115T110518Z.tar.gz",
+      "bytes": 894514,
+      "sha256": "324afeca6b9ea4001d8be8c3d5bace4afb536867765afbeb5e57ee728b61133f",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision3-before-blind-20261115T103110Z.tar.gz",
+      "bytes": 819202,
+      "sha256": "4217fb77de181ac100d24836d36b4fcfe5ed59804db3fa1613bc235527aec01f",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "current/OmniGuard-v2-revision3-final-candidate-20261115T112131Z.tar.gz",
+      "bytes": 949392,
+      "sha256": "c34d06c1f9f3871bd1335ecf839fdf554d9a0eaffc32dfc7fd47db48eba3fb02",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/OmniGuard-v2-revision3-plan-approved-20261115T100440Z.tar.gz",
+      "bytes": 736862,
+      "sha256": "1acaa0263c9807e62b4630cc1af80cd81814b7e46407e114b1166c6bae35837b",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": true
+    },
+    {
+      "file": "history/authorized_note_v2_20261115T152848Z.tar.gz",
+      "bytes": 179805,
+      "sha256": "7b5ea22f6e333289cdfe15ac916103b0e6f0d55e3faf60bff4a259b235ad210f",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": false
+    },
+    {
+      "file": "current/authorized_note_v2_20261115T152848Z_verified.tar.gz",
+      "bytes": 183549,
+      "sha256": "3e5f2880e3e7f9e0661fb55f6fa8e1e44ef0dc1b5b74bc711993aba20a7898c0",
+      "download_source_preserved": true,
+      "sidecar_copied_from_downloads": false
+    },
+    {
+      "file": "reference-documents/OmniGuard 项目手册：学什么、简历写不写、面试怎么答.md",
+      "bytes": 30007,
+      "sha256": "95f92cb1f9821627d2bd5b0d1ea8f894d8c71b7e750ae0902c4aa3cc5ede421a",
+      "download_source_preserved": true,
+      "purpose": "historical reference/export; not the current evaluation source"
+    },
+    {
+      "file": "reference-documents/OmniGuard 项目手册：学什么、简历写不写、面试怎么答.docx",
+      "bytes": 14502,
+      "sha256": "d14cb8613ab10c246e0aaa7dc366736514fec461437f493a2b6a514b68fd26f9",
+      "download_source_preserved": true,
+      "purpose": "historical reference/export; not the current evaluation source"
+    },
+    {
+      "file": "reference-documents/Project-OmniGuard_Cyber-Physical_AI_Safety_via_Zero-Trust_Isolation_and_Hybrid_Edge-Cloud_Orchestration.pdf",
+      "bytes": 323860,
+      "sha256": "88aa89121390d0f583f34b91915492d9060c2bdb9b0de83d487a0fb5e0071a54",
+      "download_source_preserved": true,
+      "purpose": "historical reference/export; not the current evaluation source"
+    },
+    {
+      "file": "reference-documents/OmniGuard 项目手册：学什么、简历写不写、面试怎么答.pdf",
+      "bytes": 1009254,
+      "sha256": "23bd96b629c6e96c19daa3a5ca7512fc58009ef8535816dd83c5740909109fd6",
+      "download_source_preserved": true,
+      "purpose": "historical reference/export; not the current evaluation source"
+    }
+  ],
+  "member_content_coverage": [
+    {
+      "archive": "OmniGuard-v2-candidate-review-20261115T062011Z.tar.gz",
+      "members": 30,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "OmniGuard-v2-candidate-review-20261115T070737Z.tar.gz",
+      "members": 46,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "OmniGuard-v2-revision1-after-adjudication-20261115T085610Z.tar.gz",
+      "members": 90,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "OmniGuard-v2-revision1-after-blind-20261115T081839Z.tar.gz",
+      "members": 68,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "OmniGuard-v2-revision1-after-blind-20261115T083542Z.tar.gz",
+      "members": 82,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "OmniGuard-v2-revision1-before-blind-20261115T073409Z.tar.gz",
+      "members": 59,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 1
+    },
+    {
+      "archive": "OmniGuard-v2-revision2-after-adjudication-20261115T094252Z.tar.gz",
+      "members": 128,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "OmniGuard-v2-revision2-after-blind-20261115T092058Z.tar.gz",
+      "members": 108,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "OmniGuard-v2-revision2-after-review-20261115T093513Z.tar.gz",
+      "members": 122,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "OmniGuard-v2-revision2-before-blind-20261115T091155Z.tar.gz",
+      "members": 101,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "OmniGuard-v2-revision3-after-blind-20261115T103955Z.tar.gz",
+      "members": 153,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 1
+    },
+    {
+      "archive": "OmniGuard-v2-revision3-after-review-20261115T110518Z.tar.gz",
+      "members": 170,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "OmniGuard-v2-revision3-before-blind-20261115T103110Z.tar.gz",
+      "members": 146,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 1
+    },
+    {
+      "archive": "OmniGuard-v2-revision3-final-candidate-20261115T112131Z.tar.gz",
+      "members": 181,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "OmniGuard-v2-revision3-plan-approved-20261115T100440Z.tar.gz",
+      "members": 134,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "authorized_note_v2_20261115T152848Z.tar.gz",
+      "members": 42,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    },
+    {
+      "archive": "authorized_note_v2_20261115T152848Z_verified.tar.gz",
+      "members": 49,
+      "content_covered_by_current_package": true,
+      "same_path_differences": 0
+    }
+  ],
+  "not_a_remote_or_independent_backup": true
+}
