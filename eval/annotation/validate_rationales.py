@@ -92,7 +92,23 @@ def _nonblank(v) -> bool:
     return isinstance(v, str) and bool(v.strip())
 
 
+def _valid_status(value) -> bool:
+    return isinstance(value, str) and value in STATUSES
+
+
+def _safe_sha(path: str, label: str, problems: dict) -> str | None:
+    try:
+        return _sha(path)
+    except OSError:
+        _add(problems, f"{label}_unreadable", None)
+        return None
+
+
 def validate(run_rows: list[tuple[int, dict]], ann_rows: list[tuple[int, dict]], problems: dict) -> dict:
+    if not run_rows:
+        _add(problems, "run_has_no_records", None)
+    if not ann_rows:
+        _add(problems, "annotation_has_no_records", None)
     run, ann = {}, {}
     for _, r in run_rows:
         rid = r.get("id")
@@ -122,7 +138,7 @@ def validate(run_rows: list[tuple[int, dict]], ann_rows: list[tuple[int, dict]],
             for key in ("family_id", "language", "note"):
                 if a.get(key) != r.get(key):
                     _add(problems, f"{key}_differs_from_run_record", aid)
-        if a.get("language") not in LANGUAGES:
+        if not isinstance(a.get("language"), str) or a["language"] not in LANGUAGES:
             _add(problems, "language_invalid", aid)
         if not isinstance(a.get("note"), str):
             _add(problems, "note_not_a_string", aid)
@@ -145,7 +161,7 @@ def validate(run_rows: list[tuple[int, dict]], ann_rows: list[tuple[int, dict]],
             if not (isinstance(c.get("text"), str) and c["text"].strip()):
                 _add(problems, "clause_text_missing_or_blank", aid, clause=i)
                 all_ok = False
-            if c.get("status") not in STATUSES:
+            if not _valid_status(c.get("status")):
                 _add(problems, "clause_status_invalid", aid, clause=i)
                 all_ok = False
             if not _nonblank(c.get("basis")):
@@ -155,16 +171,16 @@ def validate(run_rows: list[tuple[int, dict]], ann_rows: list[tuple[int, dict]],
             statuses.append(c.get("status"))
             texts.append(c.get("text") if isinstance(c.get("text"), str) else "")
         listed = a.get("clause_statuses")
-        if not isinstance(listed, list) or any(s not in STATUSES for s in listed):
+        if not isinstance(listed, list) or any(not _valid_status(s) for s in listed):
             _add(problems, "clause_statuses_missing_or_invalid", aid)
         elif listed != statuses:
             _add(problems, "clause_statuses_differ_from_clauses", aid)
         if isinstance(a.get("note"), str) and "".join(texts) != a["note"]:
             _add(problems, "clause_texts_do_not_rebuild_the_note", aid)
         combined = a.get("combined_status")
-        if combined not in STATUSES:
+        if not _valid_status(combined):
             _add(problems, "combined_status_invalid", aid)
-        elif all_ok and all(s in STATUSES for s in statuses):
+        elif all_ok and all(_valid_status(s) for s in statuses):
             if RL.combine_clause_statuses(statuses) != combined:
                 _add(problems, "combined_status_differs_from_clauses", aid)
             if r is not None and r.get("note_status") != combined:
@@ -193,16 +209,24 @@ def main(argv=None) -> int:
     ann_rows = _read_jsonl(args.rationales, "annotation", problems)
     counts = validate(run_rows, ann_rows, problems)
 
+    data_sha256 = _safe_sha(args.data, "run", problems)
+    rationales_sha256 = _safe_sha(args.rationales, "annotation", problems)
     summary = {code: {"records": len(p["records"]), "clauses": p["clauses"], "lines": p["lines"]} for code, p in sorted(problems.items())}
-    result = {"ok": not problems, "data_sha256": _sha(args.data) if os.path.isfile(args.data) else None,
-              "rationales_sha256": _sha(args.rationales) if os.path.isfile(args.rationales) else None, **counts, "problems": summary,
+    result = {"ok": not problems, "data_sha256": data_sha256,
+              "rationales_sha256": rationales_sha256, **counts, "problems": summary,
               "note": "structure and binding only; not a semantic review"}
     if args.private_errors and problems:
-        fd = os.open(args.private_errors, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            for code, p in sorted(problems.items()):
-                for rec_key, clause, line in p["detail"]:
-                    f.write(json.dumps({"code": code, "id": rec_key, "clause_index": clause, "line": line}, ensure_ascii=False) + "\n")
+        try:
+            fd = os.open(args.private_errors, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                for code, p in sorted(problems.items()):
+                    for rec_key, clause, line in p["detail"]:
+                        f.write(json.dumps({"code": code, "id": rec_key, "clause_index": clause, "line": line}, ensure_ascii=False) + "\n")
+        except OSError:
+            result["ok"] = False
+            result["error"] = "private_errors_write_failed"
+            print(json.dumps(result, indent=1))
+            return 2
         result["private_errors_written"] = True
     print(json.dumps(result, indent=1))
     return 0 if not problems else 1

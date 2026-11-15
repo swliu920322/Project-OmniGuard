@@ -207,3 +207,66 @@ def test_the_tool_does_not_import_the_frozen_runner_and_uses_the_frozen_combine_
     src = (ROOT / "eval/annotation/validate_rationales.py").read_text(encoding="utf-8")
     assert "run_note_compare" not in src and "import openai" not in src and "requests" not in src
     assert V.RL.combine_clause_statuses(["AFFIRMED_CURRENT", "NEGATED"]) == "AFFIRMED_CURRENT"
+
+
+@pytest.mark.parametrize("field,code", [
+    ("language", "language_invalid"),
+    ("clause_status", "clause_status_invalid"),
+    ("status_list_entry", "clause_statuses_missing_or_invalid"),
+    ("combined_status", "combined_status_invalid"),
+])
+@pytest.mark.parametrize("bad", [[], {}])
+def test_non_scalar_enum_values_are_reported_without_exception_or_leak(tmp_path, capsys, field, code, bad):
+    run, ann = make_pair(1)
+    if field == "language":
+        ann[0]["language"] = bad
+    elif field == "clause_status":
+        ann[0]["clauses"][0]["status"] = bad
+    elif field == "status_list_entry":
+        ann[0]["clause_statuses"][0] = bad
+    else:
+        ann[0]["combined_status"] = bad
+    exit_code, res, out = run_cli(tmp_path, run, ann, capsys)
+    assert exit_code == 1 and res["ok"] is False
+    assert code in res["problems"]
+    assert "ZZ-ID" not in out and "ZZ-TEXT" not in out and str(tmp_path) not in out
+
+
+def test_two_empty_inputs_are_not_a_successful_validation(tmp_path, capsys):
+    exit_code, res, _ = run_cli(tmp_path, [], [], capsys)
+    assert exit_code == 1 and res["ok"] is False
+    assert res["run_records"] == res["annotation_records"] == 0
+    assert {"run_has_no_records", "annotation_has_no_records"} <= res["problems"].keys()
+
+
+
+def test_late_hash_read_failure_returns_a_private_safe_error(tmp_path, capsys, monkeypatch):
+    run, ann = make_pair(1)
+    d, a = write(tmp_path, run, ann)
+    original_sha = V._sha
+
+    def deny_one_hash(path):
+        if path == d:
+            raise PermissionError("ZZ-SECRET-PATH " + path)
+        return original_sha(path)
+
+    monkeypatch.setattr(V, "_sha", deny_one_hash)
+    assert V.main(["--data", d, "--rationales", a]) == 1
+    out = capsys.readouterr().out
+    res = json.loads(out)
+    assert res["ok"] is False and res["data_sha256"] is None
+    assert "run_unreadable" in res["problems"]
+    assert "ZZ-SECRET-PATH" not in out and str(tmp_path) not in out and "ZZ-ID" not in out
+
+
+def test_private_diagnostic_write_failure_never_echoes_the_path(tmp_path, capsys):
+    run, ann = make_pair(1)
+    ann[0]["clauses"][0]["basis"] = None
+    d, a = write(tmp_path, run, ann)
+    target = tmp_path / "ZZ-MISSING-PARENT" / "private-errors.jsonl"
+    assert V.main(["--data", d, "--rationales", a, "--private-errors", str(target)]) == 2
+    out = capsys.readouterr().out
+    res = json.loads(out)
+    assert res["ok"] is False and res["error"] == "private_errors_write_failed"
+    assert not target.exists()
+    assert "ZZ-MISSING" not in out and str(tmp_path) not in out and "ZZ-ID" not in out
