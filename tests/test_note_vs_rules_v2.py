@@ -142,6 +142,49 @@ def test_quota_family_language_gate_and_overlap_problems_are_named_without_echoi
         assert code in problems, (code, problems)
 
 
+def _grid_rows():
+    """36 public fake records: 6 statuses x 3 languages x 2 kinds of telemetry, one each. No candidate text is used."""
+    rows, i = [], 0
+    for st in ("AFFIRMED_CURRENT", "UNCERTAIN", "NEGATED", "HISTORICAL", "HYPOTHETICAL", "IRRELEVANT"):
+        for lang in ("en", "zh", "mixed"):
+            for tele in (NORMAL, CLOSE):
+                i += 1
+                note = {"en": f"Public fake note number {i}.", "zh": f"公开假数据第{i}条。", "mixed": f"公开假数据 fake {i}。"}[lang]
+                rows.append((note, st, tele))
+    return rows
+
+
+GRID_QUOTA = {"n": 36, "per_status": 6, "per_status_language": 2, "per_status_normal_telemetry": 3, "per_status_risk_telemetry": 3,
+              "per_status_language_telemetry": 1, "min_families": 36, "max_per_family": 1}
+
+
+def test_the_three_way_cells_status_language_telemetry_are_checked(tmp_path):
+    path, h = write_data(tmp_path / "grid.jsonl", rows=_grid_rows())
+    _, stats, problems = RN.load_v2(path, h, GRID_QUOTA)
+    assert problems == [] and len(stats["status_x_language_x_telemetry"]) == 36 and set(stats["status_x_language_x_telemetry"].values()) == {1}
+
+    def tilt(recs):                                    # inside one status: the zh pair becomes both normal and the en pair both risk
+        zh_risk = next(r for r in recs if r["note_status"] == "AFFIRMED_CURRENT" and r["language"] == "zh" and R.risk_set(r["telemetry"]))
+        en_normal = next(r for r in recs if r["note_status"] == "AFFIRMED_CURRENT" and r["language"] == "en" and not R.risk_set(r["telemetry"]))
+        zh_risk["telemetry"], en_normal["telemetry"] = dict(NORMAL), dict(CLOSE)
+    path, h = write_data(tmp_path / "tilted.jsonl", rows=_grid_rows(), mutate=tilt)
+    _, stats, problems = RN.load_v2(path, h, GRID_QUOTA)
+    assert "per_status_language_telemetry_count" in problems
+    assert not {"per_status_count", "per_status_language_count", "per_status_normal_telemetry_count", "per_status_risk_telemetry_count"} & set(problems)   # every two-way count still holds
+
+
+def test_note_only_risk_is_reported_whole_and_split_by_telemetry_kind(tmp_path):
+    path, h = write_data(tmp_path / "split.jsonl")
+    _, stats, _ = RN.load_v2(path, h, None)
+    assert (stats["note_only_risk_records"], stats["note_only_risk_on_normal_telemetry"], stats["note_only_risk_on_non_stopping_risk_telemetry"]) == (2, 2, 0)
+
+    def low_battery_only(recs):                        # an affirmed obstacle on telemetry whose only risk (low battery) does not stop the vehicle
+        recs[1]["telemetry"] = {**NORMAL, "battery_pct": 10}
+    path, h = write_data(tmp_path / "split2.jsonl", mutate=low_battery_only)
+    _, stats, _ = RN.load_v2(path, h, None)
+    assert (stats["note_only_risk_records"], stats["note_only_risk_on_normal_telemetry"], stats["note_only_risk_on_non_stopping_risk_telemetry"]) == (3, 2, 1)
+
+
 def test_forbidden_keys_a_note_less_record_and_a_wrong_hash_are_refused_before_scoring(tmp_path):
     path, h = write_data(tmp_path / "a.jsonl", mutate=lambda recs: recs[0].update(estop=True))
     with pytest.raises(SystemExit) as e:

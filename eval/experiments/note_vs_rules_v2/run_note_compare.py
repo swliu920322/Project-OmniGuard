@@ -41,7 +41,7 @@ V2_FILES = ["eval/experiments/note_vs_rules_v2/r3.py", "eval/experiments/note_vs
 DEV_SET = os.path.join(ROOT, "eval/dev/dev_set.jsonl")
 LANGUAGES = ("zh", "en", "mixed")
 ALLOWED_KEYS = {"id", "family_id", "telemetry", "note", "note_status", "language", "gold"}
-QUOTA = {"n": 180, "per_status": 30, "per_status_language": 10, "per_status_normal_telemetry": 15, "per_status_risk_telemetry": 15, "min_families": 60, "max_per_family": 3,
+QUOTA = {"n": 180, "per_status": 30, "per_status_language": 10, "per_status_normal_telemetry": 15, "per_status_risk_telemetry": 15, "per_status_language_telemetry": 5, "min_families": 60, "max_per_family": 3,
          "max_note_chars": R.MAX_NOTE_CHARS}
 CAPS = {"health": {"max_calls": 2, "max_tokens": 20_000}, "main": {"max_calls": 180}}
 PUBLIC_NOTE_FILES = ("eval/dev/dev_set.jsonl", "eval/dev/stress/stress_dev.jsonl", "eval/spec/ambiguous_examples.json",
@@ -104,16 +104,21 @@ def check_v2(records: list[dict], quota: dict, reference: dict | None = None) ->
     st = collections.Counter(r["note_status"] for r in records)
     by_sl = collections.Counter((r["note_status"], r.get("language")) for r in records)
     by_kind = collections.Counter((r["note_status"], "risk" if R.risk_set(r["telemetry"]) else "normal") for r in records)
+    by_slk = collections.Counter((r["note_status"], r.get("language"), "risk" if R.risk_set(r["telemetry"]) else "normal") for r in records)
     fam = collections.Counter(r.get("family_id") for r in records)
     ref = reference if reference is not None else public_reference()
     overlap_notes = sum(norm_text(r["note"]) in ref["notes"] for r in records)
     overlap_inputs = sum(norm_text(r["rendered_input"]) in ref["inputs"] for r in records)
     overlap_fam = sum(1 for f in fam if f in ref["families"])
     dup_inputs = len(records) - len({r["rendered_input"] for r in records})
-    note_only = sum(1 for r in records if r["gold"]["action"]["motion"] == "HALT" and R.compose(r["telemetry"], None)["action"]["motion"] != "HALT")
+    # note-only stop risk: the gold action stops although the telemetry alone would not. Reported whole and split by the kind of telemetry it sits on.
+    note_only_recs = [r for r in records if r["gold"]["action"]["motion"] == "HALT" and R.compose(r["telemetry"], None)["action"]["motion"] != "HALT"]
+    note_only = len(note_only_recs)
+    note_only_normal = sum(1 for r in note_only_recs if not R.risk_set(r["telemetry"]))
     stats = {"records": len(records), "note_status_counts": dict(sorted(st.items())), "language_counts": dict(sorted(collections.Counter(r.get("language") for r in records).items())),
              "status_x_language": {f"{s}|{l}": v for (s, l), v in sorted(by_sl.items(), key=str)}, "status_x_telemetry": {f"{s}|{k}": v for (s, k), v in sorted(by_kind.items())},
-             "note_only_risk_records": note_only, "families": len(fam), "largest_family": max(fam.values()) if fam else 0, "longest_note_chars": max((len(r["note"]) for r in records), default=0),
+             "status_x_language_x_telemetry": {f"{s}|{l}|{k}": v for (s, l, k), v in sorted(by_slk.items(), key=str)},
+             "note_only_risk_records": note_only, "note_only_risk_on_normal_telemetry": note_only_normal, "note_only_risk_on_non_stopping_risk_telemetry": note_only - note_only_normal, "families": len(fam), "largest_family": max(fam.values()) if fam else 0, "longest_note_chars": max((len(r["note"]) for r in records), default=0),
              "exact_note_overlap_with_public_material": overlap_notes, "exact_input_overlap_with_public_material": overlap_inputs, "family_ids_shared_with_public_material": overlap_fam,
              "duplicate_rendered_inputs": dup_inputs, "gate_not_pass": sum(1 for r in records if r["gold"]["gate"] != "PASS")}
     if "n" in q and len(records) != q["n"]:
@@ -126,6 +131,8 @@ def check_v2(records: list[dict], quota: dict, reference: dict | None = None) ->
         problems.append("per_status_normal_telemetry_count")
     if "per_status_risk_telemetry" in q and any(by_kind.get((s, "risk"), 0) != q["per_status_risk_telemetry"] for s in R.NOTE_STATUSES):
         problems.append("per_status_risk_telemetry_count")
+    if "per_status_language_telemetry" in q and any(by_slk.get((s, l, k), 0) != q["per_status_language_telemetry"] for s in R.NOTE_STATUSES for l in LANGUAGES for k in ("normal", "risk")):
+        problems.append("per_status_language_telemetry_count")
     if "min_families" in q and len(fam) < q["min_families"]:
         problems.append("too_few_families")
     if "max_per_family" in q and fam and max(fam.values()) > q["max_per_family"]:
