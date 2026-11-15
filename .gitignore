@@ -243,3 +243,6 @@ new
 .env.*
 !.env.example
 local.settings.json
+
+# Local custody archives; final reviewed evaluation evidence is tracked separately.
+/.local-archives/

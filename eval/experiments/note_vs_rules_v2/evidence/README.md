@@ -47,3 +47,13 @@ python3 eval/experiments/note_vs_rules_v2/audit_recompute.py \
 ## 真实重跑另行授权
 
 真实调用入口仍是冻结运行器 [../run_note_compare.py](../run_note_compare.py)。从 `eval-note-v2-r3-final-20261115` 对应提交的新 worktree 运行，数据可通过此交付目录的绝对路径传入；先做新的公开健康检查，再运行完整集。需自备凭据、重新核实价格、明确预算及新授权，不能复用已消耗的本轮 182 次授权。模型实际版本未独立验证，提示词固定也不保证分数或时延相同。
+
+## Downloads 阶段包的本机归档
+
+2026-11-16，17 个封存包及校验单、4 份项目手册／论文导出件已复制到项目根目录的 `.local-archives/omniguard-v2/`，21 个主文件逐个与 Downloads 原件核对 SHA-256 一致，原件未移动或删除。该本机归档目录被 Git 忽略，权限仅当前用户可读写；不是公开交付的一部分，也不是独立介质或远端备份。
+
+`current/` 保留制作历史累计包 `OmniGuard-v2-revision3-final-candidate-20261115T112131Z.tar.gz`（181 个文件）和运行核验包 `authorized_note_v2_20261115T152848Z_verified.tar.gz`（49 个文件，含其清单）；`history/` 保留其余 15 个阶段包及校验单；`reference-documents/` 放历史手册和论文。全部压缩包约 9.78 MB。
+
+已核对其余包的文件内容被两个累计包覆盖，三个旧标注依据在累计制作包的 `archives/` 下保留。历史包不作为当前成绩入口，但继续保留原容器以对应旧哈希。`MANIFEST.json` 和本机 README 记录每份文件的用途、大小和哈希；缺配套校验单的两个运行包已在本机归档中补生成，未改原压缩包。
+
+本机归档清单 `MANIFEST.json` 的 SHA-256：`c8e140c5c3902bbe5dcaeb2a041c3b273ad14d4613c66d4abce2b7ad842efd70`。清单及包体被 Git 忽略；Git 中这条索引不能恢复本机归档，不代表已推送备份。
