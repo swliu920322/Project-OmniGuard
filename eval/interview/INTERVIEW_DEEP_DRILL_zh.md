@@ -524,6 +524,8 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **成本怎么说：** 本轮健康检查＋两次主跑＋压力，共 634 次 API 请求，按配置费率估算 US$0.284948；它是这一整轮的费用估算，不是一次请求价格、账单或后续承诺。见 [VERIFICATION.json](../formal/results/VERIFICATION.json)。
 
+**“多模型适配”能不能写（简历措辞核对）：** 只能写成“配置层可切换提供商”。[llm_provider.py](../../src/cloud-orchestrator/llm_provider.py) 通过环境变量 `LLM_PROVIDER` 在 Azure OpenAI、OpenAI、DeepSeek 和任意 OpenAI 兼容端点之间切换，代码只用 `openai` 这一个 SDK；[test_llm_provider.py](../../tests/test_llm_provider.py) 测的是配置解析（默认值、覆盖、拒绝未知提供商），没有真实调用。正式评测只用过 DeepSeek 一个模型，没有跨模型泛化验证，见 [LIMITATIONS.md](../LIMITATIONS.md)。不要写成“适配多个模型”。
+
 ---
 
 <a id="q7"></a>
@@ -621,6 +623,10 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 - 距离 100 cm、其他数值正常，备注“前方有人”，模型却报 NORMAL_NAV＋IRRELEVANT：代码无法从数值发现这个人，可能放行。这个错误才是备注独有风险的关键评测对象。
 
 **结果与来源：** 正式本轮模型未观察到漏停，不代表反例不可能。执行规则见 [rules.py:execute()](../../src/cloud-orchestrator/router_v2/rules.py)；漏停计数见[评分器 score_safety()](../baseline_b/evaluate.py)。HTTP 最终动作校验见 [pipeline.py:validate_actions()](../../src/cloud-orchestrator/router_v2/pipeline.py)。
+
+**“JSON 格式强约束”能不能写（简历措辞核对）：** 约束的是校验，不是模型输出。仓库没有使用 `response_format`、`json_schema` 或函数调用，调用就是普通 `chat.completions.create`；提示词要求“只回复一个 JSON 对象”，[parse_reply](../../src/cloud-orchestrator/router_v2/prompt.py) 再严格检查：必须是单个 JSON 对象，键恰好是 `primary` 与 `note_status`，无代码围栏或多余文字、无重复键、取值在六类与六种备注状态内；不合格按 PARSE_FAILURE 停车。Compiler 的动作数组由 `validate_actions` 检查，不走 `parse_reply`。建议写“严格解析并校验模型 JSON 回复，不合格即停车”，不写“强制模型输出 JSON”。
+
+**“边缘端 30cm 紧急制动”能不能写（简历措辞核对）：** 不能。车端 [device_mock.py](../../src/cloud-orchestrator/edge-simulator/device_mock.py) 只做 1Hz 发送遥测并打印收到的云端指令，距离是 `80 - x%50` 的模拟值，没有制动逻辑；前端 `physics.ts` 是看板仿真动画，不是边缘端固件。30cm 在云端 [rules.py](../../src/cloud-orchestrator/router_v2/rules.py) 的 `THRESHOLDS["distance_below_cm"]`，是仿真约定，不是制动距离；`scenario_registry.json` 里的 30cm 只是传给模型的安全规则文字。可写“云端规则对障碍距离低于 30cm（仿真约定）判停”；本地保护快环是未做事项。
 
 > **练习检查：** 分别解释“数值有危险、模型说正常”和“数值正常、备注危险被模型漏判”。后者不会因为代码合并而自动恢复。
 
