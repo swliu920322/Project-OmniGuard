@@ -30,6 +30,7 @@ This page is the only navigation entry for Project OmniGuard documentation. Docu
 |---|---|
 | Understand what the repository is | [Root README](../README.md) |
 | Understand components and boundaries | [Architecture](../ARCHITECTURE.md), including [three design trade-offs](../ARCHITECTURE.md#design-tradeoffs) |
+| See what is done, not done, and not claimed | [Project status](STATUS.md) |
 | Start, test, deploy, or troubleshoot | [Operations](operations.md) |
 | Quote a metric or research result | [Evidence index](evidence/README.md) |
 | Understand the AGV dashboard | [Dashboard reference](dashboard/00-overview.md) |

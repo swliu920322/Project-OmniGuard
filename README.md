@@ -11,6 +11,7 @@ OmniGuard combines a simulated AGV dashboard, a three-stage cloud agent pipeline
 | Question | Read |
 |---|---|
 | What connects to what? | Extended-path diagram below → [Azure reference diagrams](docs/architecture/README.md) |
+| What is done and what is not? | [Project status](docs/STATUS.md) |
 | What was measured? | [Formal evaluation](eval/report.md); [timing evidence](eval/LATENCY_EVIDENCE.md) for latency |
 | Why these choices, and at what cost? | [Three design trade-offs](ARCHITECTURE.md#design-tradeoffs) |
 | Where is the implementation? | [Code map, Chinese](eval/interview/BACKEND_CODE_GUIDE_zh.md) → [model adapter and action validation](src/cloud-orchestrator/router_v2/pipeline.py) → [risk synthesis](src/cloud-orchestrator/router_v2/rules.py) → [HTTP tests](tests/test_extended_endpoint.py) |

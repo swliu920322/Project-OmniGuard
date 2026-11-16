@@ -11,6 +11,7 @@ OmniGuard 包含模拟 AGV 仪表盘、三级云端 Agent 流水线、Azure 基�
 | 想了解什么 | 推荐入口 |
 |---|---|
 | 整体方案与调用顺序 | 下方扩展路径流程图 → [Azure参考架构图](docs/architecture/README.md) |
+| 做到哪一步、哪些没做 | [项目现状](docs/STATUS.md)（英文） |
 | 实际测出了什么 | [正式评测报告](eval/report.md)；耗时另看[延迟证据](eval/LATENCY_EVIDENCE.md) |
 | 为什么这样设计，有哪些代价 | [三个关键设计取舍](ARCHITECTURE.md#design-tradeoffs) |
 | 核心代码是否落实 | [代码地图](eval/interview/BACKEND_CODE_GUIDE_zh.md) → [模型调用与动作校验](src/cloud-orchestrator/router_v2/pipeline.py) → [风险合成](src/cloud-orchestrator/router_v2/rules.py) → [HTTP端点测试](tests/test_extended_endpoint.py) |
