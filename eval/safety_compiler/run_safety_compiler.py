@@ -39,6 +39,9 @@ TENANT = "Tenant-Alpha-Extended"
 TEST_SET = ROOT / "eval/experiments/note_vs_rules_v2/evidence/data/test_set.jsonl"
 ROUTER_REPLIES = ROOT / "eval/experiments/note_vs_rules_v2/evidence/runs/main/20261115T152854Z_main_real_e5fd14c2/calls.jsonl"
 RUNS = HERE / "runs"
+# The provider does not honour max_completion_tokens (LIMITATIONS items 7 and 25: 80 completion tokens came back for a bound of 50), so the budget reserves this
+# worst case per request, the same output bound the Router runs used (router_v2.pipeline.MAX_TOKENS). A request that reports more still stops the run.
+BUDGET_OUTPUT_BOUND = 2048
 PRICING = L.Pricing(Decimal("0.3333334"), Decimal("1.3333334"), "the conservative DeepSeek Flash rates used in round 2 (see eval/experiments/note_vs_rules_v2/RESULTS.md)")
 AUTH = {"max_calls": 180, "max_tokens": 250_000, "max_usd": Decimal("0.10"),
         "owner_words": "确认 (2026-11-21), in reply to the proposal of 180 requests, 250,000 tokens and US$0.10, health check included, no retries"}
@@ -117,13 +120,13 @@ class Recording:
         if not isinstance(bound, int) or bound <= 0:
             raise ValueError("a request without an output bound is never sent")
         try:
-            resv = self.guard.reserve(L.input_token_upper_bound(system, user), bound)
+            resv = self.guard.reserve(L.input_token_upper_bound(system, user), BUDGET_OUTPUT_BOUND)
         except L.BudgetExceeded as exc:
             self.state["stop"] = f"budget: {exc.reason}"
             raise
         self.state["worst_case_tokens"] += resv.tokens
         self.state["worst_case_usd"] += resv.usd
-        entry = {"seq": len(self.log) + 1, "role": role, "input_sha256": L.sha256_text(system + "\n" + user), "started_at": L.utc_now(), "output_bound": bound}
+        entry = {"seq": len(self.log) + 1, "role": role, "input_sha256": L.sha256_text(system + "\n" + user), "started_at": L.utc_now(), "output_bound": bound, "reserved_output_bound": BUDGET_OUTPUT_BOUND}
         t0 = time.time()
         try:
             resp = self.inner.chat.completions.create(**kw)
@@ -201,7 +204,24 @@ def run_records(records, inner, guard, replay, limit=None):
             resp = asyncio.run(EXT.simulate_extended(body_for(rec), TENANT, config, time.time()))
             results.append({"id": rec["id"], "family_id": rec.get("family_id"), "language": rec.get("language"), "gold_note_status": rec["note_status"],
                             "requests": len(log) - before, **view_of(json.loads(resp.body))})
+    if state["stop"] and results and (results[-1]["halt_reasons"] or [None])[0] == "API_ERROR":
+        results[-1]["note"] = "ended by the run's own stop, not a provider fault: " + state["stop"]
     return results, log, state
+
+
+def spent_so_far():
+    """What every earlier REAL run in runs/ has used. The owner's caps are one total for all of them, not one per run."""
+    spent = {"calls": 0, "tokens": 0, "usd": Decimal(0)}
+    for d in sorted(RUNS.iterdir()) if RUNS.is_dir() else []:
+        try:
+            cfg, b = (json.loads(Path(d, n).read_text(encoding="utf-8")) for n in ("config.json", "summary.json"))
+        except (OSError, ValueError):
+            continue
+        if cfg.get("mode") == "real":
+            spent["calls"] += int(b["budget"]["calls_started"])
+            spent["tokens"] += int(b["budget"]["tokens_committed"])
+            spent["usd"] += Decimal(b["budget"]["usd_committed"])
+    return spent
 
 
 # ---- sealed run directory and summary ------------------------------------------------------------------------------------------------------------
@@ -345,10 +365,7 @@ def main(argv=None):
     records, replay = load_inputs()
     chosen = select_records(records, replay)
     n_plan = len(chosen[:args.limit] if args.limit else chosen)
-    spent = {"calls": 0, "tokens": 0, "usd": Decimal(0)}
-    if args.mode == "real" and args.limit is None and args.after_health:
-        hs = json.loads(Path(args.after_health, "summary.json").read_text(encoding="utf-8"))["budget"]
-        spent = {"calls": hs["calls_started"], "tokens": hs["tokens_committed"], "usd": Decimal(hs["usd_committed"])}
+    spent = spent_so_far() if args.mode == "real" else {"calls": 0, "tokens": 0, "usd": Decimal(0)}
     guard = L.BudgetGuard(args.max_calls - spent["calls"], args.max_tokens - spent["tokens"], Decimal(args.max_usd) - spent["usd"], PRICING)
     if args.mode == "real":
         problems = preflight_real(args)
@@ -361,8 +378,10 @@ def main(argv=None):
         inner = ScriptedSDK()
     results, log, state = run_records(chosen, inner, guard, replay, args.limit)
     if args.mode == "plan":
-        print(json.dumps({"records_that_reach_safety": len(chosen), "requests_expected": 2 * len(chosen), "worst_case_tokens_reserved": state["worst_case_tokens"],
-                          "worst_case_usd_reserved": f"{state['worst_case_usd']:.6f}", "authorised": {"calls": AUTH["max_calls"], "tokens": AUTH["max_tokens"], "usd": str(AUTH["max_usd"])}}, indent=2))
+        per_call = state["worst_case_tokens"] // max(1, len(log))
+        print(json.dumps({"records_that_reach_safety": len(chosen), "requests_expected": 2 * len(chosen), "reserved_per_request_tokens_about": per_call,
+                          "sum_if_every_request_used_its_full_reservation": state["worst_case_tokens"], "note": "not a forecast: the guard adds each request's real usage and stops before the next one could break a cap; the health check measured 293 tokens for one Safety request",
+                          "authorised": {"calls": AUTH["max_calls"], "tokens": AUTH["max_tokens"], "usd": str(AUTH["max_usd"])}, "already_spent": {k: str(v) for k, v in spent_so_far().items()}}, indent=2))
         return 0
     health = health_verdict(results, log) if args.limit else None
     run_dir = write_run(args.mode, results, log, state, guard, n_plan, health, args.limit)

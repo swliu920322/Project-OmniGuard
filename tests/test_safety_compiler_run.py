@@ -25,19 +25,19 @@ def run(inputs, inner, limit=2, max_calls=180):
     return SC.run_records(chosen, inner, guard, replay, limit) + (guard,)
 
 
-def test_84_records_reach_safety_and_the_worst_case_fits_the_confirmed_caps(inputs):
+def test_84_records_reach_safety_and_the_actual_use_fits_the_confirmed_caps(inputs):
     records, replay, chosen = inputs
     assert len(chosen) == 84
     results, log, state, guard = run(inputs, SC.ScriptedSDK(), limit=None)
-    assert len(log) == 168 and state["stop"] is None
-    assert state["worst_case_tokens"] < SC.AUTH["max_tokens"] and state["worst_case_usd"] < SC.AUTH["max_usd"] and len(log) <= SC.AUTH["max_calls"]
+    assert len(log) == 168 and state["stop"] is None and len(log) <= SC.AUTH["max_calls"]
+    assert guard.tokens_committed < SC.AUTH["max_tokens"] and guard.usd_committed < SC.AUTH["max_usd"]
 
 
 def test_a_clean_pass_makes_one_safety_and_one_compiler_request_per_record(inputs):
     results, log, state, guard = run(inputs, SC.ScriptedSDK())
     assert [e["role"] for e in log] == ["Safety", "Compiler", "Safety", "Compiler"]
     assert all(r["safety"] == "PASS" and r["compiler"] == "COMPILED" and r["final"] == "move" for r in results)
-    assert all(e["output_bound"] in (50, 100) for e in log)
+    assert all(e["output_bound"] in (50, 100) and e["reserved_output_bound"] == SC.BUDGET_OUTPUT_BOUND for e in log)
 
 
 def test_an_empty_safety_reply_is_a_bad_reply_stop_and_the_compiler_is_not_asked(inputs):
@@ -57,9 +57,26 @@ def test_a_call_cap_stops_the_run_before_an_unaffordable_record(inputs):
     assert state["stop"].startswith("budget") and len(results) == 1 and guard.calls_started == 2
 
 
-def test_usage_above_the_reserved_bound_stops_the_run_at_once(inputs):
-    results, log, state, guard = run(inputs, SC.ScriptedSDK(completion_tokens=999), limit=None)
-    assert state["stop"].startswith("bound violation") and len(results) == 1
+def test_usage_above_the_reserved_bound_stops_the_run_at_once_and_the_record_says_why(inputs):
+    results, log, state, guard = run(inputs, SC.ScriptedSDK(completion_tokens=SC.BUDGET_OUTPUT_BOUND + 1), limit=None)
+    assert state["stop"].startswith("bound violation") and len(results) == 1 and len(log) == 1
+    assert "not a provider fault" in results[0]["note"]
+
+
+def test_the_observed_80_completion_tokens_for_a_requested_50_no_longer_stop_the_run(inputs):
+    """The provider ignores max_completion_tokens (seen in the first health check); the budget now reserves the Router's 2048."""
+    results, log, state, guard = run(inputs, SC.ScriptedSDK(completion_tokens=80))
+    assert state["stop"] is None and len(log) == 4 and all(r["final"] == "move" for r in results)
+
+
+def test_earlier_real_runs_count_against_the_same_total(tmp_path, monkeypatch):
+    monkeypatch.setattr(SC, "RUNS", tmp_path)
+    for name, mode, calls, tokens, usd in (("a", "real", 1, 293, "0.000178"), ("b", "dry-run", 99, 99999, "9"), ("c", "real", 4, 1000, "0.001")):
+        d = tmp_path / name
+        d.mkdir()
+        (d / "config.json").write_text(json.dumps({"mode": mode}))
+        (d / "summary.json").write_text(json.dumps({"budget": {"calls_started": calls, "tokens_committed": tokens, "usd_committed": usd}}))
+    assert SC.spent_so_far() == {"calls": 5, "tokens": 1293, "usd": Decimal("0.001178")}
 
 
 def test_a_request_without_an_output_bound_is_never_sent():
