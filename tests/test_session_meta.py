@@ -9,7 +9,7 @@ spec = importlib.util.spec_from_file_location("extract_session_meta", ROOT / "ev
 X = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(X)
 
-SECRET = "ZZ-SECRET-sk-0123456789abcdefghijkl"
+SECRET = "ZZ-SECRET-VALUE-0123456789abcdefghijkl"  # fake; not shaped like any real key
 
 
 def write(tmp_path, name, rows):
