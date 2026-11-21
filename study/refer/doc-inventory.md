@@ -1,4 +1,10 @@
-# 文档盘点与整理建议（2026-11-21，只读盘点，尚未动任何文件）
+# 文档盘点与整理记录（2026-11-21）
+
+**状态：已执行。** 你选了 A（分出去但仍在仓库）并要新人导读。做了：`eval/interview/` 拆成 `docs/guide/`（新人导读 4 份）和 `study/interview/`（备考 5 份），`docs/refer/` 并入 `study/refer/`；过程记录（三份设计、事实核对、第二轮交接日志和说明）归档到 `eval/archive/` 和 `eval/experiments/note_vs_rules_v2/process/`；`eval/README.md` 重写成"先问你想知道什么"的地图；新增 `tests/test_docs_map.py`，让没有被链接的新文档变红。没有被哈希钉住的文件被移动，全部 182 份文档的相对链接检查 0 个断链，552 个测试通过。`eval/web/` 留本地（`.gitignore`）。下面是执行前的盘点，保留作记录。
+
+---
+
+# 盘点（执行前）
 
 ## 数字
 
