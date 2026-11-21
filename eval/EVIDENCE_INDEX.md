@@ -45,13 +45,13 @@ Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Ea
 
 ## Gate 4: it can be explained
 
-Start with the owner's confirmed motivation and the timing/evaluation distinction: [interview narrative](interview/INTERVIEW_STORY_zh.md). This is a learning and speaking guide, not a new experiment or proof that the owner independently wrote every component. Oral acceptance remains pending.
+Start with the owner's confirmed motivation and the timing/evaluation distinction: [interview narrative](../study/interview/INTERVIEW_STORY_zh.md). This is a learning and speaking guide, not a new experiment or proof that the owner independently wrote every component. Oral acceptance remains pending.
 
 | Item | Status | Evidence |
 |---|---|---|
 | Real errors with counts and raw examples | no model errors observed in this formal set | no five model-error categories can be invented; actual rule-control error directions are in `report.md`, examples stay private. Dev provider failures remain preserved separately |
 | Limitations | written | [LIMITATIONS.md](LIMITATIONS.md) (20 items; item 20 explains the old "only stricter" comment in `extended.py`) |
-| Oral preparation materials | written; consolidated | [interview handbook](interview/INTERVIEW_DEEP_DRILL_zh.md) (core eight questions, 15 reference questions; replaces the former cards and companion); [learning route](interview/RECOMMEND_LEARNING_zh.md); latency and cost evidence [LATENCY_COST.md](LATENCY_COST.md), timing code and simulated-vs-measured values [LATENCY_EVIDENCE.md](LATENCY_EVIDENCE.md) (formal latency not yet computed: fields listed for the custodian) |
+| Oral preparation materials | written; consolidated | [interview handbook](../study/interview/INTERVIEW_DEEP_DRILL_zh.md) (core eight questions, 15 reference questions; replaces the former cards and companion); [learning route](../study/interview/RECOMMEND_LEARNING_zh.md); latency and cost evidence [LATENCY_COST.md](LATENCY_COST.md), timing code and simulated-vs-measured values [LATENCY_EVIDENCE.md](LATENCY_EVIDENCE.md) (formal latency not yet computed: fields listed for the custodian) |
 | Oral check, three random questions | **not done** | to be done by the owner; no session can stand in |
 
 ## Real model runs and their cost

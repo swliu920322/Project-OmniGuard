@@ -1,10 +1,10 @@
 # OmniGuard 面试主手册：核心 8 问研讨与 15 问练习证据库
 
 > **文档状态**：融合日期 2026-11-10；2026-11-16补明两轮范围与运行次数。**核心8问按分支逐项回答：答案、依据和结论性质分列，整题口述放在最后**；15问只作按需查询的细节库。
-> **核心依据**：[第一轮正式报告](../report.md)、[第一轮冻结清单](../acceptance/FROZEN_MANIFEST.json)、[第二轮结果](../experiments/note_vs_rules_v2/RESULTS.md)、[延迟证据说明](../LATENCY_EVIDENCE.md)及真实代码。本次文档整理未新增模型调用，未修改冻结题库或提示词。
+> **核心依据**：[第一轮正式报告](../../eval/report.md)、[第一轮冻结清单](../../eval/acceptance/FROZEN_MANIFEST.json)、[第二轮结果](../../eval/experiments/note_vs_rules_v2/RESULTS.md)、[延迟证据说明](../../eval/LATENCY_EVIDENCE.md)及真实代码。本次文档整理未新增模型调用，未修改冻结题库或提示词。
 
 
-**怎样学这份材料：** 按[学习与内化路线](RECOMMEND_LEARNING_zh.md)推进。先自己回答核心八问中的一题，再查分支；看不懂字段补[中文例子](START_HERE_zh.md)，要验证行为看[代码地图与免费实操](BACKEND_CODE_GUIDE_zh.md#offline-lab)。本页是唯一答题主稿，15问拓展不要求顺序通读。
+**怎样学这份材料：** 按[学习与内化路线](RECOMMEND_LEARNING_zh.md)推进。先自己回答核心八问中的一题，再查分支；看不懂字段补[中文例子](../../docs/guide/START_HERE_zh.md)，要验证行为看[代码地图与免费实操](../../docs/guide/BACKEND_CODE_GUIDE_zh.md#offline-lab)。本页是唯一答题主稿，15问拓展不要求顺序通读。
 
 ---
 
@@ -154,7 +154,7 @@
 | 1.1 为什么开始？ | 担心机器人持续运动时等待云端判断，动作可能来不及；停下来等又可能降低效率。 | 本人讲述的动机；不是已测出的碰撞率或效率损失。 | 本人回忆 |
 | 1.2 为什么做饭改成AGV？ | 做饭涉及视觉、精细操作等复杂环节；AGV仿真便于先把运动与等待的关系单独观察。 | 这是范围收敛，不以“所有AGV都只能走固定路线”为前提，也不证明AGV无需感知或控制。 | 选题取舍 |
 | 1.3 到底研究哪个问题？ | 最初研究云端等待的时间代价；后来补上状态判断正确性与程序怎样限制动作。 | 时间、分类、执行约束是三条不同问题；不能用300/300回答延迟容忍。 | 任务定义 |
-| 1.4 已经交付什么？ | 仿真、模型调用耗时、六类Router与动作约束；第一轮检验规范和重复运行，第二轮聚焦备注理解、错误与代价。 | [代码地图](BACKEND_CODE_GUIDE_zh.md)、[报告](../report.md)、[延迟说明](../LATENCY_EVIDENCE.md)。 | 实现＋记录 |
+| 1.4 已经交付什么？ | 仿真、模型调用耗时、六类Router与动作约束；第一轮检验规范和重复运行，第二轮聚焦备注理解、错误与代价。 | [代码地图](../../docs/guide/BACKEND_CODE_GUIDE_zh.md)、[报告](../../eval/report.md)、[延迟说明](../../eval/LATENCY_EVIDENCE.md)。 | 实现＋记录 |
 | 1.5 怎么知道做成了？ | 按预先规则检查：主类、备注和动作分开计分，两跑核对；代码反例和压力分项检查异常处理。 | 第一轮主类两跑各300/300、55例分项检查；第二轮备注模型173/180、R3为77/180，只正式跑一次。两轮都不等于真实机器人问题已解决。 | 本轮结果 |
 | 1.6 行业已有边云思路，为什么还做？ | 项目价值可以是把一个具体配置测清、把判断与约束做成可核对程序，不必先声称架构首创。 | 没有系统行业调研支持“共识已证明本方案”；作品价值看具体问题、行动与证据。 | 价值判断 |
 | 1.7 模型换了，系统就失效吗？ | 不必然。接口契约可能不变，但语义效果、格式与耗时可能变，需在相同政策下重新评估。 | 版本只记录所有者声明，别名一致不能保证底层不变；代码风险下限也不等于模型效果永不变。 | 需回归验证 |
@@ -193,7 +193,7 @@
 | 2.1 最终想得到什么结果？ | 不是一个“云端行不行”，而是某配置在某任务中的耗时分布、可用判断比例、错误处理和等待影响。 | 每项要有定义；当前只有部分时间与路由证据，没有运输吞吐收益。 | 测量目标 |
 | 2.2 需要什么数据？ | 输入与快照时间、请求起止、阶段时间、结果／错误、用量、应用动作时间与运动轨迹。 | 已有部分模型与阶段记录；浏览器往返、逐跑轨迹和真实制动信息未完整形成证据。 | 已有＋待补 |
 | 2.3 单次还是全链路？ | 都需要，但回答不同问题：单次定位模型等待，阶段总和看串行开销，完整往返看用户从发起到收到可用结果。 | 模型API耗时包含与提供方通信；不含浏览器完整往返不等于没有网络耗时。 | 计时口径 |
-| 2.4 已测到多长？ | 历史A重测B／P条件各200次，数字保留在问题2；第二轮180次模型请求中位1750.05ms、P95 3314.7ms、最大10885.4ms。 | [日志统计与字段](#q2)及[第二轮记录](../experiments/note_vs_rules_v2/RESULTS.md)；各批输入、配置与时段不同，不拼成加速趋势。 | 实测统计 |
+| 2.4 已测到多长？ | 历史A重测B／P条件各200次，数字保留在问题2；第二轮180次模型请求中位1750.05ms、P95 3314.7ms、最大10885.4ms。 | [日志统计与字段](#q2)及[第二轮记录](../../eval/experiments/note_vs_rules_v2/RESULTS.md)；各批输入、配置与时段不同，不拼成加速趋势。 | 实测统计 |
 | 2.5 历史全流程多长？ | 旧200中的121条三阶段总和中位5680.1ms；旧60中的35条中位7667.4ms、最大73892.5ms。 | [来源](#q2)；仅完整流程记录，后一次模型unknown，不能合并成一条性能趋势。 | 历史实测 |
 | 2.6 到底要比较什么？ | 已完成的是路径测量与同题规则／模型对照；单调用与三阶段、移动等与停车等，是另需控制变量的实验。 | 没有这些受控实验，就不能把不同年代记录当架构消融或效率提升。 | 已做／拟做分开 |
 | 2.7 哪些现象支持或否定设想？ | 长尾支持“不能只用均值估计等待”；合成评测支持本轮分类与处理；二者都不能证明已解决真实安全。 | 若同一配置在明确任务期限内不能返回可靠结果，才可否定它满足该任务要求。当前缺真实期限。 | 条件化判断 |
@@ -235,7 +235,7 @@
 | 3.1 不用AI能不能做？ | 当前数值阈值用规则能做；备注也可用规则或结构化选项处理，不是天然必须LLM。 | 纯数值R1/R2与金标按构造一致，不能扩成真实世界规则零错误。 | 任务内判断 |
 | 3.2 为什么试LLM？ | 备注有否定、时间、分句等关系，固定关键词可能忽略当前含义；模型是一种候选处理方案。 | “刚才有人，现在走了”与“没人，但有箱子”需要不同判断；只说明测试点。 | 方案理由 |
 | 3.3 现有对照说明什么？ | 第一轮72条备注：模型72、R1 23、R2 15；第二轮180条备注：模型173、R3 77。第二轮提供更聚焦的同题对照。 | [结果表](#core-q6)与[两轮区别](#round-comparison)；R3是有开发上限的固定词表实现，不代表规则方法上限。 | 本轮结果 |
-| 3.4 模型新增什么代价？ | API等待、生成不确定性、费用与外部依赖；需要显式失败处理和评测。 | 第二轮主请求中位1.75秒、P95 3.31秒；健康加正式保守费率估算US$0.110672，见[结果](../experiments/note_vs_rules_v2/RESULTS.md)。不当作单次价格或账单。 | 记录＋工程要求 |
+| 3.4 模型新增什么代价？ | API等待、生成不确定性、费用与外部依赖；需要显式失败处理和评测。 | 第二轮主请求中位1.75秒、P95 3.31秒；健康加正式保守费率估算US$0.110672，见[结果](../../eval/experiments/note_vs_rules_v2/RESULTS.md)。不当作单次价格或账单。 | 记录＋工程要求 |
 | 3.5 所以值不值得上线？ | 目前没有真实业务收益证据；需将质量、等待、维护与失败成本，对比完善规则、小分类器或选项输入。 | 规则足够好就采用规则。不能用“灵活”两字代替成本收益。 | 尚未确定 |
 | 3.6 多场景复用能降成本吗？ | 这是早期设想，当前只限一个备注话题和六类状态，没有测多任务复用或再配置收益。 | “先送货再充电”的顺序任务未实现；不能宣称已减少人员／设备成本。 | 设想未验证 |
 | 3.7 没有AI的固定路线为何也有价值？ | 数值规则承担确定部分，模型只在需要语义处理的部分接受对照；选技术要看任务而非是否动态环境。 | 当前无备注仍调模型；按需调用尚未实现，也未测出节省。 | 设计取舍 |
@@ -312,13 +312,13 @@
 
 | 分支问题 | 直接答案 | 为什么／证据在哪里 | 结论性质 |
 |---|---|---|---|
-| 5.1 数据是谁怎么做的？ | AI辅助制作和标注的合成材料，测试由验收侧保管；不是工人实录。 | [冻结清单](../acceptance/FROZEN_MANIFEST.json)记录制作方法；独立会话不等于完全无偏。 | 过程记录 |
+| 5.1 数据是谁怎么做的？ | AI辅助制作和标注的合成材料，测试由验收侧保管；不是工人实录。 | [冻结清单](../../eval/acceptance/FROZEN_MANIFEST.json)记录制作方法；独立会话不等于完全无偏。 | 过程记录 |
 | 5.2 180、300、55、72是什么关系？ | 两个180要分清：旧公开开发集180条，与第二轮新测试180条是不同文件；第一轮主测试300条，含72条备注，另有55例压力。 | 第一轮同批300条主测试跑两次；第二轮180条全带备注只正式跑一次。Revision1/2/3只是第二轮改题版本。 | 数量关系 |
 | 5.3 为什么选这些数？ | 第一轮300=6类×50、55=11类型×5、72=6备注状态×12；第二轮180=6备注状态×30，按覆盖、配平和工作量约定。 | 没有功效计算证明最佳数量，也未穷尽真实场景。 | 实验配额 |
 | 5.4 34个家族有什么用？ | 标记相关数值变体、翻译和改写，避免把每条都当独立场景；分组隔离开发与测试。 | 第一轮300条来自34个保守家族；第二轮180条按60个实验分组给差值区间。分组和bootstrap都不保证实地代表性或组间统计独立。 | 分组与局限 |
 | 5.5 标签怎样复核？ | 第一轮72条备注抽24条盲标再全量复核；第二轮分次封存盲标、全量复核和裁决，最终有效覆盖105条输入、49个分组。 | 两轮都是AI标注复核，不是专家真值；第二轮各次盲标不合并一致率。第一轮81300次是精确字符串比对次数，不是人工审计或语义零重合证明。 | AI标注记录 |
 | 5.6 冻结是不是只归档？ | 归档是保留材料；冻结是在测量前承诺题、规范、提示词、评分和代码版本，并要求运行核对。 | 数据清单与代码冻结清单分工不同，Git标签定位版本；第一轮原题尚未找回，第二轮原题及回复已入仓并推送。 | 协议与代码 |
-| 5.7 题公开了为何还冻结？ | 第一轮目前只有公开摘要／清单，原逐条题未找回；第二轮最终题、标签与回复已在GitHub，公开后是回归材料，冻结仍支持版本核对。 | [复现指南](../REPRODUCE.md)；清单中的“未测量”是冻结当时状态。 | 公开范围 |
+| 5.7 题公开了为何还冻结？ | 第一轮目前只有公开摘要／清单，原逐条题未找回；第二轮最终题、标签与回复已在GitHub，公开后是回归材料，冻结仍支持版本核对。 | [复现指南](../../eval/REPRODUCE.md)；清单中的“未测量”是冻结当时状态。 | 公开范围 |
 | 5.8 哈希是防作弊证明吗？ | 它能发现相对已承诺版本的变化，不能证明标签正确、API真实或绝无作弊；仍需过程隔离与核对。 | 文件持有者能重新生成哈希，tag也可移动，需保存已记录提交与结果。 | 证明范围 |
 | 5.9 造题是否参考了prompt？ | 题与prompt共享规范；清单声明未用模型预测或R1/R2结果制题，但没有逐条审计作者看过什么。 | 不能承诺完全不知prompt；任务按规则合成仍可能偏简单。 | 已声明＋未知 |
 
@@ -353,8 +353,8 @@
 | 分支问题 | 直接答案 | 为什么／证据在哪里 | 结论性质 |
 |---|---|---|---|
 | 6.1 是端侧vs云端控制吗？ | 不是。第一轮固定B-1.0与R1/R2同题比较并重复两跑；第二轮在新180条备注上加入开发后冻结的R3作同题对照。 | 没有真车纯端侧／云端安全对照，不能判断它们谁达到同等效果；也没做单调用／三阶段受控消融。 | 实际实验范围 |
-| 6.2 怎样使比较可解释？ | 同题、同渲染字段、同参考规范、同评分政策；对照规则事前固定，模型也不看测试结果调prompt。 | [正式运行器](../formal/run_formal.py)与[结果](../report.md)；共享规范仍限制外推。 | 比较条件 |
-| 6.3 分别评什么？ | 原始主要状态、备注状态、执行决定的漏停／误停分开。代码补救不替模型挣主类分。 | [评分器](../baseline_b/evaluate.py)outcome、score_primary、score_safety。 | 指标定义 |
+| 6.2 怎样使比较可解释？ | 同题、同渲染字段、同参考规范、同评分政策；对照规则事前固定，模型也不看测试结果调prompt。 | [正式运行器](../../eval/formal/run_formal.py)与[结果](../../eval/report.md)；共享规范仍限制外推。 | 比较条件 |
+| 6.3 分别评什么？ | 原始主要状态、备注状态、执行决定的漏停／误停分开。代码补救不替模型挣主类分。 | [评分器](../../eval/baseline_b/evaluate.py)outcome、score_primary、score_safety。 | 指标定义 |
 | 6.4 结果是多少？ | 第一轮主类300/300对281/300、280/300，备注72/72对23/72、15/72；第二轮备注173/180对R3的77/180。 | 第一轮两跑分别报告；第二轮模型减R3差53.33个百分点，家族区间[43.33,63.33]。主类与备注状态、两轮不同题目都不能混成前后提升。 | 公开结果 |
 | 6.5 差异在哪，有什么含义？ | 228条无备注三者全对，差异在含备注子集；说明本任务数值规则已够，语言处理值得单独比较。 | 模型与R1主类差6.33个百分点，是系统同集差值，不是优化提升。 | 结果解释 |
 | 6.6 14次漏停为何发生？ | R1漏停14、R2漏停10是相对金标的决定指标，不是碰撞。机制可能是未加入备注风险。 | 第一轮原件未找回，15条备注误判与14次漏停未逐条对应；第二轮R3的26次漏停有账本和控制流归因，不替代旧14次的分析。 | 计数确定／机制待核 |
@@ -397,7 +397,7 @@
 | 7.5 后续动作破坏约束怎么办？ | Compiler的动作再次检查。缺速度、非法转角或超速等返回CONSTRAINT_VIOLATION停车结果。 | [validate_actions](../../src/cloud-orchestrator/router_v2/pipeline.py)；不是只在prompt里提醒。 | 最终动作检查 |
 | 7.6 紧急情况在哪里处理？ | HTTP布尔emergency_stop=true在外部调用前返回；文字stop不是急停。gate只看HP≤0或电量<5。 | 距离风险另算；2026-11-21 起 HTTP 流程在请求模型之前先判 gate；评测测的 `decide()`（已冻结）仍先调模型再 execute。不说所有风险都零等待。 | 顺序明确 |
 | 7.7 错误怎样计入结果？ | 正式主测已开始失败调用留分母算错；自然接口失败与注入故障分开；未发送记录另报。 | 离线非法输入与注入故障不混入模型分类准确率。 | 计分政策 |
-| 7.8 压力验证结果与硬件保证是什么？ | 55例中13拒绝、10注入停车、32真实请求均满足本轮分项要求；不是55次成功制动。 | [压力摘要](../formal/results/20261107T115548Z_stress_real_8352b4ff/public_summary.json)；决定返回、仿真应用、真车停稳是不同层。 | 有限测试结果 |
+| 7.8 压力验证结果与硬件保证是什么？ | 55例中13拒绝、10注入停车、32真实请求均满足本轮分项要求；不是55次成功制动。 | [压力摘要](../../eval/formal/results/20261107T115548Z_stress_real_8352b4ff/public_summary.json)；决定返回、仿真应用、真车停稳是不同层。 | 有限测试结果 |
 
 **整题口述（理解分支后再压缩，不是替代上表）：**
 
@@ -429,10 +429,10 @@
 
 | 分支问题 | 直接答案 | 为什么／证据在哪里 | 结论性质 |
 |---|---|---|---|
-| 8.1 怎样标准化集成LLM？ | 固定输入／输出契约、模型适配与设置、解析、风险合成、后续动作校验，留下各阶段证据。 | [入口与代码地图](BACKEND_CODE_GUIDE_zh.md)：急停／预检→可选Cosmos→Router→合成→必要Safety／Compiler→动作校验。 | 实现流程 |
+| 8.1 怎样标准化集成LLM？ | 固定输入／输出契约、模型适配与设置、解析、风险合成、后续动作校验，留下各阶段证据。 | [入口与代码地图](../../docs/guide/BACKEND_CODE_GUIDE_zh.md)：急停／预检→可选Cosmos→Router→合成→必要Safety／Compiler→动作校验。 | 实现流程 |
 | 8.2 怎样测试不同层？ | 规则与解析用单元／反例；HTTP用假模型假依赖；模型识别用真实请求和独立题；压力按类型分别检查。 | 不能把假依赖HTTP测试与Router真调用拼成真实端到端已测。 | 验证分层 |
 | 8.3 怎样评分与保证题合理？ | 先固定规范和指标，开发／测试隔离，AI标注复核，失败留分母，同题规则对照并报告样本局限。 | 题合理性仍受合成分布和家族影响；满分可能表示区分度不足，不代表制度自动保证泛化。 | 方法＋局限 |
-| 8.4 “可复测”具体是哪一级？ | 第一轮原件未找回，现只能核对聚合和流程；第二轮可从GitHub取回题、完整回复并免费复算，真实模型重跑另需凭据和授权。 | [第二轮原件及复算](../experiments/note_vs_rules_v2/evidence/README.md)；远端新克隆69项哈希已通过，但不是模型重跑或真人陌生人验收。 | 分级复现 |
+| 8.4 “可复测”具体是哪一级？ | 第一轮原件未找回，现只能核对聚合和流程；第二轮可从GitHub取回题、完整回复并免费复算，真实模型重跑另需凭据和授权。 | [第二轮原件及复算](../../eval/experiments/note_vs_rules_v2/evidence/README.md)；远端新克隆69项哈希已通过，但不是模型重跑或真人陌生人验收。 | 分级复现 |
 | 8.5 本人现在怎么亲手做？ | 先读一个假模型测试，预测结果，再运行并解释断言；无需一开始配置付费API。 | 现有环境从根目录运行下方命令；工具或AI代跑不等于本人已经会做。 | 可执行练习 |
 | 8.6 回答了最初的问题吗？ | 测到了模型调用时间和路由／约束效果；尚未测真实任务容忍上限或停车等待效率。 | 把大问题拆成已答与待答，而不是宣称全部解决或全无价值。 | 阶段完成程度 |
 | 8.7 与行业方向一致，有意义吗？ | 可迁移能力是API集成、契约、工作流与评测；某岗位是否需要它，要对照实际JD。 | [职业路线](CAREER_ROADMAP_zh.md)提供方向；技术热度不能替代本项目业务价值证据。 | 岗位匹配判断 |
@@ -449,7 +449,7 @@
 src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 ```
 
-新环境先按[复现指南](../REPRODUCE.md)安装依赖；测试会使用缓存或临时文件，不称绝对只读。先挑一条断言解释输入、假回复与预期，再看测试通过数量。
+新环境先按[复现指南](../../eval/REPRODUCE.md)安装依赖；测试会使用缓存或临时文件，不称绝对只读。先挑一条断言解释输入、假回复与预期，再看测试通过数量。
 
 **收束整题：** 当前成果不是“机器人已可上线”，而是把等待时间、路由正确性与程序约束分别变成可检查对象。若面试官问剩余缺口，按对应分支回答；若问个人行动，补真实经历，不能靠换一种表达代替证据。
 
@@ -489,7 +489,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **例子：** 假设车距障碍 0.8 米，速度保持 0.5 米/秒，则到达障碍位置的简单估算为 `0.8 ÷ 0.5 = 1.6 秒`。它说明为什么值得关注等待时间，不是每次必撞的实验结果，也没有包含实际制动距离。
 
-**结果与来源：** 本轮两次各 300/300、55 例压力检查的分项结果见[正式报告](../report.md)；等待期间运动、时间截断与仿真参数见[延迟证据说明](../LATENCY_EVIDENCE.md)。原始动机来自你本人的回忆，不用代码替它证明。
+**结果与来源：** 本轮两次各 300/300、55 例压力检查的分项结果见[正式报告](../../eval/report.md)；等待期间运动、时间截断与仿真参数见[延迟证据说明](../../eval/LATENCY_EVIDENCE.md)。原始动机来自你本人的回忆，不用代码替它证明。
 
 **追问“解决了吗”：** “已形成等待时间、判断效果和约束行为三方面可检查的材料，因此能分别评估哪里慢、哪里错、哪里需要程序限制。真机期限是另一个需要设备条件的研究问题。”不要把后来补上的方法说成最初就全部规划好了。
 
@@ -511,11 +511,11 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 | 历史 60 例诊断，35 条走完三阶段 | 中位 7667.4 ms，最大 73892.5 ms | 同类阶段总和，模型记录 unknown |
 | 基线 A 重测，B 条件 200 次 | 中位 1168.7 ms，P95 1667.9 ms | benchmark 提示词和输入的一次 Router 请求 |
 | 基线 A 重测，P 条件 200 次 | 中位 1459.5 ms，P95 6199.1 ms | 业务提示词和输入的一次 Router 请求 |
-| 第二轮备注对照，180 次 | 中位 1750.05 ms，P95 3314.7 ms，最大10885.4 ms | 含网络与服务推理的单次API墙钟；见[本轮结果](../experiments/note_vs_rules_v2/RESULTS.md)，不与上面各批拼成加速趋势 |
+| 第二轮备注对照，180 次 | 中位 1750.05 ms，P95 3314.7 ms，最大10885.4 ms | 含网络与服务推理的单次API墙钟；见[本轮结果](../../eval/experiments/note_vs_rules_v2/RESULTS.md)，不与上面各批拼成加速趋势 |
 
 **怎么证明：** 历史 200 的 [summary.json](../../src/cloud-orchestrator/embodied_brain/benchmark_results/runs/2026-07-16-thesis-200/summary.json) 中查 `latency_ms.total_pipeline`，样本数查 `gate_counts.COMPILER_PASS`。历史 60 的 [results.json](../../src/cloud-orchestrator/embodied_brain/benchmark_results/runs/2026-08-18-diagnostic-60/results.json) 中对应字段位于 `metrics` 下。这也补齐了前面未找到 7.6674／73.8925 秒的精确来源。
 
-基线 A 的 1.17 秒来源是 [calls.jsonl](../baseline_v1/measured/20261107T045641Z_real_db062c4f/calls.jsonl)：按 `condition` 分组，对 `latency_ms` 求中位数和最近秩 P95；本节末尾有计算命令。本轮离线重算得到上述数值。
+基线 A 的 1.17 秒来源是 [calls.jsonl](../../eval/baseline_v1/measured/20261107T045641Z_real_db062c4f/calls.jsonl)：按 `condition` 分组，对 `latency_ms` 求中位数和最近秩 P95；本节末尾有计算命令。本轮离线重算得到上述数值。
 
 **口径限制：** 模型请求耗时本身包含客户端与提供方通信等待；“不含 HTTP 全链路”是指没走浏览器→应用代理→后端的完整路径，不是说模型 API 请求没有网络耗时。不能拿历史三阶段数字与新 Router 数字当作优化前后。
 
@@ -531,7 +531,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **推理怎么展开：** 先确认“考题和答案是否相同”，再谈模型是否变好。若标签变了，同样一条回复可能从错变对，准确率变化就不一定来自模型。
 
-**结果与来源：** [历史说明](../../src/cloud-orchestrator/embodied_brain/benchmark_results/README.md) 记录旧 200 例 Router 为 `162/172 = 94.19%`，旧 60 例为 `47/52 = 90.38%`；分母不同，因为有记录在旧物理门控阶段退出。旧 200 按新规范派生重标，11 条旧危险变成正常、51 条旧 SENSOR_ERROR 变成过热，见[派生 CSV](../spec/derived/legacy200_relabel.csv) 的 `legacy_label` 与 `new_primary`；[元数据](../spec/derived/legacy200_relabel.meta.json)只记录原件来源、哈希和规范版本，[重标脚本](../spec/relabel_legacy.py)说明计算过程。这些是历史溯源结果，不是本轮成绩。
+**结果与来源：** [历史说明](../../src/cloud-orchestrator/embodied_brain/benchmark_results/README.md) 记录旧 200 例 Router 为 `162/172 = 94.19%`，旧 60 例为 `47/52 = 90.38%`；分母不同，因为有记录在旧物理门控阶段退出。旧 200 按新规范派生重标，11 条旧危险变成正常、51 条旧 SENSOR_ERROR 变成过热，见[派生 CSV](../../eval/spec/derived/legacy200_relabel.csv) 的 `legacy_label` 与 `new_primary`；[元数据](../../eval/spec/derived/legacy200_relabel.meta.json)只记录原件来源、哈希和规范版本，[重标脚本](../../eval/spec/relabel_legacy.py)说明计算过程。这些是历史溯源结果，不是本轮成绩。
 
 **追问“具体是谁导致前后不同”：** “标签口径差异有文件证据；历史是否缓存命中、是否发生 SDK 重试或服务端更新，记录不足，不能确定根因。”
 
@@ -567,7 +567,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **推理怎么展开：** 兴趣方向说明为什么选题；代码和实验说明做到哪里。不能由研究方向反推已有能力，也不需要先证明某种机器人路线必然取代另一种路线。
 
-**结果与来源：** 前端仿真路径见[延迟证据说明](../LATENCY_EVIDENCE.md)，模型与执行职责见[Agent 与意图设计](AGENT_INTENT_DESIGN_zh.md)。本项目没有支持“具身智能必须用 LLM”或制造业收益比例的实验。
+**结果与来源：** 前端仿真路径见[延迟证据说明](../../eval/LATENCY_EVIDENCE.md)，模型与执行职责见[Agent 与意图设计](../../docs/guide/AGENT_INTENT_DESIGN_zh.md)。本项目没有支持“具身智能必须用 LLM”或制造业收益比例的实验。
 
 **追问“云架构是不是不存在”：** “有设计与基础设施代码，是否定义、是否实现、本地是否测过、云端是否验证过，要分别回答。”见[架构文档](../../ARCHITECTURE.md)与[架构图说明](../../docs/architecture/README.md)。没有当前云端运行证据，不代表没有架构；有 Bicep 也不代表现在一定部署成功。
 
@@ -587,9 +587,9 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **是否必须每条调用：** 不必须。当前实验选择完整测模型路由任务；未来规则优先可以仍对全部输入计分，再分别记录调用与未调用结果。分母完整和是否调用模型是两件事。
 
-**成本怎么说：** 本轮健康检查＋两次主跑＋压力，共 634 次 API 请求，按配置费率估算 US$0.284948；它是第一轮整轮费用估算，不是一次请求价格、账单或后续承诺。第二轮主测试为US$0.109678，加健康检查总额US$0.110672，两者不能混写；见[第二轮核验](../experiments/note_vs_rules_v2/results/20261115T152854Z_main_real_e5fd14c2/VERIFICATION.json)。
+**成本怎么说：** 本轮健康检查＋两次主跑＋压力，共 634 次 API 请求，按配置费率估算 US$0.284948；它是第一轮整轮费用估算，不是一次请求价格、账单或后续承诺。第二轮主测试为US$0.109678，加健康检查总额US$0.110672，两者不能混写；见[第二轮核验](../../eval/experiments/note_vs_rules_v2/results/20261115T152854Z_main_real_e5fd14c2/VERIFICATION.json)。
 
-**“多模型适配”能不能写（简历措辞核对）：** 只能写成“配置层可切换提供商”。[llm_provider.py](../../src/cloud-orchestrator/llm_provider.py) 通过环境变量 `LLM_PROVIDER` 在 Azure OpenAI、OpenAI、DeepSeek 和任意 OpenAI 兼容端点之间切换，代码只用 `openai` 这一个 SDK；[test_llm_provider.py](../../tests/test_llm_provider.py) 测的是配置解析（默认值、覆盖、拒绝未知提供商），没有真实调用。正式评测只用过 DeepSeek 一个模型，没有跨模型泛化验证，见 [LIMITATIONS.md](../LIMITATIONS.md)。不要写成“适配多个模型”。
+**“多模型适配”能不能写（简历措辞核对）：** 只能写成“配置层可切换提供商”。[llm_provider.py](../../src/cloud-orchestrator/llm_provider.py) 通过环境变量 `LLM_PROVIDER` 在 Azure OpenAI、OpenAI、DeepSeek 和任意 OpenAI 兼容端点之间切换，代码只用 `openai` 这一个 SDK；[test_llm_provider.py](../../tests/test_llm_provider.py) 测的是配置解析（默认值、覆盖、拒绝未知提供商），没有真实调用。正式评测只用过 DeepSeek 一个模型，没有跨模型泛化验证，见 [LIMITATIONS.md](../../eval/LIMITATIONS.md)。不要写成“适配多个模型”。
 
 ---
 
@@ -605,7 +605,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **例子：** `"operator_note": "刚才有人，现在走了"` 已经是字符串，不需要 OCR；摄像头拍到警示牌则是另一条尚未接入的输入链路。
 
-**证据与追问：** [冻结清单](../acceptance/FROZEN_MANIFEST.json) 的 `annotation.method` 和 `limitations` 写明合成材料与 AI 标注。若问“为什么不用下拉选项”，回答：“结构化选项是合理替代方案；当前没做交互效率或维护成本比较，不能说自由文字必然更好。”
+**证据与追问：** [冻结清单](../../eval/acceptance/FROZEN_MANIFEST.json) 的 `annotation.method` 和 `limitations` 写明合成材料与 AI 标注。若问“为什么不用下拉选项”，回答：“结构化选项是合理替代方案；当前没做交互效率或维护成本比较，不能说自由文字必然更好。”
 
 ---
 
@@ -636,7 +636,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 “接力”不是每次三个都跑：Router 合成 HALT 就跳过后两个。300/300、70/300、55/55 这些数字只对应“预检＋Router＋风险合成”，不能说成三个 Agent 全链路已评测。简历若写“四层”，要说清是哪四层；仓库里没有这个词，这是本人草稿的分法，需自己列出并和上表对一遍。
 
-**证据与范围：** [代码阅读地图](BACKEND_CODE_GUIDE_zh.md)、[extended.py](../../src/cloud-orchestrator/embodied_brain/extended.py)、[前端请求函数](../../src/client-edge/src/app/dashboard/live/lib/simulation.ts)。正式 300 条主要测 Router 与决定逻辑，HTTP 完整路径用假模型和假依赖测试；不能把两者合起来说成真实模型端到端已验证。IoT Hub 是另一路旧接入，不等于扩展路径已接 MQTT 黑板或 ROS 2。
+**证据与范围：** [代码阅读地图](../../docs/guide/BACKEND_CODE_GUIDE_zh.md)、[extended.py](../../src/cloud-orchestrator/embodied_brain/extended.py)、[前端请求函数](../../src/client-edge/src/app/dashboard/live/lib/simulation.ts)。正式 300 条主要测 Router 与决定逻辑，HTTP 完整路径用假模型和假依赖测试；不能把两者合起来说成真实模型端到端已验证。IoT Hub 是另一路旧接入，不等于扩展路径已接 MQTT 黑板或 ROS 2。
 
 > **练习检查：** 画出 HTTP 输入→急停／输入预检→外部依赖→Router→风险合成→必要的 Safety／Compiler→动作校验，说明哪些节点能提前返回。
 
@@ -665,7 +665,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **例子：** 距离 15 cm、温度 70℃、电量 10%，其他正常：主要状态是障碍；风险包含障碍、过热、低电量；结果是 HALT，保留 COOL 和回充待办，不会一边停车一边执行回充。
 
-**证据与边界：** [规范](../spec/LABEL_SPEC.md)、[rules.py](../../src/cloud-orchestrator/router_v2/rules.py) 的 `THRESHOLDS`、`risk_set()`、`resolve_action()`。阈值是仿真约定；20／50 的记录来源是旧生成器正常区间下限，不是电池、电机或真机制动认证参数。
+**证据与边界：** [规范](../../eval/spec/LABEL_SPEC.md)、[rules.py](../../src/cloud-orchestrator/router_v2/rules.py) 的 `THRESHOLDS`、`risk_set()`、`resolve_action()`。阈值是仿真约定；20／50 的记录来源是旧生成器正常区间下限，不是电池、电机或真机制动认证参数。
 
 **字段追问：** HTTP 距离叫 `obstacle_distance_cm`，内部叫 `distance_cm`；速度 `velocity`→`velocity_ms`，电量 `battery`→`battery_pct`，温度 `temperature`→`temperature_c`。`target_speed` 是输出动作的请求速度上限，动作速度单位为 cm/s；遥测速度单位为 m/s。见 `extended.py:ROUTER_FIELDS` 与 `pipeline.py:validate_actions()`。`goal=CHARGER` 是结构化目标，`deferred` 是待办信息，不是已实现路线规划或任务队列。
 
@@ -687,7 +687,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 - 距离 15 cm，模型报 NORMAL_NAV：代码补障碍，最终 HALT。
 - 距离 100 cm、其他数值正常，备注“前方有人”，模型却报 NORMAL_NAV＋IRRELEVANT：代码无法从数值发现这个人，可能放行。这个错误才是备注独有风险的关键评测对象。
 
-**结果与来源：** 正式本轮模型未观察到漏停，不代表反例不可能。执行规则见 [rules.py:execute()](../../src/cloud-orchestrator/router_v2/rules.py)；漏停计数见[评分器 score_safety()](../baseline_b/evaluate.py)。HTTP 最终动作校验见 [pipeline.py:validate_actions()](../../src/cloud-orchestrator/router_v2/pipeline.py)。
+**结果与来源：** 正式本轮模型未观察到漏停，不代表反例不可能。执行规则见 [rules.py:execute()](../../src/cloud-orchestrator/router_v2/rules.py)；漏停计数见[评分器 score_safety()](../../eval/baseline_b/evaluate.py)。HTTP 最终动作校验见 [pipeline.py:validate_actions()](../../src/cloud-orchestrator/router_v2/pipeline.py)。
 
 **“JSON 格式强约束”能不能写（简历措辞核对）：** 约束的是校验，不是模型输出。仓库没有使用 `response_format`、`json_schema` 或函数调用，调用就是普通 `chat.completions.create`；提示词要求“只回复一个 JSON 对象”，[parse_reply](../../src/cloud-orchestrator/router_v2/prompt.py) 再严格检查：必须是单个 JSON 对象，键恰好是 `primary` 与 `note_status`，无代码围栏或多余文字、无重复键、取值在六类与六种备注状态内；不合格按 PARSE_FAILURE 停车。Compiler 的动作数组由 `validate_actions` 检查，不走 `parse_reply`。建议写“严格解析并校验模型 JSON 回复，不合格即停车”，不写“强制模型输出 JSON”。
 
@@ -709,7 +709,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **标注结果：** 72 条备注中先盲标 24 条，随后全量复核 72 条。清单记录抽样一致率和 kappa 均为 1，没有标签变更。这说明这份 AI 抽样复核的一致性，不等于专家真值或所有备注都双盲。
 
-**证据：** [数据方案](../spec/DATA_PLAN.md)、[标注协议](../spec/ANNOTATION_PROTOCOL.md)、[冻结清单](../acceptance/FROZEN_MANIFEST.json) 的 `class_counts`、`note_status_counts`、`families`、`annotation`。
+**证据：** [数据方案](../../eval/spec/DATA_PLAN.md)、[标注协议](../../eval/spec/ANNOTATION_PROTOCOL.md)、[冻结清单](../../eval/acceptance/FROZEN_MANIFEST.json) 的 `class_counts`、`note_status_counts`、`families`、`annotation`。
 
 **追问“300 条是调提示词之前还是之后冻结的？是留出集吗？”：** “提示词在测试集冻结之前已经定稿：`router_v2/prompt.py` 在 git 里只有一次提交（2026-11-07 17:41），测试集冻结提交在同日 19:10，清单里记录了提示词的 SHA-256。开发集那轮没有分类错误可供调参（97.2%，其余 5 次是接口错误，返回的回复全对），所以没有根据测试结果改过提示词。”边界要同时说：git 只能证明提交记录，看不到提交之前的草稿；不能保证造题的人没见过提示词；只验证了一个提示词版本和一个模型家族。**不要说成“开发集兼回归集”，也不要说成无污染的留出集。** 另外，第二轮的 R3 若将来在这 300 条上运行，这批数据对 R3 就不再是纯留出集。
 
@@ -731,7 +731,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **例子：** `FROZEN_MANIFEST.json` 是题库清单，含数量和文件哈希；`test_set.jsonl` 才是逐条输入和标签。清单不是题目本身。清单里 `formal_metrics: not measured` 是冻结时的状态；后来测出的成绩在结果目录，不应倒改冻结原件。
 
-**证据：** [数据冻结清单](../acceptance/FROZEN_MANIFEST.json)、[代码冻结清单](../formal/CODE_FREEZE.json)、[正式运行器](../formal/run_formal.py) 的 `check_code_freeze()`、`load_data()`；正式标签 `eval-formal-v1` 对应提交号见 [VERIFICATION.json](../formal/results/VERIFICATION.json) 的 `formal_commit`。
+**证据：** [数据冻结清单](../../eval/acceptance/FROZEN_MANIFEST.json)、[代码冻结清单](../../eval/formal/CODE_FREEZE.json)、[正式运行器](../../eval/formal/run_formal.py) 的 `check_code_freeze()`、`load_data()`；正式标签 `eval-formal-v1` 对应提交号见 [VERIFICATION.json](../../eval/formal/results/VERIFICATION.json) 的 `formal_commit`。
 
 **追问“能否证明没作弊”：** “不能绝对证明。标签也能移动，哈希也能重新生成；我们用已记录的提交号、隔离分工、运行记录和独立核对增加可检查性。”模型在考试时当然要看到该条输入，只是不应收到参考答案。
 
@@ -758,9 +758,9 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **差值怎么算：** 全集模型与 R1 相差 `19÷300×100≈6.33 个百分点`，与 R2 相差 `20÷300×100≈6.67 个百分点`。只能说本轮同集系统差值，不能写“优化提升 6.33 个百分点”，也不能把不同指标的差值拼到一起。
 
-**怎么证明：** [第1跑公开摘要](../formal/results/20261107T113942Z_main_real_094cb6c1/public_summary.json) 中，模型看 `metrics`，规则看 `rule_controls.R1`／`R2`；各自再看 `primary.all_started`、`primary.noted`、`note_status`、`safety`。主指标比较模型原始主要状态，没有拿代码纠正后的主要状态替模型得分，见[评分器](../baseline_b/evaluate.py)的 `outcome()` 与 `score_primary()`。
+**怎么证明：** [第1跑公开摘要](../../eval/formal/results/20261107T113942Z_main_real_094cb6c1/public_summary.json) 中，模型看 `metrics`，规则看 `rule_controls.R1`／`R2`；各自再看 `primary.all_started`、`primary.noted`、`note_status`、`safety`。主指标比较模型原始主要状态，没有拿代码纠正后的主要状态替模型得分，见[评分器](../../eval/baseline_b/evaluate.py)的 `outcome()` 与 `score_primary()`。
 
-**追问“怎么会满分”：** “可能因为规则明确、合成题覆盖有限和对照较弱。满分没有暴露可学习的分类错误，所以没有制作优化版。第二轮就集中比较备注理解与经过开发后冻结的规则，结果见下一节。”计划见[第二轮计划](../experiments/note_vs_rules_v2/PLAN.md)，结果见[RESULTS.md](../experiments/note_vs_rules_v2/RESULTS.md)。
+**追问“怎么会满分”：** “可能因为规则明确、合成题覆盖有限和对照较弱。满分没有暴露可学习的分类错误，所以没有制作优化版。第二轮就集中比较备注理解与经过开发后冻结的规则，结果见下一节。”计划见[第二轮计划](../../eval/experiments/note_vs_rules_v2/PLAN.md)，结果见[RESULTS.md](../../eval/experiments/note_vs_rules_v2/RESULTS.md)。
 
 **R1 的 19 条主类错误（来自第1跑公开摘要的混淆矩阵 `rule_controls.R1.primary.all_started`）：** 14 条是金标 CRITICAL_OBSTACLE 被判 NORMAL_NAV（即 14 次漏停）；3 条是 NORMAL_NAV 被判 CRITICAL_OBSTACLE（误停）；LOW_HEALTH、OVERHEAT 各 1 条被判 CRITICAL_OBSTACLE（类别混淆，车仍停车）。R1 备注状态的 49 个错误里有 39 个被判成 IRRELEVANT，符合关键词没命中的特征。但 14 次漏停逐条属于阈值、关键词还是语义，需要读私有逐条记录才能分，目前没分。因此只说“固定关键词规则在备注上漏停 14 次”，**不写“语义盲区”**。
 
@@ -772,7 +772,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 | Maybe someone is ahead, not sure. | `UNCERTAIN` | 不确定，规范要求保守，按需要停车处理 |
 | 之前有过箱子；如果有箱子掉落就通知我。 | `HISTORICAL` | 说的是过去和条件，不是现在 |
 
-对错的边界也会有分歧：第二轮盲标里，作者标 `HISTORICAL`、盲标者标 `NEGATED` 的记录就是“之前有、现在已不在”算过去还是算否定，这是规范边界上的真问题，裁决时应先定一条规则再逐条套用，不是谁粗心，也不能为了保住每类 30 条而选答案。所以满分（如第一轮的 300/300）不等于“题目很难”或“系统很强”，只有同时看到错误清单、错的类型和对照方案，才知道题目考了什么。第二轮最终原题、逐条模型回复、规则预测及配对账本现已整理入仓，错误分析按类型整理，见[原件与免费复算入口](../experiments/note_vs_rules_v2/evidence/README.md)。
+对错的边界也会有分歧：第二轮盲标里，作者标 `HISTORICAL`、盲标者标 `NEGATED` 的记录就是“之前有、现在已不在”算过去还是算否定，这是规范边界上的真问题，裁决时应先定一条规则再逐条套用，不是谁粗心，也不能为了保住每类 30 条而选答案。所以满分（如第一轮的 300/300）不等于“题目很难”或“系统很强”，只有同时看到错误清单、错的类型和对照方案，才知道题目考了什么。第二轮最终原题、逐条模型回复、规则预测及配对账本现已整理入仓，错误分析按类型整理，见[原件与免费复算入口](../../eval/experiments/note_vs_rules_v2/evidence/README.md)。
 
 **第二轮结果（2026-11-15，另一批新写的题，不与第一轮的 300 条拼接）：** 180 条全部带备注，六种备注状态各 30 条，中、英、中英混合各 60 条，60 个实验情形分组（每组 3 条，不是 60 个已证明独立的真实场景）；同一批题上跑 R1、R2、R3 和固定模型（提示词不变）。共 182 次请求（2 次健康检查）、205,553 token，按保守费率估算 US$0.110672，不是账单。
 
@@ -821,7 +821,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 - **“那现在到底该选谁？”** 数值风险继续由确定性代码计算和约束；备注需要语言理解的部分，本轮数据支持模型优于这版 R3，但真实表达比例、可接受误判和任务时限未定，不能宣布生产选型已经完成。秒级请求不应仅凭这份分类结果就被当作实时避障闭环方案。
 - **“你个人的价值在哪？”** 按实际经历说提出问题、确认范围与预算、组织 AI 协作、核对输出及从质疑中修正理解；代码和具体评测方案大量由 AI 协助，不冒称本人独立写了全部规则、题目或方法。用一条记录手算并解释一处错误，比只说“主导”更有说服力。
 
-**练习：** 用自己的话分别回答“第一轮解决什么”“第二轮多回答什么”“还有什么没回答”；然后打开 [第二轮原件](../experiments/note_vs_rules_v2/evidence/README.md)，核对一条模型错误和一条 R3 错误。先看冻结标签，再看输出与最终动作，别只背差值。
+**练习：** 用自己的话分别回答“第一轮解决什么”“第二轮多回答什么”“还有什么没回答”；然后打开 [第二轮原件](../../eval/experiments/note_vs_rules_v2/evidence/README.md)，核对一条模型错误和一条 R3 错误。先看冻结标签，再看输出与最终动作，别只背差值。
 
 > **练习检查：** 指着结果表分别说清三个分母与指标。14 次漏停和 15 条备注误判尚未逐条对应；不要把候选解释说成已查明原因。
 
@@ -847,7 +847,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **错误处理例子：** 输入电量 150%→INVALID_INPUT；Router 回复带代码围栏或非正常结束→不可用回复；Compiler 返回 `move` 却缺速度→CONSTRAINT_VIOLATION。它们的来源不同，不要统一叫“模型幻觉”。
 
-**怎么证明：** [压力摘要](../formal/results/20261107T115548Z_stress_real_8352b4ff/public_summary.json) 的 `stress.total` 和 `stress.by_type`。具体类型名称和范围见[数据方案](../spec/DATA_PLAN.md)。本轮没发现失败，不能为满足“错误分析”而编造模型失败类型。
+**怎么证明：** [压力摘要](../../eval/formal/results/20261107T115548Z_stress_real_8352b4ff/public_summary.json) 的 `stress.total` 和 `stress.by_type`。具体类型名称和范围见[数据方案](../../eval/spec/DATA_PLAN.md)。本轮没发现失败，不能为满足“错误分析”而编造模型失败类型。
 
 **超时追问：** 扩展 Router 配置是 60 秒、SDK 无重试，不是 400 ms 制动。无重试是本次测量和实现选择，不是所有生产系统的通则；有时限、幂等性和重复动作风险后，才能另行设计重试。Safety／Compiler 在2026-11-21 起走 `bounded_agent.py`，设置相同，有假客户端测试和一次 84 条的真实运行（耗时见 LIMITATIONS 第 26 条），之前的历史耗时数字来自旧路径，不能与之混用。
 
@@ -863,7 +863,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 **推理怎么展开：** 动机说明选题 → 输入输出说明范围 → 代码说明怎么处理 → 对照结果说明测到了什么 → 局限和下一步说明判断。没有必要把每个细节都塞进一分钟。
 
-**数字证据：** [总报告](../report.md)、[独立核对记录](../formal/results/VERIFICATION.json)、[证据索引](../EVIDENCE_INDEX.md)。两次主类一致率 100%，来自[两跑比较文件](../formal/results/reproducibility_20261107T113942Z_main_real_094cb6c1__20261107T114703Z_main_real_19df553b.json)，不是跨模型一致性或未来稳定性保证。
+**数字证据：** [总报告](../../eval/report.md)、[独立核对记录](../../eval/formal/results/VERIFICATION.json)、[证据索引](../../eval/EVIDENCE_INDEX.md)。两次主类一致率 100%，来自[两跑比较文件](../../eval/formal/results/reproducibility_20261107T113942Z_main_real_094cb6c1__20261107T114703Z_main_real_19df553b.json)，不是跨模型一致性或未来稳定性保证。
 
 **个人贡献追问：** 当前可明确说由你提出做饭→AGV→延迟的方向，前端组织习惯也由你说明；大量规范、脚本和文档有 AI 协助。哪些代码是自己写、哪些取舍是自己作的，应按实际记录补充。不能只因仓库成果存在，就把 AI 后来解释的全部设计说成自己的原始决策。
 
@@ -881,25 +881,25 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 
 | 要回答的数字 | 来源与字段 | 计算／解释 |
 |---|---|---|
-| 6 类、300 条、每类 50 | [FROZEN_MANIFEST.json](../acceptance/FROZEN_MANIFEST.json)：`N`、`M`、`class_counts` | `6×50=300`，覆盖配额 |
+| 6 类、300 条、每类 50 | [FROZEN_MANIFEST.json](../../eval/acceptance/FROZEN_MANIFEST.json)：`N`、`M`、`class_counts` | `6×50=300`，覆盖配额 |
 | 72 条备注、每状态 12 | 同上：`noted_records`、`note_status_counts` | `6×12=72`，不是 72 个独立场景 |
 | 34 个家族 | 同上：`families`、`cross_set_audit` | 最终保守分组，不是功效计算结果 |
 | 24 条盲标、72 条复核 | 同上：`annotation.blind_sample.n`、`full_review_records` | 抽样 `24/72≈33.3%`；后续全量复核 |
-| 两跑各 300/300 | [第1跑](../formal/results/20261107T113942Z_main_real_094cb6c1/public_summary.json)、[第2跑](../formal/results/20261107T114703Z_main_real_19df553b/public_summary.json)：`metrics.primary.all_started.correct/n` | 每跑分别 `300÷300`，不是 600 个不同样本 |
-| 两跑一致率 100% | [VERIFICATION.json](../formal/results/VERIFICATION.json)：`main_primary_agreement`、`main_note_status_agreement` | 同一题两次判断的一致性；一致也可能都错，须同时看金标成绩 |
-| 98.74%–100% | 主跑摘要：`metrics.primary.all_started.ci95_wilson`；[评分公式](../baseline_b/evaluate.py)：`wilson()` | 按 300 条记录计算的名义区间，未按家族校正，不是生产保证 |
+| 两跑各 300/300 | [第1跑](../../eval/formal/results/20261107T113942Z_main_real_094cb6c1/public_summary.json)、[第2跑](../../eval/formal/results/20261107T114703Z_main_real_19df553b/public_summary.json)：`metrics.primary.all_started.correct/n` | 每跑分别 `300÷300`，不是 600 个不同样本 |
+| 两跑一致率 100% | [VERIFICATION.json](../../eval/formal/results/VERIFICATION.json)：`main_primary_agreement`、`main_note_status_agreement` | 同一题两次判断的一致性；一致也可能都错，须同时看金标成绩 |
+| 98.74%–100% | 主跑摘要：`metrics.primary.all_started.ci95_wilson`；[评分公式](../../eval/baseline_b/evaluate.py)：`wilson()` | 按 300 条记录计算的名义区间，未按家族校正，不是生产保证 |
 | R1 281、R2 280 | 主跑摘要：`rule_controls.R1/R2.primary.all_started` | 93.67%、93.33%；均为同一批 300 条 |
 | R1 53/72 与 23/72 | 主跑摘要：`rule_controls.R1.primary.noted` 与 `.note_status` | 前者主要状态，后者备注状态，不要混用 |
 | 漏停 14／10 | 主跑摘要：`rule_controls.R1/R2.safety.missed_halt` | 相对规范金标应停却没停的决定数，不是碰撞数；漏停率还需明确应停分母 |
-| 15 条备注误判与 14 次漏停 | [报告错误分析](../report.md)：9 条当前肯定→无关＋6 条不确定→无关 | `9+6=15`，尚未逐条对应 14 次漏停；不能据此宣称已证明因果 |
-| 55 例、32 次请求、13 拒绝、10 注入 | [压力摘要](../formal/results/20261107T115548Z_stress_real_8352b4ff/public_summary.json)：`stress.total` | `55=32+13+10`，不能称 55 次模型调用 |
-| 634 请求、630792 token、US$0.284948 | [VERIFICATION.json](../formal/results/VERIFICATION.json)：`api_requests`、`sum_raw_api_usage_tokens`、`recomputed_cost_rounded_6dp_usd` | 请求 `2+300+300+32=634`；费用按配置价格，不是账单 |
+| 15 条备注误判与 14 次漏停 | [报告错误分析](../../eval/report.md)：9 条当前肯定→无关＋6 条不确定→无关 | `9+6=15`，尚未逐条对应 14 次漏停；不能据此宣称已证明因果 |
+| 55 例、32 次请求、13 拒绝、10 注入 | [压力摘要](../../eval/formal/results/20261107T115548Z_stress_real_8352b4ff/public_summary.json)：`stress.total` | `55=32+13+10`，不能称 55 次模型调用 |
+| 634 请求、630792 token、US$0.284948 | [VERIFICATION.json](../../eval/formal/results/VERIFICATION.json)：`api_requests`、`sum_raw_api_usage_tokens`、`recomputed_cost_rounded_6dp_usd` | 请求 `2+300+300+32=634`；费用按配置价格，不是账单 |
 | 正式模型版本 | 主跑摘要：`model_identity_stated_by_owner`、`model_drift_flag` | 声明身份不等于验证版本；未触发漂移只说明检测范围内别名一致 |
 
-| 第二轮备注173/180、R3 77/180 | [note_compare.json](../experiments/note_vs_rules_v2/results/20261115T152854Z_main_real_e5fd14c2/note_compare.json)：`schemes.model/R3.note_status.correct/n` | 分别96.11%、42.78%；只正式跑一次；与第一轮不同题，不是性能前后变化 |
+| 第二轮备注173/180、R3 77/180 | [note_compare.json](../../eval/experiments/note_vs_rules_v2/results/20261115T152854Z_main_real_e5fd14c2/note_compare.json)：`schemes.model/R3.note_status.correct/n` | 分别96.11%、42.78%；只正式跑一次；与第一轮不同题，不是性能前后变化 |
 | 第二轮差53.33个百分点及区间 | 同上：`comparisons.model_vs_R3.note_accuracy_difference`、`.paired` | 同题模型减R3；分组bootstrap为[43.33,63.33]，配对75/98/2/5；不是优化版提升 |
-| 第二轮182次、205553 token、US$0.110672 | [本轮核验](../experiments/note_vs_rules_v2/results/20261115T152854Z_main_real_e5fd14c2/VERIFICATION.json)：`total_calls`、`total_tokens_booked`、`usd_booked_at_conservative_rates` | 包括2次公开健康；主测试单独为180次、203490 token、US$0.109678，不是账单 |
-| 第二轮GitHub包体可取回 | [远端核验凭证](../experiments/note_vs_rules_v2/results/20261115T152854Z_main_real_e5fd14c2/REMOTE_BACKUP_VERIFICATION.json)：`hashes_verified`、`historical_archives_present` | 41项归档＋28项最终证据、17个包；这是字节核验，不是模型第二次运行或真人陌生人验收 |
+| 第二轮182次、205553 token、US$0.110672 | [本轮核验](../../eval/experiments/note_vs_rules_v2/results/20261115T152854Z_main_real_e5fd14c2/VERIFICATION.json)：`total_calls`、`total_tokens_booked`、`usd_booked_at_conservative_rates` | 包括2次公开健康；主测试单独为180次、203490 token、US$0.109678，不是账单 |
+| 第二轮GitHub包体可取回 | [远端核验凭证](../../eval/experiments/note_vs_rules_v2/results/20261115T152854Z_main_real_e5fd14c2/REMOTE_BACKUP_VERIFICATION.json)：`hashes_verified`、`historical_archives_present` | 41项归档＋28项最终证据、17个包；这是字节核验，不是模型第二次运行或真人陌生人验收 |
 | 历史 5.6801／7.6674／73.8925 秒 | 历史 [200 摘要](../../src/cloud-orchestrator/embodied_brain/benchmark_results/runs/2026-07-16-thesis-200/summary.json) 的 `latency_ms.total_pipeline`；历史 [60 结果](../../src/cloud-orchestrator/embodied_brain/benchmark_results/runs/2026-08-18-diagnostic-60/results.json) 的 `metrics.latency_ms.total_pipeline` | 毫秒÷1000；各自只含走完全流程的 121／35 条 |
 | 提前退出 39.5%，估计省 4.6134 秒 | 历史 200 摘要：`gate_counts`、`circuit_breaking` | `(28+24+27)/200=39.5%`；节省是估算，不是开关消融实测 |
 
@@ -1083,7 +1083,7 @@ PY
 - **不要说：** “延迟可以接受”“成本很低所以值得”。
 
 **追问 12：这批题是你们自己写的，会不会对模型有利？**（[问题 11](#q11)）
-- **话术：** “有这个风险，所以做了几件事：题目由没参与规则开发的作者写，作者自述未读规则内部，这点没有独立核实；54+64+21+7 条分四次由没见过标签的新会话盲标，一致率分别是 96.3%、85.9%、81.0%、100%，但那是 AI 标注的自洽，不是专家金标，各轮不合并；第二轮的作者是 Gemini，盲标和复核是 GPT 家族，写和标来自不同模型家族；第一轮的作者、盲标、复核、裁决都是 GPT 家族（不同会话），所以第一轮的一致不能算跨家族验证。这些归属来自各会话的自述和 git 记录，不是数据文件里的字段，细节和没查清的地方在 [谁做了什么](../ANNOTATOR_PROVENANCE.md)；历史／否定和话题关联边界保留了替代读法；两项测后敏感性分别得57.22和51.11个百分点，原差值53.33，既有增大也有缩小，不能统称换读法只会扩大。它们不改冻结标签，不作为新成绩。这批题现在公开，成为回归集，不能再当未接触的新测试集。”
+- **话术：** “有这个风险，所以做了几件事：题目由没参与规则开发的作者写，作者自述未读规则内部，这点没有独立核实；54+64+21+7 条分四次由没见过标签的新会话盲标，一致率分别是 96.3%、85.9%、81.0%、100%，但那是 AI 标注的自洽，不是专家金标，各轮不合并；第二轮的作者是 Gemini，盲标和复核是 GPT 家族，写和标来自不同模型家族；第一轮的作者、盲标、复核、裁决都是 GPT 家族（不同会话），所以第一轮的一致不能算跨家族验证。这些归属来自各会话的自述和 git 记录，不是数据文件里的字段，细节和没查清的地方在 [谁做了什么](../../eval/ANNOTATOR_PROVENANCE.md)；历史／否定和话题关联边界保留了替代读法；两项测后敏感性分别得57.22和51.11个百分点，原差值53.33，既有增大也有缩小，不能统称换读法只会扩大。它们不改冻结标签，不作为新成绩。这批题现在公开，成为回归集，不能再当未接触的新测试集。”
 - **不要说：** “独立第三方出题”“专家标注”“这个结果可以推广到真实车间”。
 
 **不要说：** “零安全事故”“从 X 提升至 Y”“四层决策链”“三智能体全链路已评测”“适配多个模型”“κ=1.0 说明标注质量”“工业级安全”。
@@ -1094,4 +1094,4 @@ PY
 
 早期稿件与完整审阅可从 Git 提交 `3895efb` 查看，旧 review 已撤下，使用对应提交查看历史，不再保留跳转文件。未核实的个人贡献、真实硬件表现和逐条错误原因，不因整理完成而变成已验证事实。
 
-下一步按[学习与口述练习](RECOMMEND_LEARNING_zh.md)推进。正式证据仍以[报告](../report.md)、[延迟说明](../LATENCY_EVIDENCE.md)及[证据索引](../EVIDENCE_INDEX.md)为准；本次没有改变任何验收状态。
+下一步按[学习与口述练习](RECOMMEND_LEARNING_zh.md)推进。正式证据仍以[报告](../../eval/report.md)、[延迟说明](../../eval/LATENCY_EVIDENCE.md)及[证据索引](../../eval/EVIDENCE_INDEX.md)为准；本次没有改变任何验收状态。

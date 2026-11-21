@@ -88,7 +88,7 @@
 | 真正请求模型在哪？ | [pipeline.py](../../src/cloud-orchestrator/router_v2/pipeline.py#L37) 的适配器调用 `chat.completions.create`；`decide()` 把提示词与输入交给它 |
 | 多个角色怎么传信息？ | [extended.py](../../src/cloud-orchestrator/embodied_brain/extended.py#L131) 中代码把主标签、遥测、规则等拼进后续调用；不是共享一个自主对话循环 |
 | 每次一定调用三次吗？ | 不一定。急停／非法输入可不调用模型，Router 停车跳过后两段，Safety 拦截则不调用 Compiler；后两段还可能走 `ask_agent` 缓存 |
-| 正式成绩测了三 Agent 优势吗？ | 没有。正式主测试测 Router，压力测决策函数；HTTP 全流程用假依赖测试，见 [正式报告](../report.md) |
+| 正式成绩测了三 Agent 优势吗？ | 没有。正式主测试测 Router，压力测决策函数；HTTP 全流程用假依赖测试，见 [正式报告](../../eval/report.md) |
 
 ## 5. 用一个例子讲明白
 

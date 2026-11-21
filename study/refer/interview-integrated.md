@@ -1,7 +1,7 @@
 # OmniGuard 面试整合版：按八关流程串着讲
 
 2026-11-21。这是**导航与串讲层**，不是新的答案库。
-- 面试答案以 [INTERVIEW_DEEP_DRILL_zh.md](../../eval/interview/INTERVIEW_DEEP_DRILL_zh.md)（下称"手册"）为准；这里给主线、位置和每一关的"主张—证据—推理—局限"，不复制手册答案，避免出现两份不一致的版本。
+- 面试答案以 [INTERVIEW_DEEP_DRILL_zh.md](../interview/INTERVIEW_DEEP_DRILL_zh.md)（下称"手册"）为准；这里给主线、位置和每一关的"主张—证据—推理—局限"，不复制手册答案，避免出现两份不一致的版本。
 - 数字以 [第一轮 VERIFICATION.json](../../eval/formal/results/VERIFICATION.json) 和 [第二轮 RESULTS.md](../../eval/experiments/note_vs_rules_v2/RESULTS.md) 为准。
 - "谁做的"来自会话自述和 git，不是数据文件字段，见 [ANNOTATOR_PROVENANCE.md](../../eval/ANNOTATOR_PROVENANCE.md)。
 
@@ -58,7 +58,7 @@
 - **局限：** 规范是实验约定，"对"的意思是"符合这份规范"；30 cm、60 ℃ 等是仿真约定，不是制动距离；参考标注器在纯遥测记录上生成金标，所以对它得 100% 是按构造成立，只是上限检查；规范逐段是谁起草的没能恢复。
 - **追问：**
   - *对错谁说了算？* 规范；边界分歧（历史还是否定）保留了替代读法，不改标签。
-  - *30 cm 怎么定的？* 仿真约定，不是安全阈值（[核心 4](../../eval/interview/INTERVIEW_DEEP_DRILL_zh.md#core-q4)）。
+  - *30 cm 怎么定的？* 仿真约定，不是安全阈值（[核心 4](../interview/INTERVIEW_DEEP_DRILL_zh.md#core-q4)）。
   - *参考实现 100% 说明什么？* 只说明代码与规范一致，不说明任何系统的能力。
 
 ### 第 2 关：出题——会不会偏向模型
@@ -70,12 +70,12 @@
 - **追问：**
   - *题是你们自己写的，会不会对模型有利？* 见手册追问 12：作者分离、盲标、保留替代读法；第二轮作者与标注者不同家族。
   - *300 条算多少独立场景？* 34 个家族，不是 300 个。
-  - *为什么是这些数？* 6×50、6×12、6×30 是覆盖和工作量约定，没有功效计算（[核心 5](../../eval/interview/INTERVIEW_DEEP_DRILL_zh.md#core-q5)）。
+  - *为什么是这些数？* 6×50、6×12、6×30 是覆盖和工作量约定，没有功效计算（[核心 5](../interview/INTERVIEW_DEEP_DRILL_zh.md#core-q5)）。
 
 ### 第 3 关：标注——金标怎么来
 
 - **主张：** 标签经过盲标度量、复核纠错、裁决定案；是 AI 标注和 AI 复核。
-- **证据：** 模型与提交的归属有会话元数据支撑（[SESSION_META.md](../../eval/provenance/SESSION_META.md)）：Gemini 声称执行的 5 个提交都在它的会话里找到了对应调用，GPT 六个子会话的模型和档位与所有者的说法一致，只有其主会话有 8 次 high。第二轮盲标一致率 52/54、55/64、17/21、7/7，**分四批各自报告，不合并**（[FINAL_REVIEW.json](../../eval/experiments/note_vs_rules_v2/evidence/data/FINAL_REVIEW.json) 的 `agreement_reporting`）；第一轮 24 条抽样盲标、72 条备注全量复核（手册[问题 11](../../eval/interview/INTERVIEW_DEEP_DRILL_zh.md#q11)）。
+- **证据：** 模型与提交的归属有会话元数据支撑（[SESSION_META.md](../../eval/provenance/SESSION_META.md)）：Gemini 声称执行的 5 个提交都在它的会话里找到了对应调用，GPT 六个子会话的模型和档位与所有者的说法一致，只有其主会话有 8 次 high。第二轮盲标一致率 52/54、55/64、17/21、7/7，**分四批各自报告，不合并**（[FINAL_REVIEW.json](../../eval/experiments/note_vs_rules_v2/evidence/data/FINAL_REVIEW.json) 的 `agreement_reporting`）；第一轮 24 条抽样盲标、72 条备注全量复核（手册[问题 11](../interview/INTERVIEW_DEEP_DRILL_zh.md#q11)）。
 - **推理：** 盲标者看不到标签，一致就说明规范写得清楚；复核者看到标签，只能纠错。第二轮写题和标注来自不同家族，独立性比第一轮强。
 - **局限：** 同家族（第一轮）或 AI 对 AI（两轮），一致说明与规范一致，不说明对真实世界正确；κ=1 不说明标注质量；最后一批只有 7 条；合并一致率会被选择效应抬高，所以不合并；盲标者的完整上下文含加密部分，不能断言没透露过作者身份。
 - **追问：**
@@ -114,8 +114,8 @@
 - **推理：** 上限加健康检查加封存，使调用不会被静默追加，结果可复核。
 - **局限：** 费用是按配置价格的估算，不是账单；模型版本是所有者声明，没有验证；延迟是单次请求墙钟，不是业务端到端，也不是车辆容忍上限；第一轮只剩公开摘要，所以请求设置和授权在 [RUN_RECEIPTS.md](../../eval/RUN_RECEIPTS.md) 里显示「未记录」；人工干预次数和运行前测试结果没有结构化字段。
 - **追问：**
-  - *延迟能接受吗？* 我没有真实任务期限数据，不能替业务回答；只能说测到了多少（手册[问题 2](../../eval/interview/INTERVIEW_DEEP_DRILL_zh.md#q2)）。
-  - *花了多少钱？* 第二轮约 11 美分，第一轮约 28 美分，都是估算（[问题 6](../../eval/interview/INTERVIEW_DEEP_DRILL_zh.md#q6)）。
+  - *延迟能接受吗？* 我没有真实任务期限数据，不能替业务回答；只能说测到了多少（手册[问题 2](../interview/INTERVIEW_DEEP_DRILL_zh.md#q2)）。
+  - *花了多少钱？* 第二轮约 11 美分，第一轮约 28 美分，都是估算（[问题 6](../interview/INTERVIEW_DEEP_DRILL_zh.md#q6)）。
   - *模型版本怎么证明？* 不能证明，只有请求名和返回别名。
 
 ### 第 7 关：计分与复算——数字谁算的，错在哪
@@ -190,14 +190,14 @@
 
 | 我想知道 | 打开 |
 |---|---|
-| 项目是什么，为什么做 | [INTERVIEW_STORY_zh.md](../../eval/interview/INTERVIEW_STORY_zh.md) |
-| 字段看不懂（primary、note_status） | [START_HERE_zh.md](../../eval/interview/START_HERE_zh.md) |
-| 代码怎么走 | [BACKEND_CODE_GUIDE_zh.md](../../eval/interview/BACKEND_CODE_GUIDE_zh.md) |
-| 面试答案 | [手册](../../eval/interview/INTERVIEW_DEEP_DRILL_zh.md)；数字出处在末尾"数字来源速查"（`#evidence`） |
+| 项目是什么，为什么做 | [INTERVIEW_STORY_zh.md](../interview/INTERVIEW_STORY_zh.md) |
+| 字段看不懂（primary、note_status） | [START_HERE_zh.md](../../docs/guide/START_HERE_zh.md) |
+| 代码怎么走 | [BACKEND_CODE_GUIDE_zh.md](../../docs/guide/BACKEND_CODE_GUIDE_zh.md) |
+| 面试答案 | [手册](../interview/INTERVIEW_DEEP_DRILL_zh.md)；数字出处在末尾"数字来源速查"（`#evidence`） |
 | 第一轮、第二轮结果 | [report.md](../../eval/report.md)、[RESULTS.md](../../eval/experiments/note_vs_rules_v2/RESULTS.md) |
 | 错在哪 | [SLICE_REPORT.md](../../eval/experiments/note_vs_rules_v2/slices/SLICE_REPORT.md) |
 | 谁标的、哪个模型 | [ANNOTATOR_PROVENANCE.md](../../eval/ANNOTATOR_PROVENANCE.md)、[审计索引](../../eval/provenance/README.md) |
-| 做不到什么 | [LIMITATIONS.md](../../eval/LIMITATIONS.md)、[STATUS.md](../STATUS.md) |
+| 做不到什么 | [LIMITATIONS.md](../../eval/LIMITATIONS.md)、[STATUS.md](../../docs/STATUS.md) |
 | 每个说法对应哪份证据 | [EVIDENCE_INDEX.md](../../eval/EVIDENCE_INDEX.md) |
 | 想自己跑 | [REPRODUCE.md](../../eval/REPRODUCE.md) |
 

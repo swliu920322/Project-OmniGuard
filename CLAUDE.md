@@ -43,7 +43,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_docs_consistency.py
 - `spec/` six-class label spec, reference labeler, keyword rules R1/R2; `baseline_b/` prompt B-1.0 and evaluator; `dev/` public dev set; `acceptance/FROZEN_MANIFEST.json` round-1 commitments; `formal/` runner (`run_formal.py`) and published round-1 results.
 - `experiments/note_vs_rules_v2/` is round 2 (note understanding, rules R3 vs the model): `run_note_compare.py`, `r3.py`, `PLAN.md`, `RESULTS.md`, `HANDOFF_TO_GPT.md` (dated custodian log), `evidence/` (180 records, model replies, rule predictions, free recompute script), `archive/`.
 - `annotation/` blind-annotation tooling and `validate_rationales.py`.
-- `interview/INTERVIEW_DEEP_DRILL_zh.md` is the single interview answer source.
+- `study/interview/INTERVIEW_DEEP_DRILL_zh.md` is the single interview answer source (personal study, not evidence); `docs/guide/` holds the newcomer guides.
 
 ## Rules that are easy to break
 

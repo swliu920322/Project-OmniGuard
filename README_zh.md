@@ -14,7 +14,7 @@ OmniGuard 包含模拟 AGV 仪表盘、三级云端 Agent 流水线、Azure 基�
 | 做到哪一步、哪些没做 | [项目现状](docs/STATUS.md)（英文） |
 | 实际测出了什么 | [正式评测报告](eval/report.md)；耗时另看[延迟证据](eval/LATENCY_EVIDENCE.md) |
 | 为什么这样设计，有哪些代价 | [三个关键设计取舍](ARCHITECTURE.md#design-tradeoffs) |
-| 核心代码是否落实 | [代码地图](eval/interview/BACKEND_CODE_GUIDE_zh.md) → [模型调用与动作校验](src/cloud-orchestrator/router_v2/pipeline.py) → [风险合成](src/cloud-orchestrator/router_v2/rules.py) → [HTTP端点测试](tests/test_extended_endpoint.py) |
+| 核心代码是否落实 | [代码地图](docs/guide/BACKEND_CODE_GUIDE_zh.md) → [模型调用与动作校验](src/cloud-orchestrator/router_v2/pipeline.py) → [风险合成](src/cloud-orchestrator/router_v2/rules.py) → [HTTP端点测试](tests/test_extended_endpoint.py) |
 | 不用密钥能验证什么 | [免费离线复现](eval/REPRODUCE.md#level-1-offline-walkthrough-free)；只验证代码流程与结果文件完整性 |
 
 想直观看行为：本地启动前端后打开 `/dashboard/theorem`，改变延迟和速度，观察仿真运动；`/dashboard/live` 另需后端配置，开始运行可能产生模型调用费用。沙盒不是实体车实验，浏览器演示也不等于正式六类Router评测。

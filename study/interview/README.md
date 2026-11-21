@@ -30,22 +30,22 @@
 | 本页 README | 导航和维护约定 | 忘记从哪里开始时 |
 | [RECOMMEND_LEARNING_zh.md](RECOMMEND_LEARNING_zh.md) | 学习顺序、练习、掌握标准 | 日常练习入口 |
 | [INTERVIEW_DEEP_DRILL_zh.md](INTERVIEW_DEEP_DRILL_zh.md) | 核心八问、分支答案、推理和数字来源 | 自己回答后核对；唯一的项目答题主稿 |
-| [START_HERE_zh.md](START_HERE_zh.md) | 用中文例子认识输入、主要状态、风险、动作和指标 | 遇到不懂的词时补读 |
-| [BACKEND_CODE_GUIDE_zh.md](BACKEND_CODE_GUIDE_zh.md) | 真实函数地图、调用顺序、免费实操 | 要证明代码怎样工作时 |
+| [START_HERE_zh.md](../../docs/guide/START_HERE_zh.md) | 用中文例子认识输入、主要状态、风险、动作和指标 | 遇到不懂的词时补读 |
+| [BACKEND_CODE_GUIDE_zh.md](../../docs/guide/BACKEND_CODE_GUIDE_zh.md) | 真实函数地图、调用顺序、免费实操 | 要证明代码怎样工作时 |
 | [INTERVIEW_STORY_zh.md](INTERVIEW_STORY_zh.md) | 动机、本人贡献线索、前端组织习惯、Azure经历 | 准备“你本人做了什么”；不是另一套必背答案 |
-| [AGENT_INTENT_DESIGN_zh.md](AGENT_INTENT_DESIGN_zh.md) | Agent、意图、状态、多风险的区别 | 概念追问时 |
-| [BUSINESS_HARNESS_zh.md](BUSINESS_HARNESS_zh.md) | 把当前流程与企业业务执行框架联系起来 | 系统设计拓展时；区分当前实现与设想 |
+| [AGENT_INTENT_DESIGN_zh.md](../../docs/guide/AGENT_INTENT_DESIGN_zh.md) | Agent、意图、状态、多风险的区别 | 概念追问时 |
+| [BUSINESS_HARNESS_zh.md](../../docs/guide/BUSINESS_HARNESS_zh.md) | 把当前流程与企业业务执行框架联系起来 | 系统设计拓展时；区分当前实现与设想 |
 | [CAREER_ROADMAP_zh.md](CAREER_ROADMAP_zh.md) | AI应用、云和前端的职业方向讨论 | 选岗位时另读；不是本项目的必修清单，招聘信息需另核实 |
 
 ## 证据在外面，不复制进讲稿
 
-- [正式报告](../report.md)：300条冻结合成记录的两跑、规则对照与55例压力分项。
-- [延迟证据](../LATENCY_EVIDENCE.md)：仿真参数与模型调用实测各是什么，不混称端到端时间。
-- [证据索引](../EVIDENCE_INDEX.md)：各项材料和验收状态。文档整理不代表验收完成。
-- [复现指南](../REPRODUCE.md)：免费离线验证与付费模型运行的区别。
-- [eval目录说明](../README.md)：规范、开发数据、冻结清单、运行产物的用途。
+- [正式报告](../../eval/report.md)：300条冻结合成记录的两跑、规则对照与55例压力分项。
+- [延迟证据](../../eval/LATENCY_EVIDENCE.md)：仿真参数与模型调用实测各是什么，不混称端到端时间。
+- [证据索引](../../eval/EVIDENCE_INDEX.md)：各项材料和验收状态。文档整理不代表验收完成。
+- [复现指南](../../eval/REPRODUCE.md)：免费离线验证与付费模型运行的区别。
+- [eval目录说明](../../eval/README.md)：规范、开发数据、冻结清单、运行产物的用途。
 
-第二轮实验已完成：[计划](../experiments/note_vs_rules_v2/PLAN.md)、[实施记录](../experiments/note_vs_rules_v2/IMPLEMENTATION_NOTES.md)、[结果](../experiments/note_vs_rules_v2/RESULTS.md)与[原件和复算说明](../experiments/note_vs_rules_v2/evidence/README.md)；成绩按该轮实际证据核对，不与旧300条混用，也不作为学会当前项目的前提。
+第二轮实验已完成：[计划](../../eval/experiments/note_vs_rules_v2/PLAN.md)、[实施记录](../../eval/experiments/note_vs_rules_v2/IMPLEMENTATION_NOTES.md)、[结果](../../eval/experiments/note_vs_rules_v2/RESULTS.md)与[原件和复算说明](../../eval/experiments/note_vs_rules_v2/evidence/README.md)；成绩按该轮实际证据核对，不与旧300条混用，也不作为学会当前项目的前提。
 
 ## 本次删并与以后怎么维护
 

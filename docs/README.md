@@ -38,6 +38,8 @@ This page is the only navigation entry for Project OmniGuard documentation. Docu
 | Review the six-route state-routing evaluation | [Evaluation report](../eval/report.md), [evidence index](../eval/EVIDENCE_INDEX.md) and [limitations](../eval/LIMITATIONS.md) |
 | See the Azure reference architecture diagrams | [Architecture diagrams](architecture/README.md) |
 | Learn the system | [Quickstart](tutorials/quickstart.md) and [user guide](tutorials/user-guide.md) |
+| Read the code and the evaluation as a newcomer | [Newcomer guides](guide/README.md) |
+| Interview preparation (personal study material, not evidence) | [study/](../study/README.md) |
 
 ## Reference material
 

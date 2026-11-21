@@ -246,3 +246,7 @@ local.settings.json
 
 # Local custody archives; final reviewed evaluation evidence is tracked separately.
 /.local-archives/
+
+# personal local study pages (not part of the repository)
+/eval/web/
+/study/web/

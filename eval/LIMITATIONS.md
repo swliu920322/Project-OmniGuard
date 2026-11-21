@@ -47,4 +47,4 @@ Written so that nothing is discovered later and quietly left out. Items 1 to 16 
 ## Not yet known
 - behaviour on production or expert-labelled data, other model versions and broader adversarial inputs;
 - an optimised version's result: none was invented, so Y is unmeasured;
-- reproduction by a stranger and the owner's oral acceptance (materials: [REPRODUCE.md](REPRODUCE.md), [interview handbook](interview/INTERVIEW_DEEP_DRILL_zh.md)). Formal results and rule-control comparisons are in [report.md](report.md).
+- reproduction by a stranger and the owner's oral acceptance (materials: [REPRODUCE.md](REPRODUCE.md), [interview handbook](../study/interview/INTERVIEW_DEEP_DRILL_zh.md)). Formal results and rule-control comparisons are in [report.md](report.md).

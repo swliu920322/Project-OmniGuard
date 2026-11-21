@@ -98,11 +98,11 @@ prediction, err = P.parse_reply(reply.content)  # 141：把回复读成两个合
 
 Safety 的文本判断没有 Router 那样严格的 JSON 契约；源码会把非 BLOCK 的其他文本带到后续。Compiler 还允许剥除代码围栏后解析。不要说三个角色的输出都经过完全相同的严格解析。
 
-Router 调用明确使用 `no_retry_client(..., 60)`；Safety 和 Compiler 自 2026-11-21 起走 [bounded_agent.py](../../src/cloud-orchestrator/embodied_brain/bounded_agent.py)：一次请求、关闭重试、60 秒占位超时、无缓存，故障分类后停车；有假客户端测试和一次 84 条的真实可用性运行（见 [safety_compiler](../safety_compiler/README.md)）。原有 [utils.py 的 ask_agent()](../../src/cloud-orchestrator/embodied_brain/utils.py#L110)（SDK 默认值、5 秒进程内缓存）仍给旧租户用。不要把 Router 的测量口径直接推广到整条 HTTP 流程。
+Router 调用明确使用 `no_retry_client(..., 60)`；Safety 和 Compiler 自 2026-11-21 起走 [bounded_agent.py](../../src/cloud-orchestrator/embodied_brain/bounded_agent.py)：一次请求、关闭重试、60 秒占位超时、无缓存，故障分类后停车；有假客户端测试和一次 84 条的真实可用性运行（见 [safety_compiler](../../eval/safety_compiler/README.md)）。原有 [utils.py 的 ask_agent()](../../src/cloud-orchestrator/embodied_brain/utils.py#L110)（SDK 默认值、5 秒进程内缓存）仍给旧租户用。不要把 Router 的测量口径直接推广到整条 HTTP 流程。
 
 ## 6. 六类怎么确认？先有定义，再有样本和验证
 
-**六类是五种风险加正常状态，不是六个固定任务场景。** 来源与阈值理由见 [LABEL_SPEC.md](../spec/LABEL_SPEC.md) 第 3、6、9 节。下表的值都是仿真实验约定，不是工业标准。
+**六类是五种风险加正常状态，不是六个固定任务场景。** 来源与阈值理由见 [LABEL_SPEC.md](../../eval/spec/LABEL_SPEC.md) 第 3、6、9 节。下表的值都是仿真实验约定，不是工业标准。
 
 | 状态 | 判定依据 | 核心代码 | 单独出现时的处置含义 |
 |---|---|---|---|
@@ -126,7 +126,7 @@ Router 调用明确使用 `no_retry_client(..., 60)`；Safety 和 Compiler 自 2
 | battery_pct 改 15 | LOW_BATTERY | 15 < 20，但尚未触发 battery < 5 的门控 |
 | velocity_ms 改 3 | OVERSPEED | 3 > 2.5 |
 
-以上是教学示例，不是冻结测试输入。验证六类定义不是“让模型说了算”：规范规定答案，代码计算数值金标，备注状态经独立 AI 标注与复核；正式测试每类 50 条，在冻结后检验模型预测。见 [report.md](../report.md)。
+以上是教学示例，不是冻结测试输入。验证六类定义不是“让模型说了算”：规范规定答案，代码计算数值金标，备注状态经独立 AI 标注与复核；正式测试每类 50 条，在冻结后检验模型预测。见 [report.md](../../eval/report.md)。
 
 ## 7. 多风险并存怎么组合？
 
@@ -165,7 +165,7 @@ executed_primary = risks[0] if risks else "NORMAL_NAV"    # 主标签只是最�
 
 - [llm_provider.py](../../src/cloud-orchestrator/llm_provider.py#L70)：`resolve_llm_config()` 选配置，`create_llm_client()`（134 行）创建 Azure OpenAI 或 OpenAI 兼容客户端。先不读密钥文件，也不需要打印凭据。
 - [function_app.py](../../src/cloud-orchestrator/function_app.py#L40)：把 `brain_router` 注册进 FastAPI；IoT 触发是另一条旧路径，不走本页扩展 HTTP 分支。
-- [extended.py](../../src/cloud-orchestrator/embodied_brain/extended.py#L113)：`t1/t2/t3` 记录各阶段，`_respond()` 计算后端总耗时；它们不等于浏览器往返时间。完整口径见 [LATENCY_EVIDENCE.md](../LATENCY_EVIDENCE.md)。
+- [extended.py](../../src/cloud-orchestrator/embodied_brain/extended.py#L113)：`t1/t2/t3` 记录各阶段，`_respond()` 计算后端总耗时；它们不等于浏览器往返时间。完整口径见 [LATENCY_EVIDENCE.md](../../eval/LATENCY_EVIDENCE.md)。
 
 读完后先试着回答：请求靠什么进入六类路径？模型真正调用在哪？模型说正常而距离只有 20 cm 会怎样？同时低电量和过热会不会立即去充电？能解释这四题，再继续读旧路径和云资源代码。
 

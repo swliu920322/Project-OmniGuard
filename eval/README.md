@@ -6,17 +6,17 @@
 
 ## 第一次来，按这个顺序
 
-如果不知道 `primary` 等代码字段是什么意思，先看 [一辆小车的中文入门例子](interview/START_HERE_zh.md)，不需要预先懂 Agent 或评测术语。
+如果不知道 `primary` 等代码字段是什么意思，先看 [一辆小车的中文入门例子](../docs/guide/START_HERE_zh.md)，不需要预先懂 Agent 或评测术语。
 
-1. **理解项目为什么做**：[面试讲述稿](interview/INTERVIEW_STORY_zh.md)。从机器人的云端等待问题，到 AGV 仿真，再到路由评测。
-2. **理解代码怎么走**：[后端阅读地图](interview/BACKEND_CODE_GUIDE_zh.md)。包含三个 Agent 角色、六类状态、调用图与源码定位。
+1. **理解项目为什么做**：[面试讲述稿](../study/interview/INTERVIEW_STORY_zh.md)。从机器人的云端等待问题，到 AGV 仿真，再到路由评测。
+2. **理解代码怎么走**：[后端阅读地图](../docs/guide/BACKEND_CODE_GUIDE_zh.md)。包含三个 Agent 角色、六类状态、调用图与源码定位。
 3. **看实际测出了什么**：[正式报告](report.md)、[延迟证据](LATENCY_EVIDENCE.md)。准确率、模型调用耗时与仿真设定不要混用。
 4. **追查结论依据**：[证据索引](EVIDENCE_INDEX.md) → 规范／冻结清单 → 正式结果与独立核对。
 5. **想自己运行**：[复现指南](REPRODUCE.md)。免费离线、公开开发集实测、私有正式数据复现分成三级，不能相互替代。
 
-准备面试从 [interview/README.md](interview/README.md) 进入；检查结果可信度则直接从 [report.md](report.md) 开始。
+检查结果可信度直接从 [report.md](report.md) 开始。面试备考材料是个人学习资料，不是评测证据，放在 [study/](../study/README.md)。
 
-概念拓展见 [Agent 与意图](interview/AGENT_INTENT_DESIGN_zh.md) 和 [业务 harness](interview/BUSINESS_HARNESS_zh.md)：前者解释角色与类别，后者解释后端如何承载模型执行；设计示意不算已实现功能。
+概念拓展见 [Agent 与意图](../docs/guide/AGENT_INTENT_DESIGN_zh.md) 和 [业务 harness](../docs/guide/BUSINESS_HARNESS_zh.md)：前者解释角色与类别，后者解释后端如何承载模型执行；设计示意不算已实现功能。
 
 ## 名称里的字母是什么意思？
 
@@ -65,7 +65,7 @@ eval/
 └── reproduction_logs/       外部 AI 的离线复现预演记录
 ```
 
-`interview/` 已按学习路线收拢为九份文件，重复讲稿与过时review已删并；职责见[学习目录](interview/README.md)。证据文件仍在原位，旧提交里的路径可能不同，查历史时使用对应提交的目录。
+面试备考材料已移到 [study/](../study/README.md)，新人导读在 [docs/guide/](../docs/guide/README.md)；证据文件仍在原位。旧提交里的路径可能不同，查历史时使用对应提交的目录。
 
 ## 根目录每份文档负责什么
 

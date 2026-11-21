@@ -33,7 +33,7 @@ Last reviewed: 2026-11-16. This page says what exists, what does not, and where 
 | Model provider switching | Configuration level | Azure OpenAI, OpenAI, DeepSeek or any compatible endpoint, selected by environment. All roles share one model. The formal runs used DeepSeek only. |
 | Evaluation round 1 | Complete | Frozen synthetic test set, two runs, stress cases. The per-record originals are lost; only aggregates and hashes remain ([limitations](../eval/LIMITATIONS.md), item 22). See the [report](../eval/report.md). |
 | Evaluation round 2 | Complete | Note understanding: keyword rules R1, R2, the rewritten rule set R3, and the model, on one frozen set run once. Records, replies and scoring scripts are public. See [results](../eval/experiments/note_vs_rules_v2/RESULTS.md). |
-| Interview and learning material | Maintained in place | [Handbook](../eval/interview/INTERVIEW_DEEP_DRILL_zh.md). |
+| Interview and learning material | Maintained in place | [Handbook](../study/interview/INTERVIEW_DEEP_DRILL_zh.md). |
 
 ## Not done
 

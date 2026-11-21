@@ -6,7 +6,7 @@ import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VER = json.loads((ROOT / "eval/formal/results/VERIFICATION.json").read_text())
-DOCS = ["eval/README.md", "eval/interview/README.md", "eval/interview/INTERVIEW_DEEP_DRILL_zh.md", "eval/interview/RECOMMEND_LEARNING_zh.md", "eval/interview/CAREER_ROADMAP_zh.md", "eval/interview/START_HERE_zh.md", "eval/interview/INTERVIEW_STORY_zh.md", "eval/interview/BACKEND_CODE_GUIDE_zh.md", "eval/interview/AGENT_INTENT_DESIGN_zh.md", "eval/interview/BUSINESS_HARNESS_zh.md", "README.md", "README_zh.md", "eval/report.md", "eval/EVIDENCE_INDEX.md", "eval/LIMITATIONS.md", "eval/REPRODUCE.md", "eval/LATENCY_COST.md", "eval/LATENCY_EVIDENCE.md",
+DOCS = ["eval/README.md", "study/interview/README.md", "study/interview/INTERVIEW_DEEP_DRILL_zh.md", "study/interview/RECOMMEND_LEARNING_zh.md", "study/interview/CAREER_ROADMAP_zh.md", "docs/guide/START_HERE_zh.md", "study/interview/INTERVIEW_STORY_zh.md", "docs/guide/BACKEND_CODE_GUIDE_zh.md", "docs/guide/AGENT_INTENT_DESIGN_zh.md", "docs/guide/BUSINESS_HARNESS_zh.md", "README.md", "README_zh.md", "eval/report.md", "eval/EVIDENCE_INDEX.md", "eval/LIMITATIONS.md", "eval/REPRODUCE.md", "eval/LATENCY_COST.md", "eval/LATENCY_EVIDENCE.md",
         "docs/evidence/README.md", "eval/formal/FORMAL_PLAN.md", "docs/architecture/README.md", "ARCHITECTURE.md", "eval/REPRODUCE_TEST_PROMPT.md", "eval/reproduction_logs/2026-11-07-gemini-level1.md", "eval/reproduction_logs/2026-11-07-gemini-level1-round2.md"]
 TEXT = {d: (ROOT / d).read_text() for d in DOCS}
 
@@ -52,7 +52,7 @@ def test_every_relative_link_in_the_public_documents_points_to_a_file_that_exist
 
 
 def test_the_consolidated_handbook_keeps_the_eight_core_questions_and_reference_questions():
-    handbook = TEXT["eval/interview/INTERVIEW_DEEP_DRILL_zh.md"]
+    handbook = TEXT["study/interview/INTERVIEW_DEEP_DRILL_zh.md"]
     assert re.findall(r'<a id="core-q(\d+)"></a>', handbook) == [str(i) for i in range(1, 9)]
     assert re.findall(r'<a id="q(\d+)"></a>', handbook) == [str(i) for i in range(1, 16)]
     assert '<a id="evidence"></a>' in handbook

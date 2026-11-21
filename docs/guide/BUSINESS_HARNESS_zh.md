@@ -2,7 +2,7 @@
 
 用途：把本项目的后端经验与企业 AI 应用联系起来，回答“harness 是什么”“与后端有什么区别”“通用模型怎样接业务”。本页是已有实现解释与后续设计思考，不是新增产品能力、企业部署或效果证明。
 
-配套阅读：[Agent 与意图](AGENT_INTENT_DESIGN_zh.md)、[后端代码地图](BACKEND_CODE_GUIDE_zh.md)、[正式报告](../report.md)。
+配套阅读：[Agent 与意图](AGENT_INTENT_DESIGN_zh.md)、[后端代码地图](BACKEND_CODE_GUIDE_zh.md)、[正式报告](../../eval/report.md)。
 
 第一次接触这些词，先读 [中文入门页](START_HERE_zh.md)。本页说的“上下文”就是判断需要的背景；“编排”就是安排步骤和传递结果；“契约”就是约定输入输出的格式与限制。例如创建运输任务时，先给订单号和目的地，保存返回的任务号，等系统确认送达再继续。它不是让模型说一句“完成了”就算完成。
 
@@ -106,7 +106,7 @@
 | Compiler 后最终检查 | 模型输出不是最终执行授权 | [validate_actions()](../../src/cloud-orchestrator/router_v2/pipeline.py#L82)；只检查已定义的动作约束，不验证路径与目的地 |
 | 返回 trace、决策与阶段耗时 | 可以观察处理过程 | [extended.py](../../src/cloud-orchestrator/embodied_brain/extended.py#L48)；不等于完整的持久审计平台 |
 | Cosmos 状态读写 | 业务状态集成的一部分 | 当前尽力读写仿真状态；不等于持久化多步骤任务、恢复与事务实现 |
-| 独立评测、封存和结果核对 | 检验模型处理与规则合成 | [report.md](../report.md)；正式测量主要是 Router／决策函数，HTTP 完整链路只用假依赖验证 |
+| 独立评测、封存和结果核对 | 检验模型处理与规则合成 | [report.md](../../eval/report.md)；正式测量主要是 Router／决策函数，HTTP 完整链路只用假依赖验证 |
 
 所以面试可以说：**“后端实现了固定流程的模型执行编排，具备输入契约、角色衔接、结果校验和执行约束等 harness 能力。”** 不说已经建成通用企业 Agent 平台。
 
