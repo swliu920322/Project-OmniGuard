@@ -101,7 +101,8 @@ None of this changes a published number or calls a model; each file says how to 
 | Round-2 results cut by status, language, family | [slices/SLICE_REPORT.md](experiments/note_vs_rules_v2/slices/SLICE_REPORT.md) | Where the model and R3 are wrong; not a new result |
 | Scoring-chain controls | [controls/CONTROL_CHECK.md](experiments/note_vs_rules_v2/controls/CONTROL_CHECK.md) | Perfect, inverted, constant and shuffled answers through the project's own scorer; chance level 16.7% |
 | One page per real run | [RUN_RECEIPTS.md](RUN_RECEIPTS.md) | What each run recorded; missing items are shown as not recorded |
-| Designs, not implemented | [DESIGN_CANARY_UNKNOWN.md](DESIGN_CANARY_UNKNOWN.md), [DESIGN_SAFETY_COMPILER_EVAL.md](DESIGN_SAFETY_COMPILER_EVAL.md), [DESIGN_BOUNDED_RETRY.md](DESIGN_BOUNDED_RETRY.md) | Control cases and a "don't know" place; evaluating Safety and Compiler; bounded retries for their calls |
+| Code-layer action contract | [ACTION_CONTRACT_COVERAGE.md](ACTION_CONTRACT_COVERAGE.md) | Which bad Compiler outputs `validate_actions` stops, one example each; offline, no model |
+| Designs (the bounded-retry one was implemented the same day, see LIMITATIONS item 24) | [DESIGN_CANARY_UNKNOWN.md](DESIGN_CANARY_UNKNOWN.md), [DESIGN_SAFETY_COMPILER_EVAL.md](DESIGN_SAFETY_COMPILER_EVAL.md), [DESIGN_BOUNDED_RETRY.md](DESIGN_BOUNDED_RETRY.md) | Control cases and a "don't know" place; evaluating Safety and Compiler; bounded retries for their calls |
 
 ## Code and tests
 
