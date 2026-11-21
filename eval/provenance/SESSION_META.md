@@ -10,7 +10,7 @@
 | `1a90b852-9f2f-4ce6-a641-7d7b4fa19705.jsonl` | claude | 2026-11-04T03:49:16Z 至 2026-11-04T03:50:09Z | message.model: <synthetic>×1 | 未记录 | `0f2268ea965d…` |
 | `529ff251-f2a2-4725-b429-02cf281f1f46.jsonl` | claude | 2026-11-05T14:31:17Z 至 2026-11-21T10:42:45Z | message.model: claude-sonnet-5-5×2437、<synthetic>×2 | effort: medium×2437 | `745d1f614687…` |
 | `6c9e41e0-2fcc-4415-b42d-258558b32c3b.jsonl` | claude | 2026-11-16T15:56:39Z 至 2026-11-17T03:40:19Z | message.model: claude-sonnet-5-5×241、claude-fable-5-2×89 | effort: medium×330 | `1b17ede4811f…` |
-| `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl` | claude | 2026-11-21T05:57:45Z 至 2026-11-21T14:13:38Z | message.model: claude-sonnet-5-5×551 | effort: medium×551 | `bd7cdc7d1483…` |
+| `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl` | claude | 2026-11-21T05:57:45Z 至 2026-11-21T16:07:33Z | message.model: claude-sonnet-5-5×802 | effort: medium×802 | `e6cf12da7227…` |
 | `transcript.jsonl` | antigravity | 2026-11-07T12:37:53Z 至 2026-11-21T07:03:15Z | model: gemini-3.8-flash-high×391 | 未记录 | `9f01e28bda73…` |
 | `transcript_full.jsonl` | antigravity | 2026-11-07T12:37:53Z 至 2026-11-21T07:03:15Z | model: gemini-3.8-flash-high×391 | 未记录 | `f415e58d9474…` |
 | `rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl` | codex | 2026-11-07T03:30:11Z 至 2026-11-21T10:49:31Z | session_meta.provenance.model: gpt-6-astra×1；turn_context.model: gpt-6.1-sol×168 | turn_context.effort: medium×160、high×8 | `f11bb164570f…` |
@@ -32,9 +32,9 @@
 | `router_v2/prompt.py` | `529ff251-f2a2-4725-b429-02cf281f1f46.jso` | — | 14 次，2026-11-07T09:38:48Z 至 2026-11-16T02:26:28Z |
 | `r3.py` | `529ff251-f2a2-4725-b429-02cf281f1f46.jso` | — | 23 次，2026-11-09T01:27:14Z 至 2026-11-21T07:03:08Z |
 | `validate_rationales.py` | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jso` | — | 5 次，2026-11-21T06:51:00Z 至 2026-11-21T13:12:21Z |
-| `router_v2/rules.py` | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jso` | — | 5 次，2026-11-21T11:34:18Z 至 2026-11-21T13:23:10Z |
-| `router_v2/pipeline.py` | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jso` | — | 3 次，2026-11-21T13:02:19Z 至 2026-11-21T13:22:57Z |
-| `r3.py` | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jso` | — | 3 次，2026-11-21T12:06:07Z 至 2026-11-21T13:12:21Z |
+| `router_v2/rules.py` | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jso` | — | 8 次，2026-11-21T11:34:18Z 至 2026-11-21T15:40:53Z |
+| `router_v2/pipeline.py` | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jso` | — | 4 次，2026-11-21T13:02:19Z 至 2026-11-21T14:45:19Z |
+| `r3.py` | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jso` | — | 5 次，2026-11-21T12:06:07Z 至 2026-11-21T15:40:53Z |
 | `validate_rationales.py` | `transcript.jsonl` | — | 9 次，2026-11-15T10:46:17Z 至 2026-11-21T06:53:18Z |
 | `router_v2/rules.py` | `transcript.jsonl` | — | 3 次，2026-11-09T05:41:58Z 至 2026-11-09T14:16:02Z |
 | `router_v2/pipeline.py` | `transcript.jsonl` | — | 1 次，2026-11-09T12:00:36Z 至 2026-11-09T12:00:36Z |
@@ -263,6 +263,21 @@
 | `a6416a5` | 2026-11-21T13:55:14Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T13:54:31Z | 43 |
 | `706be1e` | 2026-11-21T14:04:42Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T14:04:40Z | 2 |
 | `d60be7b` | 2026-11-21T14:06:23Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T14:05:39Z | 44 |
+| `039bf21` | 2026-11-21T14:13:55Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T14:13:54Z | 1 |
+| `b79e2c1` | 2026-11-21T14:25:07Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T14:25:06Z | 1 |
+| `00dd9fd` | 2026-11-21T14:27:57Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T14:27:57Z | 0 |
+| `0b46603` | 2026-11-21T14:28:06Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T14:27:57Z | 9 |
+| `0b46603` | 2026-11-21T14:28:06Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T14:28:05Z | 1 |
+| `269d551` | 2026-11-21T14:32:19Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T14:32:19Z | 0 |
+| `267801e` | 2026-11-21T14:33:28Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T14:32:45Z | 43 |
+| `dc4a501` | 2026-11-21T14:34:22Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T14:33:39Z | 43 |
+| `5c8b3d7` | 2026-11-21T14:48:04Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T14:47:20Z | 44 |
+| `b88e425` | 2026-11-21T15:04:30Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T15:04:29Z | 1 |
+| `978cdc0` | 2026-11-21T15:08:04Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T15:08:02Z | 2 |
+| `926b013` | 2026-11-21T15:22:24Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T15:22:24Z | 0 |
+| `418f3ed` | 2026-11-21T15:45:23Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T15:45:23Z | 0 |
+| `781dbbf` | 2026-11-21T15:52:21Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T15:51:39Z | 42 |
+| `c4e0adb` | 2026-11-21T15:56:58Z | `d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl`（claude） | 2026-11-21T15:56:15Z | 43 |
 
 ## 4. 局限
 
