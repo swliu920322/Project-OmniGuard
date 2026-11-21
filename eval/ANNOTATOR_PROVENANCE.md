@@ -22,7 +22,7 @@
 |---|---|---|---|
 | Gemini 作者会话 | Gemini | `gemini-3.8-flash-high`；会话内设置 2026-11-07 12:37 选 Medium，2026-11-09 04:03 改为 High | M（所有者核对 transcript；脚本在导出文件上抽取：391 条带 `model` 字段的记录均为该值，时间 2026-11-07 至 2026-11-21）；S |
 | GPT 家族会话（第一轮 3 个子会话、第二轮 4 个盲标子会话） | GPT | 七个文件内都有两类 `model` 字段，并列记录、不互相覆盖：`session_meta` 的 `base_instructions.provenance.model` 为 `gpt-6-astra`（文件第一行，所有者 grep 命中的就是它）；`turn_context` 与 `thread_settings` 等运行配置里的 `model` 为 `gpt-6.1-sol`；`effort` 均为 `medium`。所有者确认使用的是 `gpt-6.1-sol` medium | M（所有者 grep 原文件；脚本在七个导出文件上抽取，`turn_context.model` 均为 `gpt-6.1-sol`、`effort` 均为 `medium`）；S（GPT 主会话逐字段解释）。`gpt-6-astra` 的含义 U，不断言发生过切换 |
-| GPT 主会话 | GPT | `gpt-6.1-sol`；`turn_context.effort`：medium×160、high×8。所有者称一直使用 medium，文件里有 8 次 high，**以文件为准** | M（脚本在导出文件上抽取） |
+| GPT 主会话 | GPT | `gpt-6.1-sol`；`turn_context.effort`：medium×160、high×8。所有者原先称一直使用 medium，文件里有 8 次 high，**以文件为准**；所有者说明 high 是额度充足时手动调高的，没有特别用途 | M（脚本在导出文件上抽取）；O（high 的原因） |
 | Claude 实施会话 | Claude | `claude-sonnet-5-5`，`effort` 为 medium（主会话文件中 2437 条助手消息均如此）；另一个 Claude 会话（学习站点）有 89 条 `claude-fable-5-2`，与评测无关 | M（脚本在导出文件上抽取）；S；O |
 | 被测服务 | DeepSeek | 请求名与返回别名均为 `deepseek-flash` | R（`RESULTS.md`）；底层版本未验证 |
 
