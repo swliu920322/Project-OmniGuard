@@ -7,10 +7,12 @@ import subprocess
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 CLAUDE = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
 
-# Budget for always-loaded instructions: not more than 60 lines and 8 KB. CLAUDE.md is at 57 lines and about 7.3 KB, so the cap is
-# a guard against slow growth; when it fails, cut text before raising the cap (a skill or instruction that grows without limit dilutes the rules that matter).
+# A tripwire, not a target. CLAUDE.md is read in full at the start of every session, so every line costs something every time and a long file
+# dilutes the rules that matter. It stands at about 6.1 KB and 45 lines; the cap leaves roughly 15 % for one or two new rules. When it fails, delete
+# something that no longer earns its place before raising the number, and say why in the commit. (The figure is a deliberate choice for this file,
+# not a standard: the first version of this test borrowed 8 KB from an article, which left no room and rewarded padding to fit.)
 MAX_LINES = 60
-MAX_BYTES = 8192
+MAX_BYTES = 7168
 
 
 def tracked_files():
@@ -68,6 +70,28 @@ def over_budget(text):
     if len(text.encode("utf-8")) > MAX_BYTES:
         problems.append(f"{len(text.encode('utf-8'))} bytes, budget {MAX_BYTES}")
     return problems
+
+
+def rules_bullets(text):
+    """The bullets of the section that starts with '## Rules'."""
+    section = re.search(r"^## Rules.*?(?=^## |\Z)", text, re.M | re.S)
+    return [b for b in re.split(r"\n(?=- )", section.group(0)) if b.startswith("- ")] if section else []
+
+
+def unmarked_rules(text):
+    """Rules that say neither what checks them nor that nothing does."""
+    return [b.strip()[:60] for b in rules_bullets(text) if "Checked by" not in b and "No automatic check" not in b]
+
+
+def test_every_rule_says_what_checks_it_or_that_nothing_does():
+    assert len(rules_bullets(CLAUDE)) >= 8
+    assert unmarked_rules(CLAUDE) == []
+
+
+def test_the_rule_marker_check_can_fail():
+    bad = "## Rules\n\n- **When X:** do Y. Checked by: tests.\n- **When Z:** do W.\n\n## Next\n"
+    assert unmarked_rules(bad) == ["- **When Z:** do W."]
+    assert unmarked_rules("## Rules\n\n- **A:** a. No automatic check.\n") == []
 
 
 def test_claude_md_stays_within_its_size_budget():

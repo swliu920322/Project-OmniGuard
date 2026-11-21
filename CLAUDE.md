@@ -2,7 +2,7 @@
 
 ## What this repository is
 
-A research and engineering demonstrator, not a robot-control product: a simulated AGV dashboard (Next.js), a cloud agent pipeline (Azure Functions / FastAPI), Azure Bicep templates, and a state-routing evaluation under `eval/`. Everything about vehicles is simulated. `README.md` and `docs/evidence/README.md` define which numbers may be quoted and how.
+A research and engineering demonstrator, not a robot-control product: a simulated AGV dashboard (Next.js), a cloud agent pipeline (Azure Functions / FastAPI), Azure Bicep templates, and a state-routing evaluation under `eval/`. Everything about vehicles is simulated. Start at `eval/README.md` (the evidence front door); `docs/evidence/README.md` says which numbers may be quoted and how. Newcomer guides: `docs/guide/`. The owner's interview material in `study/` is not evidence.
 
 ## Commands
 
@@ -16,43 +16,30 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_docs_consistency.py
 
 `pyproject.toml` sets `-x`, so pytest stops at the first failure. `make test` runs the same tests from `src/cloud-orchestrator`.
 
-- Backend: `make start-backend` (Azure Functions Core Tools `func`, port 7071; needs `src/cloud-orchestrator/local.settings.json`, copied from `local.settings.example.json`).
-- Frontend: `make start-frontend` (Next.js, port 3000; `npm run dev|build` inside `src/client-edge`). `/dashboard/theorem` and `/dashboard/compare` are browser-only; `/dashboard/live` calls the backend and may incur model charges.
+- Backend: `make start-backend` (port 7071; needs `src/cloud-orchestrator/local.settings.json`, copied from `local.settings.example.json`). Frontend: `make start-frontend` (port 3000); `/dashboard/live` calls the backend and may incur model charges.
 - `make provision|destroy|deploy-aca|patch-env|trigger-ci` change real Azure or GitHub state. Do not run them without the user asking.
-- Free offline checks of published evidence are listed in `eval/REPRODUCE.md` (Level 1), for example `(cd eval/formal/results && shasum -a 256 -c SHA256SUMS)`.
+- Free offline checks of published evidence are in `eval/REPRODUCE.md` (Level 1), for example `(cd eval/formal/results && shasum -a 256 -c SHA256SUMS)`.
 
-## Architecture (needs several files to see)
+## Read the code for the flow; these are the traps
 
-**Request path.** `POST /api/simulate_agent` lives in `src/cloud-orchestrator/embodied_brain/brain.py`. Tenants come from `scenario_registry.json`; only `Tenant-Alpha-Extended` (`router_mode: extended`) uses the six-class path in `embodied_brain/extended.py` (`simulate_extended`). The original three-class tenants and the IoT Hub / Event Hub path (`iot_telemetry_processor` in `brain.py`) are separate and unchanged.
+The request flow is in `src/cloud-orchestrator/embodied_brain/extended.py` and `router_v2/README.md`. Do not restate it in docs; it goes stale.
 
-**Extended path order:** emergency stop (answered in `brain.py` before the rate limit) → rate limit (5 s window, 1 request) → `precheck`/`check_input` → best-effort Cosmos write and read → `router_v2.pipeline.decide` (model call, strict JSON parse, `rules.execute`) → if HALT, Safety and Compiler are skipped → Safety → Compiler (both `embodied_brain/bounded_agent.py`) → `validate_actions`.
+- **Gate order.** The frozen `decide()` (what the evaluation measured) calls the model first and applies the gate (`gate()`, HP<=0 or battery<5) afterwards. The HTTP flow checks the gate before asking the model. Say which one you mean (`eval/LIMITATIONS.md` item 21).
+- **What the code guarantees.** The model can add risks but cannot remove one the code found (`rules.execute`). A risk that appears only in the operator note can still be missed (item 20). Safety and Compiler can only tighten the Router's decision.
+- **Claims about the vehicle.** Thresholds (30 cm, 60 C, HP 50, battery 20, speed 2.5) are simulation conventions, not braking distances. `device_mock.py` only sends 1 Hz telemetry; there is no on-vehicle braking logic anywhere, do not describe one. `goal=CHARGER` is a structured goal, not proof of arrival.
+- **Safety and Compiler calls** go through `embodied_brain/bounded_agent.py` (one request, retries off, 60 s placeholder timeout). The older `ask_agent` (SDK defaults, 5 s cache) is for legacy tenants. The provider ignores `max_completion_tokens` (item 25).
+- **Providers.** `llm_provider.py` switches by `LLM_PROVIDER`; all roles share one client and model. Formal runs used DeepSeek only.
 
-**`src/cloud-orchestrator/router_v2/`** is the core:
-- `rules.py`: the six classes, thresholds (`THRESHOLDS`: 30 cm, 60 C, HP 50, battery 20, speed 2.5 are simulation conventions, not braking distances), `check_input`, and `execute`, which merges telemetry risks computed by code with the model's risks. The model can add risks but cannot remove one the code found.
-- `prompt.py`: prompt B-1.0 and `parse_reply`, a hand-written strict parser (one JSON object, exactly the keys `primary` and `note_status`, no duplicate keys, enum values). No `response_format` or Pydantic; a bad reply becomes a halt.
-- `pipeline.py`: `decide`, the model adapter (`openai_model_call`, `no_retry_client`: retries off, 60 s timeout, errors become TIMEOUT / RATE_LIMIT / API_ERROR faults), and `validate_actions`.
-- Order matters: frozen `decide` calls the model first and `execute` applies the gate (`gate()`, HP<=0 or battery<5) afterwards; the HTTP flow (`extended.py`) checks the gate before asking the model, so the `gate()` docstring now holds there (`eval/LIMITATIONS.md` item 21). Safety and Compiler use `bounded_agent.py` (one request, retries off, 60 s placeholder timeout, faults become a stop); the older `ask_agent` (SDK defaults, 5 s cache) remains for legacy tenants.
+## Rules: when you do X, do Y
 
-**Providers.** `llm_provider.py` switches Azure OpenAI / OpenAI / DeepSeek / any OpenAI-compatible endpoint by `LLM_PROVIDER` env; all roles share one client and model. Formal runs used DeepSeek only.
+Each rule has a trigger, an action and what checks it. "No automatic check" means only you stand between a mistake and the repository.
 
-**Edge.** `src/cloud-orchestrator/edge-simulator/device_mock.py` only sends 1 Hz telemetry over IoT Hub and prints commands. There is no on-vehicle braking logic anywhere; do not describe one.
-
-**Frontend.** `src/client-edge/src/app/dashboard/live/` holds the simulation (`lib/physics.ts`, `config/simulation.ts`); it is a browser animation, not firmware.
-
-**`eval/`** (the evidence part):
-- `spec/` six-class label spec, reference labeler, keyword rules R1/R2; `baseline_b/` prompt B-1.0 and evaluator; `dev/` public dev set; `acceptance/FROZEN_MANIFEST.json` round-1 commitments; `formal/` runner (`run_formal.py`) and published round-1 results.
-- `experiments/note_vs_rules_v2/` is round 2 (note understanding, rules R3 vs the model): `run_note_compare.py`, `r3.py`, `PLAN.md`, `RESULTS.md`, `process/HANDOFF_TO_GPT.md` (dated custodian log), `evidence/` (180 records, model replies, rule predictions, free recompute script), `archive/`.
-- `annotation/` blind-annotation tooling and `validate_rationales.py`.
-- `study/interview/INTERVIEW_DEEP_DRILL_zh.md` is the single interview answer source (personal study, not evidence); `docs/guide/` holds the newcomer guides.
-
-## Rules that are easy to break
-
-- **Frozen files stay frozen.** Do not edit anything listed in `eval/experiments/note_vs_rules_v2/V2_FREEZE.json` (including `router_v2/rules.py`, `pipeline.py`, `prompt.py`, `eval/spec/*`, `run_formal.py`, `run_note_compare.py`, `r3.py`), `eval/formal/CODE_FREEZE.json`, `eval/acceptance/`, or any file pinned by a `SHA256SUMS`. Tests check the hashes. A change needs a new `freeze` and review. Record caveats in `eval/LIMITATIONS.md` instead.
-- **No model calls without the owner's explicit authorisation** with caps (calls, tokens, US$). The real runner also needs `BASELINE_B_AUTHORIZED=yes`, a clean tree and a frozen tag at HEAD. No retries. Never print or commit keys; `local.settings.json` is gitignored and holds real credentials.
-- **Evidence wording.** `tests/test_docs_consistency.py` bans phrases in the READMEs and `eval/report.md` (for example "零风险", "工业级", "from X to Y", "提升至", "人工专家标注"), requires quoted numbers to match `eval/formal/results/VERIFICATION.json`, and checks that relative links exist. Say "AI annotation and AI review", not expert labels. Round-1 300 records are 34 families, not 300 scenarios. `floor_override` 70/300 counts code-added risks, not model errors rescued. Two runs on the same data are not independent samples. Never write a before/after improvement the evidence does not contain.
-- **Private data.** Round-1 originals are lost (`LIMITATIONS.md` item 22). Round-2 originals are public under `evidence/`; earlier custody material lives outside the repo (`~/.omniguard_custody*`, `.local-archives/` is gitignored). Do not read private directories unless the user asks.
-- **Interview handbook.** Edit answers in place in `INTERVIEW_DEEP_DRILL_zh.md`; do not create parallel "final" versions. A test requires anchors `core-q1..8`, `q1..15` and `evidence`.
-- **Git.** Commit locally; push only when the user says so. `HANDOFF_TO_GPT.md` and `PLAN.md` are updated by several agents, so stage only your own hunks.
-- **When a check fails.** Stop and report. Do not regenerate a `SHA256SUMS`, loosen a test, or edit a frozen file to make it pass.
-- **Who did what.** Claude, GPT and Gemini sessions all worked here. State who annotated or wrote what only as recorded in `eval/ANNOTATOR_PROVENANCE.md`; a `Co-Authored-By` trailer does not prove who wrote a commit.
-- **New documents.** Before creating a file, name the existing document that cannot hold it; process notes go in the commit message, not in a new file. Name files for what they are (no dates, tool names or version codenames). A new document needs a link from an index (`tests/test_docs_map.py`), and round-2 numbers must match `note_compare.json` (`tests/test_round2_numbers.py`).
+- **When a test, hash or check fails:** stop and report. Do not regenerate a `SHA256SUMS`, loosen a test, or edit a frozen file to make it pass. No automatic check.
+- **When you are about to edit a file named in `eval/experiments/note_vs_rules_v2/V2_FREEZE.json` (including `router_v2/rules.py`, `pipeline.py`, `prompt.py`, `eval/spec/*`, `run_formal.py`, `run_note_compare.py`, `r3.py`), `eval/formal/CODE_FREEZE.json`, `eval/acceptance/`, or any file pinned by a `SHA256SUMS`:** don't. A change needs a new freeze and review; record caveats in `eval/LIMITATIONS.md` instead. Checked by: hashes in `tests/test_note_vs_rules_v2.py` and `tests/test_formal_runner.py`.
+- **Before any request to a model:** the owner's explicit authorisation with caps (calls, tokens, US$); no retries; never print or commit keys (`local.settings.json` is gitignored and holds real credentials). Checked by: the runners refuse without it (`tests/test_formal_runner.py`, `tests/test_safety_compiler_run.py`); nothing else you might run is checked.
+- **When you write about results:** say "AI annotation and AI review", not expert labels. Round-1 300 records are 34 families, not 300 scenarios. `floor_override` 70/300 counts code-added risks, not model errors rescued. Two runs on the same data are not independent samples. Never write a before/after improvement the evidence does not contain. Checked by: banned phrases and numbers in `tests/test_docs_consistency.py`, round-2 numbers in `tests/test_round2_numbers.py`.
+- **When you write about who annotated or wrote something:** use only what `eval/ANNOTATOR_PROVENANCE.md` records. Claude, GPT and Gemini sessions all worked here; a `Co-Authored-By` trailer does not prove who wrote a commit. No automatic check.
+- **When you create a document:** name the existing document that cannot hold it; process notes go in the commit message. Name files for what they are (no dates, tool names or version codenames). Checked by: every document must be linked from an index (`tests/test_docs_map.py`); the naming is not checked.
+- **When you edit the interview handbook:** edit `study/interview/INTERVIEW_DEEP_DRILL_zh.md` in place; no parallel "final" versions. Checked by: its anchors in `tests/test_docs_consistency.py` (not the rule about parallel versions).
+- **When you are about to read a private directory** (`~/.omniguard_custody*`, session exports): don't unless the user asks. Round-1 originals have not been found (`LIMITATIONS.md` item 22); round-2 originals are public under `evidence/`. No automatic check.
+- **When you commit or push:** commit locally; push only when the user says so. Several agents update `PLAN.md` and the handoff log, so stage only your own hunks. No automatic check.
