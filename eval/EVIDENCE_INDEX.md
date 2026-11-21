@@ -90,6 +90,19 @@ Each item is written as passed / not passed / waived with a reason at the deadli
 
 If an item is still open at the deadline it is marked "not passed" or "waived" with the reason; it is not carried over silently.
 
+## Audit and control material (added 2026-11-21)
+
+None of this changes a published number or calls a model; each file says how to regenerate it.
+
+| What | Where | What it shows |
+|---|---|---|
+| Who annotated, and from which model family | [ANNOTATOR_PROVENANCE.md](ANNOTATOR_PROVENANCE.md), [LIMITATIONS.md](LIMITATIONS.md) item 23 | Round 1: author, blind annotator, reviewer, adjudicator and custodian are all GPT-family sessions; round 2: author is a Gemini session, labelling is GPT-family |
+| Session metadata behind that table | [provenance/SESSION_META.md](provenance/SESSION_META.md), [provenance/README.md](provenance/README.md) | Model strings, effort settings, time ranges and which session issued which commit; raw exports are kept outside the repository |
+| Round-2 results cut by status, language, family | [slices/SLICE_REPORT.md](experiments/note_vs_rules_v2/slices/SLICE_REPORT.md) | Where the model and R3 are wrong; not a new result |
+| Scoring-chain controls | [controls/CONTROL_CHECK.md](experiments/note_vs_rules_v2/controls/CONTROL_CHECK.md) | Perfect, inverted, constant and shuffled answers through the project's own scorer; chance level 16.7% |
+| One page per real run | [RUN_RECEIPTS.md](RUN_RECEIPTS.md) | What each run recorded; missing items are shown as not recorded |
+| Designs, not implemented | [DESIGN_CANARY_UNKNOWN.md](DESIGN_CANARY_UNKNOWN.md), [DESIGN_SAFETY_COMPILER_EVAL.md](DESIGN_SAFETY_COMPILER_EVAL.md), [DESIGN_BOUNDED_RETRY.md](DESIGN_BOUNDED_RETRY.md) | Control cases and a "don't know" place; evaluating Safety and Compiler; bounded retries for their calls |
+
 ## Code and tests
 
 Backend extended router and its endpoint flow: `01d4ce4`, `c6f85a2`, `6aa7824` (`src/cloud-orchestrator/router_v2/`, `embodied_brain/extended.py`; endpoint tests with fake dependencies). Formal stress now exercises the backend decision function against a real model, but not the HTTP Router/Safety/Compiler flow end to end. Formal evaluator tag: `eval-formal-v1` at `fec6acf`. Its 50 focused tests passed in reviewer execution; the full suite was not rerun during the paid programme.
