@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## What this repository is
 
 A research and engineering demonstrator, not a robot-control product: a simulated AGV dashboard (Next.js), a cloud agent pipeline (Azure Functions / FastAPI), Azure Bicep templates, and a state-routing evaluation under `eval/`. Everything about vehicles is simulated. `README.md` and `docs/evidence/README.md` define which numbers may be quoted and how.
@@ -55,3 +53,5 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_docs_consistency.py
 - **Private data.** Round-1 originals are lost (`LIMITATIONS.md` item 22). Round-2 originals are public under `evidence/`; earlier custody material lives outside the repo (`~/.omniguard_custody*`, `.local-archives/` is gitignored). Do not read private directories unless the user asks.
 - **Interview handbook.** Edit answers in place in `INTERVIEW_DEEP_DRILL_zh.md`; do not create parallel "final" versions. A test requires anchors `core-q1..8`, `q1..15` and `evidence`.
 - **Git.** Commit locally; push only when the user says so. `HANDOFF_TO_GPT.md` and `PLAN.md` are updated by several agents, so stage only your own hunks.
+- **When a check fails.** Stop and report. Do not regenerate a `SHA256SUMS`, loosen a test, or edit a frozen file to make it pass.
+- **Who did what.** Claude, GPT and Gemini sessions all worked here. State who annotated or wrote what only as recorded in `eval/ANNOTATOR_PROVENANCE.md`; a `Co-Authored-By` trailer does not prove who wrote a commit.

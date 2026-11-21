@@ -28,7 +28,7 @@ def make_targets(makefile_text):
 
 def mentioned_make_targets(text):
     names = set()
-    for group in re.findall(r"make ([a-z][a-z0-9_|-]*)", text):
+    for group in re.findall(r"`make ([a-z][a-z0-9_|-]*)", text):  # only commands in backticks, not prose such as "to make it pass"
         names.update(group.split("|"))
     return names
 
@@ -104,3 +104,4 @@ def test_the_checks_can_fail():
     assert missing_paths(stale, tracked_files()) == ["eval/no_such_dir/ghost_file.py"]
     assert over_budget("x\n" * (MAX_LINES + 1)) and over_budget("x" * (MAX_BYTES + 1))
     assert over_budget("short\n") == []
+    assert mentioned_make_targets("Do not edit a test to make it pass; run `make test` or `make a|b`.") == {"test", "a", "b"}
