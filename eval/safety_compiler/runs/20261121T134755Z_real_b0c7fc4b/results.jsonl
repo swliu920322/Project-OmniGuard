@@ -1,0 +1,1 @@
+{"id": "cand_r2_061", "family_id": "cand_neg_01", "language": "zh", "gold_note_status": "NEGATED", "requests": 1, "safety": "FAULT", "safety_decision": "API_ERROR", "compiler": "SHORT_CIRCUIT", "violations": [], "final": "stop", "halt_reasons": ["API_ERROR"], "reason": "safety_fault", "agent_2_latency_ms": 1971, "agent_3_latency_ms": 0}

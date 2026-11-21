@@ -253,6 +253,20 @@ def write_run(mode, results, log, state, guard, planned, health_check=None, limi
     return run_dir
 
 
+def resolve_run_dir(arg, real_health_only=False):
+    """A run directory given as a path, or `latest`: the newest directory under runs/ (for --after-health: the newest sealed REAL run that passed the health check)."""
+    if arg != "latest":
+        return arg
+    for d in sorted((p for p in RUNS.iterdir() if p.is_dir()), reverse=True) if RUNS.is_dir() else []:
+        try:
+            cfg, summ = (json.loads(Path(d, n).read_text(encoding="utf-8")) for n in ("config.json", "summary.json"))
+        except (OSError, ValueError):
+            continue
+        if not real_health_only or (cfg.get("mode") == "real" and (summ.get("health_check") or {}).get("passed") and not L.verify_run_dir(str(d))):
+            return str(d)
+    raise SystemExit("no suitable run directory under " + str(RUNS))
+
+
 def health_verdict(results, log):
     """Pass criteria, fixed before any request: every request got a usable reply with reported usage, and no record ended in a fault stop."""
     ok = bool(log) and all(e.get("reply") and isinstance(e.get("usage"), dict) and "error" not in e for e in log) \
@@ -314,13 +328,16 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("mode", choices=["plan", "dry-run", "real", "report"])
     ap.add_argument("--limit", type=int, default=None, help="only the first N records; with real mode this is the health check")
-    ap.add_argument("--after-health", default=None)
-    ap.add_argument("--run-dir", default=None, help="for report")
+    ap.add_argument("--after-health", default=None, help="the health run's directory, or `latest` for the newest passed real health run")
+    ap.add_argument("--run-dir", default=None, help="for report: a run directory, or `latest` (the default)")
     ap.add_argument("--max-calls", type=int, default=AUTH["max_calls"])
     ap.add_argument("--max-tokens", type=int, default=AUTH["max_tokens"])
     ap.add_argument("--max-usd", default=str(AUTH["max_usd"]))
     args = ap.parse_args(argv)
+    if args.after_health:
+        args.after_health = resolve_run_dir(args.after_health, real_health_only=True)
     if args.mode == "report":
+        args.run_dir = resolve_run_dir(args.run_dir or "latest")
         Path(args.run_dir, "REPORT.md").write_text(render_report(args.run_dir), encoding="utf-8")
         L.write_sha256sums(args.run_dir)
         print("wrote", Path(args.run_dir, "REPORT.md"))

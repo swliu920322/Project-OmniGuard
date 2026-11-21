@@ -106,3 +106,24 @@ def test_the_preflight_wants_the_files_to_match_the_tag_and_a_health_run_of_the_
     args = argparse.Namespace(max_calls=180, max_tokens=250_000, max_usd="0.10", limit=None, after_health=str(tmp_path))
     problems = SC.preflight_real(args)
     assert any("no tag eval-safety-compiler" in p for p in problems) and any("health run" in p for p in problems)
+
+
+def test_latest_picks_the_newest_directory_and_for_health_only_a_passed_sealed_real_run(tmp_path, monkeypatch):
+    monkeypatch.setattr(SC, "RUNS", tmp_path)
+
+    def make(name, mode, passed):
+        d = tmp_path / name
+        d.mkdir()
+        (d / "config.json").write_text(json.dumps({"mode": mode}))
+        (d / "summary.json").write_text(json.dumps({"health_check": {"passed": passed} if passed is not None else None}))
+        SC.L.write_sha256sums(str(d))
+        return str(d)
+    old = make("20260101T000000Z_real_aaaaaaaa", "real", True)
+    make("20260102T000000Z_dry-run_bbbbbbbb", "dry-run", True)
+    failed = make("20260103T000000Z_real_cccccccc", "real", False)
+    assert SC.resolve_run_dir("latest") == failed
+    assert SC.resolve_run_dir("latest", real_health_only=True) == old
+    assert SC.resolve_run_dir("some/path") == "some/path"
+    (tmp_path / "20260101T000000Z_real_aaaaaaaa" / "summary.json").write_text("{}")  # no longer matches its hash list
+    with pytest.raises(SystemExit):
+        SC.resolve_run_dir("latest", real_health_only=True)

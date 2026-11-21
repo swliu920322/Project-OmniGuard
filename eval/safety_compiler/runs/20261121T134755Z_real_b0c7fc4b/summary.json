@@ -1,0 +1,56 @@
+{
+  "budget": {
+    "calls_started": 1,
+    "max_calls": 180,
+    "max_tokens": 250000,
+    "max_usd": "0.10",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.3333334",
+      "output_usd_per_mtok": "1.3333334",
+      "source": "the conservative DeepSeek Flash rates used in round 2 (see eval/experiments/note_vs_rules_v2/RESULTS.md)"
+    },
+    "tokens_committed": 293,
+    "usd_committed": "0.000178"
+  },
+  "compiler": {
+    "SHORT_CIRCUIT": 1
+  },
+  "cost_note": "estimated at the configured conservative rates from reported usage; not a bill",
+  "empty_or_bad_replies": 0,
+  "final": {
+    "stop": 1
+  },
+  "halt_reasons": {
+    "API_ERROR": 1
+  },
+  "health_check": {
+    "criteria": "every request returned non-empty text and reported usage; no record stopped on TIMEOUT / RATE_LIMIT / API_ERROR / BAD_REPLY",
+    "passed": false
+  },
+  "latency_ms": {
+    "compiler": {
+      "median": null,
+      "p95": null
+    },
+    "safety": {
+      "median": 1971,
+      "p95": 1971
+    }
+  },
+  "planned_records": 2,
+  "records_run": 1,
+  "requests": 1,
+  "response_models": [
+    "deepseek-flash"
+  ],
+  "safety": {
+    "FAULT": 1
+  },
+  "status": "stopped",
+  "stop_reason": "bound violation: reported usage (213 prompt + 80 completion tokens) is above the reserved bound (718 + 50)",
+  "worst_case_reservation": {
+    "tokens": 768,
+    "usd": "0.000306"
+  }
+}

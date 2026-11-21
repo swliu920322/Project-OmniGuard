@@ -22,9 +22,11 @@
    src/cloud-orchestrator/.venv/bin/python -I eval/safety_compiler/run_safety_compiler.py real --limit 2
    ```
    通过标准事先写在代码里：每个请求都返回非空文字并报告用量，没有记录停在 TIMEOUT / RATE_LIMIT / API_ERROR / BAD_REPLY。
-3. **完整运行**（健康检查通过之后）：
-   `... real --after-health eval/safety_compiler/runs/<健康检查目录>`
-4. **报告：** `... report --run-dir eval/safety_compiler/runs/<目录>`
+3. **完整运行**（健康检查通过之后）。目录不用你找，写 `latest`，运行器自己挑最新的、封存完整并且通过了健康检查的那次真实运行：
+   `src/cloud-orchestrator/.venv/bin/python -I eval/safety_compiler/run_safety_compiler.py real --after-health latest`
+4. **报告：** 同样不用找目录，默认就是最新的一次：
+   `src/cloud-orchestrator/.venv/bin/python -I eval/safety_compiler/run_safety_compiler.py report`
+   （要指定某一次，写 `--run-dir eval/safety_compiler/runs/<目录名>`；目录名是运行器在第 2、3 步结束时打印的 `wrote ...` 那一行里的路径，形如 `20261121T…Z_real_xxxxxxxx`。）
 
 **运行依赖的六个文件（见 `code_hashes()`）在打标签之后不要改**：预检要求它们与最新的 `eval-safety-compiler-*` 标签一致，健康检查和完整运行也必须用同样的代码。其他文件（笔记、文档）可以照常提交。
 
