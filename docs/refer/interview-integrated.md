@@ -213,7 +213,7 @@
 | G2 `CLAUDE.md` 测试和打分 | 已补 |
 | G3 分片报告 | 已补 |
 | G4 对照与"还不知道" | 打分链路对照已做；新一轮题的部分不做 |
-| G5 Safety 和 Compiler 评测 | 设计已写；代码层的合约覆盖表已做（[ACTION_CONTRACT_COVERAGE.md](../../eval/ACTION_CONTRACT_COVERAGE.md)）；真实运行待你给出次数、token、美元上限 |
+| G5 Safety 和 Compiler 评测 | 设计已写；代码层的合约覆盖表已做（[ACTION_CONTRACT_COVERAGE.md](../../eval/ACTION_CONTRACT_COVERAGE.md)）；你已确认上限（180 次、250,000 token、US$0.10）；**运行器和假客户端演练已完成，真实运行待你在自己的终端设置密钥后执行**（[步骤](../../eval/safety_compiler/README.md)） |
 | G6 `gate()` 顺序 | 只披露，改代码要新 freeze |
 | G7 有界重试 | **已实施**，假客户端测试 |
 | G8 运行回执 | 已补 |

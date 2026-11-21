@@ -10,7 +10,7 @@ request each, retries off), with every request counted against hard caps before 
 
 The authorisation is the owner's reply "确认" (2026-11-21) to Claude's proposal of 180 requests, 250,000 tokens and US$0.10 in total, health check
 included, no retries. A real run also needs OPENAI_API_KEY, OPENAI_BASE_URL and OPENAI_MODEL_NAME in the environment, SAFETY_COMPILER_AUTHORIZED=yes,
-the files it depends on identical to HEAD (other uncommitted files do not matter) and a tag `eval-safety-compiler-*` at HEAD. Nothing is retried, and a cap or bound violation stops the run.
+the files it depends on identical to the latest tag `eval-safety-compiler-*` (other commits and uncommitted files do not matter). Nothing is retried, and a cap or bound violation stops the run.
 """
 from __future__ import annotations
 
@@ -209,6 +209,11 @@ def git(*args):
     return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True).stdout.strip()
 
 
+def latest_tag():
+    tags = git("tag", "--list", "eval-safety-compiler-*").split()
+    return sorted(tags)[-1] if tags else None
+
+
 def code_hashes():
     files = ["eval/safety_compiler/run_safety_compiler.py", "src/cloud-orchestrator/embodied_brain/bounded_agent.py", "src/cloud-orchestrator/embodied_brain/extended.py",
              "src/cloud-orchestrator/router_v2/pipeline.py", "src/cloud-orchestrator/router_v2/rules.py", "src/cloud-orchestrator/router_v2/prompt.py"]
@@ -233,7 +238,7 @@ def summarize(results, log, state, guard, planned, health):
 
 def write_run(mode, results, log, state, guard, planned, health_check=None, limit=None):
     run_dir = L.make_run_dir(str(RUNS), mode)
-    config = {"run_id": os.path.basename(run_dir), "mode": mode, "tenant": TENANT, "started_at": L.utc_now(), "repo_head": git("rev-parse", "HEAD"), "tag": git("describe", "--exact-match", "--tags", "HEAD"),
+    config = {"run_id": os.path.basename(run_dir), "mode": mode, "tenant": TENANT, "started_at": L.utc_now(), "repo_head": git("rev-parse", "HEAD"), "tag": latest_tag(), "tag_commit": git("rev-list", "-n", "1", latest_tag()) if latest_tag() else None,
               "code_hashes": code_hashes(), "inputs": {"test_set_sha256": L.sha256_file(str(TEST_SET)), "router_replies_sha256": L.sha256_file(str(ROUTER_REPLIES))},
               "authorisation": {**AUTH, "max_usd": str(AUTH["max_usd"])}, "pricing": PRICING.as_dict(), "limit": limit,
               "request_settings": {"sdk_max_retries": 0, "sdk_timeout_s": 60.0, "temperature": 0.0, "max_completion_tokens": {"Safety": 50, "Compiler": 100}, "result_cache": "none (bounded_agent has no cache)"},
@@ -286,11 +291,11 @@ def preflight_real(args):
     if os.environ.get("SAFETY_COMPILER_AUTHORIZED") != "yes":
         problems.append("SAFETY_COMPILER_AUTHORIZED=yes is required")
     problems += [f"{v} is set; a run must not touch real devices or storage" for v in L.FORBIDDEN_ENV if os.environ.get(v)]
-    changed = subprocess.run(["git", "diff", "--quiet", "HEAD", "--", *code_hashes()], cwd=ROOT).returncode != 0  # only the files this run depends on must equal HEAD
-    if changed:
-        problems.append("a file this run depends on differs from HEAD (commit it first)")
-    if not git("describe", "--exact-match", "--tags", "HEAD").startswith("eval-safety-compiler-"):
-        problems.append("HEAD needs a tag eval-safety-compiler-*")
+    tag = latest_tag()
+    if tag is None:
+        problems.append("there is no tag eval-safety-compiler-*")
+    elif subprocess.run(["git", "diff", "--quiet", tag, "--", *code_hashes()], cwd=ROOT).returncode != 0:  # only the files this run depends on must equal the tag
+        problems.append(f"a file this run depends on differs from the tag {tag}")
     if args.max_calls > AUTH["max_calls"] or args.max_tokens > AUTH["max_tokens"] or Decimal(args.max_usd) > AUTH["max_usd"]:
         problems.append("a cap is above what the owner confirmed")
     if args.limit is None:
@@ -300,8 +305,8 @@ def preflight_real(args):
             bad = L.verify_run_dir(args.after_health)
             h = json.loads(Path(args.after_health, "summary.json").read_text(encoding="utf-8")) if not bad else {}
             c = json.loads(Path(args.after_health, "config.json").read_text(encoding="utf-8")) if not bad else {}
-            if bad or not (h.get("health_check") or {}).get("passed") or c.get("repo_head") != git("rev-parse", "HEAD"):
-                problems.append("the health run is missing, not sealed, not passed, or from another commit")
+            if bad or not (h.get("health_check") or {}).get("passed") or c.get("code_hashes") != code_hashes():
+                problems.append("the health run is missing, not sealed, not passed, or ran other code")
     return problems
 
 

@@ -26,7 +26,7 @@
    `... real --after-health eval/safety_compiler/runs/<健康检查目录>`
 4. **报告：** `... report --run-dir eval/safety_compiler/runs/<目录>`
 
-**运行前不要再提交任何文件**：预检要求运行依赖的文件与 HEAD 一致，并且 HEAD 上有 `eval-safety-compiler-*` 标签；提交了新的内容，标签就不在 HEAD 了。
+**运行依赖的六个文件（见 `code_hashes()`）在打标签之后不要改**：预检要求它们与最新的 `eval-safety-compiler-*` 标签一致，健康检查和完整运行也必须用同样的代码。其他文件（笔记、文档）可以照常提交。
 
 ## 它做什么，不做什么
 

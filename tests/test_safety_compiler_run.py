@@ -99,3 +99,10 @@ def test_the_real_preflight_refuses_caps_above_the_confirmation_and_a_full_run_w
     assert any("above what the owner confirmed" in p for p in problems) and any("--after-health" in p for p in problems)
     monkeypatch.setenv("COSMOS_KEY", "x")
     assert any("COSMOS_KEY" in p for p in SC.preflight_real(args))
+
+
+def test_the_preflight_wants_the_files_to_match_the_tag_and_a_health_run_of_the_same_code(monkeypatch, tmp_path):
+    monkeypatch.setattr(SC, "latest_tag", lambda: None)
+    args = argparse.Namespace(max_calls=180, max_tokens=250_000, max_usd="0.10", limit=None, after_health=str(tmp_path))
+    problems = SC.preflight_real(args)
+    assert any("no tag eval-safety-compiler" in p for p in problems) and any("health run" in p for p in problems)
