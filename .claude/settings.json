@@ -1,7 +1,0 @@
-{
-  "skills": {
-    "arch-audit": {
-      "triggers": ["架构审计", "架构审查", "代码审计", "合规审查", "/arch-audit"]
-    }
-  }
-}
