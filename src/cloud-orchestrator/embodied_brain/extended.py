@@ -19,7 +19,8 @@ import time
 
 from fastapi.responses import JSONResponse
 
-from .utils import ask_agent, get_cosmos_container, get_llm_client_and_model, load_scenario_config
+from .bounded_agent import AgentFault, ask_agent_bounded
+from .utils import get_cosmos_container, get_llm_client_and_model, load_scenario_config
 
 ROUTER_FIELDS = (("distance_cm", "obstacle_distance_cm"), ("velocity_ms", "velocity"), ("hp", "hp"), ("battery_pct", "battery"), ("temperature_c", "temperature"))
 SDK_TIMEOUT_S = 60.0
@@ -137,7 +138,12 @@ async def simulate_extended(req_body: dict, tenant_id: str, config: dict, start_
                          "Tenant rules configuration:\n" f"- Safety rules: {safety_rules}\n\n"
                          "Task: Compare the current Telemetry against the safety rules. If any safety rule is violated, you MUST reply 'BLOCK: [reason]'. Otherwise, reply 'PASS'.")
         t0 = time.time()
-        safety_decision = ask_agent(safety_system, f"Rules: {safety_rules}\nIntent: {intent}\n{telem}\nLast State: {json.dumps(last_state, default=str) if last_state else 'None'}", max_completion_tokens=50)
+        try:
+            safety_decision = ask_agent_bounded(safety_system, f"Rules: {safety_rules}\nIntent: {intent}\n{telem}\nLast State: {json.dumps(last_state, default=str) if last_state else 'None'}", max_completion_tokens=50)
+        except AgentFault as fault:  # no usable Safety reply: stop, with the kind of fault as the reason (not INTERNAL_ERROR)
+            t2 = int((time.time() - t0) * 1000)
+            trace += [{"agent": "Safety", "decision": fault.kind, "status": "FAULT"}, {"agent": "Action Compiler", "decision": "SKIPPED", "status": "SHORT_CIRCUIT"}]
+            return _respond(start_time, _stop("safety_fault", [fault.kind], act["holds"], act["deferred"]), trace, dec, metrics=_metrics(t1, t2, cosmos=cosmos))
         t2 = int((time.time() - t0) * 1000)
         if safety_decision.upper().startswith("BLOCK"):
             trace += [{"agent": "Safety", "decision": safety_decision, "status": "BLOCKED"}, {"agent": "Action Compiler", "decision": "SKIPPED", "status": "SHORT_CIRCUIT"}]
@@ -151,8 +157,13 @@ async def simulate_extended(req_body: dict, tenant_id: str, config: dict, start_
         compiler_system = ("You are the Action Compiler. Generate evasive actions strictly conforming to the JSON schema. "
                            "NO markdown. NO text. Return ONLY raw JSON array matching the schema.")
         t0 = time.time()
-        action_json = ask_agent(compiler_system, f"Schema: {config.get('agent_execution_schema')}\nIntent: {intent} (Strategist decided: {safety_decision})\n"
-                                f"{telem}, Target Speed Limit: {target_speed}cm/s\n{constraints}", max_completion_tokens=100)
+        try:
+            action_json = ask_agent_bounded(compiler_system, f"Schema: {config.get('agent_execution_schema')}\nIntent: {intent} (Strategist decided: {safety_decision})\n"
+                                            f"{telem}, Target Speed Limit: {target_speed}cm/s\n{constraints}", max_completion_tokens=100)
+        except AgentFault as fault:  # no usable Compiler reply: stop
+            t3 = int((time.time() - t0) * 1000)
+            trace.append({"agent": "Action Compiler", "decision": fault.kind, "status": "FAULT"})
+            return _respond(start_time, _stop("compiler_fault", [fault.kind], act["holds"], act["deferred"]), trace, dec, metrics=_metrics(t1, t2, t3, cosmos))
         t3 = int((time.time() - t0) * 1000)
         text = action_json.strip()
         if text.startswith("```"):

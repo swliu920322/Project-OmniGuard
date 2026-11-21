@@ -25,13 +25,13 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_docs_consistency.py
 
 **Request path.** `POST /api/simulate_agent` lives in `src/cloud-orchestrator/embodied_brain/brain.py`. Tenants come from `scenario_registry.json`; only `Tenant-Alpha-Extended` (`router_mode: extended`) uses the six-class path in `embodied_brain/extended.py` (`simulate_extended`). The original three-class tenants and the IoT Hub / Event Hub path (`iot_telemetry_processor` in `brain.py`) are separate and unchanged.
 
-**Extended path order:** emergency stop (answered in `brain.py` before the rate limit) → rate limit (5 s window, 1 request) → `precheck`/`check_input` → best-effort Cosmos write and read → `router_v2.pipeline.decide` (model call, strict JSON parse, `rules.execute`) → if HALT, Safety and Compiler are skipped → Safety (`ask_agent`) → Compiler (`ask_agent`) → `validate_actions`.
+**Extended path order:** emergency stop (answered in `brain.py` before the rate limit) → rate limit (5 s window, 1 request) → `precheck`/`check_input` → best-effort Cosmos write and read → `router_v2.pipeline.decide` (model call, strict JSON parse, `rules.execute`) → if HALT, Safety and Compiler are skipped → Safety → Compiler (both `embodied_brain/bounded_agent.py`) → `validate_actions`.
 
 **`src/cloud-orchestrator/router_v2/`** is the core:
 - `rules.py`: the six classes, thresholds (`THRESHOLDS`: 30 cm, 60 C, HP 50, battery 20, speed 2.5 are simulation conventions, not braking distances), `check_input`, and `execute`, which merges telemetry risks computed by code with the model's risks. The model can add risks but cannot remove one the code found.
 - `prompt.py`: prompt B-1.0 and `parse_reply`, a hand-written strict parser (one JSON object, exactly the keys `primary` and `note_status`, no duplicate keys, enum values). No `response_format` or Pydantic; a bad reply becomes a halt.
 - `pipeline.py`: `decide`, the model adapter (`openai_model_call`, `no_retry_client`: retries off, 60 s timeout, errors become TIMEOUT / RATE_LIMIT / API_ERROR faults), and `validate_actions`.
-- Order matters: `decide` calls the model first and `execute` applies the physical gate (`gate()`, HP<=0 or battery<5) afterwards. The docstring of `gate()` says "before the router is asked", which describes the legacy path (`eval/LIMITATIONS.md` item 21). Safety and Compiler use the older `ask_agent` and do not have the no-retry guarantee.
+- Order matters: `decide` calls the model first and `execute` applies the physical gate (`gate()`, HP<=0 or battery<5) afterwards. The docstring of `gate()` says "before the router is asked", which describes the legacy path (`eval/LIMITATIONS.md` item 21). Safety and Compiler use `bounded_agent.py` (one request, retries off, 60 s placeholder timeout, faults become a stop); the older `ask_agent` (SDK defaults, 5 s cache) remains for legacy tenants.
 
 **Providers.** `llm_provider.py` switches Azure OpenAI / OpenAI / DeepSeek / any OpenAI-compatible endpoint by `LLM_PROVIDER` env; all roles share one client and model. Formal runs used DeepSeek only.
 

@@ -54,7 +54,7 @@ def world():
     w.cosmos.client_connection.last_request_charge = 10.67
     w.ask = MagicMock(side_effect=["PASS", '[{"action":"move","speed":30}]'])
     w.model_lookup = MagicMock(side_effect=lambda: (w.sdk, "m"))
-    with patch(f"{EXT}.get_cosmos_container", return_value=w.cosmos) as c, patch(f"{EXT}.ask_agent", w.ask), patch(f"{EXT}.get_llm_client_and_model", w.model_lookup):
+    with patch(f"{EXT}.get_cosmos_container", return_value=w.cosmos) as c, patch(f"{EXT}.ask_agent_bounded", w.ask), patch(f"{EXT}.get_llm_client_and_model", w.model_lookup):
         w.cosmos_getter = c
         yield w
 
@@ -305,3 +305,26 @@ def test_legacy_tenants_keep_their_flow_defaults_and_errors(legacy):
 def test_the_docs_say_the_goal_is_a_structured_goal_and_not_proof_of_arrival():
     text = (ROOT / "src/cloud-orchestrator/router_v2/README.md").read_text()
     assert "structured goal" in text and "must not be claimed" in text
+
+
+# --- Safety and Compiler faults are classified stops, not INTERNAL_ERROR ----------------------------------------------------
+
+@pytest.mark.parametrize("kind", ["TIMEOUT", "RATE_LIMIT", "API_ERROR", "BAD_REPLY"])
+def test_a_safety_fault_stops_with_its_kind_and_the_compiler_is_not_asked(world, kind):
+    from embodied_brain.bounded_agent import AgentFault
+    world.ask.side_effect = [AgentFault(kind)]
+    r = post(world)
+    stop = stop_of(r)
+    assert r.status_code == 200 and stop["reason"] == "safety_fault" and stop["halt_reasons"] == [kind]
+    assert world.ask.call_count == 1
+    assert [t["status"] for t in r.json()["pipeline_trace"] if t.get("agent") == "Safety"] == ["FAULT"]
+
+
+@pytest.mark.parametrize("kind", ["TIMEOUT", "RATE_LIMIT", "API_ERROR", "BAD_REPLY"])
+def test_a_compiler_fault_stops_with_its_kind(world, kind):
+    from embodied_brain.bounded_agent import AgentFault
+    world.ask.side_effect = ["PASS", AgentFault(kind)]
+    r = post(world)
+    stop = stop_of(r)
+    assert r.status_code == 200 and stop["reason"] == "compiler_fault" and stop["halt_reasons"] == [kind]
+    assert [t["status"] for t in r.json()["pipeline_trace"] if t.get("agent") == "Action Compiler"] == ["FAULT"]

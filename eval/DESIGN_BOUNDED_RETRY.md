@@ -1,6 +1,6 @@
 # 设计：Safety 和 Compiler 的有界重试与故障分类（G7）
 
-2026-11-21。**这是设计，没有实施，没有改动任何代码和冻结文件。** 对应八关流程第 5 关（系统设计）。
+2026-11-21。**已实施（同日）：** `embodied_brain/bounded_agent.py` 和 `extended.py` 的两处调用，测试在 `tests/test_bounded_agent.py` 与 `tests/test_extended_endpoint.py`，没有改动 `ask_agent` 和任何冻结文件，没有联网、没有调用模型。超时 60 秒是占位，与 Router 相同，没有依据，待测得 Safety 和 Compiler 的耗时后再定。下面是原设计。 对应八关流程第 5 关（系统设计）。
 
 ## 1. 主张
 
