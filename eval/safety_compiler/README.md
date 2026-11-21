@@ -2,7 +2,7 @@
 
 对应设计：[DESIGN_SAFETY_COMPILER_EVAL.md](../DESIGN_SAFETY_COMPILER_EVAL.md)。运行器：[run_safety_compiler.py](run_safety_compiler.py)。
 
-**状态（2026-11-21）：** 运行器和假客户端演练已完成，真实运行**尚未执行**（需要所有者在自己的环境里设置密钥）。
+**状态（2026-11-21）：** 运行器和假客户端演练已完成。所有者执行的第一次健康检查（`runs/20261121T134755Z_real_b0c7fc4b`）在第一个请求后**按设计停下**：Safety 的回复正常（`PASS`），但报告的用量是 213 个输入加 80 个输出（其中 77 个是推理 token），超过了预留的输出上限 50，触发预留突破并停止运行。Compiler 没有被请求。这次只用了 1 次请求、293 token、约 US$0.0002。原因和处理见 [LIMITATIONS](../LIMITATIONS.md) 第 25 条；**完整运行尚未执行**。
 
 ## 授权
 
