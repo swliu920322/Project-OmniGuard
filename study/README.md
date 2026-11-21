@@ -9,6 +9,7 @@
 | 面试整合版（按八关讲，只导航不复制答案） | [interview-integrated.md](refer/interview-integrated.md) |
 | `CLAUDE.md` 的 8 问打分 | [claude-md-8q.md](refer/claude-md-8q.md) |
 | 文档盘点与整理记录 | [doc-inventory.md](refer/doc-inventory.md) |
+| 冷读测试：让一个陌生会话只从 `eval/README.md` 出发，找 5 个答案 | [cold-read-test.md](refer/cold-read-test.md) |
 
 新人想读懂项目，不要从这里开始，看 [docs/guide/](../docs/guide/README.md)；想核对结果，看 [eval/README.md](../eval/README.md)。
 
