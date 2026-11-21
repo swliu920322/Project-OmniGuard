@@ -1,20 +1,34 @@
 # eval：评测证据与阅读导航
 
-这里保存 OmniGuard 的路由规范、数据制作过程、模型评测程序、运行结果和面试讲解材料。第一次接触项目，不需要从几百个运行文件开始读。
+这里保存 OmniGuard 的路由规范、数据制作过程、模型评测程序、运行结果和证据说明。第一次接触项目，不需要从几百个运行文件开始读。
 
 项目使用 AGV 仿真遥测和一条可选备注，验证模型如何选择六类状态路由，以及程序如何约束输出。它没有实现视觉感知或实体车辆控制。延迟研究与路由准确率是两条不同的证据线。
+
+## 先问你想知道什么
+
+| 你想知道 | 读这个 | 它告诉你什么 |
+|---|---|---|
+| 结果是什么？ | [report.md](report.md)（第一轮）、[RESULTS.md](experiments/note_vs_rules_v2/RESULTS.md)（第二轮） | 数字、对照方案、代价；两轮的题和系统不同，不是前后对比 |
+| 凭什么信？ | [EVIDENCE_INDEX.md](EVIDENCE_INDEX.md) | 每个说法对应哪份证据，哪些关卡还没完成 |
+| 什么没声称、做不到？ | [LIMITATIONS.md](LIMITATIONS.md) | 已知局限，引用成绩时一起看 |
+| 谁做的、哪个模型？ | [ANNOTATOR_PROVENANCE.md](ANNOTATOR_PROVENANCE.md) | 两轮每个环节的执行方，以及每条说法的依据有多硬 |
+| 我怎么自己验证？ | [REPRODUCE.md](REPRODUCE.md) | 三级复现；第一级免费、离线，现在就能做 |
+| 错在哪里？打分链路对不对？ | [SLICE_REPORT.md](experiments/note_vs_rules_v2/slices/SLICE_REPORT.md)、[CONTROL_CHECK.md](experiments/note_vs_rules_v2/controls/CONTROL_CHECK.md) | 按状态、语言、家族切开；完美、反向、打乱标签三种对照；各自怎么重新生成见 [slices/](experiments/note_vs_rules_v2/slices/README.md)、[controls/](experiments/note_vs_rules_v2/controls/README.md) |
+| 每次真实运行是怎么控制的？ | [RUN_RECEIPTS.md](RUN_RECEIPTS.md) | 数据、版本、模型、预算、授权、回滚点，没记录的写"未记录" |
+| Safety 和 Compiler 测过吗？ | [safety_compiler/README.md](safety_compiler/README.md) | 一次 84 条的真实可用性运行；不是安全性评测 |
+| 我是新人，想先读懂项目 | [新人导读](../docs/guide/README.md) | 从一辆小车的一次决定读起，再看代码地图 |
+| 过程是怎么走过来的？ | [archive/](archive/README.md)、[第二轮过程记录](experiments/note_vs_rules_v2/process/README.md) | 交接日志和设计稿，记录过程，不是结论 |
+
+面试备考材料是个人学习资料，不是评测证据，放在 [study/](../study/README.md)。
 
 ## 第一次来，按这个顺序
 
 如果不知道 `primary` 等代码字段是什么意思，先看 [一辆小车的中文入门例子](../docs/guide/START_HERE_zh.md)，不需要预先懂 Agent 或评测术语。
 
-1. **理解项目为什么做**：[面试讲述稿](../study/interview/INTERVIEW_STORY_zh.md)。从机器人的云端等待问题，到 AGV 仿真，再到路由评测。
-2. **理解代码怎么走**：[后端阅读地图](../docs/guide/BACKEND_CODE_GUIDE_zh.md)。包含三个 Agent 角色、六类状态、调用图与源码定位。
-3. **看实际测出了什么**：[正式报告](report.md)、[延迟证据](LATENCY_EVIDENCE.md)。准确率、模型调用耗时与仿真设定不要混用。
-4. **追查结论依据**：[证据索引](EVIDENCE_INDEX.md) → 规范／冻结清单 → 正式结果与独立核对。
-5. **想自己运行**：[复现指南](REPRODUCE.md)。免费离线、公开开发集实测、私有正式数据复现分成三级，不能相互替代。
-
-检查结果可信度直接从 [report.md](report.md) 开始。面试备考材料是个人学习资料，不是评测证据，放在 [study/](../study/README.md)。
+1. **理解代码怎么走**：[后端阅读地图](../docs/guide/BACKEND_CODE_GUIDE_zh.md)。包含三个 Agent 角色、六类状态、调用图与源码定位。
+2. **看实际测出了什么**：[正式报告](report.md)、[延迟证据](LATENCY_EVIDENCE.md)。准确率、模型调用耗时与仿真设定不要混用。
+3. **追查结论依据**：[证据索引](EVIDENCE_INDEX.md) → 规范／冻结清单 → 正式结果与独立核对。
+4. **想自己运行**：[复现指南](REPRODUCE.md)。免费离线、公开开发集实测、私有正式数据复现分成三级，不能相互替代。
 
 概念拓展见 [Agent 与意图](../docs/guide/AGENT_INTENT_DESIGN_zh.md) 和 [业务 harness](../docs/guide/BUSINESS_HARNESS_zh.md)：前者解释角色与类别，后者解释后端如何承载模型执行；设计示意不算已实现功能。
 
@@ -46,10 +60,12 @@
 ```text
 eval/
 ├── README.md                 本导航
-├── interview/                学习路线、答题主手册、中文入门、代码地图与按需专题
 ├── report.md                 本轮正式评测结论
 ├── EVIDENCE_INDEX.md         结论到证据的索引、执行台账、验收状态
 ├── LIMITATIONS.md            已知局限与不能声称的结论
+├── ANNOTATOR_PROVENANCE.md   谁做的、哪个模型、依据有多硬
+├── RUN_RECEIPTS.md           每次真实运行的一页回执（由 run_receipt.py 生成）
+├── ACTION_CONTRACT_COVERAGE.md 代码层能挡住哪几类坏输出（由 action_contract_coverage.py 生成）
 ├── LATENCY_EVIDENCE.md       延迟计时边界、真实请求与仿真设定
 ├── LATENCY_COST.md           延迟／费用统计口径与缺失字段
 ├── REPRODUCE.md              分级复现方法
@@ -61,11 +77,14 @@ eval/
 ├── baseline_v1/             原版三类实现归档及重测
 ├── baseline_b/              新任务固定提示词、评分器、开发运行与故障诊断
 ├── formal/                  正式运行入口、代码冻结与公开聚合结果
-├── experiments/             后续实验计划／实现，须按各自状态区分，不能冒充已完成成绩
+├── experiments/             第二轮（备注理解）的计划、结果、切片与对照；process/ 是过程记录
+├── provenance/              来源审计：会话元数据摘录与审计索引
+├── safety_compiler/         Safety 与 Compiler 的运行器和运行记录
+├── archive/                 过程记录：设计稿、事实核对
 └── reproduction_logs/       外部 AI 的离线复现预演记录
 ```
 
-面试备考材料已移到 [study/](../study/README.md)，新人导读在 [docs/guide/](../docs/guide/README.md)；证据文件仍在原位。旧提交里的路径可能不同，查历史时使用对应提交的目录。
+面试备考材料在 [study/](../study/README.md)，新人导读在 [docs/guide/](../docs/guide/README.md)，都不在 `eval/` 里；证据文件仍在原位。旧提交里的路径可能不同，查历史时使用对应提交的目录。
 
 ## 根目录每份文档负责什么
 
@@ -76,6 +95,7 @@ eval/
 | [LIMITATIONS.md](LIMITATIONS.md) | 数据、版本、执行、统计和部署的局限 | 引用成绩时一起看 |
 | [LATENCY_EVIDENCE.md](LATENCY_EVIDENCE.md) | 哪些是真计时、哪些是模拟参数、车辆等待时如何运动 | 历史三阶段模型调用之和不是浏览器端到端延迟 |
 | [LATENCY_COST.md](LATENCY_COST.md) | 可计算的平均费用、开发延迟旁证及正式延迟缺失字段 | 费用按配置费率估算，不是账单 |
+| [ANNOTATOR_PROVENANCE.md](ANNOTATOR_PROVENANCE.md) | 两轮每个环节由哪个会话和模型家族承担，依据类型从仓库证据到所有者陈述 | 来自会话元数据和自述，不是数据文件字段；第一轮标注全是同一家族 |
 | [REPRODUCE.md](REPRODUCE.md) | 从哪里运行、需要什么依赖、不同层级证明什么 | 只克隆公开仓库不能重新测出私有正式数据的成绩 |
 | [REPRODUCE_TEST_PROMPT.md](REPRODUCE_TEST_PROMPT.md) | 如何要求一个新会话只报告、不修复地试跑指南 | 这是任务说明，不是已经通过的证据 |
 
@@ -98,7 +118,7 @@ eval/
 
 - `dev_set.jsonl`：180 条公开开发记录；`families.json`：家族信息。
 - `make_dev_set.py`：带种子生成；`dev_report.py`、`dev_report.json`、[COVERAGE_REPORT.md](dev/COVERAGE_REPORT.md)：覆盖检查及报告。
-- `stress/`：66 条开发侧压力用例、生成器与覆盖报告。
+- `stress/`：66 条开发侧压力用例、生成器与[覆盖报告](dev/stress/COVERAGE_REPORT.md)。
 - `rule_control/`：规则对照在开发材料上的离线结果，先看 [REPORT.md](dev/rule_control/REPORT.md)。
 - 各处 `SHA256SUMS` 用于检查保存内容，不代表数据本身没有偏差。
 
@@ -159,9 +179,9 @@ eval/
 
 ## 修改与引用规则
 
-下一轮计划：[备注理解：规则与模型对照](experiments/note_vs_rules_v2/PLAN.md)，[Claude 执行提示词](experiments/note_vs_rules_v2/process/HANDOFF_TO_CLAUDE.md)。当前只是计划，不影响第一轮冻结结果，不代表已授权付费调用。
+第二轮（备注理解：规则与模型对照）的计划见 [PLAN.md](experiments/note_vs_rules_v2/PLAN.md)，已执行，结果见 [RESULTS.md](experiments/note_vs_rules_v2/RESULTS.md)；它不改变第一轮的冻结结果。
 
-- 学习和面试内容放 `interview/`；结果、局限与证据导航留在根目录。
+- 学习和面试内容放 `study/`，新人导读放 `docs/guide/`；结果、局限与证据导航留在这里。新增文档必须被某个索引链接，否则测试会提示。
 - 冻结规范、数据承诺、运行器与原始运行目录保持原位，不为整理文件夹修改其内容或重新生成哈希。
 - 讲解稿有冲突时，回到原始记录、规范和核对报告；修正讲解，不用讲解覆盖证据。
 - 没有优化版，不写“从 X 提升到 Y”；没有硬件实测，不把设定参数写成真实响应能力。
@@ -169,4 +189,4 @@ eval/
 
 ## 第二轮：备注理解的模型／规则对照
 
-正式执行及交叉核对已完成，见 [第二轮结果](experiments/note_vs_rules_v2/RESULTS.md)。最终180条合成题与182次逐条调用现已整理入仓，见 [原件及免费复算](experiments/note_vs_rules_v2/evidence/README.md)；这与原300条仍缺原件的历史评测不同。尚未推送，数据现作为公开回归材料，不能用于未来未见测试。
+正式执行及交叉核对已完成，见 [第二轮结果](experiments/note_vs_rules_v2/RESULTS.md)。最终180条合成题与182次逐条调用现已整理入仓，见 [原件及免费复算](experiments/note_vs_rules_v2/evidence/README.md)；这与原300条仍缺原件的历史评测不同。数据现作为公开回归材料，不能用于未来未见测试。

@@ -43,6 +43,7 @@ This page is the only navigation entry for Project OmniGuard documentation. Docu
 
 ## Reference material
 
+- [PROJECT_MEMORY.md](PROJECT_MEMORY.md) is a short maintenance map from an earlier phase of the project (2026-10); check it against the code before relying on it.
 - reference/blueprints/ contains architecture patterns and implementation notes. A blueprint may describe a target state; verify it against code before treating it as deployed.
 
 ## Source-of-truth rules
