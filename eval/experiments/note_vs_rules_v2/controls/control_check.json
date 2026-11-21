@@ -1,0 +1,63 @@
+{
+  "anti_oracle": 0,
+  "checks": {
+    "R3 reproduces the published 77/180": true,
+    "anti-oracle scores 0%": true,
+    "each constant predictor scores its status share exactly": true,
+    "model reproduces the published 173/180": true,
+    "oracle scores 100%": true,
+    "shuffled mean is within 1.5 points of the exact chance level": true
+  },
+  "constant": {
+    "AFFIRMED_CURRENT": 30,
+    "HISTORICAL": 30,
+    "HYPOTHETICAL": 30,
+    "IRRELEVANT": 30,
+    "NEGATED": 30,
+    "UNCERTAIN": 30
+  },
+  "n": 180,
+  "oracle": 180,
+  "passed": true,
+  "shuffle": {
+    "exact_chance": 0.16666666666666666,
+    "high": 0.21666666666666667,
+    "low": 0.1111111111111111,
+    "mean": 0.16563333333333333,
+    "n_shuffles": 1000
+  },
+  "systems": {
+    "R1": {
+      "accuracy": 0.3333333333333333,
+      "correct": 60,
+      "scorer_correct": 60,
+      "shuffle_high": 0.2111111111111111,
+      "shuffle_low": 0.12777777777777777,
+      "shuffle_mean": 0.16689444444444446
+    },
+    "R2": {
+      "accuracy": 0.22777777777777777,
+      "correct": 41,
+      "scorer_correct": 41,
+      "shuffle_high": 0.20555555555555555,
+      "shuffle_low": 0.12777777777777777,
+      "shuffle_mean": 0.16693333333333335
+    },
+    "R3": {
+      "accuracy": 0.42777777777777776,
+      "correct": 77,
+      "scorer_correct": 77,
+      "shuffle_high": 0.21666666666666667,
+      "shuffle_low": 0.11666666666666667,
+      "shuffle_mean": 0.16607222222222223
+    },
+    "model": {
+      "accuracy": 0.9611111111111111,
+      "correct": 173,
+      "scorer_correct": 173,
+      "shuffle_high": 0.21666666666666667,
+      "shuffle_low": 0.1111111111111111,
+      "shuffle_mean": 0.16554444444444444
+    }
+  }
+}
