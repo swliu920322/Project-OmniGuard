@@ -146,7 +146,7 @@ executed_primary = risks[0] if risks else "NORMAL_NAV"    # 主标签只是最�
 
 `compose()` 用遥测和给定备注状态生成参考标签；`execute()` 用模型预测合成实际决策。前者知道已标注的备注状态，后者只知道模型的备注判断，不能认为代码能独立发现所有备注风险。
 
-`gate()` 在 HP≤0 或电量<5 时给出 SKIP 门控状态；当前扩展 `decide()` 仍会先请求模型、再由 `execute()` 应用门控。不要被 `gate()` 的旧注释误导，说它和 HTTP 急停一样保证模型前零调用。
+`gate()` 在 HP≤0 或电量<5 时给出 SKIP 门控状态；冻结的 `decide()`（评测测的函数）仍会先请求模型、再由 `execute()` 应用门控；自 2026-11-21 起，HTTP 流程（`extended.py`）在请求模型之前先判 gate，所以 gate 为 SKIP 的请求不会产生模型请求，`gate()` 的注释在 HTTP 流程里成立，在 `decide()` 里仍不成立。
 
 ## 8. 想核实行为，读哪些测试？
 
@@ -214,7 +214,7 @@ assert invalid['executed']['action']['motion'] == 'HALT'
 failure = run('假模型报告超时', base, fault='TIMEOUT')
 assert failure['executed']['action']['motion'] == 'HALT'
 gated = run('HP为0的扩展Router', dict(base, hp=0))
-assert gated['model_called']  # 门控在execute内应用，不等于HTTP急停前置
+assert gated['model_called']  # decide() 里门控在execute内应用，仍先请求模型；HTTP 流程在 extended.py 里先判 gate
 assert gated['executed']['action']['motion'] == 'HALT'
 
 violations = validate_actions([dict(action='move', speed=999)],

@@ -395,7 +395,7 @@
 | 7.3 回复格式／契约错怎么办？ | 非JSON、重复键、缺字段、枚举错、非stop结束、备注状态与输入不匹配，都当不可用回复。 | 严格解析或上下文检查后停车，原回复与失败记录保留。 | 可识别失败 |
 | 7.4 格式对但模型判断错呢？ | 有数值风险时代码能补回；风险只在备注且模型漏判时可能补不回。第二轮7条模型备注错分未改变停车决定，仍全部计错。 | 这两种错不能统称“代码都兜底”；语义错误要用金标和漏停指标发现。 | 部分可纠正 |
 | 7.5 后续动作破坏约束怎么办？ | Compiler的动作再次检查。缺速度、非法转角或超速等返回CONSTRAINT_VIOLATION停车结果。 | [validate_actions](../../src/cloud-orchestrator/router_v2/pipeline.py)；不是只在prompt里提醒。 | 最终动作检查 |
-| 7.6 紧急情况在哪里处理？ | HTTP布尔emergency_stop=true在外部调用前返回；文字stop不是急停。gate只看HP≤0或电量<5。 | 距离风险另算；当前decide先调用模型再execute，不说所有风险都零等待。 | 顺序明确 |
+| 7.6 紧急情况在哪里处理？ | HTTP布尔emergency_stop=true在外部调用前返回；文字stop不是急停。gate只看HP≤0或电量<5。 | 距离风险另算；2026-11-21 起 HTTP 流程在请求模型之前先判 gate；评测测的 `decide()`（已冻结）仍先调模型再 execute。不说所有风险都零等待。 | 顺序明确 |
 | 7.7 错误怎样计入结果？ | 正式主测已开始失败调用留分母算错；自然接口失败与注入故障分开；未发送记录另报。 | 离线非法输入与注入故障不混入模型分类准确率。 | 计分政策 |
 | 7.8 压力验证结果与硬件保证是什么？ | 55例中13拒绝、10注入停车、32真实请求均满足本轮分项要求；不是55次成功制动。 | [压力摘要](../formal/results/20261107T115548Z_stress_real_8352b4ff/public_summary.json)；决定返回、仿真应用、真车停稳是不同层。 | 有限测试结果 |
 
@@ -629,7 +629,7 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_router_v2.py -q
 |---|---|---|---|
 | 输入预检（`precheck`／`check_input`） | 否 | `pipeline.py`、`rules.py` | 是（13 例本地拒绝） |
 | Router | 是 | `decide()` | 是（300 条主评测） |
-| 风险合成（`execute`，含 `gate`，在模型返回之后） | 否 | `rules.py` | 是（`floor_override` 70/300） |
+| 风险合成（`execute`，含 `gate`；在 `decide()` 里于模型返回之后，HTTP 流程里 gate 先于模型请求） | 否 | `rules.py` | 是（`floor_override` 70/300） |
 | Safety | 是 | `extended.py` | 否，只在假模型下测过 |
 | Compiler | 是 | `extended.py` | 否，只在假模型下测过 |
 | 动作校验（`validate_actions`） | 否 | `pipeline.py` | 假模型下测过 |

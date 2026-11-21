@@ -19,7 +19,7 @@
 | 2 出题 | 会不会偏向模型 | 合成题，由不参与规则开发的作者写 | 标注者家族没有记录（G1） | **已补** |
 | 3 标注 | 金标怎么来 | 盲标度量、复核纠错、裁决定案；AI 标注 | 没有对照组，无法裁决的句子被排除而不是保留（G4）；三方会话原文未入库（G10，已处理，见下） | G4 设计已写（[DESIGN_CANARY_UNKNOWN.md](../../eval/DESIGN_CANARY_UNKNOWN.md)）；其中**打分链路对照已做**（[CONTROL_CHECK.md](../../eval/experiments/note_vs_rules_v2/controls/CONTROL_CHECK.md)），新一轮题的部分不做；G10 **已做**：原文放在私有目录，仓库里是[元数据摘录](../../eval/provenance/SESSION_META.md) |
 | 4 冻结保管 | 怎么防泄题 | 测前哈希承诺，测后可核 | 保管者改过自己用的检查器 | 已披露 |
-| 5 系统设计 | 模型出错谁兜底 | 模型提议，代码保底 | `gate()` 在模型调用之后（G6） | G6 只披露，不改冻结代码；**G7 已实施**（`bounded_agent.py`，只在假客户端下测过，见 [LIMITATIONS 第 24 条](../../eval/LIMITATIONS.md)） |
+| 5 系统设计 | 模型出错谁兜底 | 模型提议，代码保底 | `gate()` 在冻结的 `decide()` 里仍在模型之后（G6） | **G6 已做**：HTTP 流程在请求模型之前先判 gate（`extended.py`，不碰冻结文件，评测测的 `decide()` 没变）；**G7 已实施**（`bounded_agent.py`，只在假客户端下测过，见 [LIMITATIONS 第 24 条](../../eval/LIMITATIONS.md)） |
 | 6 运行 | 钱和乱调怎么控 | 有授权上限、不重试、先健康检查 | 回执分散在几个文件里；人工干预次数和运行前测试结果没有字段（G8） | **已补**一页汇总 [RUN_RECEIPTS.md](../../eval/RUN_RECEIPTS.md)，缺的字段显示「未记录」 |
 | 7 计分复算 | 数字谁算的，错在哪 | 两个独立实现复现同一总数；失败样例保留 | 分家族对照（G3） | **已补**（分片报告） |
 | 8 发布 | 别人能不能验证 | 第二轮原件公开，可免费复算 | 陌生人复现（G9） | 只能你做 |
@@ -214,7 +214,7 @@
 | G3 分片报告 | 已补 |
 | G4 对照与"还不知道" | 打分链路对照已做；新一轮题的部分不做 |
 | G5 Safety 和 Compiler 评测 | 设计已写；代码层的合约覆盖表已做（[ACTION_CONTRACT_COVERAGE.md](../../eval/ACTION_CONTRACT_COVERAGE.md)）；你已确认上限（180 次、250,000 token、US$0.10）；**运行器和假客户端演练已完成，真实运行待你在自己的终端设置密钥后执行**（[步骤](../../eval/safety_compiler/README.md)） |
-| G6 `gate()` 顺序 | 只披露，改代码要新 freeze |
+| G6 `gate()` 顺序 | **已做**（HTTP 流程先判 gate；`decide()` 未改，评测数字不受影响） |
 | G7 有界重试 | **已实施**，假客户端测试 |
 | G8 运行回执 | 已补 |
 | G9 陌生人复现和口头验收 | 只能所有者做 |

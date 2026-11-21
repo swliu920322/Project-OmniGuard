@@ -54,7 +54,7 @@ The HTTP entry selects either the original tenant path or the opt-in six-class p
 
 ### 4.1 Deterministic physical pre-check
 
-In the original path, depleted health or critically low battery can stop processing before an LLM call. In the extended path, only the structured emergency-stop entry and invalid-input handling guarantee rejection before external calls. Its HP≤0 or battery<5% physical gate is applied inside `execute()` after the Router call. This is deterministic decision logic in the backend, not a deployed edge controller or a guarantee that the vehicle is already stopped.
+In the original path, depleted health or critically low battery can stop processing before an LLM call. In the extended path, only the structured emergency-stop entry and invalid-input handling guarantee rejection before external calls. Since 2026-11-21 its HP≤0 or battery<5% physical gate is also checked in the HTTP flow before the Router model is asked, so a gated request makes no model request; the frozen `decide()` that the evaluation measured still applies the gate inside `execute()` after the Router call. This is deterministic decision logic in the backend, not a deployed edge controller or a guarantee that the vehicle is already stopped.
 
 ### 4.2 Router Agent
 

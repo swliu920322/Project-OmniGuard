@@ -56,7 +56,21 @@ def _decision_view(res: dict) -> dict:
     ex, act = res["executed"], res["executed"]["action"]
     return {"valid": ex.get("valid", False), "primary": ex.get("primary"), "risk_set": ex.get("risk_set", []), "added_risks": ex.get("added_risks", []),
             "forced_by": ex.get("forced_by", []), "floor_override": ex.get("floor_override"), "action": act, "model_called": res.get("model_called", False),
-            "prediction": res.get("prediction"), "parse_error": res.get("parse_error"), "fault": res.get("fault"), "invalid_reason": res.get("invalid_reason")}
+            "prediction": res.get("prediction"), "parse_error": res.get("parse_error"), "fault": res.get("fault"), "invalid_reason": res.get("invalid_reason"),
+            "gate_skipped_model": res.get("gate_skipped_model", False)}
+
+
+def _decision_without_model(rec, note):
+    """The physical gate halts the vehicle (HP <= 0 or battery < 5): the Router model is not asked, the decision is the code's alone.
+
+    Telemetry risks plus the gate are resolved by the same rules.execute() as in every other case; a neutral stand-in reply (no risk of its own, no
+    note risk) is given to it because there is no model reply. Compared with the model-first path the motion is the same (HALT) and the telemetry
+    reasons are the same; a risk the model alone would have added (for example from an operator note) is simply not in the list.
+    `decide()` in router_v2 is frozen and still asks the model first; this only changes what the HTTP flow does for these records."""
+    from router_v2 import rules as RULES
+    clean = (note or "").strip() or None
+    executed = RULES.execute(rec, {"primary": "NORMAL_NAV", "note_status": None if clean is None else "IRRELEVANT"}, clean)
+    return {"executed": executed, "model_called": False, "prediction": None, "parse_error": None, "fault": None, "invalid_reason": None, "gate_skipped_model": True}
 
 
 def _halt(start, reasons, text, trace=None, **kw):
@@ -75,6 +89,7 @@ def estop_response(start):
 
 async def simulate_extended(req_body: dict, tenant_id: str, config: dict, start_time: float):
     from router_v2 import decide, no_retry_client, openai_model_call, precheck, validate_actions, DEFAULT_ALLOWED_ACTIONS
+    from router_v2 import rules as RULES
 
     trace = []
     try:
@@ -112,18 +127,21 @@ async def simulate_extended(req_body: dict, tenant_id: str, config: dict, start_
             logging.warning(f"Cosmos unavailable for the extended tenant: {ce}")
 
         t0 = time.time()
-        try:
-            client, model_name = get_llm_client_and_model()
-            call = openai_model_call(no_retry_client(client, SDK_TIMEOUT_S), model_name)
-        except Exception as exc:  # noqa: BLE001 - no usable client: the vehicle halts
-            return _halt(start_time, ["API_ERROR"], f"model client unavailable or retries cannot be disabled: {exc}", metrics=_metrics(cosmos=cosmos))
-        res = decide(rec, note, call)
+        if RULES.gate(rec) == "SKIP":  # the physical gate halts the vehicle: no model request is made (see _decision_without_model)
+            res = _decision_without_model(rec, note)
+        else:
+            try:
+                client, model_name = get_llm_client_and_model()
+                call = openai_model_call(no_retry_client(client, SDK_TIMEOUT_S), model_name)
+            except Exception as exc:  # noqa: BLE001 - no usable client: the vehicle halts
+                return _halt(start_time, ["API_ERROR"], f"model client unavailable or retries cannot be disabled: {exc}", metrics=_metrics(cosmos=cosmos))
+            res = decide(rec, note, call)
         t1 = int((time.time() - t0) * 1000)
         dec = _decision_view(res)
         act = dec["action"]
         trace.append({"agent": "Router", "decision": f"{dec['primary'] or 'INVALID'} | motion={act['motion']} | goal={act['goal']} | speed_cap={act['speed_cap']} | "
                       f"holds={act['holds']} | deferred={act['deferred']} | halt_reasons={act['halt_reasons']} | floor_override={dec['floor_override']} | "
-                      f"model_called={dec['model_called']}"})
+                      f"model_called={dec['model_called']}" + (" | model_skipped_by_gate=True" if dec["gate_skipped_model"] else "")})
         if act["motion"] == "HALT":
             trace += [{"agent": "Safety", "decision": "SKIPPED", "status": "SHORT_CIRCUIT"}, {"agent": "Action Compiler", "decision": "SKIPPED", "status": "SHORT_CIRCUIT"}]
             return _respond(start_time, _stop(act["halt_reasons"][0], act["halt_reasons"], act["holds"], act["deferred"], risk_set=dec["risk_set"]),

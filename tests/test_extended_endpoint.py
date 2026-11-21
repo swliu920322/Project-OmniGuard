@@ -328,3 +328,46 @@ def test_a_compiler_fault_stops_with_its_kind(world, kind):
     stop = stop_of(r)
     assert r.status_code == 200 and stop["reason"] == "compiler_fault" and stop["halt_reasons"] == [kind]
     assert [t["status"] for t in r.json()["pipeline_trace"] if t.get("agent") == "Action Compiler"] == ["FAULT"]
+
+
+# --- the physical gate is applied before the Router model is asked ---------------------------------------------------------
+
+@pytest.mark.parametrize("over", [{"battery": 3}, {"battery": 4.99}, {"hp": 0}])
+def test_the_physical_gate_stops_the_vehicle_without_asking_any_model(world, over):
+    r = post(world, **over)
+    fa = stop_of(r)
+    assert "GATE" in fa["halt_reasons"] and fa["reason"] == "GATE"
+    assert world.sdk.requests == 0 and world.model_lookup.call_count == 0 and world.ask.call_count == 0
+    d = r.json()["router_decision"]
+    assert d["model_called"] is False and d["gate_skipped_model"] is True and d["prediction"] is None and d["action"]["motion"] == "HALT"
+    assert [t["status"] for t in r.json()["pipeline_trace"] if t.get("agent") in ("Safety", "Action Compiler")] == ["SHORT_CIRCUIT", "SHORT_CIRCUIT"]
+
+
+def test_just_above_the_gate_the_model_is_still_asked(world):
+    post(world, battery=5, hp=1)
+    assert world.model_lookup.call_count == 1 and world.sdk.requests == 1
+
+
+@pytest.mark.parametrize("tele", [{"hp": 0}, {"battery": 3}, {"hp": 0, "battery": 3, "temperature_c": 70, "distance_cm": 10}, {"battery": 3, "velocity_ms": 3.0}])
+@pytest.mark.parametrize("note", [None, "Shift change at 3 pm."])
+def test_the_gate_path_gives_the_same_action_as_the_model_first_path_when_the_model_adds_nothing(tele, note):
+    from embodied_brain.extended import _decision_without_model
+    from router_v2 import decide
+    from router_v2.pipeline import ModelReply
+    rec = {"distance_cm": 400, "velocity_ms": 1.0, "hp": 80, "battery_pct": 60, "temperature_c": 35, **tele}
+    reply = json.dumps({"primary": "NORMAL_NAV", "note_status": None if note is None else "IRRELEVANT"})
+    old = decide(rec, note, lambda s, u: ModelReply(content=reply, finish_reason="stop"))["executed"]["action"]
+    new = _decision_without_model(rec, note)["executed"]["action"]
+    assert new == old
+
+
+def test_when_the_model_would_have_added_a_risk_the_motion_and_the_gate_reason_are_the_same_and_only_that_reason_is_missing():
+    from embodied_brain.extended import _decision_without_model
+    from router_v2 import decide
+    from router_v2.pipeline import ModelReply
+    rec = {"distance_cm": 400, "velocity_ms": 1.0, "hp": 80, "battery_pct": 3, "temperature_c": 35}
+    note = "A worker is standing ahead."
+    old = decide(rec, note, lambda s, u: ModelReply(content='{"primary":"CRITICAL_OBSTACLE","note_status":"AFFIRMED_CURRENT"}', finish_reason="stop"))["executed"]["action"]
+    new = _decision_without_model(rec, note)["executed"]["action"]
+    assert old["motion"] == new["motion"] == "HALT" and "GATE" in old["halt_reasons"] and "GATE" in new["halt_reasons"]
+    assert "CRITICAL_OBSTACLE" in old["halt_reasons"] and "CRITICAL_OBSTACLE" not in new["halt_reasons"]
