@@ -5,7 +5,7 @@ import json
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("run_receipt", ROOT / "eval/run_receipt.py")
+spec = importlib.util.spec_from_file_location("run_receipt", ROOT / "eval/provenance/run_receipt.py")
 RR = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(RR)
 

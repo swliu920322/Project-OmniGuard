@@ -14,7 +14,7 @@
 | 谁做的、哪个模型？ | [ANNOTATOR_PROVENANCE.md](ANNOTATOR_PROVENANCE.md) | 两轮每个环节的执行方，以及每条说法的依据有多硬 |
 | 我怎么自己验证？ | [REPRODUCE.md](REPRODUCE.md) | 三级复现；第一级免费、离线，现在就能做 |
 | 错在哪里？打分链路对不对？ | [SLICE_REPORT.md](experiments/note_vs_rules_v2/slices/SLICE_REPORT.md)、[CONTROL_CHECK.md](experiments/note_vs_rules_v2/controls/CONTROL_CHECK.md) | 按状态、语言、家族切开；完美、反向、打乱标签三种对照；各自怎么重新生成见 [slices/](experiments/note_vs_rules_v2/slices/README.md)、[controls/](experiments/note_vs_rules_v2/controls/README.md) |
-| 每次真实运行是怎么控制的？ | [RUN_RECEIPTS.md](RUN_RECEIPTS.md) | 数据、版本、模型、预算、授权、回滚点，没记录的写"未记录" |
+| 每次真实运行是怎么控制的？ | [RUN_RECEIPTS.md](provenance/RUN_RECEIPTS.md) | 数据、版本、模型、预算、授权、回滚点，没记录的写"未记录" |
 | Safety 和 Compiler 测过吗？ | [safety_compiler/README.md](safety_compiler/README.md) | 一次 84 条的真实可用性运行；不是安全性评测 |
 | 我是新人，想先读懂项目 | [新人导读](../docs/guide/README.md) | 从一辆小车的一次决定读起，再看代码地图 |
 | 过程是怎么走过来的？ | [archive/](archive/README.md)、[第二轮过程记录](experiments/note_vs_rules_v2/process/README.md) | 交接日志和设计稿，记录过程，不是结论 |
@@ -77,8 +77,6 @@ eval/
 ├── EVIDENCE_INDEX.md         结论到证据的索引、执行台账、验收状态
 ├── LIMITATIONS.md            已知局限与不能声称的结论
 ├── ANNOTATOR_PROVENANCE.md   谁做的、哪个模型、依据有多硬
-├── RUN_RECEIPTS.md           每次真实运行的一页回执（由 run_receipt.py 生成）
-├── ACTION_CONTRACT_COVERAGE.md 代码层能挡住哪几类坏输出（由 action_contract_coverage.py 生成）
 ├── LATENCY_EVIDENCE.md       延迟计时边界、真实请求与仿真设定
 ├── LATENCY_COST.md           延迟／费用统计口径与缺失字段
 ├── REPRODUCE.md              分级复现方法
@@ -91,8 +89,8 @@ eval/
 ├── baseline_b/              新任务固定提示词、评分器、开发运行与故障诊断
 ├── formal/                  正式运行入口、代码冻结与公开聚合结果
 ├── experiments/             第二轮（备注理解）的计划、结果、切片与对照；process/ 是过程记录
-├── provenance/              来源审计：会话元数据摘录与审计索引
-├── safety_compiler/         Safety 与 Compiler 的运行器和运行记录
+├── provenance/              来源审计：会话元数据摘录、每次真实运行的一页回执（RUN_RECEIPTS.md）、审计索引
+├── safety_compiler/         Safety 与 Compiler 的运行器和运行记录，以及代码层能挡住哪几类坏输出（ACTION_CONTRACT_COVERAGE.md）
 ├── archive/                 过程记录：设计稿、事实核对
 └── reproduction_logs/       外部 AI 的离线复现预演记录
 ```

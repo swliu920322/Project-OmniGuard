@@ -66,7 +66,7 @@ All paths are under `experiments/note_vs_rules_v2/`. The numbers live in two pla
 | Rule set R3 (the main comparison), same records | 77/180 (42.78 %) | same files |
 | Difference and its uncertainty | 53.33 points, family-bootstrap 95 % interval [43.33, 63.33]; paired 75 both right, 98 model only, 2 R3 only, 5 both wrong | `note_compare.json`; the family interval says nothing about how representative synthetic data is |
 | What the data is | 180 records, 60 families of three language variants, six note statuses of 30 each; inputs frozen before the run | `evidence/data/test_set.jsonl`, hash in `V2_FREEZE.json` and [RESULTS.md](experiments/note_vs_rules_v2/RESULTS.md) |
-| How the run was controlled | 2 health requests and 180 main requests, no retries, about US$0.11 at the conservative rates (an estimate, not a bill) | [RUN_RECEIPTS.md](RUN_RECEIPTS.md), `evidence/runs/` |
+| How the run was controlled | 2 health requests and 180 main requests, no retries, about US$0.11 at the conservative rates (an estimate, not a bill) | [RUN_RECEIPTS.md](provenance/RUN_RECEIPTS.md), `evidence/runs/` |
 | Who wrote and who labelled | author a Gemini session; blind labelling and review GPT-family sessions; AI labels, not expert truth | [ANNOTATOR_PROVENANCE.md](ANNOTATOR_PROVENANCE.md) |
 | Where each system is wrong | by status, language, note-only stop risk and family | [SLICE_REPORT.md](experiments/note_vs_rules_v2/slices/SLICE_REPORT.md) |
 | The scoring chain itself works | perfect, inverted, constant and shuffled answers behave as they must | [CONTROL_CHECK.md](experiments/note_vs_rules_v2/controls/CONTROL_CHECK.md) |
@@ -119,9 +119,9 @@ None of this changes a published number or calls a model; each file says how to 
 | Session metadata behind that table | [provenance/SESSION_META.md](provenance/SESSION_META.md), [provenance/README.md](provenance/README.md) | Model strings, effort settings, time ranges and which session issued which commit; raw exports are kept outside the repository |
 | Round-2 results cut by status, language, family | [slices/SLICE_REPORT.md](experiments/note_vs_rules_v2/slices/SLICE_REPORT.md) | Where the model and R3 are wrong; not a new result |
 | Scoring-chain controls | [controls/CONTROL_CHECK.md](experiments/note_vs_rules_v2/controls/CONTROL_CHECK.md) | Perfect, inverted, constant and shuffled answers through the project's own scorer; chance level 16.7% |
-| One page per real run | [RUN_RECEIPTS.md](RUN_RECEIPTS.md) | What each run recorded; missing items are shown as not recorded |
+| One page per real run | [RUN_RECEIPTS.md](provenance/RUN_RECEIPTS.md) | What each run recorded; missing items are shown as not recorded |
 | Safety and Compiler: one real availability run (2026-11-21) | [safety_compiler/README.md](safety_compiler/README.md), [LIMITATIONS.md](LIMITATIONS.md) item 26 | 84 records, 168 requests through the real extended flow with the Router replayed from sealed replies; all usable, none blocked, no empty reply; latency and use; not a safety evaluation |
-| Code-layer action contract | [ACTION_CONTRACT_COVERAGE.md](ACTION_CONTRACT_COVERAGE.md) | Which bad Compiler outputs `validate_actions` stops, one example each; offline, no model |
+| Code-layer action contract | [ACTION_CONTRACT_COVERAGE.md](safety_compiler/ACTION_CONTRACT_COVERAGE.md) | Which bad Compiler outputs `validate_actions` stops, one example each; offline, no model |
 | Designs (the bounded-retry one was implemented the same day, see LIMITATIONS item 24) | [DESIGN_CANARY_UNKNOWN.md](archive/designs/DESIGN_CANARY_UNKNOWN.md), [DESIGN_SAFETY_COMPILER_EVAL.md](archive/designs/DESIGN_SAFETY_COMPILER_EVAL.md), [DESIGN_BOUNDED_RETRY.md](archive/designs/DESIGN_BOUNDED_RETRY.md) | Control cases and a "don't know" place; evaluating Safety and Compiler; bounded retries for their calls |
 
 ## Code and tests

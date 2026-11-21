@@ -4,14 +4,14 @@ The Compiler is a model and can write anything; validate_actions is the code tha
 action contract before anything leaves the endpoint. This lists the categories with an example each and what the code says, so the coverage can be read,
 and so a category that stops being caught shows up as a failing test. It says nothing about how often a real model writes any of these.
 
-    python3 -I eval/action_contract_coverage.py        # writes eval/ACTION_CONTRACT_COVERAGE.md
+    python3 -I eval/safety_compiler/action_contract_coverage.py        # writes eval/safety_compiler/ACTION_CONTRACT_COVERAGE.md
 """
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src/cloud-orchestrator"))
 from router_v2.pipeline import DEFAULT_ALLOWED_ACTIONS, validate_actions  # noqa: E402
 
@@ -75,7 +75,7 @@ def render(rows):
 
 def main(argv=None):
     rows = run()
-    out = Path(argv[0]) if argv else ROOT / "eval/ACTION_CONTRACT_COVERAGE.md"
+    out = Path(argv[0]) if argv else Path(__file__).resolve().parent / "ACTION_CONTRACT_COVERAGE.md"
     out.write_text(render(rows), encoding="utf-8")
     bad = [r["category"] for r in rows if not r["ok"]]
     print("written", out, "| categories not behaving as expected:", bad or "none")

@@ -103,7 +103,7 @@
 - **做了什么（P）：** 授权上限（182 次、40 万 token、0.20 美元）、不重试、健康检查在前、封存运行目录。
 - **文章规则（F）：** 留痕、变更回执（Harness）；没有停止条件不是自主是失控（第一性原理）。
 - **缺口：** **G8** 回执没有统一模板。
-- **补法：** 写一页汇总，核对各次运行各项是否齐全。**已做**（2026-11-21）：`eval/run_receipt.py`、`eval/RUN_RECEIPTS.md`、`tests/test_run_receipt.py`。
+- **补法：** 写一页汇总，核对各次运行各项是否齐全。**已做**（2026-11-21）：`eval/provenance/run_receipt.py`、`eval/provenance/RUN_RECEIPTS.md`、`tests/test_run_receipt.py`。
 
 ### 第 7 关：分数怎么算，错在哪？（计分与复算）
 - **会被问：** 数字谁算的？错的几条是什么原因？

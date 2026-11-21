@@ -3,7 +3,7 @@ import importlib.util
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("action_contract_coverage", ROOT / "eval/action_contract_coverage.py")
+spec = importlib.util.spec_from_file_location("action_contract_coverage", ROOT / "eval/safety_compiler/action_contract_coverage.py")
 A = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(A)
 

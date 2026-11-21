@@ -5,7 +5,7 @@ and lists ten items: what ran, how it ended, data, rule and prompt versions, mod
 what was used, authorisation, rollback point. An item the files do not record is shown as "not recorded";
 nothing is filled in, and no run directory is changed. The receipt summarises sealed files, it is not new evidence.
 
-    python3 -I eval/run_receipt.py            # writes eval/RUN_RECEIPTS.md
+    python3 -I eval/provenance/run_receipt.py            # writes eval/provenance/RUN_RECEIPTS.md
 """
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ import json
 import sys
 from pathlib import Path
 
-EVAL = Path(__file__).resolve().parent
+EVAL = Path(__file__).resolve().parents[1]
 ROOTS = (EVAL / "formal/results", EVAL / "experiments/note_vs_rules_v2/evidence/runs")
 MISSING = "未记录"
 
@@ -140,7 +140,7 @@ def render(runs):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--out", default=str(EVAL / "RUN_RECEIPTS.md"))
+    ap.add_argument("--out", default=str(Path(__file__).resolve().parent / "RUN_RECEIPTS.md"))
     args = ap.parse_args(argv)
     runs = find_runs()
     if not runs:
