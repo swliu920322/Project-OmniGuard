@@ -40,7 +40,7 @@
 
 - **怎么读**：同一行内横向比较四个系统；不同状态之间每种 30 条，条数相同可以直接比。
 - **说明什么**：哪几种状态上规则或模型失手更多。
-- **不说明什么**：为什么失手。归因见 [CROSS_REVIEW.json](evidence/review/CROSS_REVIEW.json)。每行只有 30 条，且同一情境以三种语言重复出现，差几条不能当稳定差异。
+- **不说明什么**：为什么失手。归因见 [CROSS_REVIEW.json](../evidence/review/CROSS_REVIEW.json)。每行只有 30 条，且同一情境以三种语言重复出现，差几条不能当稳定差异。
 
 ## 3. 按语言
 
@@ -120,7 +120,7 @@
 
 ## 8. 模型的 7 条错分
 
-只列编号、家族、金标与模型预测；题目原文在 [test_set.jsonl](evidence/data/test_set.jsonl)，公开。
+只列编号、家族、金标与模型预测；题目原文在 [test_set.jsonl](../evidence/data/test_set.jsonl)，公开。
 
 
 | 编号 | 家族 | 语言 | 金标 | 模型预测 | 家族现象 |

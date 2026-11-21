@@ -17,7 +17,7 @@
 |---|---|---|---|---|
 | 1 规范 | 什么叫"对" | 对错由规范定义，参考实现是可运行的代码 | 规范逐段起草者未恢复 | 写明即可 |
 | 2 出题 | 会不会偏向模型 | 合成题，由不参与规则开发的作者写 | 标注者家族没有记录（G1） | **已补** |
-| 3 标注 | 金标怎么来 | 盲标度量、复核纠错、裁决定案；AI 标注 | 没有对照组，无法裁决的句子被排除而不是保留（G4）；三方会话原文未入库（G10，已处理，见下） | G4 设计已写（[DESIGN_CANARY_UNKNOWN.md](../../eval/DESIGN_CANARY_UNKNOWN.md)）；其中**打分链路对照已做**（[CONTROL_CHECK.md](../../eval/experiments/note_vs_rules_v2/controls/CONTROL_CHECK.md)），新一轮题的部分不做；G10 **已做**：原文放在私有目录，仓库里是[元数据摘录](../../eval/provenance/SESSION_META.md) |
+| 3 标注 | 金标怎么来 | 盲标度量、复核纠错、裁决定案；AI 标注 | 没有对照组，无法裁决的句子被排除而不是保留（G4）；三方会话原文未入库（G10，已处理，见下） | G4 设计已写（[DESIGN_CANARY_UNKNOWN.md](../../eval/archive/designs/DESIGN_CANARY_UNKNOWN.md)）；其中**打分链路对照已做**（[CONTROL_CHECK.md](../../eval/experiments/note_vs_rules_v2/controls/CONTROL_CHECK.md)），新一轮题的部分不做；G10 **已做**：原文放在私有目录，仓库里是[元数据摘录](../../eval/provenance/SESSION_META.md) |
 | 4 冻结保管 | 怎么防泄题 | 测前哈希承诺，测后可核 | 保管者改过自己用的检查器 | 已披露 |
 | 5 系统设计 | 模型出错谁兜底 | 模型提议，代码保底 | `gate()` 在冻结的 `decide()` 里仍在模型之后（G6） | **G6 已做**：HTTP 流程在请求模型之前先判 gate（`extended.py`，不碰冻结文件，评测测的 `decide()` 没变）；**G7 已实施**（`bounded_agent.py`，假客户端测试加一次 84 条真实运行，见 [LIMITATIONS 第 24、26 条](../../eval/LIMITATIONS.md)） |
 | 6 运行 | 钱和乱调怎么控 | 有授权上限、不重试、先健康检查 | 回执分散在几个文件里；人工干预次数和运行前测试结果没有字段（G8） | **已补**一页汇总 [RUN_RECEIPTS.md](../../eval/RUN_RECEIPTS.md)，缺的字段显示「未记录」 |
@@ -160,7 +160,7 @@
 
 - 陌生人复现和所有者口头验收（作者和 AI 都不能代标）。
 - 实车、真实 HTTP 端到端、制动验证。
-- Safety 和 Compiler 的评测（设计已写：[DESIGN_SAFETY_COMPILER_EVAL.md](../../eval/DESIGN_SAFETY_COMPILER_EVAL.md)，未实施）。
+- Safety 和 Compiler 的评测（设计已写：[DESIGN_SAFETY_COMPILER_EVAL.md](../../eval/archive/designs/DESIGN_SAFETY_COMPILER_EVAL.md)，未实施）。
 - 跨模型、跨架构对照。
 - 专家标注。
 - 独立介质备份（所有者延期）。

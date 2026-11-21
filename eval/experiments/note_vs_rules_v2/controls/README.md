@@ -10,4 +10,4 @@ python3 -I eval/experiments/note_vs_rules_v2/control_check.py
 - 不调用模型，不联网，不修改 `evidence/`；测试核对运行前后输入哈希不变，并用一个"全部判对"和一个"全部判错"的坏打分函数，确认对照会报错。
 - 对照失败说明打分链路或它的输入方式有问题，**与模型好坏无关**。
 - 打乱标签的范围只是读分数的参照，不是显著性检验。
-- 设计来源：[DESIGN_CANARY_UNKNOWN.md](../../../DESIGN_CANARY_UNKNOWN.md) 的 A 部分。B 部分（新一轮题）不做。
+- 设计来源：[DESIGN_CANARY_UNKNOWN.md](../../../archive/designs/DESIGN_CANARY_UNKNOWN.md) 的 A 部分。B 部分（新一轮题）不做。

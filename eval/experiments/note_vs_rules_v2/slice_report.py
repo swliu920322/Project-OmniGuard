@@ -165,7 +165,7 @@ def render(rows, families, inputs, problems):
     w("\n" + table(status, STATUS_ORDER, "金标状态") + "\n")
     w("- **怎么读**：同一行内横向比较四个系统；不同状态之间每种 30 条，条数相同可以直接比。")
     w("- **说明什么**：哪几种状态上规则或模型失手更多。")
-    w("- **不说明什么**：为什么失手。归因见 [CROSS_REVIEW.json](evidence/review/CROSS_REVIEW.json)。每行只有 30 条，且同一情境以三种语言重复出现，差几条不能当稳定差异。\n")
+    w("- **不说明什么**：为什么失手。归因见 [CROSS_REVIEW.json](../evidence/review/CROSS_REVIEW.json)。每行只有 30 条，且同一情境以三种语言重复出现，差几条不能当稳定差异。\n")
     w("## 3. 按语言\n")
     w("- **为什么看**：规则靠词表，语言可能是弱点。")
     w("- **是什么**：中文、英文、混合各 60 条。")
@@ -196,7 +196,7 @@ def render(rows, families, inputs, problems):
     w("\n- **说明什么**：错误是分散在很多家族，还是集中在少数家族。")
     w("- **不说明什么**：家族是作者自己声明的语义分组，没有证明它们在统计上独立。\n")
     w(f"## 8. 模型的 {len(errs)} 条错分\n")
-    w("只列编号、家族、金标与模型预测；题目原文在 [test_set.jsonl](evidence/data/test_set.jsonl)，公开。\n")
+    w("只列编号、家族、金标与模型预测；题目原文在 [test_set.jsonl](../evidence/data/test_set.jsonl)，公开。\n")
     w("\n| 编号 | 家族 | 语言 | 金标 | 模型预测 | 家族现象 |\n|---|---|---|---|---|---|")
     for e in errs:
         w(f"| {e['id']} | {e['family']} | {e['language']} | {e['gold']} | {e['model']} | {e['phenomenon']} |")

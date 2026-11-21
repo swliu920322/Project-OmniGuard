@@ -41,4 +41,4 @@ Date 2026-11-09. Scope of this commit series: P0 and P1 of [PLAN.md](PLAN.md). O
 
 ## 5. Status at the end of P1
 
-Done offline: R3 (draft + 2 logged revisions, frozen as the candidate), development evaluation, the wrapper `run_note_compare.py` with `plan`, `check-data`, `freeze`, `run`, `check-health`, `analyze`, the note-first analysis, 42 targeted tests, the author brief and the custodian guide, `V2_FREEZE.json` (scheme commitment). Not done by design: the independent test (P2), a price check, any budget, any model call. See [HANDOFF_TO_GPT.md](HANDOFF_TO_GPT.md).
+Done offline: R3 (draft + 2 logged revisions, frozen as the candidate), development evaluation, the wrapper `run_note_compare.py` with `plan`, `check-data`, `freeze`, `run`, `check-health`, `analyze`, the note-first analysis, 42 targeted tests, the author brief and the custodian guide, `V2_FREEZE.json` (scheme commitment). Not done by design: the independent test (P2), a price check, any budget, any model call. See [HANDOFF_TO_GPT.md](process/HANDOFF_TO_GPT.md).

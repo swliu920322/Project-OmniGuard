@@ -1,6 +1,6 @@
 # Safety 和 Compiler 的运行
 
-对应设计：[DESIGN_SAFETY_COMPILER_EVAL.md](../DESIGN_SAFETY_COMPILER_EVAL.md)。运行器：[run_safety_compiler.py](run_safety_compiler.py)。
+对应设计：[DESIGN_SAFETY_COMPILER_EVAL.md](../archive/designs/DESIGN_SAFETY_COMPILER_EVAL.md)。运行器：[run_safety_compiler.py](run_safety_compiler.py)。
 
 **状态（2026-11-21）：已完成一次真实运行。** 代码：标签 `eval-safety-compiler-v1`（实际运行的 6 个文件与该提交逐个哈希相同）。
 

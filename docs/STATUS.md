@@ -67,7 +67,7 @@ Dates are commit dates in the Git history.
 | 2026-11-09 to 11-11 | Rule set R3 developed and frozen |
 | 2026-11-15 to 11-16 | Evaluation round 2: blind labelling, audits, frozen set, one authorised run, cross-check, evidence published |
 
-For the full ordering of round 2, including commit times, read the dated log in `eval/experiments/note_vs_rules_v2/HANDOFF_TO_GPT.md`.
+For the full ordering of round 2, including commit times, read the dated log in `eval/experiments/note_vs_rules_v2/process/HANDOFF_TO_GPT.md`.
 
 ## Where to read next
 

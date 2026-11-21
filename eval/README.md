@@ -159,7 +159,7 @@ eval/
 
 ## 修改与引用规则
 
-下一轮计划：[备注理解：规则与模型对照](experiments/note_vs_rules_v2/PLAN.md)，[Claude 执行提示词](experiments/note_vs_rules_v2/HANDOFF_TO_CLAUDE.md)。当前只是计划，不影响第一轮冻结结果，不代表已授权付费调用。
+下一轮计划：[备注理解：规则与模型对照](experiments/note_vs_rules_v2/PLAN.md)，[Claude 执行提示词](experiments/note_vs_rules_v2/process/HANDOFF_TO_CLAUDE.md)。当前只是计划，不影响第一轮冻结结果，不代表已授权付费调用。
 
 - 学习和面试内容放 `interview/`；结果、局限与证据导航留在根目录。
 - 冻结规范、数据承诺、运行器与原始运行目录保持原位，不为整理文件夹修改其内容或重新生成哈希。

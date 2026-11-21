@@ -1,7 +1,7 @@
 """Safety and Compiler on the round-2 records, through the real extended flow (embodied_brain.extended.simulate_extended).
 
 The Router is replayed from the sealed round-2 replies (no new Router request); Safety and Compiler are the real code path (bounded_agent.py, one
-request each, retries off), with every request counted against hard caps before it is sent. Plan: eval/DESIGN_SAFETY_COMPILER_EVAL.md.
+request each, retries off), with every request counted against hard caps before it is sent. Plan: eval/archive/designs/DESIGN_SAFETY_COMPILER_EVAL.md.
 
     plan      offline: which records reach Safety, and the worst-case reservation against the authorised caps
     dry-run   the whole flow with a scripted fake client; writes a sealed run directory; no network, no key

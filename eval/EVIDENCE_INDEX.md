@@ -103,7 +103,7 @@ None of this changes a published number or calls a model; each file says how to 
 | One page per real run | [RUN_RECEIPTS.md](RUN_RECEIPTS.md) | What each run recorded; missing items are shown as not recorded |
 | Safety and Compiler: one real availability run (2026-11-21) | [safety_compiler/README.md](safety_compiler/README.md), [LIMITATIONS.md](LIMITATIONS.md) item 26 | 84 records, 168 requests through the real extended flow with the Router replayed from sealed replies; all usable, none blocked, no empty reply; latency and use; not a safety evaluation |
 | Code-layer action contract | [ACTION_CONTRACT_COVERAGE.md](ACTION_CONTRACT_COVERAGE.md) | Which bad Compiler outputs `validate_actions` stops, one example each; offline, no model |
-| Designs (the bounded-retry one was implemented the same day, see LIMITATIONS item 24) | [DESIGN_CANARY_UNKNOWN.md](DESIGN_CANARY_UNKNOWN.md), [DESIGN_SAFETY_COMPILER_EVAL.md](DESIGN_SAFETY_COMPILER_EVAL.md), [DESIGN_BOUNDED_RETRY.md](DESIGN_BOUNDED_RETRY.md) | Control cases and a "don't know" place; evaluating Safety and Compiler; bounded retries for their calls |
+| Designs (the bounded-retry one was implemented the same day, see LIMITATIONS item 24) | [DESIGN_CANARY_UNKNOWN.md](archive/designs/DESIGN_CANARY_UNKNOWN.md), [DESIGN_SAFETY_COMPILER_EVAL.md](archive/designs/DESIGN_SAFETY_COMPILER_EVAL.md), [DESIGN_BOUNDED_RETRY.md](archive/designs/DESIGN_BOUNDED_RETRY.md) | Control cases and a "don't know" place; evaluating Safety and Compiler; bounded retries for their calls |
 
 ## Code and tests
 
