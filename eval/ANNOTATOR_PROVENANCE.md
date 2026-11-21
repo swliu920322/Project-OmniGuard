@@ -8,7 +8,7 @@
 |---|---|
 | R | 仓库证据：能指到文件、哈希或提交，并已在仓库内重算或核对 |
 | S | 该会话读取自己的记录后的自述；所有者尚未亲自打开原始记录核对 |
-| M | 所有者亲自在原始会话记录里核对过 |
+| M | 会话元数据：所有者亲自在原始会话记录里核对过，或由只读脚本在导出的原始文件上抽取（结果见 [provenance/SESSION_META.md](provenance/SESSION_META.md)） |
 | O | 所有者陈述，没有文件支撑 |
 | U | 未知 |
 
@@ -20,10 +20,10 @@
 
 | 代号 | 模型家族 | 型号与档位 | 依据 |
 |---|---|---|---|
-| Gemini 作者会话 | Gemini | `gemini-3.8-flash-high`；会话内设置 2026-11-07 12:37 选 Medium，2026-11-09 04:03 改为 High | M（所有者核对 transcript）；S |
-| GPT 家族会话（第一轮 3 个子会话、第二轮 4 个盲标子会话） | GPT | 七个文件内都有两类 `model` 字段，并列记录、不互相覆盖：`session_meta` 的 `base_instructions.provenance.model` 为 `gpt-6-astra`（文件第一行，所有者 grep 命中的就是它）；`turn_context` 与 `thread_settings` 等运行配置里的 `model` 为 `gpt-6.1-sol`；`effort` 均为 `medium`。所有者确认使用的是 `gpt-6.1-sol` medium | M（所有者 grep 原文件）；S（GPT 主会话逐字段读取后解释）；O。`gpt-6-astra` 的含义 U，不断言发生过切换 |
-| GPT 主会话 | GPT | 所有者确认 `gpt-6.1-sol` medium；未对主会话文件做同样的 grep | O |
-| Claude 实施会话 | Claude | `claude-sonnet-5-5`（该会话记录 11-05 至 11-21 均如此）；推理档位 medium 仅见到一处无法定位的片段 | S；O（所有者称一直使用 medium） |
+| Gemini 作者会话 | Gemini | `gemini-3.8-flash-high`；会话内设置 2026-11-07 12:37 选 Medium，2026-11-09 04:03 改为 High | M（所有者核对 transcript；脚本在导出文件上抽取：391 条带 `model` 字段的记录均为该值，时间 2026-11-07 至 2026-11-21）；S |
+| GPT 家族会话（第一轮 3 个子会话、第二轮 4 个盲标子会话） | GPT | 七个文件内都有两类 `model` 字段，并列记录、不互相覆盖：`session_meta` 的 `base_instructions.provenance.model` 为 `gpt-6-astra`（文件第一行，所有者 grep 命中的就是它）；`turn_context` 与 `thread_settings` 等运行配置里的 `model` 为 `gpt-6.1-sol`；`effort` 均为 `medium`。所有者确认使用的是 `gpt-6.1-sol` medium | M（所有者 grep 原文件；脚本在七个导出文件上抽取，`turn_context.model` 均为 `gpt-6.1-sol`、`effort` 均为 `medium`）；S（GPT 主会话逐字段解释）。`gpt-6-astra` 的含义 U，不断言发生过切换 |
+| GPT 主会话 | GPT | `gpt-6.1-sol`；`turn_context.effort`：medium×160、high×8。所有者称一直使用 medium，文件里有 8 次 high，**以文件为准** | M（脚本在导出文件上抽取） |
+| Claude 实施会话 | Claude | `claude-sonnet-5-5`，`effort` 为 medium（主会话文件中 2437 条助手消息均如此）；另一个 Claude 会话（学习站点）有 89 条 `claude-fable-5-2`，与评测无关 | M（脚本在导出文件上抽取）；S；O |
 | 被测服务 | DeepSeek | 请求名与返回别名均为 `deepseek-flash` | R（`RESULTS.md`）；底层版本未验证 |
 
 GPT 子会话（文件均在 `~/.codex/sessions/` 下，创建时间取文件内 `session_meta`）：
@@ -52,6 +52,8 @@ GPT 子会话（文件均在 `~/.codex/sessions/` 下，创建时间取文件内
 
 **第一轮的作者、盲标、复核、裁决、保管都来自 GPT 家族**（分属不同会话）。这一轮只有规范实现和规则开发来自别的家族。盲标和复核的"一致"因此不能当作跨家族的独立佐证。
 
+会话元数据核对（[SESSION_META.md](provenance/SESSION_META.md)）：规范提交 `6858b1f`、`1b6e09c`、`2ac27c6` 和 `router_v2` 初版提交 `01d4ce4` 都匹配到 Claude 会话发起的 `git commit` 调用（相差 0 至 28 秒），支持"规范实现与规则开发来自 Claude"。
+
 ## 第二轮（180 条备注理解测试）
 
 | 环节 | 执行方 | 依据 |
@@ -60,10 +62,10 @@ GPT 子会话（文件均在 `~/.codex/sessions/` 下，创建时间取文件内
 | 盲标（4 批） | GPT 子会话 | S。Gemini 自述没做过 |
 | 全量复核与增量复核 | GPT 子会话，在放行标签后 | S。Gemini 自述没做过 |
 | 争议裁决、保管、终审、运行 | GPT 主会话 | S；终审文件 R（`evidence/data/FINAL_REVIEW.json`） |
-| 流程审核与交接文档提交 | **两个会话分担。** Gemini 会话自述执行了 5 个提交：`a6ba4aa`（15:12）、`494c9c4`（15:35）、`e40a8e5`（17:00）、`ee853c0`（17:50）、`887f606`（18:07），均为本地时间 +08:00，说明与时间已在 git 中核对；其余 2026-11-15 的文档提交（如 `b6d6413`、`0512192`、`a65eb62`）由谁提交 U | R（提交存在）；执行方 S |
-| 辅助检查器 `eval/annotation/validate_rationales.py` 初版 | Claude 会话（自述写入记录 10:45:33，提交 `98403f7` 在 18:47:16 本地，时间吻合） | S；提交 R |
-| 辅助检查器加固版（提交 `1a702a2`，19:44 本地） | Claude 会话执行了提交，自述不是它写的；Gemini、所有者均称不是自己。**GPT 主会话自述在 2026-11-15 11:00:25Z 写入测试文件、11:01:26Z 读取并替换后写回检查器，并追加测试，用的是 `exec` 内的 Python `write_text`**（主会话文件第 6859、6870 行）。这些编辑发生在初版提交（10:47:15Z）之后、加固版提交（11:44:15Z）之前，**最可能就是加固版的内容，由 Claude 会话提交**；但提交时间不等于编辑时间，没有逐行比对 | S；归属为推断 |
-| 规则 R3 | 提交 `1ec769a`、`dbb6b90`、`d5e20ec`（2026-11-09），署名 Claude；Claude 会话是否写了它未逐一核对 | R（提交）；作者 U |
+| 流程审核与交接文档提交 | **两个会话分担。** Gemini 会话执行了 5 个提交：`a6ba4aa`（15:12）、`494c9c4`（15:35）、`e40a8e5`（17:00）、`ee853c0`（17:50）、`887f606`（18:07），均为本地时间 +08:00；脚本在它的会话里找到对应的 `git commit` 调用，与 git 提交时间相差 4 至 16 秒。`887f606` 同时匹配到一个 Claude 会话的调用（相差 23 秒），Gemini 的更近（4 秒），两者都列出，不替你选。`b6d6413`、`a65eb62` 等其他核对过的提交匹配到 Claude 会话 | M（会话元数据与 git 时间）；执行方的最终归属为推断 |
+| 辅助检查器 `eval/annotation/validate_rationales.py` 初版 | Claude 会话：写入类工具调用 10:45:33Z 与 10:46:07Z，提交调用 10:47:15Z，git 提交 10:47:16Z；Gemini 没有任何对该文件的写入类调用 | M |
+| 辅助检查器加固版（提交 `1a702a2`，19:44 本地） | Claude 会话在 11:44:13Z 发起了提交（M），自述不是它写的；Gemini、所有者均称不是自己。GPT 主会话的命令在 **11:00:25Z、11:01:26Z** 提到该文件及其测试（M），与 GPT 自述的两次编辑时间一致；那是 `exec` 里的命令，工具没有把它分类为写入，所以是"命令里提到"，不是写入的直接证明。这些时间落在初版提交与加固版提交之间，**最可能就是加固版的内容，由 Claude 会话提交**，没有逐行比对 | 提交归属 M；内容归属为推断 |
+| 规则 R3 | 提交 `1ec769a`、`dbb6b90`、`d5e20ec`（2026-11-09）由 Claude 会话发起（M，调用与提交相差 0、2、2 秒）；Claude 会话对 `r3.py` 的操作是命令（23 次提到），不是写入类工具，内容的逐项核对未做 | 提交归属 M；内容 U |
 | 测后复算 | Claude 会话先复算（输入为私有的 revision3 文件与运行记录，运行结束后读取，脚本 `p5_recompute.py`，提交 `4a41818`），GPT 主会话随后交叉核对 | S；提交与文件 R |
 
 **第二轮的作者（Gemini）与标注、复核、裁决方（GPT）不是同一家族。** 这是流程上的差异，不是准确率的提升。
@@ -96,15 +98,15 @@ GPT 子会话（文件均在 `~/.codex/sessions/` 下，创建时间取文件内
 
 ## 尚未解决
 
-1. `gpt-6-astra` 字段的含义；所有者尚未对 GPT 主会话文件做同样的核对。
-2. `1a702a2` 校验器加固版：归属为 GPT 主会话的可能性很大，但未逐行比对。无论归属，保管者参与修改了自己用来验收的检查器，需要如实写出。
+1. `gpt-6-astra` 字段的含义：它在每个 GPT 文件的 `session_meta` 里，`turn_context` 里是 `gpt-6.1-sol`；两者关系 U。
+2. `1a702a2` 校验器加固版：提交归属（Claude 会话）与 GPT 的命令时间已核对，**内容归属**仍是推断，没有逐行比对。无论归属，保管者参与修改了自己用来验收的检查器，需要如实写出。
 2a. 第一轮开发材料盲标与复核者是 `/root/blind_annotation`，属 GPT 家族；它后来读过测试候选和语义重合审计材料，复核阶段的接触范围未逐文件核对。
 3. `src/cloud-orchestrator/router_v2/{rules,pipeline,prompt}.py`：Claude 会话更正自述，称初版由它在 2026-11-07 09:38:31Z 用一条 Bash 命令生成（`rules.py` 由它写的 `eval/spec/reference_labeler.py` 复制而来，`prompt.py` 以 `eval/baseline_b/prompt_b.py` 为底改写，同时写入 `pipeline.py`），提交 `01d4ce4` 在 09:41:50Z，时间吻合。之后它又多次用 Python 字符串替换修改，是否全部落入冻结版未逐条核对。`rules.py` 与 `eval/spec/reference_labeler.py` 是字节相同的副本，这一点已在 `router_v2/README.md` 披露，并有测试比对哈希；`LABEL_SPEC.md` 说明参考标注器在纯遥测记录上生成金标，因此按构造得 100%，只是上限检查。
 4. 规则 R3 与 `run_note_compare.py` 的作者，Claude 会话未逐一核对。
-5. 其余 2026-11-15 文档提交由哪个会话执行。Claude 会话给出的 39 条提交清单只是 git 日志，不是它自己发起的提交；Gemini 的 5 个提交时间与 git 相差 4–10 秒，Claude 的 `98403f7` 相差 1 秒，均吻合。需要用各会话工具调用的时间戳逐条归属。
+5. 其余 2026-11-15 文档提交的归属：`SESSION_META.md` 第 3 节已按调用时间列出每个提交匹配的会话；多个会话同时匹配的提交（如 `887f606`）需要人工裁定，没有匹配到的由其他窗口或你本人发起。
 6. Claude 会话"测前是否读过第二轮私有内容"：只能说"没搜到"，不能说"没读过"。它 11-15 05:29 对 `~/.omniguard_custody` 做过 `ls`、`shasum`、`find`，其中没有读内容的命令，但输出未逐字核对。
 7. 主会话向盲标子会话透露作者身份的可能性（加密正文）。
-8. Claude 的推理档位、Gemini 端和 Claude 端会话的原始导出未纳入仓库；GPT、Gemini、Claude 三方自述报告也尚未归档。
+8. 三方会话原文已在私有目录 `~/.omniguard_custody/provenance_exports/` 复制并算了哈希（不进仓库；其中 Claude 的两个文件、GPT 的两个文件含疑似密钥的匹配行）；仓库里只有 [provenance/SESSION_META.md](provenance/SESSION_META.md) 的元数据摘录。三方自述报告的索引在 `provenance/README.md`。Claude 本会话文件仍在增长，摘录是快照。
 9. 规范逐段起草者；备份介质的物理独立性（按所有者决定延期）。
 
 ## 对结论的影响

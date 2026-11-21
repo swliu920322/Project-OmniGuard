@@ -1,0 +1,2219 @@
+{
+  "commit_matches": {
+    "01d4ce4": [
+      {
+        "call_at": "2026-11-07T09:41:47Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 3,
+        "tool": "claude"
+      }
+    ],
+    "0251bd5": [
+      {
+        "call_at": "2026-11-11T08:56:49Z",
+        "file": "transcript.jsonl",
+        "gap_s": 26,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T08:56:54Z",
+        "file": "transcript.jsonl",
+        "gap_s": 21,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T08:56:49Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 26,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T08:56:54Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 21,
+        "tool": "antigravity"
+      }
+    ],
+    "02c5653": [
+      {
+        "call_at": "2026-11-15T03:31:37Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "0512192": [
+      {
+        "call_at": "2026-11-15T08:38:25Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 22,
+        "tool": "claude"
+      }
+    ],
+    "0569eae": [
+      {
+        "call_at": "2026-11-21T13:03:40Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 21,
+        "tool": "claude"
+      }
+    ],
+    "16e4b6c": [
+      {
+        "call_at": "2026-11-07T12:51:13Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 43,
+        "tool": "claude"
+      }
+    ],
+    "18528ca": [
+      {
+        "call_at": "2026-11-07T11:00:51Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 1,
+        "tool": "codex"
+      }
+    ],
+    "186049d": [
+      {
+        "call_at": "2026-11-07T11:10:53Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "1a702a2": [
+      {
+        "call_at": "2026-11-15T11:44:13Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "1accbd6": [
+      {
+        "call_at": "2026-11-07T08:01:07Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "1b6106e": [
+      {
+        "call_at": "2026-11-15T15:38:40Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "1b6e09c": [
+      {
+        "call_at": "2026-11-07T06:36:32Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "1ec769a": [
+      {
+        "call_at": "2026-11-09T01:29:53Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "1eddd79": [
+      {
+        "call_at": "2026-11-15T11:49:03Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 41,
+        "tool": "claude"
+      }
+    ],
+    "1fff109": [
+      {
+        "call_at": "2026-11-07T06:53:50Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "2243bee": [
+      {
+        "call_at": "2026-11-07T10:39:23Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 38,
+        "tool": "claude"
+      }
+    ],
+    "22eed2c": [
+      {
+        "call_at": "2026-11-07T10:59:04Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 11,
+        "tool": "codex"
+      },
+      {
+        "call_at": "2026-11-07T10:59:15Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "230c5a3": [
+      {
+        "call_at": "2026-11-15T16:12:25Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "2750930": [
+      {
+        "call_at": "2026-11-10T10:48:54Z",
+        "file": "transcript.jsonl",
+        "gap_s": 24,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:49:08Z",
+        "file": "transcript.jsonl",
+        "gap_s": 10,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:48:54Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 24,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:49:08Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 10,
+        "tool": "antigravity"
+      }
+    ],
+    "28dfaa7": [
+      {
+        "call_at": "2026-11-15T04:19:51Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 20,
+        "tool": "claude"
+      }
+    ],
+    "2ac27c6": [
+      {
+        "call_at": "2026-11-07T06:40:04Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "2bb0b9e": [
+      {
+        "call_at": "2026-11-07T11:08:13Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "2d30b0e": [
+      {
+        "call_at": "2026-11-15T04:10:11Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "3159198": [
+      {
+        "call_at": "2026-11-21T11:36:57Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "31f902e": [
+      {
+        "call_at": "2026-11-21T12:34:18Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "35914f2": [
+      {
+        "call_at": "2026-11-07T06:46:14Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "3895efb": [
+      {
+        "call_at": "2026-11-10T04:29:38Z",
+        "file": "transcript.jsonl",
+        "gap_s": 19,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T04:29:38Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 19,
+        "tool": "antigravity"
+      }
+    ],
+    "3a06ebe": [
+      {
+        "call_at": "2026-11-07T11:02:07Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "3db72fa": [
+      {
+        "call_at": "2026-11-07T12:35:05Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 42,
+        "tool": "claude"
+      }
+    ],
+    "3fbf1ca": [
+      {
+        "call_at": "2026-11-07T11:22:51Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "4386a13": [
+      {
+        "call_at": "2026-11-07T10:56:34Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "43c6aca": [
+      {
+        "call_at": "2026-11-10T10:59:22Z",
+        "file": "transcript.jsonl",
+        "gap_s": 21,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:59:32Z",
+        "file": "transcript.jsonl",
+        "gap_s": 11,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:59:22Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 21,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:59:32Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 11,
+        "tool": "antigravity"
+      }
+    ],
+    "4604b67": [
+      {
+        "call_at": "2026-11-07T12:46:19Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 45,
+        "tool": "claude"
+      }
+    ],
+    "46e19dd": [
+      {
+        "call_at": "2026-11-10T04:23:05Z",
+        "file": "transcript.jsonl",
+        "gap_s": 6,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T04:23:05Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 6,
+        "tool": "antigravity"
+      }
+    ],
+    "494c9c4": [
+      {
+        "call_at": "2026-11-15T07:35:29Z",
+        "file": "transcript.jsonl",
+        "gap_s": 9,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-15T07:35:29Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 9,
+        "tool": "antigravity"
+      }
+    ],
+    "4a41818": [
+      {
+        "call_at": "2026-11-15T15:51:13Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 46,
+        "tool": "claude"
+      }
+    ],
+    "4fb4cde": [
+      {
+        "call_at": "2026-11-07T15:09:47Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 35,
+        "tool": "claude"
+      }
+    ],
+    "509f4be": [
+      {
+        "call_at": "2026-11-07T12:13:40Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "510538a": [
+      {
+        "call_at": "2026-11-15T05:54:30Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 41,
+        "tool": "claude"
+      }
+    ],
+    "5278e51": [
+      {
+        "call_at": "2026-11-06T13:56:39Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "5312610": [
+      {
+        "call_at": "2026-11-15T09:23:25Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 42,
+        "tool": "claude"
+      }
+    ],
+    "53d4b4f": [
+      {
+        "call_at": "2026-11-21T12:07:17Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "567219a": [
+      {
+        "call_at": "2026-11-15T10:35:50Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 42,
+        "tool": "claude"
+      }
+    ],
+    "57211b8": [
+      {
+        "call_at": "2026-11-11T13:10:58Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "5806966": [
+      {
+        "call_at": "2026-11-07T12:44:53Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 37,
+        "tool": "claude"
+      }
+    ],
+    "588231e": [
+      {
+        "call_at": "2026-11-07T04:34:02Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "5e6d121": [
+      {
+        "call_at": "2026-11-07T11:07:08Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 1,
+        "tool": "codex"
+      }
+    ],
+    "6181f27": [
+      {
+        "call_at": "2026-11-07T10:49:10Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 40,
+        "tool": "claude"
+      }
+    ],
+    "63a5ea8": [
+      {
+        "call_at": "2026-11-07T09:37:12Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "6682bdb": [
+      {
+        "call_at": "2026-11-15T03:31:37Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 51,
+        "tool": "claude"
+      },
+      {
+        "call_at": "2026-11-15T03:32:26Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "6858b1f": [
+      {
+        "call_at": "2026-11-07T06:28:25Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 28,
+        "tool": "claude"
+      }
+    ],
+    "6866782": [
+      {
+        "call_at": "2026-11-09T01:38:09Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "691c6ca": [
+      {
+        "call_at": "2026-11-16T05:53:27Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "69b8a07": [
+      {
+        "call_at": "2026-11-15T06:03:33Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 42,
+        "tool": "claude"
+      }
+    ],
+    "6aa7824": [
+      {
+        "call_at": "2026-11-07T10:33:59Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 37,
+        "tool": "claude"
+      }
+    ],
+    "6c0e976": [
+      {
+        "call_at": "2026-11-07T04:39:30Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 3,
+        "tool": "claude"
+      }
+    ],
+    "7196512": [
+      {
+        "call_at": "2026-11-15T09:15:17Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 21,
+        "tool": "claude"
+      }
+    ],
+    "72f8793": [
+      {
+        "call_at": "2026-11-07T11:32:09Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 45,
+        "tool": "claude"
+      }
+    ],
+    "75e8bf4": [
+      {
+        "call_at": "2026-11-15T04:21:18Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "78906f0": [
+      {
+        "call_at": "2026-11-07T05:08:15Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "7c0a751": [
+      {
+        "call_at": "2026-11-15T05:27:06Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "820d2b3": [
+      {
+        "call_at": "2026-11-11T13:40:18Z",
+        "file": "transcript.jsonl",
+        "gap_s": 34,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T13:40:47Z",
+        "file": "transcript.jsonl",
+        "gap_s": 5,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T13:40:18Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 34,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T13:40:47Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 5,
+        "tool": "antigravity"
+      }
+    ],
+    "8476cb8": [
+      {
+        "call_at": "2026-11-15T04:39:18Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 46,
+        "tool": "claude"
+      }
+    ],
+    "879f969": [
+      {
+        "call_at": "2026-11-11T08:39:22Z",
+        "file": "transcript.jsonl",
+        "gap_s": 24,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T08:39:39Z",
+        "file": "transcript.jsonl",
+        "gap_s": 7,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T08:39:22Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 24,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T08:39:39Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 7,
+        "tool": "antigravity"
+      }
+    ],
+    "880d75a": [
+      {
+        "call_at": "2026-11-21T12:45:49Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "887f606": [
+      {
+        "call_at": "2026-11-15T10:07:23Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 23,
+        "tool": "claude"
+      },
+      {
+        "call_at": "2026-11-15T10:07:42Z",
+        "file": "transcript.jsonl",
+        "gap_s": 4,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-15T10:07:42Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 4,
+        "tool": "antigravity"
+      }
+    ],
+    "8c3737f": [
+      {
+        "call_at": "2026-11-15T16:56:05Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "8cbe4d7": [
+      {
+        "call_at": "2026-11-07T07:18:32Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "90e7138": [
+      {
+        "call_at": "2026-11-07T04:26:11Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "9103401": [
+      {
+        "call_at": "2026-11-21T12:48:39Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "98403f7": [
+      {
+        "call_at": "2026-11-15T10:47:15Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "9848ac3": [
+      {
+        "call_at": "2026-11-07T07:50:52Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "993a0b0": [
+      {
+        "call_at": "2026-11-07T07:36:39Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 31,
+        "tool": "claude"
+      }
+    ],
+    "9a7c739": [
+      {
+        "call_at": "2026-11-15T04:50:12Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "9a9e1e4": [
+      {
+        "call_at": "2026-11-10T10:36:20Z",
+        "file": "transcript.jsonl",
+        "gap_s": 15,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:36:28Z",
+        "file": "transcript.jsonl",
+        "gap_s": 7,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:36:20Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 15,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:36:28Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 7,
+        "tool": "antigravity"
+      }
+    ],
+    "9c24661": [
+      {
+        "call_at": "2026-11-15T16:18:02Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "9cdad69": [
+      {
+        "call_at": "2026-11-07T04:56:33Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "a03b415": [
+      {
+        "call_at": "2026-11-16T05:53:27Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "a09fdd5": [
+      {
+        "call_at": "2026-11-07T15:11:59Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 35,
+        "tool": "claude"
+      }
+    ],
+    "a15c870": [
+      {
+        "call_at": "2026-11-07T07:09:45Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "a218eb1": [
+      {
+        "call_at": "2026-11-11T09:07:02Z",
+        "file": "transcript.jsonl",
+        "gap_s": 15,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T09:07:11Z",
+        "file": "transcript.jsonl",
+        "gap_s": 6,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T09:07:02Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 15,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T09:07:11Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 6,
+        "tool": "antigravity"
+      }
+    ],
+    "a35bbb4": [
+      {
+        "call_at": "2026-11-15T04:46:04Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 41,
+        "tool": "claude"
+      }
+    ],
+    "a406d8e": [
+      {
+        "call_at": "2026-11-10T10:25:23Z",
+        "file": "transcript.jsonl",
+        "gap_s": 10,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:25:29Z",
+        "file": "transcript.jsonl",
+        "gap_s": 4,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:25:23Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 10,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:25:29Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 4,
+        "tool": "antigravity"
+      }
+    ],
+    "a58b125": [
+      {
+        "call_at": "2026-11-07T03:31:26Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "a65eb62": [
+      {
+        "call_at": "2026-11-15T11:44:13Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "a6ba4aa": [
+      {
+        "call_at": "2026-11-15T07:11:55Z",
+        "file": "transcript.jsonl",
+        "gap_s": 35,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-15T07:12:23Z",
+        "file": "transcript.jsonl",
+        "gap_s": 7,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-15T07:11:55Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 35,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-15T07:12:23Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 7,
+        "tool": "antigravity"
+      }
+    ],
+    "acfdb5b": [
+      {
+        "call_at": "2026-11-07T07:42:49Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 31,
+        "tool": "claude"
+      }
+    ],
+    "ad8e5f8": [
+      {
+        "call_at": "2026-11-15T09:05:47Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "ae418af": [
+      {
+        "call_at": "2026-11-15T08:21:50Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 21,
+        "tool": "claude"
+      }
+    ],
+    "ae539a6": [
+      {
+        "call_at": "2026-11-07T06:15:19Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 8,
+        "tool": "claude"
+      },
+      {
+        "call_at": "2026-11-07T06:15:27Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "af48d9a": [
+      {
+        "call_at": "2026-11-21T11:46:44Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "b03b8b0": [
+      {
+        "call_at": "2026-11-16T02:29:05Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "b34f0e3": [
+      {
+        "call_at": "2026-11-16T05:53:27Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "b45da92": [
+      {
+        "call_at": "2026-11-11T14:41:12Z",
+        "file": "transcript.jsonl",
+        "gap_s": 26,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T14:41:25Z",
+        "file": "transcript.jsonl",
+        "gap_s": 13,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T14:41:12Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 26,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T14:41:25Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 13,
+        "tool": "antigravity"
+      }
+    ],
+    "b537c67": [
+      {
+        "call_at": "2026-11-15T05:44:47Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 43,
+        "tool": "claude"
+      }
+    ],
+    "b59596a": [
+      {
+        "call_at": "2026-11-07T12:28:22Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "b61ffc5": [
+      {
+        "call_at": "2026-11-08T10:11:25Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "b6d6413": [
+      {
+        "call_at": "2026-11-15T06:23:53Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 42,
+        "tool": "claude"
+      }
+    ],
+    "b8a49cb": [
+      {
+        "call_at": "2026-11-15T10:44:30Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 43,
+        "tool": "claude"
+      },
+      {
+        "call_at": "2026-11-15T10:44:59Z",
+        "file": "transcript.jsonl",
+        "gap_s": 14,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-15T10:44:59Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 14,
+        "tool": "antigravity"
+      }
+    ],
+    "b8d3c59": [
+      {
+        "call_at": "2026-11-15T03:39:55Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "b95bffb": [
+      {
+        "call_at": "2026-11-15T04:22:56Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "ba81a7f": [
+      {
+        "call_at": "2026-11-21T13:00:14Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 20,
+        "tool": "claude"
+      }
+    ],
+    "bc896ef": [
+      {
+        "call_at": "2026-11-15T16:29:47Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "bd46117": [
+      {
+        "call_at": "2026-11-07T14:37:25Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "bdb4738": [
+      {
+        "call_at": "2026-11-07T05:14:40Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "c6852ca": [
+      {
+        "call_at": "2026-11-07T06:15:19Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "c6dfc66": [
+      {
+        "call_at": "2026-11-11T08:55:50Z",
+        "file": "transcript.jsonl",
+        "gap_s": 19,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T08:55:58Z",
+        "file": "transcript.jsonl",
+        "gap_s": 11,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T08:55:50Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 19,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-11T08:55:58Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 11,
+        "tool": "antigravity"
+      }
+    ],
+    "c6f85a2": [
+      {
+        "call_at": "2026-11-07T10:31:23Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "c765f79": [
+      {
+        "call_at": "2026-11-08T09:32:57Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 36,
+        "tool": "claude"
+      }
+    ],
+    "c7eb5b3": [
+      {
+        "call_at": "2026-11-15T05:37:31Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "c823421": [
+      {
+        "call_at": "2026-11-09T16:49:49Z",
+        "file": "transcript.jsonl",
+        "gap_s": 4,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-09T16:49:49Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 4,
+        "tool": "antigravity"
+      }
+    ],
+    "cc36590": [
+      {
+        "call_at": "2026-11-15T08:21:50Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 21,
+        "tool": "claude"
+      }
+    ],
+    "cecf8b4": [
+      {
+        "call_at": "2026-11-07T07:27:56Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "cf7345f": [
+      {
+        "call_at": "2026-11-07T07:53:48Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "d0d536f": [
+      {
+        "call_at": "2026-11-07T15:07:32Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "d55fc1e": [
+      {
+        "call_at": "2026-11-15T06:34:04Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 42,
+        "tool": "claude"
+      }
+    ],
+    "d5e20ec": [
+      {
+        "call_at": "2026-11-09T01:30:47Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 32,
+        "tool": "claude"
+      },
+      {
+        "call_at": "2026-11-09T01:31:17Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "d5ffbcb": [
+      {
+        "call_at": "2026-11-07T04:00:26Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 3,
+        "tool": "claude"
+      }
+    ],
+    "d76c349": [
+      {
+        "call_at": "2026-11-10T10:07:44Z",
+        "file": "transcript.jsonl",
+        "gap_s": 15,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:07:51Z",
+        "file": "transcript.jsonl",
+        "gap_s": 8,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:07:44Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 15,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T10:07:51Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 8,
+        "tool": "antigravity"
+      }
+    ],
+    "d99c46b": [
+      {
+        "call_at": "2026-11-10T06:10:44Z",
+        "file": "transcript.jsonl",
+        "gap_s": 6,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-10T06:10:44Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 6,
+        "tool": "antigravity"
+      }
+    ],
+    "dbb6b90": [
+      {
+        "call_at": "2026-11-09T01:29:53Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 56,
+        "tool": "claude"
+      },
+      {
+        "call_at": "2026-11-09T01:30:47Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "df3cb3e": [
+      {
+        "call_at": "2026-11-15T16:33:57Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "dff902d": [
+      {
+        "call_at": "2026-11-07T04:16:52Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "e1dbc5b": [
+      {
+        "call_at": "2026-11-07T03:18:28Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "e40a8e5": [
+      {
+        "call_at": "2026-11-15T09:00:37Z",
+        "file": "transcript.jsonl",
+        "gap_s": 9,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-15T09:00:37Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 9,
+        "tool": "antigravity"
+      }
+    ],
+    "e5a0b0e": [
+      {
+        "call_at": "2026-11-07T12:02:35Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 1,
+        "tool": "codex"
+      }
+    ],
+    "e6b2003": [
+      {
+        "call_at": "2026-11-07T11:04:07Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "ea525e4": [
+      {
+        "call_at": "2026-11-15T03:35:48Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "ee853c0": [
+      {
+        "call_at": "2026-11-15T09:49:55Z",
+        "file": "transcript.jsonl",
+        "gap_s": 16,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-15T09:50:01Z",
+        "file": "transcript.jsonl",
+        "gap_s": 10,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-15T09:49:55Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 16,
+        "tool": "antigravity"
+      },
+      {
+        "call_at": "2026-11-15T09:50:01Z",
+        "file": "transcript_full.jsonl",
+        "gap_s": 10,
+        "tool": "antigravity"
+      }
+    ],
+    "f0b8104": [
+      {
+        "call_at": "2026-11-15T08:47:18Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 21,
+        "tool": "claude"
+      }
+    ],
+    "f5e0763": [
+      {
+        "call_at": "2026-11-07T04:47:27Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 2,
+        "tool": "claude"
+      }
+    ],
+    "f6d0e56": [
+      {
+        "call_at": "2026-11-15T04:42:40Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "fc1bc58": [
+      {
+        "call_at": "2026-11-15T16:48:19Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 1,
+        "tool": "codex"
+      }
+    ],
+    "fec6acf": [
+      {
+        "call_at": "2026-11-07T11:35:30Z",
+        "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+        "gap_s": 0,
+        "tool": "codex"
+      }
+    ],
+    "fef3833": [
+      {
+        "call_at": "2026-11-07T04:43:18Z",
+        "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+        "gap_s": 3,
+        "tool": "claude"
+      }
+    ]
+  },
+  "files": [
+    {
+      "effort": {},
+      "file": "1a90b852-9f2f-4ce6-a641-7d7b4fa19705.jsonl",
+      "first": "2026-11-04T03:49:16Z",
+      "git_commit_calls": [],
+      "last": "2026-11-04T03:50:09Z",
+      "lines": 24,
+      "models": {
+        "message.model": {
+          "<synthetic>": 1
+        }
+      },
+      "sha256": "0f2268ea965d6d7b9dbbecebd331d253e41a430ba7c71c97661b3803ebacaacb",
+      "tool": "claude",
+      "touches": {},
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {
+        "effort": {
+          "medium": 2437
+        }
+      },
+      "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
+      "first": "2026-11-05T14:31:17Z",
+      "git_commit_calls": [
+        "2026-11-06T13:56:39Z",
+        "2026-11-07T03:18:28Z",
+        "2026-11-07T03:31:26Z",
+        "2026-11-07T04:00:26Z",
+        "2026-11-07T04:16:52Z",
+        "2026-11-07T04:26:11Z",
+        "2026-11-07T04:34:02Z",
+        "2026-11-07T04:39:30Z",
+        "2026-11-07T04:43:18Z",
+        "2026-11-07T04:47:27Z",
+        "2026-11-07T04:56:33Z",
+        "2026-11-07T05:08:15Z",
+        "2026-11-07T05:14:40Z",
+        "2026-11-07T06:15:19Z",
+        "2026-11-07T06:15:27Z",
+        "2026-11-07T06:28:25Z",
+        "2026-11-07T06:36:32Z",
+        "2026-11-07T06:40:04Z",
+        "2026-11-07T06:46:14Z",
+        "2026-11-07T06:53:50Z",
+        "2026-11-07T07:09:45Z",
+        "2026-11-07T07:18:32Z",
+        "2026-11-07T07:27:56Z",
+        "2026-11-07T07:36:39Z",
+        "2026-11-07T07:42:49Z",
+        "2026-11-07T07:50:52Z",
+        "2026-11-07T07:53:48Z",
+        "2026-11-07T08:01:07Z",
+        "2026-11-07T09:37:12Z",
+        "2026-11-07T09:41:47Z",
+        "2026-11-07T10:31:23Z",
+        "2026-11-07T10:33:59Z",
+        "2026-11-07T10:39:23Z",
+        "2026-11-07T10:49:10Z",
+        "2026-11-07T11:22:51Z",
+        "2026-11-07T11:32:09Z",
+        "2026-11-07T12:13:40Z",
+        "2026-11-07T12:28:22Z",
+        "2026-11-07T12:35:05Z",
+        "2026-11-07T12:44:53Z",
+        "2026-11-07T12:46:19Z",
+        "2026-11-07T12:51:13Z",
+        "2026-11-07T14:37:25Z",
+        "2026-11-07T15:07:32Z",
+        "2026-11-07T15:09:47Z",
+        "2026-11-07T15:11:59Z",
+        "2026-11-08T09:32:57Z",
+        "2026-11-09T01:29:53Z",
+        "2026-11-09T01:30:47Z",
+        "2026-11-09T01:31:17Z",
+        "2026-11-09T01:38:09Z",
+        "2026-11-11T13:10:58Z",
+        "2026-11-15T03:31:37Z",
+        "2026-11-15T03:32:26Z",
+        "2026-11-15T03:35:48Z",
+        "2026-11-15T03:39:55Z",
+        "2026-11-15T04:10:11Z",
+        "2026-11-15T04:19:51Z",
+        "2026-11-15T04:21:18Z",
+        "2026-11-15T04:22:56Z",
+        "2026-11-15T04:39:18Z",
+        "2026-11-15T04:42:40Z",
+        "2026-11-15T04:46:04Z",
+        "2026-11-15T04:50:12Z",
+        "2026-11-15T05:27:06Z",
+        "2026-11-15T05:37:31Z",
+        "2026-11-15T05:44:47Z",
+        "2026-11-15T05:54:30Z",
+        "2026-11-15T06:03:33Z",
+        "2026-11-15T06:23:53Z",
+        "2026-11-15T06:34:04Z",
+        "2026-11-15T07:35:42Z",
+        "2026-11-15T08:21:50Z",
+        "2026-11-15T08:38:25Z",
+        "2026-11-15T08:47:18Z",
+        "2026-11-15T09:05:47Z",
+        "2026-11-15T09:15:17Z",
+        "2026-11-15T09:23:25Z",
+        "2026-11-15T10:07:23Z",
+        "2026-11-15T10:35:50Z",
+        "2026-11-15T10:44:30Z",
+        "2026-11-15T10:47:15Z",
+        "2026-11-15T11:44:13Z",
+        "2026-11-15T11:49:03Z",
+        "2026-11-15T15:51:13Z",
+        "2026-11-15T16:18:02Z",
+        "2026-11-16T05:53:27Z",
+        "2026-11-21T07:02:12Z",
+        "2026-11-21T07:03:26Z",
+        "2026-11-21T10:35:44Z",
+        "2026-11-21T10:35:53Z"
+      ],
+      "last": "2026-11-21T10:42:45Z",
+      "lines": 11493,
+      "models": {
+        "message.model": {
+          "<synthetic>": 2,
+          "claude-sonnet-5-5": 2437
+        }
+      },
+      "sha256": "745d1f614687e1ae4b5fac8d06e084e74bb9f7fc5d01572ad50904bdd9afce67",
+      "tool": "claude",
+      "touches": {
+        "r3.py": {
+          "command_mentions": [
+            "2026-11-09T01:27:14Z",
+            "2026-11-09T01:28:01Z",
+            "2026-11-09T01:28:04Z",
+            "2026-11-09T01:28:07Z",
+            "2026-11-09T01:28:12Z",
+            "2026-11-09T01:28:30Z",
+            "2026-11-09T01:29:13Z",
+            "2026-11-09T01:29:53Z",
+            "2026-11-09T01:30:05Z",
+            "2026-11-09T01:30:27Z",
+            "2026-11-09T01:30:39Z",
+            "2026-11-09T01:30:47Z",
+            "2026-11-09T01:31:03Z",
+            "2026-11-09T01:31:17Z",
+            "2026-11-09T01:34:02Z",
+            "2026-11-09T01:35:13Z",
+            "2026-11-09T01:36:24Z",
+            "2026-11-09T01:36:49Z",
+            "2026-11-11T13:48:35Z",
+            "2026-11-15T15:40:27Z",
+            "2026-11-15T15:40:39Z",
+            "2026-11-16T07:06:03Z",
+            "2026-11-21T07:03:08Z"
+          ]
+        },
+        "router_v2/pipeline.py": {
+          "command_mentions": [
+            "2026-11-07T09:39:36Z",
+            "2026-11-07T10:29:11Z",
+            "2026-11-07T10:31:23Z",
+            "2026-11-07T10:33:49Z",
+            "2026-11-07T10:33:59Z",
+            "2026-11-07T11:15:40Z",
+            "2026-11-07T11:16:41Z",
+            "2026-11-07T11:20:15Z",
+            "2026-11-10T10:13:12Z",
+            "2026-11-10T10:13:42Z",
+            "2026-11-11T08:41:55Z",
+            "2026-11-11T08:42:00Z",
+            "2026-11-11T13:48:15Z",
+            "2026-11-11T13:48:35Z",
+            "2026-11-11T13:48:43Z",
+            "2026-11-11T14:54:09Z",
+            "2026-11-15T03:34:12Z",
+            "2026-11-15T03:43:32Z",
+            "2026-11-15T04:03:05Z",
+            "2026-11-15T04:09:47Z",
+            "2026-11-16T02:24:19Z",
+            "2026-11-16T02:24:39Z",
+            "2026-11-16T02:24:49Z",
+            "2026-11-16T02:26:28Z"
+          ]
+        },
+        "router_v2/prompt.py": {
+          "command_mentions": [
+            "2026-11-07T09:38:48Z",
+            "2026-11-07T11:15:40Z",
+            "2026-11-10T10:13:12Z",
+            "2026-11-10T10:30:14Z",
+            "2026-11-15T03:18:59Z",
+            "2026-11-15T03:19:08Z",
+            "2026-11-15T03:34:04Z",
+            "2026-11-15T03:34:12Z",
+            "2026-11-15T03:43:32Z",
+            "2026-11-15T04:03:05Z",
+            "2026-11-16T02:24:19Z",
+            "2026-11-16T02:24:39Z",
+            "2026-11-16T02:24:49Z",
+            "2026-11-16T02:26:28Z"
+          ]
+        },
+        "router_v2/rules.py": {
+          "command_mentions": [
+            "2026-11-07T09:39:27Z",
+            "2026-11-07T11:15:40Z",
+            "2026-11-07T15:02:06Z",
+            "2026-11-07T15:05:24Z",
+            "2026-11-09T16:44:05Z",
+            "2026-11-10T10:13:12Z",
+            "2026-11-10T10:13:42Z",
+            "2026-11-10T10:30:14Z",
+            "2026-11-11T08:41:55Z",
+            "2026-11-11T08:42:00Z",
+            "2026-11-11T08:59:19Z",
+            "2026-11-11T14:54:09Z",
+            "2026-11-15T03:43:32Z",
+            "2026-11-15T04:03:05Z",
+            "2026-11-15T04:09:47Z",
+            "2026-11-16T02:24:19Z",
+            "2026-11-16T02:24:39Z",
+            "2026-11-16T02:24:49Z",
+            "2026-11-16T02:26:28Z"
+          ]
+        },
+        "validate_rationales.py": {
+          "command_mentions": [
+            "2026-11-15T10:46:08Z",
+            "2026-11-15T10:46:21Z",
+            "2026-11-15T10:46:28Z",
+            "2026-11-15T10:47:15Z",
+            "2026-11-15T11:43:13Z",
+            "2026-11-15T11:44:13Z",
+            "2026-11-21T06:54:25Z",
+            "2026-11-21T06:54:28Z"
+          ],
+          "write_tool": [
+            "2026-11-15T10:45:33Z",
+            "2026-11-15T10:46:07Z"
+          ]
+        }
+      },
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {
+        "effort": {
+          "medium": 330
+        }
+      },
+      "file": "6c9e41e0-2fcc-4415-b42d-258558b32c3b.jsonl",
+      "first": "2026-11-16T15:56:39Z",
+      "git_commit_calls": [
+        "2026-11-16T17:13:40Z"
+      ],
+      "last": "2026-11-17T03:40:19Z",
+      "lines": 1454,
+      "models": {
+        "message.model": {
+          "claude-fable-5-2": 89,
+          "claude-sonnet-5-5": 241
+        }
+      },
+      "sha256": "8adcc4c24b0aa542a258363f97ce6e1bc74524835317b320b37e093ad2d0a89f",
+      "tool": "claude",
+      "touches": {},
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {
+        "effort": {
+          "medium": 309
+        }
+      },
+      "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+      "first": "2026-11-21T05:57:45Z",
+      "git_commit_calls": [
+        "2026-11-21T11:36:57Z",
+        "2026-11-21T11:46:44Z",
+        "2026-11-21T12:07:17Z",
+        "2026-11-21T12:34:18Z",
+        "2026-11-21T12:45:49Z",
+        "2026-11-21T12:48:39Z",
+        "2026-11-21T13:00:14Z",
+        "2026-11-21T13:03:40Z"
+      ],
+      "last": "2026-11-21T13:07:12Z",
+      "lines": 1341,
+      "models": {
+        "message.model": {
+          "claude-sonnet-5-5": 309
+        }
+      },
+      "sha256": "6f0196c27277bdeb9438c2407ff93757bc584631d4032b65686d08b35375989a",
+      "tool": "claude",
+      "touches": {
+        "r3.py": {
+          "command_mentions": [
+            "2026-11-21T12:06:07Z"
+          ]
+        },
+        "router_v2/pipeline.py": {
+          "command_mentions": [
+            "2026-11-21T13:02:19Z",
+            "2026-11-21T13:02:24Z"
+          ]
+        },
+        "router_v2/rules.py": {
+          "command_mentions": [
+            "2026-11-21T11:34:18Z",
+            "2026-11-21T12:47:02Z"
+          ]
+        },
+        "validate_rationales.py": {
+          "command_mentions": [
+            "2026-11-21T06:51:00Z",
+            "2026-11-21T11:44:35Z"
+          ]
+        }
+      },
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {},
+      "file": "transcript.jsonl",
+      "first": "2026-11-07T12:37:53Z",
+      "git_commit_calls": [
+        "2026-11-09T16:49:49Z",
+        "2026-11-10T04:23:05Z",
+        "2026-11-10T04:29:38Z",
+        "2026-11-10T06:10:44Z",
+        "2026-11-10T10:07:44Z",
+        "2026-11-10T10:07:51Z",
+        "2026-11-10T10:25:23Z",
+        "2026-11-10T10:25:29Z",
+        "2026-11-10T10:36:20Z",
+        "2026-11-10T10:36:28Z",
+        "2026-11-10T10:48:54Z",
+        "2026-11-10T10:49:08Z",
+        "2026-11-10T10:59:22Z",
+        "2026-11-10T10:59:32Z",
+        "2026-11-11T08:39:22Z",
+        "2026-11-11T08:39:39Z",
+        "2026-11-11T08:55:50Z",
+        "2026-11-11T08:55:58Z",
+        "2026-11-11T08:56:49Z",
+        "2026-11-11T08:56:54Z",
+        "2026-11-11T09:07:02Z",
+        "2026-11-11T09:07:11Z",
+        "2026-11-11T13:40:18Z",
+        "2026-11-11T13:40:47Z",
+        "2026-11-11T14:41:12Z",
+        "2026-11-11T14:41:25Z",
+        "2026-11-15T07:11:55Z",
+        "2026-11-15T07:12:23Z",
+        "2026-11-15T07:35:29Z",
+        "2026-11-15T09:00:37Z",
+        "2026-11-15T09:49:55Z",
+        "2026-11-15T09:50:01Z",
+        "2026-11-15T10:07:42Z",
+        "2026-11-15T10:44:59Z",
+        "2026-11-21T07:01:43Z",
+        "2026-11-21T07:01:49Z"
+      ],
+      "last": "2026-11-21T07:03:15Z",
+      "lines": 2532,
+      "models": {
+        "model": {
+          "gemini-3.8-flash-high": 391
+        }
+      },
+      "sha256": "9f01e28bda73ceaf14139f76df8a48bd9d2fbd5043cd37dfe80da4a57b02b991",
+      "tool": "antigravity",
+      "touches": {
+        "r3.py": {
+          "command_mentions": [
+            "2026-11-15T07:11:37Z"
+          ]
+        },
+        "router_v2/pipeline.py": {
+          "command_mentions": [
+            "2026-11-09T12:00:36Z"
+          ]
+        },
+        "router_v2/rules.py": {
+          "command_mentions": [
+            "2026-11-09T05:41:58Z",
+            "2026-11-09T05:42:11Z",
+            "2026-11-09T14:16:02Z"
+          ]
+        },
+        "validate_rationales.py": {
+          "command_mentions": [
+            "2026-11-15T10:46:17Z",
+            "2026-11-15T10:46:27Z",
+            "2026-11-15T10:46:50Z",
+            "2026-11-15T10:47:24Z",
+            "2026-11-15T10:47:54Z",
+            "2026-11-15T10:48:11Z",
+            "2026-11-15T11:50:26Z",
+            "2026-11-21T06:53:10Z",
+            "2026-11-21T06:53:18Z"
+          ]
+        }
+      },
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {},
+      "file": "transcript_full.jsonl",
+      "first": "2026-11-07T12:37:53Z",
+      "git_commit_calls": [
+        "2026-11-09T16:49:49Z",
+        "2026-11-10T04:23:05Z",
+        "2026-11-10T04:29:38Z",
+        "2026-11-10T06:10:44Z",
+        "2026-11-10T10:07:44Z",
+        "2026-11-10T10:07:51Z",
+        "2026-11-10T10:25:23Z",
+        "2026-11-10T10:25:29Z",
+        "2026-11-10T10:36:20Z",
+        "2026-11-10T10:36:28Z",
+        "2026-11-10T10:48:54Z",
+        "2026-11-10T10:49:08Z",
+        "2026-11-10T10:59:22Z",
+        "2026-11-10T10:59:32Z",
+        "2026-11-11T08:39:22Z",
+        "2026-11-11T08:39:39Z",
+        "2026-11-11T08:55:50Z",
+        "2026-11-11T08:55:58Z",
+        "2026-11-11T08:56:49Z",
+        "2026-11-11T08:56:54Z",
+        "2026-11-11T09:07:02Z",
+        "2026-11-11T09:07:11Z",
+        "2026-11-11T13:40:18Z",
+        "2026-11-11T13:40:47Z",
+        "2026-11-11T14:41:12Z",
+        "2026-11-11T14:41:25Z",
+        "2026-11-15T07:11:55Z",
+        "2026-11-15T07:12:23Z",
+        "2026-11-15T07:35:29Z",
+        "2026-11-15T09:00:37Z",
+        "2026-11-15T09:49:55Z",
+        "2026-11-15T09:50:01Z",
+        "2026-11-15T10:07:42Z",
+        "2026-11-15T10:44:59Z",
+        "2026-11-21T07:01:43Z",
+        "2026-11-21T07:01:49Z"
+      ],
+      "last": "2026-11-21T07:03:15Z",
+      "lines": 2532,
+      "models": {
+        "model": {
+          "gemini-3.8-flash-high": 391
+        }
+      },
+      "sha256": "f415e58d9474380879314a61c098152f1af923e07e7aa42be7702ff5b96a2dfd",
+      "tool": "antigravity",
+      "touches": {
+        "r3.py": {
+          "command_mentions": [
+            "2026-11-15T07:11:37Z"
+          ]
+        },
+        "router_v2/pipeline.py": {
+          "command_mentions": [
+            "2026-11-09T12:00:36Z"
+          ]
+        },
+        "router_v2/rules.py": {
+          "command_mentions": [
+            "2026-11-09T05:41:58Z",
+            "2026-11-09T05:42:11Z",
+            "2026-11-09T11:23:16Z",
+            "2026-11-09T14:16:02Z"
+          ]
+        },
+        "validate_rationales.py": {
+          "command_mentions": [
+            "2026-11-15T10:46:17Z",
+            "2026-11-15T10:46:27Z",
+            "2026-11-15T10:46:50Z",
+            "2026-11-15T10:47:24Z",
+            "2026-11-15T10:47:54Z",
+            "2026-11-15T10:48:11Z",
+            "2026-11-15T11:50:26Z",
+            "2026-11-21T06:53:10Z",
+            "2026-11-21T06:53:18Z"
+          ]
+        }
+      },
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {
+        "turn_context.effort": {
+          "high": 8,
+          "medium": 160
+        }
+      },
+      "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
+      "first": "2026-11-07T03:30:11Z",
+      "git_commit_calls": [
+        "2026-11-07T10:56:34Z",
+        "2026-11-07T10:59:04Z",
+        "2026-11-07T10:59:15Z",
+        "2026-11-07T11:00:51Z",
+        "2026-11-07T11:02:07Z",
+        "2026-11-07T11:04:07Z",
+        "2026-11-07T11:07:08Z",
+        "2026-11-07T11:08:13Z",
+        "2026-11-07T11:10:53Z",
+        "2026-11-07T11:35:30Z",
+        "2026-11-07T12:02:35Z",
+        "2026-11-08T10:11:25Z",
+        "2026-11-15T15:38:40Z",
+        "2026-11-15T16:12:25Z",
+        "2026-11-15T16:29:47Z",
+        "2026-11-15T16:33:57Z",
+        "2026-11-15T16:48:19Z",
+        "2026-11-15T16:56:05Z",
+        "2026-11-16T02:29:05Z"
+      ],
+      "last": "2026-11-21T10:49:31Z",
+      "lines": 8965,
+      "models": {
+        "session_meta.provenance.model": {
+          "gpt-6-astra": 1
+        },
+        "turn_context.model": {
+          "gpt-6.1-sol": 168
+        }
+      },
+      "sha256": "f11bb164570fe93d7208dbbd88c1ffa19e139591a876049d53de1b15524cd019",
+      "tool": "codex",
+      "touches": {
+        "r3.py": {
+          "command_mentions": [
+            "2026-11-15T16:03:34Z",
+            "2026-11-15T16:06:58Z",
+            "2026-11-16T06:11:12Z",
+            "2026-11-16T06:14:19Z",
+            "2026-11-16T06:29:40Z",
+            "2026-11-21T06:40:33Z"
+          ]
+        },
+        "router_v2/pipeline.py": {
+          "command_mentions": [
+            "2026-11-07T09:42:57Z",
+            "2026-11-07T10:32:15Z",
+            "2026-11-07T10:35:20Z",
+            "2026-11-08T09:59:32Z",
+            "2026-11-08T09:59:35Z",
+            "2026-11-08T10:01:22Z",
+            "2026-11-08T10:25:10Z",
+            "2026-11-08T13:53:15Z",
+            "2026-11-09T16:36:52Z",
+            "2026-11-09T16:41:11Z",
+            "2026-11-09T16:56:55Z",
+            "2026-11-10T04:00:51Z",
+            "2026-11-10T04:05:16Z",
+            "2026-11-10T04:08:44Z",
+            "2026-11-10T06:21:30Z",
+            "2026-11-10T08:29:02Z",
+            "2026-11-14T15:34:02Z",
+            "2026-11-14T15:44:43Z",
+            "2026-11-14T15:45:31Z",
+            "2026-11-16T06:10:55Z",
+            "2026-11-16T06:14:19Z",
+            "2026-11-16T06:29:40Z",
+            "2026-11-17T05:33:21Z"
+          ]
+        },
+        "router_v2/prompt.py": {
+          "command_mentions": [
+            "2026-11-08T09:59:32Z",
+            "2026-11-08T09:59:41Z",
+            "2026-11-08T10:01:22Z",
+            "2026-11-08T10:23:09Z",
+            "2026-11-08T10:25:10Z",
+            "2026-11-08T13:53:15Z",
+            "2026-11-08T14:07:50Z",
+            "2026-11-09T16:41:11Z",
+            "2026-11-10T04:01:13Z",
+            "2026-11-10T04:01:29Z",
+            "2026-11-10T08:29:02Z"
+          ]
+        },
+        "router_v2/rules.py": {
+          "command_mentions": [
+            "2026-11-08T09:59:32Z",
+            "2026-11-08T09:59:35Z",
+            "2026-11-08T10:01:22Z",
+            "2026-11-08T10:25:10Z",
+            "2026-11-08T13:53:15Z",
+            "2026-11-08T14:07:50Z",
+            "2026-11-08T14:09:10Z",
+            "2026-11-09T16:36:52Z",
+            "2026-11-09T16:41:11Z",
+            "2026-11-09T16:56:55Z",
+            "2026-11-10T04:00:51Z",
+            "2026-11-10T04:05:16Z",
+            "2026-11-10T04:08:44Z",
+            "2026-11-10T04:09:15Z",
+            "2026-11-10T06:21:30Z",
+            "2026-11-10T06:25:35Z",
+            "2026-11-10T06:26:08Z",
+            "2026-11-10T08:29:02Z",
+            "2026-11-14T15:34:02Z",
+            "2026-11-14T15:34:13Z",
+            "2026-11-14T15:43:34Z",
+            "2026-11-14T15:44:43Z",
+            "2026-11-14T15:45:31Z",
+            "2026-11-16T06:10:55Z",
+            "2026-11-16T06:14:19Z",
+            "2026-11-16T06:16:24Z",
+            "2026-11-16T06:29:40Z"
+          ]
+        },
+        "validate_rationales.py": {
+          "command_mentions": [
+            "2026-11-15T10:42:24Z",
+            "2026-11-15T10:50:11Z",
+            "2026-11-15T10:51:03Z",
+            "2026-11-15T11:00:25Z",
+            "2026-11-15T11:01:26Z",
+            "2026-11-15T11:03:06Z",
+            "2026-11-15T11:16:58Z",
+            "2026-11-15T11:25:34Z",
+            "2026-11-15T11:57:00Z",
+            "2026-11-15T15:27:24Z",
+            "2026-11-15T15:28:39Z",
+            "2026-11-21T06:40:33Z",
+            "2026-11-21T10:46:46Z",
+            "2026-11-21T10:47:29Z",
+            "2026-11-21T10:47:54Z"
+          ]
+        }
+      },
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {
+        "turn_context.effort": {
+          "medium": 5
+        }
+      },
+      "file": "rollout-2026-11-07T18-55-23-01a1b5a6-1601-7a33-87f2-6c54cd4b80e4.jsonl",
+      "first": "2026-11-07T10:55:23Z",
+      "git_commit_calls": [],
+      "last": "2026-11-07T11:08:38Z",
+      "lines": 181,
+      "models": {
+        "session_meta.provenance.model": {
+          "gpt-6-astra": 1
+        },
+        "turn_context.model": {
+          "gpt-6.1-sol": 5
+        }
+      },
+      "sha256": "b2af8f822d9a750155122c1d5d85f0273c428ed0e5908284b3155c8594963c1f",
+      "tool": "codex",
+      "touches": {},
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {
+        "turn_context.effort": {
+          "medium": 3
+        }
+      },
+      "file": "rollout-2026-11-07T18-55-54-01a1b5a6-9020-7ac0-b609-8354a976e6b7.jsonl",
+      "first": "2026-11-07T10:55:54Z",
+      "git_commit_calls": [],
+      "last": "2026-11-07T11:07:04Z",
+      "lines": 104,
+      "models": {
+        "session_meta.provenance.model": {
+          "gpt-6-astra": 1
+        },
+        "turn_context.model": {
+          "gpt-6.1-sol": 3
+        }
+      },
+      "sha256": "b6d678f4418b8d4fc0b6a384c84504046c3bade6586e41091cc712a7856589d0",
+      "tool": "codex",
+      "touches": {},
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {
+        "turn_context.effort": {
+          "medium": 2
+        }
+      },
+      "file": "rollout-2026-11-07T19-07-15-01a1b5b0-f633-71c3-8380-f0cbb5f4d53b.jsonl",
+      "first": "2026-11-07T11:07:15Z",
+      "git_commit_calls": [],
+      "last": "2026-11-07T11:09:32Z",
+      "lines": 53,
+      "models": {
+        "session_meta.provenance.model": {
+          "gpt-6-astra": 1
+        },
+        "turn_context.model": {
+          "gpt-6.1-sol": 2
+        }
+      },
+      "sha256": "60aae7923366792c41156007c4298dc848ba05e85181eb89ed3f5f97a56b4cfc",
+      "tool": "codex",
+      "touches": {},
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {
+        "turn_context.effort": {
+          "medium": 3
+        }
+      },
+      "file": "rollout-2026-11-15T13-57-18-01a1ddc8-1054-7c93-825b-61def4c4bd7b.jsonl",
+      "first": "2026-11-15T05:57:18Z",
+      "git_commit_calls": [],
+      "last": "2026-11-15T06:56:40Z",
+      "lines": 241,
+      "models": {
+        "session_meta.provenance.model": {
+          "gpt-6-astra": 1
+        },
+        "turn_context.model": {
+          "gpt-6.1-sol": 3
+        }
+      },
+      "sha256": "1b9ae6779653ccae3088391ba6be66464982a4bc9c18b2a25eb68a92dba90f3a",
+      "tool": "codex",
+      "touches": {},
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {
+        "turn_context.effort": {
+          "medium": 8
+        }
+      },
+      "file": "rollout-2026-11-15T15-40-24-01a1de26-75cb-7ad1-890f-ee3abd927354.jsonl",
+      "first": "2026-11-15T07:40:25Z",
+      "git_commit_calls": [],
+      "last": "2026-11-15T08:56:53Z",
+      "lines": 258,
+      "models": {
+        "session_meta.provenance.model": {
+          "gpt-6-astra": 1
+        },
+        "turn_context.model": {
+          "gpt-6.1-sol": 8
+        }
+      },
+      "sha256": "11d0548cdd4ca82ac03fff404612ad79d324d2466c7fcb2bc50fdd377de059f7",
+      "tool": "codex",
+      "touches": {},
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {
+        "turn_context.effort": {
+          "medium": 2
+        }
+      },
+      "file": "rollout-2026-11-15T17-18-34-01a1de80-54cd-7900-b9f8-1f2f4251ed0a.jsonl",
+      "first": "2026-11-15T09:18:34Z",
+      "git_commit_calls": [],
+      "last": "2026-11-15T09:31:05Z",
+      "lines": 105,
+      "models": {
+        "session_meta.provenance.model": {
+          "gpt-6-astra": 1
+        },
+        "turn_context.model": {
+          "gpt-6.1-sol": 2
+        }
+      },
+      "sha256": "bdc553950c89f43c1c72e855c066a0cde6901c6a0e8f426a0c46aeebdf3d12aa",
+      "tool": "codex",
+      "touches": {},
+      "unparsable_lines": 0
+    },
+    {
+      "effort": {
+        "turn_context.effort": {
+          "medium": 2
+        }
+      },
+      "file": "rollout-2026-11-15T18-37-35-01a1dec8-aa9a-75b0-86a4-ad7188452128.jsonl",
+      "first": "2026-11-15T10:37:35Z",
+      "git_commit_calls": [],
+      "last": "2026-11-15T11:04:05Z",
+      "lines": 111,
+      "models": {
+        "session_meta.provenance.model": {
+          "gpt-6-astra": 1
+        },
+        "turn_context.model": {
+          "gpt-6.1-sol": 2
+        }
+      },
+      "sha256": "35f5a75dcb1a7236402d1e0f60bde5594bd67dc61e2a4fe5acef3e7a47be717f",
+      "tool": "codex",
+      "touches": {},
+      "unparsable_lines": 0
+    }
+  ]
+}
