@@ -55,3 +55,4 @@ src/cloud-orchestrator/.venv/bin/python -m pytest tests/test_docs_consistency.py
 - **Git.** Commit locally; push only when the user says so. `HANDOFF_TO_GPT.md` and `PLAN.md` are updated by several agents, so stage only your own hunks.
 - **When a check fails.** Stop and report. Do not regenerate a `SHA256SUMS`, loosen a test, or edit a frozen file to make it pass.
 - **Who did what.** Claude, GPT and Gemini sessions all worked here. State who annotated or wrote what only as recorded in `eval/ANNOTATOR_PROVENANCE.md`; a `Co-Authored-By` trailer does not prove who wrote a commit.
+- **New documents.** Before creating a file, name the existing document that cannot hold it; process notes go in the commit message, not in a new file. Name files for what they are (no dates, tool names or version codenames). A new document needs a link from an index (`tests/test_docs_map.py`), and round-2 numbers must match `note_compare.json` (`tests/test_round2_numbers.py`).

@@ -1,8 +1,10 @@
-# Evidence index (framework, status of 2026-11-07)
+# Evidence index (kept up to date; last review 2026-11-21)
 
 A map from each claim to the file that proves it. **Empty cells are empty on purpose: nothing unfinished is written as a conclusion.** The path a reader should be able to follow is: README claim -> evaluation report -> data version and code commit -> per-record raw results. Independent data is frozen and formal evaluation is complete: see [report.md](report.md), `acceptance/FROZEN_MANIFEST.json` and `formal/results/VERIFICATION.json`. Stranger reproduction and oral acceptance remain pending.
 
-Time box: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. Each gate below is "passed", "not passed" or "waived with a reason" at the deadline; waived is not passed.
+Round 2 (note understanding, 180 new synthetic notes) has its own section below: [Round 2: claim to evidence](#round-2-claim-to-evidence). Round 2 is a different question on different data, not a before-and-after of round 1.
+
+Time box of round 1: D0 = 2026-11-07 11:58:03 +0800, deadline 2026-11-14 11:58:03 +0800. The deadline has passed. Each gate was to be written as "passed", "not passed" or "waived with a reason"; waived is not passed. **Nothing in the repository records that marking, and this file does not make it: that is the owner's decision.** What this file records is the state of the evidence for each gate, today, in [Where the gates stand](#where-the-gates-stand-2026-11-21).
 
 ## The resume line, field by field
 
@@ -50,9 +52,26 @@ Start with the owner's confirmed motivation and the timing/evaluation distinctio
 | Item | Status | Evidence |
 |---|---|---|
 | Real errors with counts and raw examples | no model errors observed in this formal set | no five model-error categories can be invented; actual rule-control error directions are in `report.md`, examples stay private. Dev provider failures remain preserved separately |
-| Limitations | written | [LIMITATIONS.md](LIMITATIONS.md) (20 items; item 20 explains the old "only stricter" comment in `extended.py`) |
-| Oral preparation materials | written; consolidated | [interview handbook](../study/interview/INTERVIEW_DEEP_DRILL_zh.md) (core eight questions, 15 reference questions; replaces the former cards and companion); [learning route](../study/interview/RECOMMEND_LEARNING_zh.md); latency and cost evidence [LATENCY_COST.md](LATENCY_COST.md), timing code and simulated-vs-measured values [LATENCY_EVIDENCE.md](LATENCY_EVIDENCE.md) (formal latency not yet computed: fields listed for the custodian) |
+| Limitations | written | [LIMITATIONS.md](LIMITATIONS.md) (26 items; a one-sentence summary of the eight that matter most comes first) |
+| Oral preparation materials | written; consolidated | [interview handbook](../study/interview/INTERVIEW_DEEP_DRILL_zh.md) (core eight questions, 15 reference questions; replaces the former cards and companion); [learning route](../study/interview/RECOMMEND_LEARNING_zh.md); latency and cost evidence [LATENCY_COST.md](LATENCY_COST.md), timing code and simulated-vs-measured values [LATENCY_EVIDENCE.md](LATENCY_EVIDENCE.md) (round 1: the public files hold no per-request latency and the private run package cannot be found, LIMITATIONS item 22; round 2: measured and public, see [RESULTS.md](experiments/note_vs_rules_v2/RESULTS.md)) |
 | Oral check, three random questions | **not done** | to be done by the owner; no session can stand in |
+
+## Round 2: claim to evidence
+
+All paths are under `experiments/note_vs_rules_v2/`. The numbers live in two places only: [RESULTS.md](experiments/note_vs_rules_v2/RESULTS.md) (prose) and `results/20261115T152854Z_main_real_e5fd14c2/note_compare.json` (machine-readable); `tests/test_round2_numbers.py` checks that the other documents agree with the second.
+
+| Claim | Value | Where it is proven |
+|---|---|---|
+| Fixed-prompt model, note-status accuracy | 173/180 (96.11 %) | [RESULTS.md](experiments/note_vs_rules_v2/RESULTS.md); recompute for free from the sealed replies: [evidence/README.md](experiments/note_vs_rules_v2/evidence/README.md) |
+| Rule set R3 (the main comparison), same records | 77/180 (42.78 %) | same files |
+| Difference and its uncertainty | 53.33 points, family-bootstrap 95 % interval [43.33, 63.33]; paired 75 both right, 98 model only, 2 R3 only, 5 both wrong | `note_compare.json`; the family interval says nothing about how representative synthetic data is |
+| What the data is | 180 records, 60 families of three language variants, six note statuses of 30 each; inputs frozen before the run | `evidence/data/test_set.jsonl`, hash in `V2_FREEZE.json` and [RESULTS.md](experiments/note_vs_rules_v2/RESULTS.md) |
+| How the run was controlled | 2 health requests and 180 main requests, no retries, about US$0.11 at the conservative rates (an estimate, not a bill) | [RUN_RECEIPTS.md](RUN_RECEIPTS.md), `evidence/runs/` |
+| Who wrote and who labelled | author a Gemini session; blind labelling and review GPT-family sessions; AI labels, not expert truth | [ANNOTATOR_PROVENANCE.md](ANNOTATOR_PROVENANCE.md) |
+| Where each system is wrong | by status, language, note-only stop risk and family | [SLICE_REPORT.md](experiments/note_vs_rules_v2/slices/SLICE_REPORT.md) |
+| The scoring chain itself works | perfect, inverted, constant and shuffled answers behave as they must | [CONTROL_CHECK.md](experiments/note_vs_rules_v2/controls/CONTROL_CHECK.md) |
+| The copy on GitHub is the copy that ran | fresh clone, 41 archive and 28 evidence hashes verified | `results/20261115T152854Z_main_real_e5fd14c2/REMOTE_BACKUP_VERIFICATION.json` |
+| What is not claimed | not an improvement over round 1, not expert labels, not production accuracy, not that R3 is the best rules can do | [RESULTS.md](experiments/note_vs_rules_v2/RESULTS.md), [LIMITATIONS.md](LIMITATIONS.md) |
 
 ## Real model runs and their cost
 
@@ -77,18 +96,18 @@ Formal programme (separate authorization, US$0.57): health canary 2 calls, two m
 
 `eval/formal/` (`FORMAL_PLAN.md`, `ACCEPTANCE_FORMAT.md`, `run_formal.py`, `CODE_FREEZE.json`), tag `eval-formal-v1` at `fec6acf`. Results, hashes and the independent recount: `eval/formal/results/` and `report.md`. Rule controls R1/R2 are scored on the same records.
 
-## Closing the gates at the deadline (2026-11-14 11:58:03 +0800)
+## Where the gates stand (2026-11-21)
 
-Each item is written as passed / not passed / waived with a reason at the deadline; a waiver is not a pass. Items the tuning side cannot close are listed with who closes them.
+The state of the evidence for each gate of round 1. It is not a marking of passed, not passed or waived (see the note at the top). Items the tuning side cannot close are listed with who closes them.
 
-| Gate | State on 2026-11-07 | Who closes the rest |
+| Gate | State of the evidence on 2026-11-21 | Who closes the rest |
 |---|---|---|
-| 1. The evaluation can be trusted | evidence complete: spec, frozen data, annotation, report | nobody; ready to be marked passed |
-| 2. Stress and limits | evidence complete for the decision function; no HTTP-endpoint run against a real model | nobody; ready to be marked passed with that scope |
-| 3. Reproducibility | two-run gate passed; the stranger's 10-minute reproduction is **not done** | the owner finds the stranger; needs the private files or an owner decision on publication |
-| 4. It can be explained | limitations and cards written; the random three-question oral check is **not done** | the owner, in person |
+| 1. The evaluation can be trusted | evidence complete: spec, frozen data, annotation, report; who annotated is now recorded ([ANNOTATOR_PROVENANCE.md](ANNOTATOR_PROVENANCE.md)); round 1 labels all come from one model family | nobody; the owner marks it |
+| 2. Stress and limits | evidence complete for the decision function; Safety and Compiler have one real availability run of 84 records (not a safety evaluation, [LIMITATIONS](LIMITATIONS.md) item 26); no live HTTP request was made against a real model | nobody; the owner marks it with that scope |
+| 3. Reproducibility | two-run gate passed; the stranger's 10-minute reproduction is **not done**; a level-3 rerun of round 1 cannot be done because the private files cannot be found ([LIMITATIONS](LIMITATIONS.md) item 22); round 2 can be recomputed for free | the owner finds the stranger (level 1 needs no private data) |
+| 4. It can be explained | limitations written (26 items); the interview handbook and a three-minute walk-through exist; the random three-question oral check is **not done** | the owner, in person |
 
-If an item is still open at the deadline it is marked "not passed" or "waived" with the reason; it is not carried over silently.
+A gate that is still open stays open in this table; it is not carried over silently.
 
 ## Audit and control material (added 2026-11-21)
 
@@ -107,4 +126,4 @@ None of this changes a published number or calls a model; each file says how to 
 
 ## Code and tests
 
-Backend extended router and its endpoint flow: `01d4ce4`, `c6f85a2`, `6aa7824` (`src/cloud-orchestrator/router_v2/`, `embodied_brain/extended.py`; endpoint tests with fake dependencies). Formal stress now exercises the backend decision function against a real model, but not the HTTP Router/Safety/Compiler flow end to end. Formal evaluator tag: `eval-formal-v1` at `fec6acf`. Its 50 focused tests passed in reviewer execution; the full suite was not rerun during the paid programme.
+Backend extended router and its endpoint flow: `01d4ce4`, `c6f85a2`, `6aa7824` (`src/cloud-orchestrator/router_v2/`, `embodied_brain/extended.py`; endpoint tests with fake dependencies). Formal stress exercises the backend decision function against a real model; the Safety and Compiler stages ran once against a real model (item 26), with the Router replayed. Formal evaluator tag: `eval-formal-v1` at `fec6acf`; the code of the Safety/Compiler run is tag `eval-safety-compiler-v1`. The whole offline test suite runs with one command (see `CLAUDE.md`).
