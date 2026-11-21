@@ -27,7 +27,7 @@ Last reviewed: 2026-11-16. This page says what exists, what does not, and where 
 | Part | State | Notes |
 |---|---|---|
 | AGV dashboard (Next.js) | Done, demonstrator | A browser animation of a simulated vehicle and delayed decisions. Not firmware. `/dashboard/live` needs a backend and may incur model charges. |
-| Cloud decision pipeline (Router, Safety, Compiler) | Done | Only the tenant `Tenant-Alpha-Extended` uses the six-class path. Safety and Compiler are not covered by the evaluation. See [Architecture](../ARCHITECTURE.md). |
+| Cloud decision pipeline (Router, Safety, Compiler) | Done | Only the tenant `Tenant-Alpha-Extended` uses the six-class path. Safety and Compiler are not part of the formal evaluation; one real availability run on 84 records exists (see [safety_compiler](../eval/safety_compiler/README.md)). See [Architecture](../ARCHITECTURE.md). |
 | Edge simulator | Minimal by design | Sends 1 Hz telemetry and prints commands. There is no on-vehicle braking logic. |
 | Azure Bicep templates | Frozen snapshot, reference | Generated with the separate Bicep Studio project. This page does not claim that any environment is currently deployed. |
 | Model provider switching | Configuration level | Azure OpenAI, OpenAI, DeepSeek or any compatible endpoint, selected by environment. All roles share one model. The formal runs used DeepSeek only. |
@@ -41,7 +41,7 @@ Last reviewed: 2026-11-16. This page says what exists, what does not, and where 
 - Backup of the round-2 custody material to an independent medium. The owner deferred it.
 - Any physical-vehicle test, real HTTP end-to-end evaluation, or braking validation.
 - Comparison across other models or other architectures. Both rounds used one fixed model.
-- Evaluation of Safety and Compiler.
+- A safety evaluation of Safety and Compiler. The 2026-11-21 run measured availability and latency only; Safety blocked none of 84 records, so it shows nothing about what Safety would catch.
 - Expert annotation. Labels come from AI annotation and AI review.
 
 ## Deliberately not claimed

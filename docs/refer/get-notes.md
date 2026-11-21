@@ -127,7 +127,7 @@
 - **补法：** 写测试，并给出打分表。**已做**（2026-11-21）：`tests/test_claude_md.py`，打分表见 [claude-md-8q.md](claude-md-8q.md)。
 
 ### 范围外
-- **G5** Safety 和 Compiler 没被评测，真车、真实 HTTP 端到端、制动验证都没做。已在 `STATUS.md` 声明不主张。**评测设计已写**（`eval/DESIGN_SAFETY_COMPILER_EVAL.md`，未实施）。
+- **G5** Safety 和 Compiler 没被评测，真车、真实 HTTP 端到端、制动验证都没做。已在 `STATUS.md` 声明不主张。**已做**（2026-11-21）：合约覆盖表加一次 84 条的真实可用性运行，结果见 `eval/safety_compiler/` 和 `LIMITATIONS` 第 26 条；这不是安全性评测。
 
 ## 三分钟怎么讲
 

@@ -98,7 +98,7 @@ prediction, err = P.parse_reply(reply.content)  # 141：把回复读成两个合
 
 Safety 的文本判断没有 Router 那样严格的 JSON 契约；源码会把非 BLOCK 的其他文本带到后续。Compiler 还允许剥除代码围栏后解析。不要说三个角色的输出都经过完全相同的严格解析。
 
-Router 调用明确使用 `no_retry_client(..., 60)`；Safety 和 Compiler 自 2026-11-21 起走 [bounded_agent.py](../../src/cloud-orchestrator/embodied_brain/bounded_agent.py)：一次请求、关闭重试、60 秒占位超时、无缓存，故障分类后停车；只在假客户端下测过。原有 [utils.py 的 ask_agent()](../../src/cloud-orchestrator/embodied_brain/utils.py#L110)（SDK 默认值、5 秒进程内缓存）仍给旧租户用。不要把 Router 的测量口径直接推广到整条 HTTP 流程。
+Router 调用明确使用 `no_retry_client(..., 60)`；Safety 和 Compiler 自 2026-11-21 起走 [bounded_agent.py](../../src/cloud-orchestrator/embodied_brain/bounded_agent.py)：一次请求、关闭重试、60 秒占位超时、无缓存，故障分类后停车；有假客户端测试和一次 84 条的真实可用性运行（见 [safety_compiler](../safety_compiler/README.md)）。原有 [utils.py 的 ask_agent()](../../src/cloud-orchestrator/embodied_brain/utils.py#L110)（SDK 默认值、5 秒进程内缓存）仍给旧租户用。不要把 Router 的测量口径直接推广到整条 HTTP 流程。
 
 ## 6. 六类怎么确认？先有定义，再有样本和验证
 

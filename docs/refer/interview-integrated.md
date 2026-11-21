@@ -19,7 +19,7 @@
 | 2 出题 | 会不会偏向模型 | 合成题，由不参与规则开发的作者写 | 标注者家族没有记录（G1） | **已补** |
 | 3 标注 | 金标怎么来 | 盲标度量、复核纠错、裁决定案；AI 标注 | 没有对照组，无法裁决的句子被排除而不是保留（G4）；三方会话原文未入库（G10，已处理，见下） | G4 设计已写（[DESIGN_CANARY_UNKNOWN.md](../../eval/DESIGN_CANARY_UNKNOWN.md)）；其中**打分链路对照已做**（[CONTROL_CHECK.md](../../eval/experiments/note_vs_rules_v2/controls/CONTROL_CHECK.md)），新一轮题的部分不做；G10 **已做**：原文放在私有目录，仓库里是[元数据摘录](../../eval/provenance/SESSION_META.md) |
 | 4 冻结保管 | 怎么防泄题 | 测前哈希承诺，测后可核 | 保管者改过自己用的检查器 | 已披露 |
-| 5 系统设计 | 模型出错谁兜底 | 模型提议，代码保底 | `gate()` 在冻结的 `decide()` 里仍在模型之后（G6） | **G6 已做**：HTTP 流程在请求模型之前先判 gate（`extended.py`，不碰冻结文件，评测测的 `decide()` 没变）；**G7 已实施**（`bounded_agent.py`，只在假客户端下测过，见 [LIMITATIONS 第 24 条](../../eval/LIMITATIONS.md)） |
+| 5 系统设计 | 模型出错谁兜底 | 模型提议，代码保底 | `gate()` 在冻结的 `decide()` 里仍在模型之后（G6） | **G6 已做**：HTTP 流程在请求模型之前先判 gate（`extended.py`，不碰冻结文件，评测测的 `decide()` 没变）；**G7 已实施**（`bounded_agent.py`，假客户端测试加一次 84 条真实运行，见 [LIMITATIONS 第 24、26 条](../../eval/LIMITATIONS.md)） |
 | 6 运行 | 钱和乱调怎么控 | 有授权上限、不重试、先健康检查 | 回执分散在几个文件里；人工干预次数和运行前测试结果没有字段（G8） | **已补**一页汇总 [RUN_RECEIPTS.md](../../eval/RUN_RECEIPTS.md)，缺的字段显示「未记录」 |
 | 7 计分复算 | 数字谁算的，错在哪 | 两个独立实现复现同一总数；失败样例保留 | 分家族对照（G3） | **已补**（分片报告） |
 | 8 发布 | 别人能不能验证 | 第二轮原件公开，可免费复算 | 陌生人复现（G9） | 只能你做 |
@@ -100,7 +100,7 @@
 - **主张：** 模型提议，代码保底；模型删不掉代码算出的风险。
 - **证据：** `check_input`（`router_v2/rules.py:162`）在模型前拒绝非法输入；`parse_reply`（`router_v2/prompt.py:73`）严格校验 JSON，不合格即停车；`execute`（`router_v2/rules.py:181`）合并代码风险与模型判断；HALT 时跳过后两个角色；55 例压力检查；`tests/test_router_v2.py`。
 - **推理：** 把能计算的部分交给代码，把需要语义理解的部分交给模型，并让故障退化为停车而不是放行。
-- **局限：** `gate()` 在模型调用之后执行，文档字符串写的是旧路径（[LIMITATIONS 第 21 条](../../eval/LIMITATIONS.md)）；Safety 和 Compiler 自 2026-11-21 起走 `bounded_agent.py`（一次请求、关重试、60 秒占位超时、故障分类后停车），只在假客户端下测过，耗时没测，空回复现在是停车而不是通过；备注独有风险可能被模型漏判；没有车端制动逻辑。
+- **局限：** `gate()` 在模型调用之后执行，文档字符串写的是旧路径（[LIMITATIONS 第 21 条](../../eval/LIMITATIONS.md)）；Safety 和 Compiler 自 2026-11-21 起走 `bounded_agent.py`（一次请求、关重试、60 秒占位超时、故障分类后停车），有假客户端测试和一次 84 条的真实运行（168 次请求全部可用，Safety 没拦截，无空回复，耗时中位 Safety 1.2 秒、Compiler 1.7 秒；不是安全性评测），空回复现在是停车而不是通过；备注独有风险可能被模型漏判；没有车端制动逻辑。
 - **追问：**
   - *模型报正常，为什么仍会停车？* 代码按遥测算出了风险，模型删不掉。
   - *JSON 约束用的 Structured Outputs 还是 Pydantic？* 都没用，手写 `parse_reply`（手册追问 3）。
@@ -213,7 +213,7 @@
 | G2 `CLAUDE.md` 测试和打分 | 已补 |
 | G3 分片报告 | 已补 |
 | G4 对照与"还不知道" | 打分链路对照已做；新一轮题的部分不做 |
-| G5 Safety 和 Compiler 评测 | 设计已写；代码层的合约覆盖表已做（[ACTION_CONTRACT_COVERAGE.md](../../eval/ACTION_CONTRACT_COVERAGE.md)）；你已确认上限（180 次、250,000 token、US$0.10）；**运行器和假客户端演练已完成，真实运行待你在自己的终端设置密钥后执行**（[步骤](../../eval/safety_compiler/README.md)） |
+| G5 Safety 和 Compiler 评测（可用性与耗时，不是安全性） | 设计已写；代码层的合约覆盖表已做（[ACTION_CONTRACT_COVERAGE.md](../../eval/ACTION_CONTRACT_COVERAGE.md)）；**阶段 1 已做**（2026-11-21，84 条、168 次请求，约 6.3 万 token、约 US$0.049，额度只剩 3 次请求；结果见 [safety_compiler](../../eval/safety_compiler/README.md)，不是安全性评测） |
 | G6 `gate()` 顺序 | **已做**（HTTP 流程先判 gate；`decide()` 未改，评测数字不受影响） |
 | G7 有界重试 | **已实施**，假客户端测试 |
 | G8 运行回执 | 已补 |

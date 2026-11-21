@@ -1,0 +1,54 @@
+{
+  "budget": {
+    "calls_started": 4,
+    "max_calls": 175,
+    "max_tokens": 248297,
+    "max_usd": "0.098776",
+    "pricing": {
+      "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+      "input_usd_per_mtok": "0.3333334",
+      "output_usd_per_mtok": "1.3333334",
+      "source": "the conservative DeepSeek Flash rates used in round 2 (see eval/experiments/note_vs_rules_v2/RESULTS.md)"
+    },
+    "tokens_committed": 1501,
+    "usd_committed": "0.001167"
+  },
+  "compiler": {
+    "COMPILED": 2
+  },
+  "cost_note": "estimated at the configured conservative rates from reported usage; not a bill",
+  "empty_or_bad_replies": 0,
+  "final": {
+    "move": 2
+  },
+  "halt_reasons": {},
+  "health_check": {
+    "criteria": "every request returned non-empty text and reported usage; no record stopped on TIMEOUT / RATE_LIMIT / API_ERROR / BAD_REPLY",
+    "passed": true
+  },
+  "latency_ms": {
+    "compiler": {
+      "median": 1797,
+      "p95": 1917
+    },
+    "safety": {
+      "median": 1511,
+      "p95": 1770
+    }
+  },
+  "planned_records": 2,
+  "records_run": 2,
+  "requests": 4,
+  "response_models": [
+    "deepseek-flash"
+  ],
+  "safety": {
+    "PASS": 2
+  },
+  "status": "completed",
+  "stop_reason": "completed all planned records",
+  "worst_case_reservation": {
+    "tokens": 10864,
+    "usd": "0.011813"
+  }
+}

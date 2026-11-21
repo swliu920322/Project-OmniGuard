@@ -1,0 +1,49 @@
+{
+  "authorisation": {
+    "max_calls": 180,
+    "max_tokens": 250000,
+    "max_usd": "0.10",
+    "owner_words": "确认 (2026-11-21), in reply to the proposal of 180 requests, 250,000 tokens and US$0.10, health check included, no retries"
+  },
+  "code_hashes": {
+    "eval/safety_compiler/run_safety_compiler.py": "f94d27e94559fe8418b4bcfd2c57eae1619e5eb404c7069b6627647dd8d13be2",
+    "src/cloud-orchestrator/embodied_brain/bounded_agent.py": "e5dc2c74da2c0ac5f54ccab54d24e7c484c8935f464796446bf176d69199196d",
+    "src/cloud-orchestrator/embodied_brain/extended.py": "cd3e35195deee70dd93f0943660608929c34b18aeb0e887430b2b119192bc3bc",
+    "src/cloud-orchestrator/router_v2/pipeline.py": "55dddf702606ae8a49c3ed22c7065441647555e2f3a2f5f34c90ae84bd28f5e8",
+    "src/cloud-orchestrator/router_v2/prompt.py": "4f6eae88f33337c5116a46e36e7b5915945b02b6b62970b354131c3164392e68",
+    "src/cloud-orchestrator/router_v2/rules.py": "489c1c252d5d14ecf28af06eeb734e33b1ddeaaafae34b9234dc605aef7827d2"
+  },
+  "environment": {
+    "platform": "macOS-15.7.3-arm64-arm-64bit",
+    "python": "3.11.9"
+  },
+  "inputs": {
+    "router_replies_sha256": "090625b63538d45c53723a333055d456c25b6e01b36d3aa1ec38f8f1b709ece6",
+    "test_set_sha256": "6249acb7385857262942e746a91c55f19500f8be0905a7499ae2b25b580a1369"
+  },
+  "limit": 2,
+  "mode": "real",
+  "pricing": {
+    "input_rate_applied_to": "every prompt token (cache-miss price, the highest)",
+    "input_usd_per_mtok": "0.3333334",
+    "output_usd_per_mtok": "1.3333334",
+    "source": "the conservative DeepSeek Flash rates used in round 2 (see eval/experiments/note_vs_rules_v2/RESULTS.md)"
+  },
+  "repo_head": "a6416a51551e222624954c6d7286018c8e40d2c5",
+  "request_settings": {
+    "max_completion_tokens": {
+      "Compiler": 100,
+      "Safety": 50
+    },
+    "result_cache": "none (bounded_agent has no cache)",
+    "sdk_max_retries": 0,
+    "sdk_timeout_s": 60.0,
+    "temperature": 0.0
+  },
+  "router": "replayed from the sealed round-2 replies; no Router request",
+  "run_id": "20261121T135603Z_real_11a91792",
+  "started_at": "2026-11-21T13:56:03.400682Z",
+  "tag": "eval-safety-compiler-v1",
+  "tag_commit": "a6416a51551e222624954c6d7286018c8e40d2c5",
+  "tenant": "Tenant-Alpha-Extended"
+}
