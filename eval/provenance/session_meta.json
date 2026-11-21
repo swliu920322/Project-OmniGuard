@@ -42,6 +42,20 @@
         "tool": "claude"
       }
     ],
+    "05042f0": [
+      {
+        "call_at": "2026-11-21T13:27:52Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 29,
+        "tool": "claude"
+      },
+      {
+        "call_at": "2026-11-21T13:28:20Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
     "0512192": [
       {
         "call_at": "2026-11-15T08:38:25Z",
@@ -53,6 +67,14 @@
     "0569eae": [
       {
         "call_at": "2026-11-21T13:03:40Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 21,
+        "tool": "claude"
+      }
+    ],
+    "0daa059": [
+      {
+        "call_at": "2026-11-21T13:27:52Z",
         "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
         "gap_s": 21,
         "tool": "claude"
@@ -294,6 +316,14 @@
         "tool": "claude"
       }
     ],
+    "3e6e1d0": [
+      {
+        "call_at": "2026-11-21T13:33:38Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 21,
+        "tool": "claude"
+      }
+    ],
     "3fbf1ca": [
       {
         "call_at": "2026-11-07T11:22:51Z",
@@ -484,6 +514,22 @@
         "tool": "claude"
       }
     ],
+    "64e4965": [
+      {
+        "call_at": "2026-11-21T13:53:10Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
+      }
+    ],
+    "664c15e": [
+      {
+        "call_at": "2026-11-21T13:26:39Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
     "6682bdb": [
       {
         "call_at": "2026-11-15T03:31:37Z",
@@ -538,11 +584,27 @@
         "tool": "claude"
       }
     ],
+    "6ae5cbd": [
+      {
+        "call_at": "2026-11-21T13:19:18Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
     "6c0e976": [
       {
         "call_at": "2026-11-07T04:39:30Z",
         "file": "529ff251-f2a2-4725-b429-02cf281f1f46.jsonl",
         "gap_s": 3,
+        "tool": "claude"
+      }
+    ],
+    "706be1e": [
+      {
+        "call_at": "2026-11-21T14:04:40Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 2,
         "tool": "claude"
       }
     ],
@@ -618,6 +680,20 @@
         "file": "transcript_full.jsonl",
         "gap_s": 5,
         "tool": "antigravity"
+      }
+    ],
+    "82d00cb": [
+      {
+        "call_at": "2026-11-21T13:19:18Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 36,
+        "tool": "claude"
+      },
+      {
+        "call_at": "2026-11-21T13:19:53Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
       }
     ],
     "8476cb8": [
@@ -711,6 +787,14 @@
         "call_at": "2026-11-21T12:48:39Z",
         "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
         "gap_s": 0,
+        "tool": "claude"
+      }
+    ],
+    "93b28e0": [
+      {
+        "call_at": "2026-11-21T13:38:58Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 2,
         "tool": "claude"
       }
     ],
@@ -880,6 +964,14 @@
         "tool": "claude"
       }
     ],
+    "a6416a5": [
+      {
+        "call_at": "2026-11-21T13:54:31Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 43,
+        "tool": "claude"
+      }
+    ],
     "a65eb62": [
       {
         "call_at": "2026-11-15T11:44:13Z",
@@ -976,6 +1068,14 @@
         "tool": "claude"
       }
     ],
+    "b3f3c73": [
+      {
+        "call_at": "2026-11-21T13:50:13Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 3,
+        "tool": "claude"
+      }
+    ],
     "b45da92": [
       {
         "call_at": "2026-11-11T14:41:12Z",
@@ -1024,6 +1124,14 @@
         "file": "rollout-2026-11-07T11-27-44-01a1b40c-345f-7b03-8310-040b17a3112a.jsonl",
         "gap_s": 0,
         "tool": "codex"
+      }
+    ],
+    "b632a3b": [
+      {
+        "call_at": "2026-11-21T13:34:46Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 1,
+        "tool": "claude"
       }
     ],
     "b6d6413": [
@@ -1236,6 +1344,14 @@
         "tool": "claude"
       }
     ],
+    "d60be7b": [
+      {
+        "call_at": "2026-11-21T14:05:39Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 44,
+        "tool": "claude"
+      }
+    ],
     "d76c349": [
       {
         "call_at": "2026-11-10T10:07:44Z",
@@ -1326,6 +1442,14 @@
         "file": "transcript_full.jsonl",
         "gap_s": 9,
         "tool": "antigravity"
+      }
+    ],
+    "e48c612": [
+      {
+        "call_at": "2026-11-21T13:19:18Z",
+        "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
+        "gap_s": 0,
+        "tool": "claude"
       }
     ],
     "e5a0b0e": [
@@ -1684,14 +1808,14 @@
         "2026-11-16T17:13:40Z"
       ],
       "last": "2026-11-17T03:40:19Z",
-      "lines": 1454,
+      "lines": 1459,
       "models": {
         "message.model": {
           "claude-fable-5-2": 89,
           "claude-sonnet-5-5": 241
         }
       },
-      "sha256": "8adcc4c24b0aa542a258363f97ce6e1bc74524835317b320b37e093ad2d0a89f",
+      "sha256": "1b17ede4811f7a25c6f5d4613b38b6c26c83e9a383ea9b9ba6b8aecdddd5cc64",
       "tool": "claude",
       "touches": {},
       "unparsable_lines": 0
@@ -1699,7 +1823,7 @@
     {
       "effort": {
         "effort": {
-          "medium": 368
+          "medium": 551
         }
       },
       "file": "d031520a-ea9e-48ce-ac7e-3805c09b1044.jsonl",
@@ -1717,16 +1841,29 @@
         "2026-11-21T13:11:08Z",
         "2026-11-21T13:12:21Z",
         "2026-11-21T13:12:53Z",
-        "2026-11-21T13:16:43Z"
+        "2026-11-21T13:16:43Z",
+        "2026-11-21T13:19:18Z",
+        "2026-11-21T13:19:53Z",
+        "2026-11-21T13:26:39Z",
+        "2026-11-21T13:27:52Z",
+        "2026-11-21T13:28:20Z",
+        "2026-11-21T13:33:38Z",
+        "2026-11-21T13:34:46Z",
+        "2026-11-21T13:38:58Z",
+        "2026-11-21T13:50:13Z",
+        "2026-11-21T13:53:10Z",
+        "2026-11-21T13:54:31Z",
+        "2026-11-21T14:04:40Z",
+        "2026-11-21T14:05:39Z"
       ],
-      "last": "2026-11-21T13:18:47Z",
-      "lines": 1555,
+      "last": "2026-11-21T14:13:38Z",
+      "lines": 2274,
       "models": {
         "message.model": {
-          "claude-sonnet-5-5": 368
+          "claude-sonnet-5-5": 551
         }
       },
-      "sha256": "85557ff7296019905f6e838f7ec187705b738752386f94d3b6af80d54b01f672",
+      "sha256": "bd7cdc7d14833a443fb1b603b48642f34c6b2de3ce0b6cd027eaad99aede8ae1",
       "tool": "claude",
       "touches": {
         "r3.py": {
@@ -1739,14 +1876,17 @@
         "router_v2/pipeline.py": {
           "command_mentions": [
             "2026-11-21T13:02:19Z",
-            "2026-11-21T13:02:24Z"
+            "2026-11-21T13:02:24Z",
+            "2026-11-21T13:22:57Z"
           ]
         },
         "router_v2/rules.py": {
           "command_mentions": [
             "2026-11-21T11:34:18Z",
             "2026-11-21T12:47:02Z",
-            "2026-11-21T13:11:08Z"
+            "2026-11-21T13:11:08Z",
+            "2026-11-21T13:22:57Z",
+            "2026-11-21T13:23:10Z"
           ]
         },
         "validate_rationales.py": {
