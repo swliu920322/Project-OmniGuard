@@ -144,3 +144,45 @@ def test_latest_picks_the_newest_directory_and_for_health_only_a_passed_sealed_r
     (tmp_path / "20260101T000000Z_real_aaaaaaaa" / "summary.json").write_text("{}")  # no longer matches its hash list
     with pytest.raises(SystemExit):
         SC.resolve_run_dir("latest", real_health_only=True)
+
+
+class InterruptingSDK(SC.ScriptedSDK):
+    """Raises KeyboardInterrupt on the third request, as a Ctrl-C in the middle of a run would."""
+    n = 0
+
+    def _create(self, **kw):
+        InterruptingSDK.n += 1
+        if InterruptingSDK.n == 3:
+            raise KeyboardInterrupt
+        return super()._create(**kw)
+
+
+def test_an_interruption_seals_what_was_done_and_says_so(tmp_path, monkeypatch):
+    monkeypatch.setattr(SC, "RUNS", tmp_path)
+    monkeypatch.setattr(SC, "ScriptedSDK", InterruptingSDK)
+    InterruptingSDK.n = 0
+    assert SC.main(["dry-run", "--limit", "5"]) == 130
+    d = next(tmp_path.iterdir())
+    assert SC.L.verify_run_dir(str(d)) == []
+    summ = json.loads((d / "summary.json").read_text())
+    assert summ["status"] == "interrupted" and summ["records_run"] == 1 and summ["requests"] == 2
+    assert summ["requests_booked_but_not_recorded"] == 1  # the third request was in flight: its budget stays booked
+    assert len((d / "results.jsonl").read_text().splitlines()) == 1 and len((d / "calls.jsonl").read_text().splitlines()) == 2
+
+
+def test_the_configuration_is_written_before_the_first_request_with_the_real_start_time(tmp_path, monkeypatch):
+    monkeypatch.setattr(SC, "RUNS", tmp_path)
+    seen = {}
+
+    class Spy(SC.ScriptedSDK):
+        def _create(self, **kw):
+            d = next(tmp_path.iterdir())
+            seen.setdefault("config_present_at_first_request", (d / "config.json").exists())
+            seen.setdefault("calls_so_far", len((d / "calls.jsonl").read_text().splitlines()))
+            return super()._create(**kw)
+    monkeypatch.setattr(SC, "ScriptedSDK", Spy)
+    assert SC.main(["dry-run", "--limit", "2"]) == 0
+    d = next(tmp_path.iterdir())
+    cfg, summ = json.loads((d / "config.json").read_text()), json.loads((d / "summary.json").read_text())
+    assert seen == {"config_present_at_first_request": True, "calls_so_far": 0}
+    assert cfg["started_at"] < summ["finished_at"] and summ["requests_booked_but_not_recorded"] == 0

@@ -179,16 +179,17 @@ def view_of(data):
             "agent_2_latency_ms": (data.get("cloud_metrics") or {}).get("agent_2_latency_ms"), "agent_3_latency_ms": (data.get("cloud_metrics") or {}).get("agent_3_latency_ms")}
 
 
-def run_records(records, inner, guard, replay, limit=None):
+def run_records(records, inner, guard, replay, limit=None, results=None, log=None, state=None, on_record=None):
     from embodied_brain import extended as EXT
     from embodied_brain.utils import load_scenario_config
     from router_v2 import pipeline as PL
     logging.getLogger().setLevel(logging.ERROR)  # the flow warns once per record that Cosmos is not used
     config = load_scenario_config(TENANT)
-    log, state = [], {"stop": None, "worst_case_tokens": 0, "worst_case_usd": Decimal(0)}
+    log = [] if log is None else log
+    results = [] if results is None else results
+    state = {"stop": None, "worst_case_tokens": 0, "worst_case_usd": Decimal(0)} if state is None else state
     rec_client = Recording(inner, guard, log, state)
     dummy = ScriptedSDK()  # the Router client is built but never used: decide() is replayed
-    results = []
     replay_decide = make_replay_decide(replay, PL.decide)
     with patch("embodied_brain.extended.get_cosmos_container", side_effect=RuntimeError("no Cosmos in this run")), \
             patch("embodied_brain.extended.get_llm_client_and_model", return_value=(dummy, "unused")), \
@@ -204,6 +205,8 @@ def run_records(records, inner, guard, replay, limit=None):
             resp = asyncio.run(EXT.simulate_extended(body_for(rec), TENANT, config, time.time()))
             results.append({"id": rec["id"], "family_id": rec.get("family_id"), "language": rec.get("language"), "gold_note_status": rec["note_status"],
                             "requests": len(log) - before, **view_of(json.loads(resp.body))})
+            if on_record:
+                on_record(results, log)
     if state["stop"] and results and (results[-1]["halt_reasons"] or [None])[0] == "API_ERROR":
         results[-1]["note"] = "ended by the run's own stop, not a provider fault: " + state["stop"]
     return results, log, state
@@ -256,19 +259,44 @@ def summarize(results, log, state, guard, planned, health):
     return summ
 
 
-def write_run(mode, results, log, state, guard, planned, health_check=None, limit=None):
+def start_run(mode, limit):
+    """Creates the run directory and writes the configuration BEFORE the first request, with the real start time; the record files start empty."""
     run_dir = L.make_run_dir(str(RUNS), mode)
-    config = {"run_id": os.path.basename(run_dir), "mode": mode, "tenant": TENANT, "started_at": L.utc_now(), "repo_head": git("rev-parse", "HEAD"), "tag": latest_tag(), "tag_commit": git("rev-list", "-n", "1", latest_tag()) if latest_tag() else None,
+    config = {"run_id": os.path.basename(run_dir), "mode": mode, "tenant": TENANT, "started_at": L.utc_now(), "repo_head": git("rev-parse", "HEAD"), "tag": latest_tag(),
+              "tag_commit": git("rev-list", "-n", "1", latest_tag()) if latest_tag() else None,
               "code_hashes": code_hashes(), "inputs": {"test_set_sha256": L.sha256_file(str(TEST_SET)), "router_replies_sha256": L.sha256_file(str(ROUTER_REPLIES))},
               "authorisation": {**AUTH, "max_usd": str(AUTH["max_usd"])}, "pricing": PRICING.as_dict(), "limit": limit,
-              "request_settings": {"sdk_max_retries": 0, "sdk_timeout_s": 60.0, "temperature": 0.0, "max_completion_tokens": {"Safety": 50, "Compiler": 100}, "result_cache": "none (bounded_agent has no cache)"},
+              "request_settings": {"sdk_max_retries": 0, "sdk_timeout_s": 60.0, "temperature": 0.0, "max_completion_tokens_requested": {"Safety": 50, "Compiler": 100},
+                                   "output_tokens_reserved_per_request": BUDGET_OUTPUT_BOUND, "result_cache": "none (bounded_agent has no cache)"},
               "router": "replayed from the sealed round-2 replies; no Router request", "environment": {"python": sys.version.split()[0], "platform": platform.platform()}}
     L.write_json(os.path.join(run_dir, "config.json"), config)
-    with open(os.path.join(run_dir, "calls.jsonl"), "w", encoding="utf-8") as f:
-        f.writelines(json.dumps(e, ensure_ascii=False) + "\n" for e in log)
-    with open(os.path.join(run_dir, "results.jsonl"), "w", encoding="utf-8") as f:
-        f.writelines(json.dumps(r, ensure_ascii=False) + "\n" for r in results)
-    L.write_json(os.path.join(run_dir, "summary.json"), summarize(results, log, state, guard, planned, health_check))
+    for name in ("calls.jsonl", "results.jsonl"):
+        open(os.path.join(run_dir, name), "w", encoding="utf-8").close()
+    return run_dir
+
+
+class Progress:
+    """Appends each finished record and its requests to the run directory as the run goes, so an interruption or a crash keeps what was done."""
+
+    def __init__(self, run_dir):
+        self.run_dir, self.n_log, self.n_results = run_dir, 0, 0
+
+    def __call__(self, results, log):
+        for name, items, done in (("calls.jsonl", log, "n_log"), ("results.jsonl", results, "n_results")):
+            new = items[getattr(self, done):]
+            if new:
+                with open(os.path.join(self.run_dir, name), "a", encoding="utf-8") as f:
+                    f.writelines(json.dumps(x, ensure_ascii=False) + "\n" for x in new)
+                setattr(self, done, len(items))
+
+
+def finish_run(run_dir, results, log, state, guard, planned, health, interrupted=None):
+    summ = summarize(results, log, state, guard, planned, health)
+    summ["finished_at"] = L.utc_now()
+    summ["requests_booked_but_not_recorded"] = guard.calls_started - len(log)  # an in-flight request at an interruption: its budget stays booked
+    if interrupted is not None:
+        summ["status"], summ["stop_reason"] = "interrupted", f"interrupted: {type(interrupted).__name__}; the records finished before it are kept"
+    L.write_json(os.path.join(run_dir, "summary.json"), summ)
     L.write_sha256sums(run_dir)
     return run_dir
 
@@ -376,17 +404,28 @@ def main(argv=None):
         inner = OpenAI(base_url=os.environ["OPENAI_BASE_URL"], api_key=os.environ["OPENAI_API_KEY"]).with_options(max_retries=0, timeout=L.SDK_TIMEOUT_S)
     else:
         inner = ScriptedSDK()
-    results, log, state = run_records(chosen, inner, guard, replay, args.limit)
+    results, log, state = [], [], {"stop": None, "worst_case_tokens": 0, "worst_case_usd": Decimal(0)}
+    run_dir = start_run(args.mode, args.limit) if args.mode != "plan" else None
+    progress = Progress(run_dir) if run_dir else None
+    interrupted = None
+    try:
+        run_records(chosen, inner, guard, replay, args.limit, results=results, log=log, state=state, on_record=progress)
+    except BaseException as exc:  # noqa: BLE001 - seal what exists, then report; nothing is retried
+        interrupted = exc
+        state["stop"] = state["stop"] or f"interrupted: {type(exc).__name__}"
     if args.mode == "plan":
         per_call = state["worst_case_tokens"] // max(1, len(log))
         print(json.dumps({"records_that_reach_safety": len(chosen), "requests_expected": 2 * len(chosen), "reserved_per_request_tokens_about": per_call,
                           "sum_if_every_request_used_its_full_reservation": state["worst_case_tokens"], "note": "not a forecast: the guard adds each request's real usage and stops before the next one could break a cap; the health check measured 293 tokens for one Safety request",
                           "authorised": {"calls": AUTH["max_calls"], "tokens": AUTH["max_tokens"], "usd": str(AUTH["max_usd"])}, "already_spent": {k: str(v) for k, v in spent_so_far().items()}}, indent=2))
         return 0
+    progress(results, log)
     health = health_verdict(results, log) if args.limit else None
-    run_dir = write_run(args.mode, results, log, state, guard, n_plan, health, args.limit)
+    finish_run(run_dir, results, log, state, guard, n_plan, health, interrupted)
     print("wrote", run_dir, "|", "stopped: " + state["stop"] if state["stop"] else "completed", "|", health or "")
-    return 1 if state["stop"] else 0
+    if interrupted is not None and not isinstance(interrupted, KeyboardInterrupt):
+        raise interrupted
+    return 130 if isinstance(interrupted, KeyboardInterrupt) else (1 if state["stop"] else 0)
 
 
 if __name__ == "__main__":
