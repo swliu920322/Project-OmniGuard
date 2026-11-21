@@ -2,6 +2,14 @@
 
 > 第二轮备注对照的最终原题及逐条回复已另行整理入仓，免费复算入口见 [第二轮原件说明](experiments/note_vs_rules_v2/evidence/README.md)。下文关于旧300条私有原件缺失的边界继续适用，不因第二轮交付而恢复。
 
+**现在能做什么（2026-11-21）：**
+
+| | 第一轮（300 条） | 第二轮（180 条） |
+|---|---|---|
+| 第 1 级：免费离线 | 可以 | 可以 |
+| 第 2 级：公开开发集真实运行 | 可以（自备密钥，几美分） | 不适用 |
+| 第 3 级：用原题重跑 | **做不到**：原题和逐条记录已丢失（[LIMITATIONS](LIMITATIONS.md) 第 22 条） | 可以：题目和回复已公开，免费复算见[原件说明](experiments/note_vs_rules_v2/evidence/README.md)；付费重跑需要你自己的预算 |
+
 Read this before claiming that anything "reproduces". There are three levels, and only the first needs no private data and no money.
 
 | Level | Needs | What it proves |
@@ -56,6 +64,8 @@ export BASELINE_B_AUTHORIZED=yes LLM_PROVIDER=deepseek OPENAI_BASE_URL=https://a
 The run needs a clean tracked working tree and writes a sealed directory under `eval/baseline_b/runs/`. The full dev run (180 calls) costs roughly US$0.08 to 0.10 at those rates; its recorded result (175/180, five provider errors) is in [baseline_b/runs/INDEX.md](baseline_b/runs/INDEX.md). A dev-set figure is a development figure, never the formal one.
 
 ## Level 3: formal reproduction (private data, budget)
+
+**Status (2026-11-21): not possible for round 1, because the private files can no longer be found (LIMITATIONS item 22).** The steps below are kept to show how it was designed to work; the file hashes remain the check if the originals ever turn up. Round 2 does not need this level: see its [evidence README](experiments/note_vs_rules_v2/evidence/README.md).
 
 Only possible with the files `test_set.jsonl` and `stress_cases.jsonl` whose SHA-256 equal the ones in the manifest (`68e08ed9…` and `dc888af0…`), obtained from their custodian. The custodian holds them outside the repository; do not ask the tuning side for them.
 

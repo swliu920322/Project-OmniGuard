@@ -21,14 +21,27 @@
 
 面试备考材料是个人学习资料，不是评测证据，放在 [study/](../study/README.md)。
 
-## 第一次来，按这个顺序
+## 两轮评测各是什么
+
+| | 第一轮 | 第二轮 |
+|---|---|---|
+| 问什么 | 模型能不能把一条记录分进六类路由，程序怎样约束输出 | 备注文字（"刚才有人，现在走了"）能不能被正确理解 |
+| 题目 | 300 条合成记录（只来自 34 个家族）加 55 例压力检查 | 180 条新写的合成备注（60 个家族，每种备注状态 30 条） |
+| 比较 | 固定提示词的模型，同一批题跑两次，对照关键词规则 R1、R2 | 同一个模型对照开发后冻结的规则 R3，只跑一次 |
+| 看结果 | [report.md](report.md) | [RESULTS.md](experiments/note_vs_rules_v2/RESULTS.md) |
+| 原件 | **已丢失**，只剩汇总和哈希（[LIMITATIONS](LIMITATIONS.md) 第 22 条） | **公开**，可以免费复算 |
+| 谁标的 | 全是 GPT 家族的 AI | 作者是 Gemini，标注和复核是 GPT 家族 |
+
+两轮的题和系统不同，**不是前后对比**。
+
+## 想从头读，按这个顺序
 
 如果不知道 `primary` 等代码字段是什么意思，先看 [一辆小车的中文入门例子](../docs/guide/START_HERE_zh.md)，不需要预先懂 Agent 或评测术语。
 
-1. **理解代码怎么走**：[后端阅读地图](../docs/guide/BACKEND_CODE_GUIDE_zh.md)。包含三个 Agent 角色、六类状态、调用图与源码定位。
-2. **看实际测出了什么**：[正式报告](report.md)、[延迟证据](LATENCY_EVIDENCE.md)。准确率、模型调用耗时与仿真设定不要混用。
-3. **追查结论依据**：[证据索引](EVIDENCE_INDEX.md) → 规范／冻结清单 → 正式结果与独立核对。
-4. **想自己运行**：[复现指南](REPRODUCE.md)。免费离线、公开开发集实测、私有正式数据复现分成三级，不能相互替代。
+1. **理解代码怎么走**：[后端阅读地图](../docs/guide/BACKEND_CODE_GUIDE_zh.md)。三个 Agent 角色、六类状态、调用图与源码定位。
+2. **看实际测出了什么**：两轮结果见上表；耗时和费用见 [延迟证据](LATENCY_EVIDENCE.md)。准确率、模型调用耗时与仿真设定不要混用。
+3. **追查结论依据**：[证据索引](EVIDENCE_INDEX.md) → 规范与冻结清单 → 运行记录与独立核对；谁做的见 [ANNOTATOR_PROVENANCE.md](ANNOTATOR_PROVENANCE.md)。
+4. **想自己验证**：[复现指南](REPRODUCE.md)，页首有一张"现在能做什么"的表；第二轮的免费复算看[原件说明](experiments/note_vs_rules_v2/evidence/README.md)。
 
 概念拓展见 [Agent 与意图](../docs/guide/AGENT_INTENT_DESIGN_zh.md) 和 [业务 harness](../docs/guide/BUSINESS_HARNESS_zh.md)：前者解释角色与类别，后者解释后端如何承载模型执行；设计示意不算已实现功能。
 

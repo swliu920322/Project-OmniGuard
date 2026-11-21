@@ -133,7 +133,7 @@ def render(runs):
     lines.append("- 第一轮只有公开摘要（私有的配置和逐条文件已丢，见 `LIMITATIONS.md` 第 22 条），所以请求设置和授权显示「未记录」；这不表示当时没有设置，只表示公开文件里没有这一项。")
     lines.append("- 「声明身份」是所有者声明，不是验证过的模型版本；「返回别名」只说明接口返回的名字一致。")
     lines.append("- 没有「人工干预次数」和「运行前测试通过情况」这两个结构化字段；运行过程的文字记录在 `experiments/note_vs_rules_v2/process/HANDOFF_TO_GPT.md`。")
-    lines.append("- 第二轮主测试的记录里 `measurement=False`；这个字段在第二轮的含义没有核对，该次运行的正式性质以 `RESULTS.md` 为准，不据此字段下结论。")
+    lines.append("- 看到第二轮主测试的 `measurement=False` 不用担心：这个字段只有在运行用的数据文件正好是第一轮的冻结验收文件时才为真（见 `eval/formal/run_formal.py`）；第二轮用的是它自己冻结的另一份数据，所以按定义是 False，不表示这次运行不正式。第二轮的正式运行以 `RESULTS.md` 和 `V2_FREEZE.json` 为准。")
     lines.append("- 费用是按配置价格的估算，不是账单。")
     return "\n".join(lines) + "\n"
 

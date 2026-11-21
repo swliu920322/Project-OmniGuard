@@ -5,8 +5,8 @@ Order, so that nothing external is touched before it has to be:
  1. emergency stop (a strict boolean) -> stop at once, zero external calls;
  2. raw input check, no defaults and no int() casts -> a bad request is an explicit HALT result, zero external calls;
  3. only then Cosmos (best effort) and the model, with SDK retries off and a fixed timeout;
- 4. the Router's whole decision (motion, goal, speed cap, COOL/LOCK holds, deferred follow-ups) is kept and returned; Safety and Compiler may
-    only make the result stricter: the Compiler's actions are validated against the decision in code before they leave.
+ 4. the Router's whole decision (motion, goal, speed cap, COOL/LOCK holds, deferred follow-ups) is kept and returned; Safety and Compiler can only
+    make that decision stricter, never looser (they do not look for risks the Router missed); the Compiler's actions are validated against it in code.
 Legacy tenants never come through here.
 
 `goal` (for example CHARGER) is a structured goal carried through the decision. Nothing here checks a path or a destination, so it is not
@@ -147,7 +147,7 @@ async def simulate_extended(req_body: dict, tenant_id: str, config: dict, start_
             return _respond(start_time, _stop(act["halt_reasons"][0], act["halt_reasons"], act["holds"], act["deferred"], risk_set=dec["risk_set"]),
                             trace, dec, metrics=_metrics(t1, cosmos=cosmos))
 
-        # Safety (may only make it stricter)
+        # Safety (can only make the Router's decision stricter; it does not look for risks the Router missed)
         intent = dec["primary"]
         safety_rules = config.get("agent_safety_rules")
         telem = (f"Telemetry: Distance: {rec['distance_cm']}cm, X: {req_body.get('current_x', 0)}, Velocity: {rec['velocity_ms']}m/s, HP: {rec['hp']}, "
