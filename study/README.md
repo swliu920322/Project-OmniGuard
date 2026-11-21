@@ -9,6 +9,7 @@
 | 面试整合版（按八关讲，只导航不复制答案） | [interview-integrated.md](refer/interview-integrated.md) |
 | `CLAUDE.md` 的 8 问打分 | [claude-md-8q.md](refer/claude-md-8q.md) |
 | Claude Code 的指令文件、skill 和上下文：官方怎么说，我们的实测数字，优化清单 | [claude-code-memory-and-context.md](refer/claude-code-memory-and-context.md) |
+| 指令文件的最佳实践（活文档：放哪、怎么写、怎么衡量、迭代日志） | [instruction-files-best-practices.md](refer/instruction-files-best-practices.md) |
 | 文档盘点与整理记录 | [doc-inventory.md](refer/doc-inventory.md) |
 | 冷读测试：让一个陌生会话只从 `eval/README.md` 出发，找 5 个答案 | [cold-read-test.md](refer/cold-read-test.md) |
 
