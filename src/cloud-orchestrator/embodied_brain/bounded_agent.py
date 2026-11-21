@@ -6,8 +6,8 @@ legacy tenants and the benchmarks still use it and are left as they are. The ext
 limits the Router has (router_v2.pipeline.no_retry_client). A failure is not an exception that ends as INTERNAL_ERROR: it is an AgentFault
 with the kind the Router uses (TIMEOUT / RATE_LIMIT / API_ERROR) or BAD_REPLY, and the caller turns it into a stop.
 
-The timeout is a placeholder equal to the Router's: no latency has been measured for these two roles yet (eval/DESIGN_SAFETY_COMPILER_EVAL.md).
-Design and reasons: eval/DESIGN_BOUNDED_RETRY.md.
+The timeout is a placeholder equal to the Router's: no latency has been measured for these two roles yet (eval/archive/designs/DESIGN_SAFETY_COMPILER_EVAL.md).
+Design and reasons: eval/archive/designs/DESIGN_BOUNDED_RETRY.md.
 """
 from .utils import get_llm_client_and_model
 
