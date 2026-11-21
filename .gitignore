@@ -250,3 +250,5 @@ local.settings.json
 # personal local study pages (not part of the repository)
 /eval/web/
 /study/web/
+# owner's eight interview answers with comments; source of the local practice page, kept private
+/answer.md
